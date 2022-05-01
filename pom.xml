@@ -32,6 +32,7 @@
         <mybatis.version>3.5.7</mybatis.version>
         <mysql.connection.version>8.0.16</mysql.connection.version>
         <lombok.version>1.18.22</lombok.version>
+        <argLine>-Dfile.encoding=UTF-8</argLine>
     </properties>
 
     <dependencies>
