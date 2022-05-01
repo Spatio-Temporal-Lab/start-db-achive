@@ -5,7 +5,7 @@ import org.apache.calcite.plan.RelOptRuleCall;
 import org.apache.calcite.plan.RelRule;
 import org.apache.calcite.plan.RelTraitSet;
 import org.apache.calcite.rel.logical.LogicalFilter;
-import org.sikong.db.geomesa.GeomesaConstant;
+import org.urbcomp.start.db.geomesa.GeomesaConstant;
 import org.urbcomp.start.db.geomesa.rel.GeomesaFilter;
 import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan;
 

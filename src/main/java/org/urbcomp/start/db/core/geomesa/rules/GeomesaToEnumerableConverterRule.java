@@ -6,7 +6,7 @@ import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.convert.ConverterRule;
 import org.apache.calcite.rel.core.RelFactories;
 import org.apache.calcite.tools.RelBuilderFactory;
-import org.sikong.db.geomesa.GeomesaConstant;
+import org.urbcomp.start.db.geomesa.GeomesaConstant;
 import org.urbcomp.start.db.geomesa.GeomesaToEnumeratorConverter;
 
 import java.util.function.Predicate;

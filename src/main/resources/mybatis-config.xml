@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-        <package name="org.sikong.db.metadata.entity"/>
+        <package name="org.urbcomp.start.db.metadata.entity"/>
     </typeAliases>
     <!-- connection environment -->
     <environments default="development">
