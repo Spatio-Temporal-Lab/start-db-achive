@@ -4,7 +4,7 @@ package org.urbcomp.start.db.metadata.entity;
  * This class is used to encapsulate the basic information of users
  *
  * @author zaiyuan
- * @date 2022-03-27 15:17:07
+ * @date 2022-05-01 15:17:07
  */
 public class User extends AbstractEntity {
 

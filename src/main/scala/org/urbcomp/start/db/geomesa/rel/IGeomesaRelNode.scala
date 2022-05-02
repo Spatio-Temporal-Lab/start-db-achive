@@ -7,7 +7,7 @@ import org.urbcomp.start.db.core.geomesa.model.GeomesaQuery
  * RelNode Trait for Geomesa.
  *
  * @author zaiyuan
- * @date 2022/02/27
+ * @date 2022/05/01
  */
 trait IGeomesaRelNode extends RelNode {
   def wrap(query: GeomesaQuery): Unit

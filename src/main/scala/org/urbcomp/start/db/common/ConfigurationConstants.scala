@@ -4,7 +4,7 @@ package org.urbcomp.start.db.common
  * Configuration Constants
  *
  * @author zaiyuan
- * @date 2022/02/27
+ * @date 2022/05/01
  * @since 0.1.0
  */
 object ConfigurationConstants {

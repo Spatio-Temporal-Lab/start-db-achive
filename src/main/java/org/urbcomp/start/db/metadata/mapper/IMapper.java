@@ -9,7 +9,7 @@ import java.util.List;
  * This interface is used to encapsulate some basic mapping information.
  *
  * @author zaiyuan
- * @date 2022-03-27 15:17:07
+ * @date 2022-05-01 15:17:07
  */
 public interface IMapper<T extends AbstractEntity> {
 

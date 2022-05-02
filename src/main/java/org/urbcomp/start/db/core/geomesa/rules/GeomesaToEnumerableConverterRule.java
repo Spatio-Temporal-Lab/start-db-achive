@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  * This Rule is used to convert Geomesa Logic to Linq4J Enumerable
  *
  * @author zaiyuan
- * @date 2022-03-06 15:17:07
+ * @date 2022-05-01 15:17:07
  */
 public class GeomesaToEnumerableConverterRule extends ConverterRule {
 

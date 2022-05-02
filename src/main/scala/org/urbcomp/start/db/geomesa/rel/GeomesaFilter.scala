@@ -9,7 +9,7 @@ import org.apache.calcite.sql.SqlKind._
 import org.apache.calcite.sql.validate.SqlValidatorUtil
 import org.opengis.filter.expression.Expression
 import org.opengis.filter.{Filter => GeoToolsFilter}
-import org.sikong.db.geomesa.ff
+import org.urbcomp.start.db.geomesa.ff
 import org.urbcomp.start.db.core.geomesa.model.GeomesaQuery
 import org.urbcomp.start.db.geomesa.GeomesaConstant
 
@@ -26,7 +26,7 @@ import scala.collection.JavaConverters._
  * @param condition RexNode
  *
  * @author zaiyuan
- * @date 2022/02/27
+ * @date 2022/05/21
  */
 class GeomesaFilter(cluster: RelOptCluster,
                     traits: RelTraitSet,

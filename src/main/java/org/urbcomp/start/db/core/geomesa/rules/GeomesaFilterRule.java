@@ -14,7 +14,7 @@ import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan;
  * query criteria into the filter object of geotools, and push down.
  *
  * @author zaiyuan
- * @date 2022-03-06 15:17:07
+ * @date 2022-05-01 15:17:07
  */
 public class GeomesaFilterRule extends RelRule<GeomesaFilterRule.Config> {
 
