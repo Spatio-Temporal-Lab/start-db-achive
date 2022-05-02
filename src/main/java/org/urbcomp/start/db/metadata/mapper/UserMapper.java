@@ -7,7 +7,7 @@ import org.urbcomp.start.db.metadata.entity.User;
  * This interface is used to encapsulate some user mapping information.
  *
  * @author zaiyuan
- * @date 2022-03-27 15:17:07
+ * @date 2022-05-01 15:17:07
  */
 public interface UserMapper extends IMapper<User> {
     /**

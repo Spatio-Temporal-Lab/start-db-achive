@@ -11,7 +11,7 @@ import java.util.List;
  * Accessor for User
  *
  * @author zaiyuan
- * @date 2022-03-27 15:17:07
+ * @date 2022-05-01 15:17:07
  */
 public class UserAccessor implements IAccessor<User> {
     /**

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList
 import org.apache.calcite.plan.{RelOptCluster, RelOptPlanner, RelOptTable, RelTraitSet}
 import org.apache.calcite.rel.core.TableScan
 import org.apache.calcite.rel.hint.RelHint
-import org.sikong.db.core.geomesa.rules.GeomesaFilterRule
+import org.urbcomp.start.db.core.geomesa.rules.GeomesaFilterRule
 import org.urbcomp.start.db.core.geomesa.model.GeomesaQuery
 import org.urbcomp.start.db.core.geomesa.rules.{GeomesaFilterRule, GeomesaToEnumerableConverterRule}
 import org.urbcomp.start.db.geomesa.GeomesaTable
@@ -18,7 +18,7 @@ import org.urbcomp.start.db.geomesa.GeomesaTable
  * @param geomesaTable  GeomesaTable
  *
  * @author zaiyuan
- * @date 2022/02/27
+ * @date 2022/05/01
  */
 class GeomesaTableScan(cluster: RelOptCluster,
                        traitSet: RelTraitSet,

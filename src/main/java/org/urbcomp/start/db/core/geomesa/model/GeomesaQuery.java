@@ -18,7 +18,7 @@ import java.lang.reflect.Type;
  * this information, we need to present it in the form of basic data types.
  *
  * @author zaiyuan
- * @date 2022-03-06 15:17:07
+ * @date 2022-05-01 15:17:07
  */
 public class GeomesaQuery {
 
