@@ -18,7 +18,7 @@ import org.urbcomp.start.db.geomesa.GeomesaTable
  * @param geomesaTable  GeomesaTable
  *
  * @author zaiyuan
- * @date 2022/05/01
+ * @date 2022/05/02
  */
 class GeomesaTableScan(cluster: RelOptCluster,
                        traitSet: RelTraitSet,
