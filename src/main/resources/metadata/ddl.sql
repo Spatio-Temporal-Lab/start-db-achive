@@ -1,4 +1,4 @@
-CREATE DATABASE meta_data;
+CREATE DATABASE if not exists meta_data;
 
 use meta_data;
 

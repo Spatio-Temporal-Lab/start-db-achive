@@ -3,6 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <properties resource="config.properties"/>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="useGeneratedKeys" value="true"/>
+    </settings>
+
     <typeAliases>
         <package name="org.urbcomp.start.db.metadata.entity"/>
     </typeAliases>
@@ -15,11 +22,10 @@
                 <property value="true" name="poolPingEnabled"/>
                 <property value="select 1 from dual" name="poolPingQuery"/>
                 <property value="28799000" name="poolPingConnectionsNotUsedFor"/>
-                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url"
-                          value="jdbc:mysql://ArchiLab-development03:3306/meta_data?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=GMT%2B8"/>
-                <property name="username" value="root"/>
-                <property name="password" value="ArchiLab"/>
+                <property name="driver" value="${meta.jdbc.driver}"/>
+                <property name="url" value="${meta.jdbc.url}"/>
+                <property name="username" value="${meta.jdbc.username}"/>
+                <property name="password" value="${meta.jdbc.password}"/>
             </dataSource>
         </environment>
     </environments>

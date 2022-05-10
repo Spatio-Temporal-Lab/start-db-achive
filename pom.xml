@@ -152,13 +152,15 @@
 
         <dependency>
             <groupId>org.apache.hbase</groupId>
-            <artifactId>hbase-common</artifactId>
-            <version>${hbase.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-testing-util</artifactId>
             <version>${hbase.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--  test for mysql : https://www.testcontainers.org/modules/databases/mysql/ -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>1.17.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
