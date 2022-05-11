@@ -29,6 +29,10 @@ jobs:
           java-version: '8'
           cache: maven
           distribution: 'adopt'
+      - name: init mini hbase cluster
+        run: mvn test exec:java -f test/mini-hbase/pom.xml
+      - name: init embedded mysql
+        run: mvn test exec:java -f test/embedded-mysql/pom.xml
       # Runs a set of commands using the runners shell
       - name: build and test with maven
         run: |
