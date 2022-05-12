@@ -56,6 +56,7 @@
                 </executions>
                 <configuration>
                     <mainClass>org.urbcomp.start.db.test.MiniHBaseCluster</mainClass>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
                 </configuration>
             </plugin>
 

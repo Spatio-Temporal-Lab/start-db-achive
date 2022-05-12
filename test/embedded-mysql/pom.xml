@@ -45,6 +45,7 @@
                 </executions>
                 <configuration>
                     <mainClass>org.urbcomp.start.db.test.MySQLServerInit</mainClass>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
                 </configuration>
             </plugin>
         </plugins>
