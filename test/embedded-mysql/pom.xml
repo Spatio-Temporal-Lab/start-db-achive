@@ -41,11 +41,11 @@
                         <goals>
                             <goal>java</goal>
                         </goals>
-                        <configuration>
-                            <mainClass>org.urbcomp.start.db.test.MySQLServerInit</mainClass>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <mainClass>org.urbcomp.start.db.test.MySQLServerInit</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

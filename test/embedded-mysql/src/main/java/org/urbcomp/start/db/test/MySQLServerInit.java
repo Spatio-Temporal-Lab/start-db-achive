@@ -23,6 +23,7 @@ public class MySQLServerInit {
         String jdbcUrl = "jdbc:mysql://localhost:3306/meta_data?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8";
         String user = "start_db";
         String password = "start_db";
+        Class.forName("com.mysql.cj.jdbc.Driver");
         final String sqlTxt = Files.readAllLines(Paths.get("test/embedded-mysql/src/main/resources/metadata/ddl.sql"))
                 .stream().filter(line -> !line.trim().startsWith("#") && !line.trim().startsWith("--")).collect(Collectors.joining());
         final String[] sqlList = sqlTxt.split(";");

@@ -52,11 +52,11 @@
                         <goals>
                             <goal>java</goal>
                         </goals>
-                        <configuration>
-                            <mainClass>org.urbcomp.start.db.test.MiniHBaseCluster</mainClass>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <mainClass>org.urbcomp.start.db.test.MiniHBaseCluster</mainClass>
+                </configuration>
             </plugin>
 
             <!-- <plugin>
