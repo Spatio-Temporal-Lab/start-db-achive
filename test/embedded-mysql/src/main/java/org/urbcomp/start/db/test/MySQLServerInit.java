@@ -20,7 +20,7 @@ public class MySQLServerInit {
     }
 
     public static void init() throws Exception {
-        String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/meta_data?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT+8";
+        String jdbcUrl = "jdbc:mysql://mysql:3306/meta_data?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT+8";
         String user = "start_db";
         String password = "start_db";
         final String sqlTxt = Files.readAllLines(Paths.get("test/embedded-mysql/src/main/resources/metadata/ddl.sql"))
