@@ -42,9 +42,7 @@ jobs:
       - name: init mysql schema
         run: mvn test exec:java -f test/embedded-mysql/pom.xml
       - name: build hbase image
-        run: cd test && docker build .
-      - name: start mini-hbase
-        run: docker run -p 2000-20000:2000-20000 -d mini-hbase
+        run: cd test && docker build . && docker run -p 2000-20000:2000-20000 -d mini-hbase
 
       # Runs a set of commands using the runners shell
       - name: build and test with maven
