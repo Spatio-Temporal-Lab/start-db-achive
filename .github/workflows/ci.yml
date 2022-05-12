@@ -21,6 +21,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
+          MYSQL_ROOT_PASSWORD: start_db
           MYSQL_USER: start_db
           MYSQL_PASSWORD: start_db
           MYSQL_DATABASE: meta_data
