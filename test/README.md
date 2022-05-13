@@ -2,9 +2,8 @@
  
 check `.github/workflows/ci.yml`
 
-We init a hbase cluster and an embedded mysql instance before test.
-
-init hbase need HADOOP_HOME env.
-
+We init an embedded mysql instance before test.
 init mysql need docker env.
+
+then init mysql schema and data.
 
