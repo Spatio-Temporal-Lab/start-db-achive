@@ -24,7 +24,7 @@ public class MySQLServerInit {
         String user = "start_db";
         String password = "start_db";
         Class.forName("com.mysql.cj.jdbc.Driver");
-        final String sqlTxt = Files.readAllLines(Paths.get("test/embedded-mysql/src/main/resources/metadata/ddl.sql"))
+        final String sqlTxt = Files.readAllLines(Paths.get("core/src/main/resources/metadata/ddl.sql"))
                 .stream().filter(line -> !line.trim().startsWith("#") && !line.trim().startsWith("--")).collect(Collectors.joining());
         final String[] sqlList = sqlTxt.split(";");
         try (Connection conn = DriverManager.getConnection(jdbcUrl, user, password)) {
