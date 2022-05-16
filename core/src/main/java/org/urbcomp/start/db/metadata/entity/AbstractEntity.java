@@ -9,7 +9,7 @@ package org.urbcomp.start.db.metadata.entity;
 public abstract class AbstractEntity {
 
     /**
-     * user id
+     * id
      */
     protected long id;
 

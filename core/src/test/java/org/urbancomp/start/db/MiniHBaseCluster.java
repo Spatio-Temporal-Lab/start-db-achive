@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * start a embedded hbase cluster for unit test
+ * start an embedded hbase cluster for unit test
  * bind ZK to 0.0.0.0/2181
  * need HADOOP_HOME on windows
  *
