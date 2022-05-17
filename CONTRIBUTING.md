@@ -1,10 +1,10 @@
 # Contributing to Start DB
 
-### Local Environment setup
+### Running environment setup
 
-Before build or test Start DB. Running environment need to be setup first.
+Running environment need to be setup before build or test Start DB.
 
-Please follow [Docker Setup](docker/README.md) before following steps. And confirm
+Please follow [Docker Setup](docker/docker-compose.md) and confirm
 
 ```
 mvn clean package
