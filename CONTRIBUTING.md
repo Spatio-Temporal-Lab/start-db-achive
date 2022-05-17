@@ -1,6 +1,19 @@
 # Contributing to Start DB
 
+### Local Environment setup
+
+Before build or test Start DB. Running environment need to be setup first.
+
+Please follow [Docker Setup](docker/README.md) before following steps. And confirm
+
+```
+mvn clean package
+```
+
+run successfully.
+
 ### Importing the project into IntelliJ IDEA
+
 Start DB builds using Java 8. When importing into IntelliJ you will need
 to define an appropriate SDK.or more details
 on defining an SDK in IntelliJ please refer to [their documentation](https://www.jetbrains.com/help/idea/sdk.html#define-sdk).
@@ -12,6 +25,7 @@ You can import the Start DB project into IntelliJ IDEA via:
 - In the subsequent dialog select **Open as Project**
 
 #### Checkstyle
+
 You can install [Checkstyle] plugin to check the Start DB code.
 
 1. Open **File > Settings> Tools > CheckStyle**
@@ -20,6 +34,7 @@ You can install [Checkstyle] plugin to check the Start DB code.
 4. Click "OK"
 
 ### Formatting
+
 Start DB code is automatically formatted with [spotless], backed by the Eclipse formatter. You can do the same in IntelliJ with the [Eclipse Code Formatter] so that you can apply the correct formatting directly in
 your IDE. Or import it as IntelliJ code style setting.
 
@@ -28,6 +43,6 @@ your IDE. Or import it as IntelliJ code style setting.
 3. Navigate to the file `conventions/eclipse-formatter.xml`
 4. Click "OK"
 
-[Checkstyle]: https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
+[checkstyle]: https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
 [spotless]: https://github.com/diffplug/spotless
-[Eclipse Code Formatter]: https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter
+[eclipse code formatter]: https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter
