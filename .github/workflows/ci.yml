@@ -17,6 +17,16 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-20.04
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: start_db
+          MYSQL_USER: start_db
+          MYSQL_PASSWORD: start_db
+          MYSQL_DATABASE: meta_data
+        ports:
+          - 3306:3306
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -29,6 +39,11 @@ jobs:
           java-version: '8'
           cache: maven
           distribution: 'adopt'
+      - name: init mysql schema
+        run: mvn test exec:java -f test/embedded-mysql/pom.xml
+#      - name: init hbase data
+#        run:
+
       # Runs a set of commands using the runners shell
       - name: build and test with maven
         run: |
