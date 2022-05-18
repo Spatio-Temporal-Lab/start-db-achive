@@ -38,10 +38,21 @@ You can install [Checkstyle] plugin to check the START-DB code.
 START-DB code is automatically formatted with [spotless], backed by the Eclipse formatter. You can do the same in IntelliJ with the [Eclipse Code Formatter] so that you can apply the correct formatting directly in
 your IDE. Or import it as IntelliJ code style setting.
 
+**Java Code Style**
+
 1. Open **File > Settings/Preferences > Code Style > Java**
 2. Gear icon > Import Scheme > Eclipse XML Profile
 3. Navigate to the file `conventions/eclipse-formatter.xml`
 4. Click "OK"
+
+**Scala Code Style**
+
+1. Open **File > Settings/Preferences > Code Style > Scala**
+2. Change **Formatter** to `scalafmt`
+3. Set **Configguration** to file `conventions/scalafmt.conf`
+4. Click "OK"
+
+Formatting will be triggered when running command `mvn package`. Or you can do format only with command `mvn spotless:apply`.
 
 [checkstyle]: https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
 [spotless]: https://github.com/diffplug/spotless

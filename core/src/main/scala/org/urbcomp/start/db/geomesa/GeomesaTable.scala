@@ -1,3 +1,16 @@
+/*
+ * Copyright 2022 ST-Lab
+
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 package org.urbcomp.start.db.geomesa
 
 import org.apache.calcite.adapter.java.AbstractQueryableTable
@@ -14,35 +27,44 @@ import java.lang.reflect.Type
 import scala.collection.JavaConverters._
 
 /**
- * Table of Geomesa
- *
- * @author zaiyuan
- * @since 0.1.0
- * @param dataStore Geotools DataStore
- * @param query     Geotools Query
- */
+  * Table of Geomesa
+  *
+  * @author zaiyuan
+  * @since 0.1.0
+  * @param dataStore Geotools DataStore
+  * @param query     Geotools Query
+  */
 case class GeomesaTable(userName: String, dbName: String, tableName: String)
-  extends AbstractQueryableTable(classOf[Type]) with TranslatableTable {
+    extends AbstractQueryableTable(classOf[Type])
+    with TranslatableTable {
 
   /**
-   * convert table instance to table scan instance
-   */
+    * convert table instance to table scan instance
+    */
   override def toRel(toRelContext: RelOptTable.ToRelContext, relOptTable: RelOptTable): RelNode =
-    new GeomesaTableScan(toRelContext.getCluster,
-      toRelContext.getCluster.traitSetOf(GeomesaConstant.CONVENTION), relOptTable, this)
+    new GeomesaTableScan(
+      toRelContext.getCluster,
+      toRelContext.getCluster.traitSetOf(GeomesaConstant.CONVENTION),
+      relOptTable,
+      this
+    )
 
   /**
-   * convert to queryable instance
-   */
-  override def asQueryable[T](queryProvider: QueryProvider, schemaPlus: SchemaPlus, s: String): Queryable[T] =
+    * convert to queryable instance
+    */
+  override def asQueryable[T](
+      queryProvider: QueryProvider,
+      schemaPlus: SchemaPlus,
+      s: String
+  ): Queryable[T] =
     new GeomesaQueryable[T](queryProvider, schemaPlus, this, s)
 
   /**
-   * get Schema of the table
-   *
-   * @param relDataTypeFactory RelDataTypeFactory
-   * @return RelDataType
-   */
+    * get Schema of the table
+    *
+    * @param relDataTypeFactory RelDataTypeFactory
+    * @return RelDataType
+    */
   override def getRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
     val dataStore = DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(dbName).asJava)
     val query = new Query(tableName)

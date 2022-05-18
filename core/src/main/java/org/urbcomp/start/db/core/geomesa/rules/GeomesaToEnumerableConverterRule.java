@@ -1,3 +1,16 @@
+/*
+ * Copyright 2022 ST-Lab
+
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 package org.urbcomp.start.db.core.geomesa.rules;
 
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
@@ -23,7 +36,7 @@ public class GeomesaToEnumerableConverterRule extends ConverterRule {
      * ConverterRule Instance
      */
     public static final ConverterRule INSTANCE =
-            new GeomesaToEnumerableConverterRule(RelFactories.LOGICAL_BUILDER);
+                    new GeomesaToEnumerableConverterRule(RelFactories.LOGICAL_BUILDER);
 
     /**
      * Construct Function with only One Parameter
@@ -31,16 +44,16 @@ public class GeomesaToEnumerableConverterRule extends ConverterRule {
      * @param relBuilderFactory RelNoade Factory
      */
     public GeomesaToEnumerableConverterRule(RelBuilderFactory relBuilderFactory) {
-        super(RelNode.class, (Predicate<? super RelNode>) relNode -> true, GeomesaConstant.CONVENTION(),
-                EnumerableConvention.INSTANCE, relBuilderFactory,
-                "GeomesaToEnumerableConverterRule");
+        super(RelNode.class, (Predicate<? super RelNode>) relNode -> true,
+                        GeomesaConstant.CONVENTION(), EnumerableConvention.INSTANCE,
+                        relBuilderFactory, "GeomesaToEnumerableConverterRule");
     }
 
     /**
      * Convert RelNode to GeomesaToEnumeratorConverter
      *
      * @param rel RelNode
-     * @return  GeomesaToEnumeratorConverter
+     * @return GeomesaToEnumeratorConverter
      */
     @Override
     public RelNode convert(RelNode rel) {
