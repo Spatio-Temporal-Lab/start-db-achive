@@ -27,3 +27,6 @@ target
 # idea ignore
 .idea
 *.iml
+
+# generated file
+**/dependency-reduced-pom.xml
