@@ -40,14 +40,16 @@ your IDE.
 
 **Java Code Style**
 
-1. Open **Preferences > Other Settings > Eclipse Code Formatter**
-2. Click "Use the Eclipse Code Formatter"
-3. Use default "Boundled Eclipse"
-4. Under "Eclipse formatter config", select "Eclipse workspace/project
+1. Open **File > Settings/Preferences > Plugins**
+2. Install **Adapter for Eclipse Code Formatter** from marketplace
+3. Open **File > Settings/Preferences > Adapter for Eclipse Code Formatter**
+4. Click "Use the Eclipse Code Formatter"
+5. Use default "Boundled Eclipse"
+6. Under "Eclipse formatter config", select "Eclipse workspace/project
    folder or config file"
-5. Click "Browse", and navigate to the file `conventions/eclipse-formatter.xml`
-6. **IMPORTANT** - make sure "Optimize Imports" is **NOT** selected.
-7. Click "OK"
+7. Click "Browse", and navigate to the file `conventions/eclipse-formatter.xml`
+8. **IMPORTANT** - make sure "Optimize Imports" is **NOT** selected.
+9. Click "OK"
 
 **Scala Code Style**
 
