@@ -36,14 +36,18 @@ You can install [Checkstyle] plugin to check the START-DB code.
 ### Formatting
 
 START-DB code is automatically formatted with [spotless], backed by the Eclipse formatter. You can do the same in IntelliJ with the [Eclipse Code Formatter] so that you can apply the correct formatting directly in
-your IDE. Or import it as IntelliJ code style setting.
+your IDE.
 
 **Java Code Style**
 
-1. Open **File > Settings/Preferences > Code Style > Java**
-2. Gear icon > Import Scheme > Eclipse XML Profile
-3. Navigate to the file `conventions/eclipse-formatter.xml`
-4. Click "OK"
+1. Open **Preferences > Other Settings > Eclipse Code Formatter**
+2. Click "Use the Eclipse Code Formatter"
+3. Use default "Boundled Eclipse"
+4. Under "Eclipse formatter config", select "Eclipse workspace/project
+   folder or config file"
+5. Click "Browse", and navigate to the file `conventions/eclipse-formatter.xml`
+6. **IMPORTANT** - make sure "Optimize Imports" is **NOT** selected.
+7. Click "OK"
 
 **Scala Code Style**
 
