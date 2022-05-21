@@ -1,19 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to you under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2022 ST-Lab
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
+
 package org.apache.calcite.rex;
 
 import org.apache.calcite.avatica.util.ByteString;
@@ -61,17 +56,21 @@ import java.util.TimeZone;
 /**
  * Constant value in a row-expression.
  *
- * <p>There are several methods for creating literals in {@link RexBuilder}:
- * {@link RexBuilder#makeLiteral(boolean)} and so forth.</p>
+ * <p>
+ * There are several methods for creating literals in {@link RexBuilder}:
+ * {@link RexBuilder#makeLiteral(boolean)} and so forth.
+ * </p>
  *
- * <p>How is the value stored? In that respect, the class is somewhat of a black
- * box. There is a {@link #getValue} method which returns the value as an
- * object, but the type of that value is implementation detail, and it is best
- * that your code does not depend upon that knowledge. It is better to use
- * task-oriented methods such as {@link #getValue2} and
- * {@link #toJavaString}.</p>
+ * <p>
+ * How is the value stored? In that respect, the class is somewhat of a black box. There is a
+ * {@link #getValue} method which returns the value as an object, but the type of that value is
+ * implementation detail, and it is best that your code does not depend upon that knowledge. It is
+ * better to use task-oriented methods such as {@link #getValue2} and {@link #toJavaString}.
+ * </p>
  *
- * <p>The allowable types and combinations are:</p>
+ * <p>
+ * The allowable types and combinations are:
+ * </p>
  *
  * <table>
  * <caption>Allowable types for RexLiteral instances</caption>
@@ -105,83 +104,68 @@ import java.util.TimeZone;
  * <tr>
  * <td>{@link SqlTypeName#DATE}</td>
  * <td>Date, for example <code>DATE '1969-04'29'</code></td>
- * <td>{@link Calendar};
- *     also {@link Calendar} (UTC time zone)
- *     and {@link Integer} (days since POSIX epoch)</td>
+ * <td>{@link Calendar}; also {@link Calendar} (UTC time zone) and {@link Integer} (days since POSIX
+ * epoch)</td>
  * </tr>
  * <tr>
  * <td>{@link SqlTypeName#TIME}</td>
  * <td>Time, for example <code>TIME '18:37:42.567'</code></td>
- * <td>{@link Calendar};
- *     also {@link Calendar} (UTC time zone)
- *     and {@link Integer} (milliseconds since midnight)</td>
+ * <td>{@link Calendar}; also {@link Calendar} (UTC time zone) and {@link Integer} (milliseconds
+ * since midnight)</td>
  * </tr>
  * <tr>
  * <td>{@link SqlTypeName#TIMESTAMP}</td>
  * <td>Timestamp, for example <code>TIMESTAMP '1969-04-29
  * 18:37:42.567'</code></td>
- * <td>{@link TimestampString};
- *     also {@link Calendar} (UTC time zone)
- *     and {@link Long} (milliseconds since POSIX epoch)</td>
+ * <td>{@link TimestampString}; also {@link Calendar} (UTC time zone) and {@link Long} (milliseconds
+ * since POSIX epoch)</td>
  * </tr>
  * <tr>
- * <td>{@link SqlTypeName#INTERVAL_DAY},
- *     {@link SqlTypeName#INTERVAL_DAY_HOUR},
- *     {@link SqlTypeName#INTERVAL_DAY_MINUTE},
- *     {@link SqlTypeName#INTERVAL_DAY_SECOND},
- *     {@link SqlTypeName#INTERVAL_HOUR},
- *     {@link SqlTypeName#INTERVAL_HOUR_MINUTE},
- *     {@link SqlTypeName#INTERVAL_HOUR_SECOND},
- *     {@link SqlTypeName#INTERVAL_MINUTE},
- *     {@link SqlTypeName#INTERVAL_MINUTE_SECOND},
- *     {@link SqlTypeName#INTERVAL_SECOND}</td>
+ * <td>{@link SqlTypeName#INTERVAL_DAY}, {@link SqlTypeName#INTERVAL_DAY_HOUR},
+ * {@link SqlTypeName#INTERVAL_DAY_MINUTE}, {@link SqlTypeName#INTERVAL_DAY_SECOND},
+ * {@link SqlTypeName#INTERVAL_HOUR}, {@link SqlTypeName#INTERVAL_HOUR_MINUTE},
+ * {@link SqlTypeName#INTERVAL_HOUR_SECOND}, {@link SqlTypeName#INTERVAL_MINUTE},
+ * {@link SqlTypeName#INTERVAL_MINUTE_SECOND}, {@link SqlTypeName#INTERVAL_SECOND}</td>
  * <td>Interval, for example <code>INTERVAL '4:3:2' HOUR TO SECOND</code></td>
- * <td>{@link BigDecimal};
- *     also {@link Long} (milliseconds)</td>
+ * <td>{@link BigDecimal}; also {@link Long} (milliseconds)</td>
  * </tr>
  * <tr>
- * <td>{@link SqlTypeName#INTERVAL_YEAR},
- *     {@link SqlTypeName#INTERVAL_YEAR_MONTH},
- *     {@link SqlTypeName#INTERVAL_MONTH}</td>
+ * <td>{@link SqlTypeName#INTERVAL_YEAR}, {@link SqlTypeName#INTERVAL_YEAR_MONTH},
+ * {@link SqlTypeName#INTERVAL_MONTH}</td>
  * <td>Interval, for example <code>INTERVAL '2-3' YEAR TO MONTH</code></td>
- * <td>{@link BigDecimal};
- *     also {@link Integer} (months)</td>
+ * <td>{@link BigDecimal}; also {@link Integer} (months)</td>
  * </tr>
  * <tr>
  * <td>{@link SqlTypeName#CHAR}</td>
  * <td>Character constant, for example <code>'Hello, world!'</code>, <code>
  * ''</code>, <code>_N'Bonjour'</code>, <code>_ISO-8859-1'It''s superman!'
  * COLLATE SHIFT_JIS$ja_JP$2</code>. These are always CHAR, never VARCHAR.</td>
- * <td>{@link NlsString};
- *     also {@link String}</td>
+ * <td>{@link NlsString}; also {@link String}</td>
  * </tr>
  * <tr>
  * <td>{@link SqlTypeName#BINARY}</td>
- * <td>Binary constant, for example <code>X'7F34'</code>. (The number of hexits
- * must be even; see above.) These constants are always BINARY, never
- * VARBINARY.</td>
- * <td>{@link ByteBuffer};
- *     also {@code byte[]}</td>
+ * <td>Binary constant, for example <code>X'7F34'</code>. (The number of hexits must be even; see
+ * above.) These constants are always BINARY, never VARBINARY.</td>
+ * <td>{@link ByteBuffer}; also {@code byte[]}</td>
  * </tr>
  * <tr>
  * <td>{@link SqlTypeName#SYMBOL}</td>
- * <td>A symbol is a special type used to make parsing easier; it is not part of
- * the SQL standard, and is not exposed to end-users. It is used to hold a flag,
- * such as the LEADING flag in a call to the function <code>
+ * <td>A symbol is a special type used to make parsing easier; it is not part of the SQL standard,
+ * and is not exposed to end-users. It is used to hold a flag, such as the LEADING flag in a call to
+ * the function <code>
  * TRIM([LEADING|TRAILING|BOTH] chars FROM string)</code>.</td>
  * <td>An enum class</td>
  * </tr>
  * </table>
  */
 public class RexLiteral extends RexNode {
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     /**
      * The value of this literal. Must be consistent with its type, as per
-     * {@link #valueMatchesType}. For example, you can't store an
-     * {@link Integer} value here just because you feel like it -- all numbers are
-     * represented by a {@link BigDecimal}. But since this field is private, it
-     * doesn't really matter how the values are stored.
+     * {@link #valueMatchesType}. For example, you can't store an {@link Integer} value here just
+     * because you feel like it -- all numbers are represented by a {@link BigDecimal}. But since
+     * this field is private, it doesn't really matter how the values are stored.
      */
     private final Comparable value;
 
@@ -190,30 +174,26 @@ public class RexLiteral extends RexNode {
      */
     private final RelDataType type;
 
-    // TODO jvs 26-May-2006:  Use SqlTypeFamily instead; it exists
+    // TODO jvs 26-May-2006: Use SqlTypeFamily instead; it exists
     // for exactly this purpose (to avoid the confusion which results
     // from overloading SqlTypeName).
     /**
-     * An indication of the broad type of this literal -- even if its type isn't
-     * a SQL type. Sometimes this will be different than the SQL type; for
-     * example, all exact numbers, including integers have typeName
-     * {@link SqlTypeName#DECIMAL}. See {@link #valueMatchesType} for the
+     * An indication of the broad type of this literal -- even if its type isn't a SQL type.
+     * Sometimes this will be different than the SQL type; for example, all exact numbers, including
+     * integers have typeName {@link SqlTypeName#DECIMAL}. See {@link #valueMatchesType} for the
      * definitive story.
      */
     private final SqlTypeName typeName;
 
     private static final ImmutableList<TimeUnit> TIME_UNITS =
-            ImmutableList.copyOf(TimeUnit.values());
+                    ImmutableList.copyOf(TimeUnit.values());
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * Creates a <code>RexLiteral</code>.
      */
-    RexLiteral(
-            Comparable value,
-            RelDataType type,
-            SqlTypeName typeName) {
+    RexLiteral(Comparable value, RelDataType type, SqlTypeName typeName) {
         this.value = value;
         this.type = Objects.requireNonNull(type);
         this.typeName = Objects.requireNonNull(typeName);
@@ -223,35 +203,35 @@ public class RexLiteral extends RexNode {
         this.digest = computeDigest(RexDigestIncludeType.OPTIONAL);
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
-     * Returns a string which concisely describes the definition of this
-     * rex literal. Two literals are equivalent if and only if their digests are the same.
+     * Returns a string which concisely describes the definition of this rex literal. Two literals
+     * are equivalent if and only if their digests are the same.
      *
-     * <p>The digest does not contain the expression's identity, but does include the identity
-     * of children.
+     * <p>
+     * The digest does not contain the expression's identity, but does include the identity of
+     * children.
      *
-     * <p>Technically speaking 1:INT differs from 1:FLOAT, so we need data type in the literal's
+     * <p>
+     * Technically speaking 1:INT differs from 1:FLOAT, so we need data type in the literal's
      * digest, however we want to avoid extra verbosity of the {@link RelNode#getDigest()} for
-     * readability purposes, so we omit type info in certain cases.
-     * For instance, 1:INT becomes 1 (INT is implied by default), however 1:BIGINT always holds
-     * the type
+     * readability purposes, so we omit type info in certain cases. For instance, 1:INT becomes 1
+     * (INT is implied by default), however 1:BIGINT always holds the type
      *
-     * <p>Here's a non-exhaustive list of the "well known cases":
-     * <ul><li>Hide "NOT NULL" for not null literals
+     * <p>
+     * Here's a non-exhaustive list of the "well known cases":
+     * <ul>
+     * <li>Hide "NOT NULL" for not null literals
      * <li>Hide INTEGER, BOOLEAN, SYMBOL, TIME(0), TIMESTAMP(0), DATE(0) types
      * <li>Hide collation when it matches IMPLICIT/COERCIBLE
      * <li>Hide charset when it matches default
-     * <li>Hide CHAR(xx) when literal length is equal to the precision of the type.
-     * In other words, use 'Bob' instead of 'Bob':CHAR(3)
-     * <li>Hide BOOL for AND/OR arguments. In other words, AND(true, null) means
-     * null is BOOL.
-     * <li>Hide types for literals in simple binary operations (e.g. +, -, *, /,
-     * comparison) when type of the other argument is clear.
-     * See {@link RexCall#computeDigest(boolean)}
-     * For instance: =(true. null) means null is BOOL. =($0, null) means the type
-     * of null matches the type of $0.
+     * <li>Hide CHAR(xx) when literal length is equal to the precision of the type. In other words,
+     * use 'Bob' instead of 'Bob':CHAR(3)
+     * <li>Hide BOOL for AND/OR arguments. In other words, AND(true, null) means null is BOOL.
+     * <li>Hide types for literals in simple binary operations (e.g. +, -, *, /, comparison) when
+     * type of the other argument is clear. See {@link RexCall#computeDigest(boolean)} For instance:
+     * =(true. null) means null is BOOL. =($0, null) means the type of null matches the type of $0.
      * </ul>
      *
      * @param includeType whether the digest should include type or not
@@ -286,12 +266,10 @@ public class RexLiteral extends RexNode {
         return shouldIncludeType(value, type);
     }
 
-    /** Returns whether a value is appropriate for its type. (We have rules about
-     * these things!) */
-    public static boolean valueMatchesType(
-            Comparable value,
-            SqlTypeName typeName,
-            boolean strict) {
+    /**
+     * Returns whether a value is appropriate for its type. (We have rules about these things!)
+     */
+    public static boolean valueMatchesType(Comparable value, SqlTypeName typeName, boolean strict) {
         if (value == null) {
             return true;
         }
@@ -356,9 +334,8 @@ public class RexLiteral extends RexNode {
             case CHAR:
                 // A SqlLiteral's charset and collation are optional; not so a
                 // RexLiteral.
-                return (value instanceof NlsString)
-                        && (((NlsString) value).getCharset() != null)
-                        && (((NlsString) value).getCollation() != null);
+                return (value instanceof NlsString) && (((NlsString) value).getCharset() != null)
+                                && (((NlsString) value).getCollation() != null);
             case SARG:
                 return value instanceof Sarg;
             case SYMBOL:
@@ -394,15 +371,13 @@ public class RexLiteral extends RexNode {
         }
     }
 
-    private static String toJavaString(
-            Comparable value,
-            SqlTypeName typeName, RelDataType type,
-            RexDigestIncludeType includeType) {
+    private static String toJavaString(Comparable value, SqlTypeName typeName, RelDataType type,
+                    RexDigestIncludeType includeType) {
         assert includeType != RexDigestIncludeType.OPTIONAL
-                : "toJavaString must not be called with includeType=OPTIONAL";
+                        : "toJavaString must not be called with includeType=OPTIONAL";
         if (value == null) {
             return includeType == RexDigestIncludeType.NO_TYPE ? "null"
-                    : "null:" + type.getFullTypeString();
+                            : "null:" + type.getFullTypeString();
         }
         StringBuilder sb = new StringBuilder();
         appendAsJava(value, sb, typeName, type, false, includeType);
@@ -413,7 +388,8 @@ public class RexLiteral extends RexNode {
             if (!fullTypeString.endsWith("NOT NULL")) {
                 sb.append(fullTypeString);
             } else {
-                // Trim " NOT NULL". Apparently, the literal is not null, so we just print the data type.
+                // Trim " NOT NULL". Apparently, the literal is not null, so we just print the data
+                // type.
                 sb.append(fullTypeString, 0, fullTypeString.length() - 9);
             }
         }
@@ -422,11 +398,14 @@ public class RexLiteral extends RexNode {
 
     /**
      * Computes if data type can be omitted from the digset.
-     * <p>For instance, {@code 1:BIGINT} has to keep data type while {@code 1:INT}
-     * should be represented as just {@code 1}.
+     * <p>
+     * For instance, {@code 1:BIGINT} has to keep data type while {@code 1:INT} should be
+     * represented as just {@code 1}.
      *
-     * <p>Implementation assumption: this method should be fast. In fact might call
-     * {@link NlsString#getValue()} which could decode the string, however we rely on the cache there.
+     * <p>
+     * Implementation assumption: this method should be fast. In fact might call
+     * {@link NlsString#getValue()} which could decode the string, however we rely on the cache
+     * there.
      *
      * @see RexLiteral#computeDigest(RexDigestIncludeType)
      * @param value value of the literal
@@ -436,35 +415,35 @@ public class RexLiteral extends RexNode {
     private static RexDigestIncludeType shouldIncludeType(Comparable value, RelDataType type) {
         if (type.isNullable()) {
             // This means "null literal", so we require a type for it
-            // There might be exceptions like AND(null, true) which are handled by RexCall#computeDigest
+            // There might be exceptions like AND(null, true) which are handled by
+            // RexCall#computeDigest
             return RexDigestIncludeType.ALWAYS;
         }
         // The variable here simplifies debugging (one can set a breakpoint at return)
-        // final ensures we set the value in all the branches, and it ensures the value is set just once
+        // final ensures we set the value in all the branches, and it ensures the value is set just
+        // once
         final RexDigestIncludeType includeType;
         if (type.getSqlTypeName() == SqlTypeName.BOOLEAN
-                || type.getSqlTypeName() == SqlTypeName.INTEGER
-                || type.getSqlTypeName() == SqlTypeName.SYMBOL) {
+                        || type.getSqlTypeName() == SqlTypeName.INTEGER
+                        || type.getSqlTypeName() == SqlTypeName.SYMBOL) {
             // We don't want false:BOOLEAN NOT NULL, so we don't print type information for
             // non-nullable BOOLEAN and INTEGER
             includeType = RexDigestIncludeType.NO_TYPE;
-        } else if (type.getSqlTypeName() == SqlTypeName.CHAR
-                && value instanceof NlsString) {
+        } else if (type.getSqlTypeName() == SqlTypeName.CHAR && value instanceof NlsString) {
             NlsString nlsString = (NlsString) value;
 
             // Ignore type information for 'Bar':CHAR(3)
-            if ((
-                    (nlsString.getCharset() != null && type.getCharset().equals(nlsString.getCharset()))
-                            || (nlsString.getCharset() == null
-                            && SqlCollation.IMPLICIT.getCharset().equals(type.getCharset())))
-                    && nlsString.getCollation().equals(type.getCollation())
-                    && ((NlsString) value).getValue().length() == type.getPrecision()) {
+            if (((nlsString.getCharset() != null
+                            && type.getCharset().equals(nlsString.getCharset()))
+                            || (nlsString.getCharset() == null && SqlCollation.IMPLICIT.getCharset()
+                                            .equals(type.getCharset())))
+                            && nlsString.getCollation().equals(type.getCollation())
+                            && ((NlsString) value).getValue().length() == type.getPrecision()) {
                 includeType = RexDigestIncludeType.NO_TYPE;
             } else {
                 includeType = RexDigestIncludeType.ALWAYS;
             }
-        } else if (type.getPrecision() == 0 && (
-                type.getSqlTypeName() == SqlTypeName.TIME
+        } else if (type.getPrecision() == 0 && (type.getSqlTypeName() == SqlTypeName.TIME
                         || type.getSqlTypeName() == SqlTypeName.TIMESTAMP
                         || type.getSqlTypeName() == SqlTypeName.DATE)) {
             // Ignore type information for '12:23:20':TIME(0)
@@ -476,14 +455,13 @@ public class RexLiteral extends RexNode {
         return includeType;
     }
 
-    /** Returns whether a value is valid as a constant value, using the same
-     * criteria as {@link #valueMatchesType}. */
+    /**
+     * Returns whether a value is valid as a constant value, using the same criteria as
+     * {@link #valueMatchesType}.
+     */
     public static boolean validConstant(Object o, Litmus litmus) {
-        if (o == null
-                || o instanceof BigDecimal
-                || o instanceof NlsString
-                || o instanceof ByteString
-                || o instanceof Boolean) {
+        if (o == null || o instanceof BigDecimal || o instanceof NlsString
+                        || o instanceof ByteString || o instanceof Boolean) {
             return litmus.succeed();
         } else if (o instanceof List) {
             List list = (List) o;
@@ -494,7 +472,8 @@ public class RexLiteral extends RexNode {
             }
             return litmus.succeed();
         } else if (o instanceof Map) {
-            @SuppressWarnings("unchecked") final Map<Object, Object> map = (Map) o;
+            @SuppressWarnings("unchecked")
+            final Map<Object, Object> map = (Map) o;
             for (Map.Entry entry : map.entrySet()) {
                 if (!validConstant(entry.getKey(), litmus)) {
                     return litmus.fail("not a constant: {}", entry.getKey());
@@ -509,14 +488,14 @@ public class RexLiteral extends RexNode {
         }
     }
 
-    /** Returns a list of the time units covered by an interval type such
-     * as HOUR TO SECOND. Adds MILLISECOND if the end is SECOND, to deal with
-     * fractional seconds. */
+    /**
+     * Returns a list of the time units covered by an interval type such as HOUR TO SECOND. Adds
+     * MILLISECOND if the end is SECOND, to deal with fractional seconds.
+     */
     private static List<TimeUnit> getTimeUnits(SqlTypeName typeName) {
         final TimeUnit start = typeName.getStartUnit();
         final TimeUnit end = typeName.getEndUnit();
-        final ImmutableList<TimeUnit> list =
-                TIME_UNITS.subList(start.ordinal(), end.ordinal() + 1);
+        final ImmutableList<TimeUnit> list = TIME_UNITS.subList(start.ordinal(), end.ordinal() + 1);
         if (end == TimeUnit.SECOND) {
             return CompositeList.of(list, ImmutableList.of(TimeUnit.MILLISECOND));
         }
@@ -573,8 +552,7 @@ public class RexLiteral extends RexNode {
      * Prints the value this literal as a Java string constant.
      */
     public void printAsJava(PrintWriter pw) {
-        Util.asStringBuilder(pw, sb ->
-                appendAsJava(value, sb, typeName, type, true,
+        Util.asStringBuilder(pw, sb -> appendAsJava(value, sb, typeName, type, true,
                         RexDigestIncludeType.NO_TYPE));
     }
 
@@ -582,7 +560,9 @@ public class RexLiteral extends RexNode {
      * Appends the specified value in the provided destination as a Java string. The value must be
      * consistent with the type, as per {@link #valueMatchesType}.
      *
-     * <p>Typical return values:</p>
+     * <p>
+     * Typical return values:
+     * </p>
      *
      * <ul>
      * <li>true</li>
@@ -592,28 +572,23 @@ public class RexLiteral extends RexNode {
      * <li>1234ABCD</li>
      * </ul>
      *
-     * @param value    Value to be appended to the provided destination as a Java string
-     * @param sb       Destination to which to append the specified value
+     * @param value Value to be appended to the provided destination as a Java string
+     * @param sb Destination to which to append the specified value
      * @param typeName Type name to be used for the transformation of the value to a Java string
      * @param type Type to be used for the transformation of the value to a Java string
      * @param includeType Whether to include the data type in the Java representation
      */
-    private static void appendAsJava(Comparable value, StringBuilder sb,
-                                     SqlTypeName typeName, RelDataType type, boolean java,
-                                     RexDigestIncludeType includeType) {
+    private static void appendAsJava(Comparable value, StringBuilder sb, SqlTypeName typeName,
+                    RelDataType type, boolean java, RexDigestIncludeType includeType) {
         switch (typeName) {
             case CHAR:
                 NlsString nlsString = (NlsString) value;
                 if (java) {
-                    Util.printJavaString(
-                            sb,
-                            nlsString.getValue(),
-                            true);
+                    Util.printJavaString(sb, nlsString.getValue(), true);
                 } else {
-                    boolean includeCharset =
-                            (nlsString.getCharsetName() != null)
+                    boolean includeCharset = (nlsString.getCharsetName() != null)
                                     && !nlsString.getCharsetName().equals(
-                                    CalciteSystemProperty.DEFAULT_CHARSET.value());
+                                                    CalciteSystemProperty.DEFAULT_CHARSET.value());
                     sb.append(nlsString.asSql(includeCharset, false));
                 }
                 break;
@@ -647,9 +622,8 @@ public class RexLiteral extends RexNode {
                 break;
             case SARG:
                 assert value instanceof Sarg;
-                //noinspection unchecked,rawtypes
-                Util.asStringBuilder(sb, sb2 ->
-                        printSarg(sb2, (Sarg) value, type));
+                // noinspection unchecked,rawtypes
+                Util.asStringBuilder(sb, sb2 -> printSarg(sb2, (Sarg) value, type));
                 break;
             case SYMBOL:
                 assert value instanceof Enum;
@@ -690,9 +664,8 @@ public class RexLiteral extends RexNode {
             case MULTISET:
             case ROW:
                 final List<RexLiteral> list = (List) value;
-                Util.asStringBuilder(sb, sb2 ->
-                        Util.printList(sb, list.size(), (sb3, i) ->
-                                sb3.append(list.get(i).computeDigest(includeType))));
+                Util.asStringBuilder(sb, sb2 -> Util.printList(sb, list.size(),
+                                (sb3, i) -> sb3.append(list.get(i).computeDigest(includeType))));
                 break;
             case GEOMETRY:
                 final String wkt = GeoFunctions.ST_AsWKT((Geometries.Geom) value);
@@ -704,33 +677,31 @@ public class RexLiteral extends RexNode {
         }
     }
 
-    private static <C extends Comparable<C>> void printSarg(StringBuilder sb,
-                                                            Sarg<C> sarg, RelDataType type) {
-        sarg.printTo(sb, (sb2, value) ->
-                sb2.append(toLiteral(type, value)));
+    private static <C extends Comparable<C>> void printSarg(StringBuilder sb, Sarg<C> sarg,
+                    RelDataType type) {
+        sarg.printTo(sb, (sb2, value) -> sb2.append(toLiteral(type, value)));
     }
 
-    /** Converts a value to a temporary literal, for the purposes of generating a
-     * digest. Literals of type ROW and MULTISET require that their components are
-     * also literals. */
+    /**
+     * Converts a value to a temporary literal, for the purposes of generating a digest. Literals of
+     * type ROW and MULTISET require that their components are also literals.
+     */
     private static RexLiteral toLiteral(RelDataType type, Comparable<?> value) {
         final SqlTypeName typeName = strictTypeName(type);
         switch (typeName) {
             case ROW:
                 final List<Comparable<?>> fieldValues = (List) value;
                 final List<RelDataTypeField> fields = type.getFieldList();
-                final List<RexLiteral> fieldLiterals =
-                        FlatLists.of(
-                                Functions.generate(fieldValues.size(), i ->
-                                        toLiteral(fields.get(i).getType(), fieldValues.get(i))));
+                final List<RexLiteral> fieldLiterals = FlatLists.of(Functions.generate(
+                                fieldValues.size(),
+                                i -> toLiteral(fields.get(i).getType(), fieldValues.get(i))));
                 return new RexLiteral((Comparable) fieldLiterals, type, typeName);
 
             case MULTISET:
                 final List<Comparable<?>> elementValues = (List) value;
-                final List<RexLiteral> elementLiterals =
-                        FlatLists.of(
-                                Functions.generate(elementValues.size(), i ->
-                                        toLiteral(type.getComponentType(), elementValues.get(i))));
+                final List<RexLiteral> elementLiterals = FlatLists.of(Functions.generate(
+                                elementValues.size(),
+                                i -> toLiteral(type.getComponentType(), elementValues.get(i))));
                 return new RexLiteral((Comparable) elementLiterals, type, typeName);
 
             default:
@@ -739,23 +710,21 @@ public class RexLiteral extends RexNode {
     }
 
     /**
-     * Converts a Jdbc string into a RexLiteral. This method accepts a string,
-     * as returned by the Jdbc method ResultSet.getString(), and restores the
-     * string into an equivalent RexLiteral. It allows one to use Jdbc strings
-     * as a common format for data.
+     * Converts a Jdbc string into a RexLiteral. This method accepts a string, as returned by the
+     * Jdbc method ResultSet.getString(), and restores the string into an equivalent RexLiteral. It
+     * allows one to use Jdbc strings as a common format for data.
      *
-     * <p>If a null literal is provided, then a null pointer will be returned.
+     * <p>
+     * If a null literal is provided, then a null pointer will be returned.
      *
-     * @param type     data type of literal to be read
+     * @param type data type of literal to be read
      * @param typeName type family of literal
-     * @param literal  the (non-SQL encoded) string representation, as returned
-     *                 by the Jdbc call to return a column as a string
+     * @param literal the (non-SQL encoded) string representation, as returned by the Jdbc call to
+     *        return a column as a string
      * @return a typed RexLiteral, or null
      */
-    public static RexLiteral fromJdbcString(
-            RelDataType type,
-            SqlTypeName typeName,
-            String literal) {
+    public static RexLiteral fromJdbcString(RelDataType type, SqlTypeName typeName,
+                    String literal) {
         if (literal == null) {
             return null;
         }
@@ -764,11 +733,7 @@ public class RexLiteral extends RexNode {
             case CHAR:
                 Charset charset = type.getCharset();
                 SqlCollation collation = type.getCollation();
-                NlsString str =
-                        new NlsString(
-                                literal,
-                                charset.name(),
-                                collation);
+                NlsString str = new NlsString(literal, charset.name(), collation);
                 return new RexLiteral(str, type, typeName);
             case BOOLEAN:
                 boolean b = ConversionUtil.toBoolean(literal);
@@ -792,18 +757,12 @@ public class RexLiteral extends RexNode {
             case INTERVAL_MINUTE:
             case INTERVAL_MINUTE_SECOND:
             case INTERVAL_SECOND:
-                long millis =
-                        SqlParserUtil.intervalToMillis(
-                                literal,
-                                type.getIntervalQualifier());
+                long millis = SqlParserUtil.intervalToMillis(literal, type.getIntervalQualifier());
                 return new RexLiteral(BigDecimal.valueOf(millis), type, typeName);
             case INTERVAL_YEAR:
             case INTERVAL_YEAR_MONTH:
             case INTERVAL_MONTH:
-                long months =
-                        SqlParserUtil.intervalToMonths(
-                                literal,
-                                type.getIntervalQualifier());
+                long months = SqlParserUtil.intervalToMonths(literal, type.getIntervalQualifier());
                 return new RexLiteral(BigDecimal.valueOf(months), type, typeName);
             case DATE:
             case TIME:
@@ -814,11 +773,10 @@ public class RexLiteral extends RexNode {
                 switch (typeName) {
                     case DATE:
                         final Calendar cal = DateTimeUtils.parseDateFormat(literal,
-                                new SimpleDateFormat(format, Locale.ROOT),
-                                tz);
+                                        new SimpleDateFormat(format, Locale.ROOT), tz);
                         if (cal == null) {
                             throw new AssertionError("fromJdbcString: invalid date/time value '"
-                                    + literal + "'");
+                                            + literal + "'");
                         }
                         v = DateString.fromCalendarFields(cal);
                         break;
@@ -826,20 +784,21 @@ public class RexLiteral extends RexNode {
                         // Allow fractional seconds for times and timestamps
                         assert format != null;
                         final DateTimeUtils.PrecisionTime ts =
-                                DateTimeUtils.parsePrecisionDateTimeLiteral(literal,
-                                        new SimpleDateFormat(format, Locale.ROOT), tz, -1);
+                                        DateTimeUtils.parsePrecisionDateTimeLiteral(literal,
+                                                        new SimpleDateFormat(format, Locale.ROOT),
+                                                        tz, -1);
                         if (ts == null) {
                             throw new AssertionError("fromJdbcString: invalid date/time value '"
-                                    + literal + "'");
+                                            + literal + "'");
                         }
                         switch (typeName) {
                             case TIMESTAMP:
                                 v = TimestampString.fromCalendarFields(ts.getCalendar())
-                                        .withFraction(ts.getFraction());
+                                                .withFraction(ts.getFraction());
                                 break;
                             case TIME:
                                 v = TimeString.fromCalendarFields(ts.getCalendar())
-                                        .withFraction(ts.getFraction());
+                                                .withFraction(ts.getFraction());
                                 break;
                             default:
                                 throw new AssertionError();
@@ -875,7 +834,8 @@ public class RexLiteral extends RexNode {
         return type;
     }
 
-    @Override public SqlKind getKind() {
+    @Override
+    public SqlKind getKind() {
         return SqlKind.LITERAL;
     }
 
@@ -889,8 +849,9 @@ public class RexLiteral extends RexNode {
     /**
      * Returns the value of this literal.
      *
-     * <p>For backwards compatibility, returns DATE. TIME and TIMESTAMP as a
-     * {@link Calendar} value in UTC time zone.
+     * <p>
+     * For backwards compatibility, returns DATE. TIME and TIMESTAMP as a {@link Calendar} value in
+     * UTC time zone.
      */
     public Comparable getValue() {
         assert valueMatchesType(value, typeName, true) : value;
@@ -908,8 +869,7 @@ public class RexLiteral extends RexNode {
     }
 
     /**
-     * Returns the value of this literal, in the form that the calculator
-     * program builder wants it.
+     * Returns the value of this literal, in the form that the calculator program builder wants it.
      */
     public Object getValue2() {
         if (value == null) {
@@ -932,8 +892,7 @@ public class RexLiteral extends RexNode {
     }
 
     /**
-     * Returns the value of this literal, in the form that the rex-to-lix
-     * translator wants it.
+     * Returns the value of this literal, in the form that the rex-to-lix translator wants it.
      */
     public Object getValue3() {
         if (value == null) {
@@ -949,8 +908,7 @@ public class RexLiteral extends RexNode {
     }
 
     /**
-     * Returns the value of this literal, in the form that {@link RexInterpreter}
-     * wants it.
+     * Returns the value of this literal, in the form that {@link RexInterpreter} wants it.
      */
     public Comparable getValue4() {
         if (value == null) {
@@ -969,26 +927,24 @@ public class RexLiteral extends RexNode {
         }
     }
 
-    /** Returns the value of this literal as an instance of the specified class.
+    /**
+     * Returns the value of this literal as an instance of the specified class.
      *
-     * <p>The following SQL types allow more than one form:
+     * <p>
+     * The following SQL types allow more than one form:
      *
      * <ul>
      * <li>CHAR as {@link NlsString} or {@link String}
-     * <li>TIME as {@link TimeString},
-     *   {@link Integer} (milliseconds since midnight),
-     *   {@link Calendar} (in UTC)
-     * <li>DATE as {@link DateString},
-     *   {@link Integer} (days since 1970-01-01),
-     *   {@link Calendar}
-     * <li>TIMESTAMP as {@link TimestampString},
-     *   {@link Long} (milliseconds since 1970-01-01 00:00:00),
-     *   {@link Calendar}
+     * <li>TIME as {@link TimeString}, {@link Integer} (milliseconds since midnight),
+     * {@link Calendar} (in UTC)
+     * <li>DATE as {@link DateString}, {@link Integer} (days since 1970-01-01), {@link Calendar}
+     * <li>TIMESTAMP as {@link TimestampString}, {@link Long} (milliseconds since 1970-01-01
+     * 00:00:00), {@link Calendar}
      * <li>DECIMAL as {@link BigDecimal} or {@link Long}
      * </ul>
      *
-     * <p>Called with {@code clazz} = {@link Comparable}, returns the value in
-     * its native form.
+     * <p>
+     * Called with {@code clazz} = {@link Comparable}, returns the value in its native form.
      *
      * @param clazz Desired return type
      * @param <T> Return type
@@ -1106,8 +1062,7 @@ public class RexLiteral extends RexNode {
                 }
                 break;
         }
-        throw new AssertionError("cannot convert " + typeName
-                + " literal to " + clazz);
+        throw new AssertionError("cannot convert " + typeName + " literal to " + clazz);
     }
 
     public static boolean booleanValue(RexNode node) {
@@ -1132,9 +1087,8 @@ public class RexLiteral extends RexNode {
         if (this == obj) {
             return true;
         }
-        return (obj instanceof RexLiteral)
-                && equals(((RexLiteral) obj).value, value)
-                && equals(((RexLiteral) obj).type, type);
+        return (obj instanceof RexLiteral) && equals(((RexLiteral) obj).value, value)
+                        && equals(((RexLiteral) obj).type, type);
     }
 
     public int hashCode() {
@@ -1166,8 +1120,7 @@ public class RexLiteral extends RexNode {
                 return findValue(call.getOperands().get(0));
             }
             if (operator == SqlStdOperatorTable.UNARY_MINUS) {
-                final BigDecimal value =
-                        (BigDecimal) findValue(call.getOperands().get(0));
+                final BigDecimal value = (BigDecimal) findValue(call.getOperands().get(0));
                 return value.negate();
             }
         }
@@ -1175,8 +1128,7 @@ public class RexLiteral extends RexNode {
     }
 
     public static boolean isNullLiteral(RexNode node) {
-        return (node instanceof RexLiteral)
-                && (((RexLiteral) node).value == null);
+        return (node instanceof RexLiteral) && (((RexLiteral) node).value == null);
     }
 
     private static boolean equals(Object o1, Object o2) {

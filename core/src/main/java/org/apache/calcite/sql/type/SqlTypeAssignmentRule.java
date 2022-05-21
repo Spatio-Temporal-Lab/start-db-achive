@@ -1,19 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to you under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2022 ST-Lab
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
+
 package org.apache.calcite.sql.type;
 
 import com.google.common.collect.ImmutableMap;
@@ -28,26 +23,26 @@ import java.util.Set;
  * Rules that determine whether a type is assignable from another type.
  */
 public class SqlTypeAssignmentRule implements SqlTypeMappingRule {
-    //~ Static fields/initializers ---------------------------------------------
+    // ~ Static fields/initializers ---------------------------------------------
 
     private static final SqlTypeAssignmentRule INSTANCE;
 
-    //~ Instance fields --------------------------------------------------------
+    // ~ Instance fields --------------------------------------------------------
 
     private final Map<SqlTypeName, ImmutableSet<SqlTypeName>> map;
 
-    //~ Constructors -----------------------------------------------------------
+    // ~ Constructors -----------------------------------------------------------
 
     /**
      * Creates a {@code SqlTypeAssignmentRules} with specified type mappings {@code map}.
      *
-     * <p>Make this constructor private intentionally, use {@link #instance()}.
+     * <p>
+     * Make this constructor private intentionally, use {@link #instance()}.
      *
-     * @param map The type mapping, for each map entry, the values types can be assigned to
-     *            the key type
+     * @param map The type mapping, for each map entry, the values types can be assigned to the key
+     *        type
      */
-    private SqlTypeAssignmentRule(
-            Map<SqlTypeName, ImmutableSet<SqlTypeName>> map) {
+    private SqlTypeAssignmentRule(Map<SqlTypeName, ImmutableSet<SqlTypeName>> map) {
         this.map = ImmutableMap.copyOf(map);
     }
 
@@ -171,14 +166,14 @@ public class SqlTypeAssignmentRule implements SqlTypeMappingRule {
 
         // TIME WITH LOCAL TIME ZONE is assignable from...
         rules.add(SqlTypeName.TIME_WITH_LOCAL_TIME_ZONE,
-                EnumSet.of(SqlTypeName.TIME_WITH_LOCAL_TIME_ZONE));
+                        EnumSet.of(SqlTypeName.TIME_WITH_LOCAL_TIME_ZONE));
 
         // TIMESTAMP is assignable from ...
         rules.add(SqlTypeName.TIMESTAMP, EnumSet.of(SqlTypeName.TIMESTAMP));
 
         // TIMESTAMP WITH LOCAL TIME ZONE is assignable from...
         rules.add(SqlTypeName.TIMESTAMP_WITH_LOCAL_TIME_ZONE,
-                EnumSet.of(SqlTypeName.TIMESTAMP_WITH_LOCAL_TIME_ZONE));
+                        EnumSet.of(SqlTypeName.TIMESTAMP_WITH_LOCAL_TIME_ZONE));
 
         // GEOMETRY is assignable from ...
         rules.add(SqlTypeName.GEOMETRY, EnumSet.of(SqlTypeName.GEOMETRY));
@@ -206,14 +201,15 @@ public class SqlTypeAssignmentRule implements SqlTypeMappingRule {
         INSTANCE = new SqlTypeAssignmentRule(rules.map);
     }
 
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /** Returns an instance. */
     public static SqlTypeAssignmentRule instance() {
         return INSTANCE;
     }
 
-    @Override public Map<SqlTypeName, ImmutableSet<SqlTypeName>> getTypeMapping() {
+    @Override
+    public Map<SqlTypeName, ImmutableSet<SqlTypeName>> getTypeMapping() {
         return this.map;
     }
 }

@@ -1,19 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to you under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2022 ST-Lab
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
+
 package org.apache.calcite.sql.type;
 
 import org.apache.calcite.avatica.util.TimeUnit;
@@ -33,88 +28,54 @@ import java.util.Map;
 /**
  * SqlTypeFamily provides SQL type categorization.
  *
- * <p>The <em>primary</em> family categorization is a complete disjoint
- * partitioning of SQL types into families, where two types are members of the
- * same primary family iff instances of the two types can be the operands of an
- * SQL equality predicate such as <code>WHERE v1 = v2</code>. Primary families
- * are returned by RelDataType.getFamily().
+ * <p>
+ * The <em>primary</em> family categorization is a complete disjoint partitioning of SQL types into
+ * families, where two types are members of the same primary family iff instances of the two types
+ * can be the operands of an SQL equality predicate such as <code>WHERE v1 = v2</code>. Primary
+ * families are returned by RelDataType.getFamily().
  *
- * <p>There is also a <em>secondary</em> family categorization which overlaps
- * with the primary categorization. It is used in type strategies for more
- * specific or more general categorization than the primary families. Secondary
- * families are never returned by RelDataType.getFamily().
+ * <p>
+ * There is also a <em>secondary</em> family categorization which overlaps with the primary
+ * categorization. It is used in type strategies for more specific or more general categorization
+ * than the primary families. Secondary families are never returned by RelDataType.getFamily().
  */
 public enum SqlTypeFamily implements RelDataTypeFamily {
     // Primary families.
-    CHARACTER,
-    BINARY,
-    NUMERIC,
-    DATE,
-    TIME,
-    TIMESTAMP,
-    BOOLEAN,
-    INTERVAL_YEAR_MONTH,
-    INTERVAL_DAY_TIME,
+    CHARACTER, BINARY, NUMERIC, DATE, TIME, TIMESTAMP, BOOLEAN, INTERVAL_YEAR_MONTH, INTERVAL_DAY_TIME,
 
     // Secondary families.
 
-    STRING,
-    APPROXIMATE_NUMERIC,
-    EXACT_NUMERIC,
-    DECIMAL,
-    INTEGER,
-    DATETIME,
-    DATETIME_INTERVAL,
-    MULTISET,
-    ARRAY,
-    MAP,
-    NULL,
-    ANY,
-    CURSOR,
-    COLUMN_LIST,
-    GEO,
-    /** Like ANY, but do not even validate the operand. It may not be an
-     * expression. */
+    STRING, APPROXIMATE_NUMERIC, EXACT_NUMERIC, DECIMAL, INTEGER, DATETIME, DATETIME_INTERVAL, MULTISET, ARRAY, MAP, NULL, ANY, CURSOR, COLUMN_LIST, GEO,
+    /**
+     * Like ANY, but do not even validate the operand. It may not be an expression.
+     */
     IGNORE;
 
-    private static final Map<Integer, SqlTypeFamily> JDBC_TYPE_TO_FAMILY =
-            ImmutableMap.<Integer, SqlTypeFamily>builder()
+    private static final Map<Integer, SqlTypeFamily> JDBC_TYPE_TO_FAMILY = ImmutableMap
+                    .<Integer, SqlTypeFamily>builder()
                     // Not present:
                     // SqlTypeName.MULTISET shares Types.ARRAY with SqlTypeName.ARRAY;
                     // SqlTypeName.MAP has no corresponding JDBC type
                     // SqlTypeName.COLUMN_LIST has no corresponding JDBC type
-                    .put(Types.BIT, NUMERIC)
-                    .put(Types.TINYINT, NUMERIC)
-                    .put(Types.SMALLINT, NUMERIC)
-                    .put(Types.BIGINT, NUMERIC)
-                    .put(Types.INTEGER, NUMERIC)
-                    .put(Types.NUMERIC, NUMERIC)
+                    .put(Types.BIT, NUMERIC).put(Types.TINYINT, NUMERIC)
+                    .put(Types.SMALLINT, NUMERIC).put(Types.BIGINT, NUMERIC)
+                    .put(Types.INTEGER, NUMERIC).put(Types.NUMERIC, NUMERIC)
                     .put(Types.DECIMAL, NUMERIC)
 
-                    .put(Types.FLOAT, NUMERIC)
-                    .put(Types.REAL, NUMERIC)
-                    .put(Types.DOUBLE, NUMERIC)
+                    .put(Types.FLOAT, NUMERIC).put(Types.REAL, NUMERIC).put(Types.DOUBLE, NUMERIC)
 
-                    .put(Types.CHAR, CHARACTER)
-                    .put(Types.VARCHAR, CHARACTER)
-                    .put(Types.LONGVARCHAR, CHARACTER)
-                    .put(Types.CLOB, CHARACTER)
+                    .put(Types.CHAR, CHARACTER).put(Types.VARCHAR, CHARACTER)
+                    .put(Types.LONGVARCHAR, CHARACTER).put(Types.CLOB, CHARACTER)
 
-                    .put(Types.BINARY, BINARY)
-                    .put(Types.VARBINARY, BINARY)
-                    .put(Types.LONGVARBINARY, BINARY)
-                    .put(Types.BLOB, BINARY)
+                    .put(Types.BINARY, BINARY).put(Types.VARBINARY, BINARY)
+                    .put(Types.LONGVARBINARY, BINARY).put(Types.BLOB, BINARY)
 
-                    .put(Types.DATE, DATE)
-                    .put(Types.TIME, TIME)
-                    .put(ExtraSqlTypes.TIME_WITH_TIMEZONE, TIME)
-                    .put(Types.TIMESTAMP, TIMESTAMP)
+                    .put(Types.DATE, DATE).put(Types.TIME, TIME)
+                    .put(ExtraSqlTypes.TIME_WITH_TIMEZONE, TIME).put(Types.TIMESTAMP, TIMESTAMP)
                     .put(ExtraSqlTypes.TIMESTAMP_WITH_TIMEZONE, TIMESTAMP)
                     .put(Types.BOOLEAN, BOOLEAN)
 
-                    .put(ExtraSqlTypes.REF_CURSOR, CURSOR)
-                    .put(Types.ARRAY, ARRAY)
-                    .build();
+                    .put(ExtraSqlTypes.REF_CURSOR, CURSOR).put(Types.ARRAY, ARRAY).build();
 
     /**
      * Gets the primary family containing a JDBC type.
@@ -142,7 +103,8 @@ public enum SqlTypeFamily implements RelDataTypeFamily {
             case TIME:
                 return ImmutableList.of(SqlTypeName.TIME, SqlTypeName.TIME_WITH_LOCAL_TIME_ZONE);
             case TIMESTAMP:
-                return ImmutableList.of(SqlTypeName.TIMESTAMP, SqlTypeName.TIMESTAMP_WITH_LOCAL_TIME_ZONE);
+                return ImmutableList.of(SqlTypeName.TIMESTAMP,
+                                SqlTypeName.TIMESTAMP_WITH_LOCAL_TIME_ZONE);
             case BOOLEAN:
                 return SqlTypeName.BOOLEAN_TYPES;
             case INTERVAL_YEAR_MONTH:
@@ -212,11 +174,11 @@ public enum SqlTypeFamily implements RelDataTypeFamily {
             case DATETIME:
                 return factory.createSqlType(SqlTypeName.TIMESTAMP);
             case INTERVAL_DAY_TIME:
-                return factory.createSqlIntervalType(
-                        new SqlIntervalQualifier(TimeUnit.DAY, TimeUnit.SECOND, SqlParserPos.ZERO));
+                return factory.createSqlIntervalType(new SqlIntervalQualifier(TimeUnit.DAY,
+                                TimeUnit.SECOND, SqlParserPos.ZERO));
             case INTERVAL_YEAR_MONTH:
-                return factory.createSqlIntervalType(
-                        new SqlIntervalQualifier(TimeUnit.YEAR, TimeUnit.MONTH, SqlParserPos.ZERO));
+                return factory.createSqlIntervalType(new SqlIntervalQualifier(TimeUnit.YEAR,
+                                TimeUnit.MONTH, SqlParserPos.ZERO));
             case GEO:
                 return factory.createSqlType(SqlTypeName.GEOMETRY);
             case MULTISET:
@@ -225,7 +187,7 @@ public enum SqlTypeFamily implements RelDataTypeFamily {
                 return factory.createArrayType(factory.createSqlType(SqlTypeName.ANY), -1);
             case MAP:
                 return factory.createMapType(factory.createSqlType(SqlTypeName.ANY),
-                        factory.createSqlType(SqlTypeName.ANY));
+                                factory.createSqlType(SqlTypeName.ANY));
             case NULL:
                 return factory.createSqlType(SqlTypeName.NULL);
             case CURSOR:
