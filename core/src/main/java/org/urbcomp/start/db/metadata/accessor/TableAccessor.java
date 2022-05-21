@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
@@ -12,6 +23,7 @@ import java.util.List;
 
 /**
  * Accessor for Table
+ * 
  * @author : Wang Bohong
  * @Date: 2022-05-21
  */
@@ -19,7 +31,8 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * select all tables
-     * @return  list of table instance
+     * 
+     * @return list of table instance
      */
     @Override
     public List<Table> selectAll(boolean commit) {
@@ -36,8 +49,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * select one table in table
-     * @param id    id
-     * @return  table instance
+     * 
+     * @param id id
+     * @return table instance
      */
     @Override
     public Table selectById(long id, boolean commit) {
@@ -54,8 +68,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * select one table by name
-     * @param name  name
-     * @return  table instance
+     * 
+     * @param name name
+     * @return table instance
      */
     @Override
     public Table selectByName(String name, boolean commit) {
@@ -72,12 +87,14 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * insert one table into table
-     * @param table  user instance
-     * @return  number of affected rows
+     * 
+     * @param table user instance
+     * @return number of affected rows
      */
     @Override
     public long insert(Table table, boolean commit) {
-        if (!isValid(table)) return -1;
+        if (!isValid(table))
+            return -1;
         if (commit) {
             return getMapper().insert(table);
         } else {
@@ -91,8 +108,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * update one table in table
-     * @param table  table instance
-     * @return  number of affected rows
+     * 
+     * @param table table instance
+     * @return number of affected rows
      */
     @Override
     public long update(Table table, boolean commit) {
@@ -109,8 +127,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * delete one table in table by id
-     * @param id    id
-     * @return  number of affected rows
+     * 
+     * @param id id
+     * @return number of affected rows
      */
     @Override
     public long deleteById(long id, boolean commit) {
@@ -144,7 +163,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * get mapper instance of table
-     * @return  IMapper<Table>
+     * 
+     * @return IMapper
+     *         <Table>
      */
     @Override
     public IMapper<Table> getMapper() {
@@ -153,7 +174,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * get mapper instance of table (manual commit)
-     * @return  IMapper<Table>
+     * 
+     * @return IMapper
+     *         <Table>
      */
     @Override
     public IMapper<Table> getMapperManual() {
@@ -167,6 +190,7 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * constraint about insert
+     * 
      * @param table
      * @return isValid
      */

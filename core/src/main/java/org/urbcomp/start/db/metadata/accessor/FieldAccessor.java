@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
@@ -12,14 +23,16 @@ import java.util.List;
 
 /**
  * Accessor for Field
- * @author   Wang Bohong
- * @Date:   2022-05-20
+ * 
+ * @author Wang Bohong
+ * @Date: 2022-05-20
  */
 public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * select all fields
-     * @return  list of fields instance
+     * 
+     * @return list of fields instance
      */
     @Override
     public List<Field> selectAll(boolean commit) {
@@ -36,8 +49,9 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * select one field in table
-     * @param id    id
-     * @return  field instance
+     * 
+     * @param id id
+     * @return field instance
      */
     @Override
     public Field selectById(long id, boolean commit) {
@@ -54,8 +68,9 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * select one field by name
-     * @param name  name
-     * @return  field instance
+     * 
+     * @param name name
+     * @return field instance
      */
     @Override
     public Field selectByName(String name, boolean commit) {
@@ -72,12 +87,14 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * insert one field into table
-     * @param field  user instance
-     * @return  number of affected rows
+     * 
+     * @param field user instance
+     * @return number of affected rows
      */
     @Override
     public long insert(Field field, boolean commit) {
-        if (!isValid(field)) return -1;
+        if (!isValid(field))
+            return -1;
         if (commit) {
             return getMapper().insert(field);
         } else {
@@ -91,8 +108,9 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * update one field in table
-     * @param field  user instance
-     * @return  number of affected rows
+     * 
+     * @param field user instance
+     * @return number of affected rows
      */
     @Override
     public long update(Field field, boolean commit) {
@@ -109,8 +127,9 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * delete one field in table by id
-     * @param id    id
-     * @return  number of affected rows
+     * 
+     * @param id id
+     * @return number of affected rows
      */
     @Override
     public long deleteById(long id, boolean commit) {
@@ -143,7 +162,8 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * get mapper instance of field
-     * @return  IMapper<Field>
+     * 
+     * @return IMapper<Field>
      */
     @Override
     public IMapper<Field> getMapper() {
@@ -152,7 +172,8 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * get mapper instance of field (manual commit)
-     * @return  IMapper<Field>
+     * 
+     * @return IMapper<Field>
      */
     @Override
     public IMapper<Field> getMapperManual() {
@@ -166,6 +187,7 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * constraint check
+     * 
      * @param field
      * @return
      */

@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.entity;
 
 /**
@@ -18,8 +29,7 @@ public abstract class AbstractEntity {
      */
     protected String name;
 
-    public AbstractEntity() {
-    }
+    public AbstractEntity() {}
 
     public AbstractEntity(long id, String name) {
         this.id = id;
@@ -44,9 +54,6 @@ public abstract class AbstractEntity {
 
     @Override
     public String toString() {
-        return "IEntity{" +
-                "id=" + id +
-                ", userName='" + name + '\'' +
-                '}';
+        return "IEntity{" + "id=" + id + ", userName='" + name + '\'' + '}';
     }
 }

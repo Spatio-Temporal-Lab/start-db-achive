@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
@@ -18,20 +29,20 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select all users
-     * @return  list of user instance
+     * 
+     * @return list of user instance
      */
     public List<User> selectAll() {
         return getMapper().selectAll();
     }
 
     /**
-     * @param commit    auto-commit
-     * select all users
-     * @return  list of user instance
+     * @param commit auto-commit select all users
+     * @return list of user instance
      */
     @Override
     public List<User> selectAll(boolean commit) {
-        if(commit) {
+        if (commit) {
             return getMapper().selectAll();
         } else {
             return getMapperManual().selectAll();
@@ -40,8 +51,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select one user in table
-     * @param id    id
-     * @return  user instance
+     * 
+     * @param id id
+     * @return user instance
      */
     public User selectById(long id) {
         return getMapper().selectById(id);
@@ -49,9 +61,10 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select one user in table
-     * @param id    id
-     * @param commit    auto-commit
-     * @return  user instance
+     * 
+     * @param id id
+     * @param commit auto-commit
+     * @return user instance
      */
     @Override
     public User selectById(long id, boolean commit) {
@@ -64,8 +77,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select one user by name
-     * @param name  name
-     * @return  user instance
+     * 
+     * @param name name
+     * @return user instance
      */
     public User selectByName(String name) {
         return getMapper().selectByName(name);
@@ -73,9 +87,10 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select one user by name
-     * @param name  name
-     * @param commit    auto-commit
-     * @return  user instance
+     * 
+     * @param name name
+     * @param commit auto-commit
+     * @return user instance
      */
     @Override
     public User selectByName(String name, boolean commit) {
@@ -88,8 +103,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * insert one user into table
-     * @param user  user instance
-     * @return  number of affected rows
+     * 
+     * @param user user instance
+     * @return number of affected rows
      */
     public long insert(User user) {
         return getMapper().insert(user);
@@ -97,9 +113,10 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * insert one user into table
-     * @param user  user instance
-     * @param commit    auto-commit
-     * @return  number of affected rows
+     * 
+     * @param user user instance
+     * @param commit auto-commit
+     * @return number of affected rows
      */
     @Override
     public long insert(User user, boolean commit) {
@@ -112,8 +129,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * update one user in table
-     * @param user  user instance
-     * @return  number of affected rows
+     * 
+     * @param user user instance
+     * @return number of affected rows
      */
     public long update(User user) {
         return getMapper().update(user);
@@ -121,9 +139,10 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * update one user in table
-     * @param user  user instance
-     * @param commit    auto-commit
-     * @return  number of affected rows
+     * 
+     * @param user user instance
+     * @param commit auto-commit
+     * @return number of affected rows
      */
     @Override
     public long update(User user, boolean commit) {
@@ -136,8 +155,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * delete one user in table by id
-     * @param id    id
-     * @return  number of affected rows
+     * 
+     * @param id id
+     * @return number of affected rows
      */
     public long deleteById(long id) {
         return getMapper().deleteById(id);
@@ -145,9 +165,10 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * delete one user in table by id
-     * @param id    id
-     * @param commit    auto-commit
-     * @return  number of affected rows
+     * 
+     * @param id id
+     * @param commit auto-commit
+     * @return number of affected rows
      */
     @Override
     public long deleteById(long id, boolean commit) {
@@ -184,7 +205,8 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * get mapper instance of user
-     * @return  IMapper<User>
+     * 
+     * @return IMapper<User>
      */
     @Override
     public IMapper<User> getMapper() {
@@ -193,7 +215,8 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * get mapper instance of user (manual commit)
-     * @return  IMapper<User>
+     * 
+     * @return IMapper<User>
      */
     @Override
     public IMapper<User> getMapperManual() {

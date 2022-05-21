@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.entity.AbstractEntity;
@@ -14,48 +25,54 @@ import java.util.List;
 public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
     /**
      * select all entity in table
+     * 
      * @param commit auto_commit
-     * @return  list of entity instance
+     * @return list of entity instance
      */
     List<T> selectAll(boolean commit);
 
     /**
      * select one entity from table by id
-     * @param id    id
+     * 
+     * @param id id
      * @param commit auto_commit
-     * @return  entity instance
+     * @return entity instance
      */
     T selectById(long id, boolean commit);
 
     /**
      * select one entity from table by name
-     * @param name  name
+     * 
+     * @param name name
      * @param commit auto_commit
-     * @return  entity instance
+     * @return entity instance
      */
     T selectByName(String name, boolean commit);
 
     /**
      * insert one entity instance into table
-     * @param entity    entity instance
+     * 
+     * @param entity entity instance
      * @param commit auto_commit
-     * @return  number of affected rows
+     * @return number of affected rows
      */
     long insert(T entity, boolean commit);
 
     /**
      * update one entity instance in table
-     * @param entity    entity instance
+     * 
+     * @param entity entity instance
      * @param commit auto_commit
-     * @return  number of affected rows
+     * @return number of affected rows
      */
     long update(T entity, boolean commit);
 
     /**
      * delete one entity instance in table
-     * @param id    id
+     * 
+     * @param id id
      * @param commit auto_commit
-     * @return  number of affected rows
+     * @return number of affected rows
      */
     long deleteById(long id, boolean commit);
 
@@ -71,13 +88,15 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
 
     /**
      * get mapper instance
-     * @return  IMapper<T>
+     * 
+     * @return IMapper<T>
      */
     IMapper<T> getMapper();
 
     /**
      * get mapper instance(Manual Commit)
-     * @return  IMapper<T>
+     * 
+     * @return IMapper<T>
      */
     IMapper<T> getMapperManual();
 }

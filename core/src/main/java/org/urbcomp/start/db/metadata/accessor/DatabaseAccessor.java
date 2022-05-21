@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
@@ -12,6 +23,7 @@ import java.util.List;
 
 /**
  * Accessor for Database
+ * 
  * @authour: wangbohong
  * @Date: 2022-05-21
  */
@@ -19,7 +31,8 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * select all databases
-     * @return  list of database instance
+     * 
+     * @return list of database instance
      */
     @Override
     public List<Database> selectAll(boolean commit) {
@@ -37,8 +50,9 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * select one database in table
-     * @param id    id
-     * @return  database instance
+     * 
+     * @param id id
+     * @return database instance
      */
     @Override
     public Database selectById(long id, boolean commit) {
@@ -55,8 +69,9 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * select one datavase by name
-     * @param name  name
-     * @return  database instance
+     * 
+     * @param name name
+     * @return database instance
      */
     @Override
     public Database selectByName(String name, boolean commit) {
@@ -73,13 +88,15 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * if db's name exists or userId does not exist, return -1.
-     * @param database    database instance
-     * @param commit    auto_commit
+     * 
+     * @param database database instance
+     * @param commit auto_commit
      * @return
      */
     @Override
     public long insert(Database database, boolean commit) {
-        if (!isValid(database)) return -1;
+        if (!isValid(database))
+            return -1;
         if (commit) {
             return getMapper().insert(database);
         } else {
@@ -93,8 +110,9 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * update one database in table
-     * @param database  user instance
-     * @return  number of affected rows
+     * 
+     * @param database user instance
+     * @return number of affected rows
      */
     @Override
     public long update(Database database, boolean commit) {
@@ -105,12 +123,15 @@ public class DatabaseAccessor implements IAccessor<Database> {
         }
     }
 
-    public long update(Database database) { return update(database, true); }
+    public long update(Database database) {
+        return update(database, true);
+    }
 
     /**
      * delete one database in table by id
-     * @param id    id
-     * @return  number of affected rows
+     * 
+     * @param id id
+     * @return number of affected rows
      */
     @Override
     public long deleteById(long id, boolean commit) {
@@ -143,7 +164,8 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * get mapper instance of database
-     * @return  IMapper<Database>
+     * 
+     * @return IMapper<Database>
      */
     @Override
     public IMapper<Database> getMapper() {
@@ -152,7 +174,8 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * get mapper instance of database (manual commit)
-     * @return  IMapper<Database>
+     * 
+     * @return IMapper<Database>
      */
     @Override
     public IMapper<Database> getMapperManual() {
@@ -166,8 +189,10 @@ public class DatabaseAccessor implements IAccessor<Database> {
     public void close() throws Exception {
         SqlSessionUtilManual.getSession().close();
     }
+
     /**
      * constraint about insert
+     * 
      * @param db database
      * @return isValid
      */
