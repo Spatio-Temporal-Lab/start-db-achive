@@ -19,5 +19,6 @@
 
     <modules>
         <module>embedded-mysql</module>
+        <module>geomesa-geotools</module>
     </modules>
 </project>
