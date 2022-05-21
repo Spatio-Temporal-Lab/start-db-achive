@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.urbcomp.start.db.metadata.mapper.DatabaseMapper">
+    <select id="selectAll" resultType="org.urbcomp.start.db.metadata.entity.Database">
+        SELECT *
+        FROM sys_database;
+    </select>
+    <select id="selectById" resultType="org.urbcomp.start.db.metadata.entity.Database">
+        SELECT *
+        FROM sys_database
+        WHERE id = #{id};
+    </select>
+    <select id="selectByName" resultType="org.urbcomp.start.db.metadata.entity.Database">
+        SELECT *
+        FROM sys_database
+        WHERE name = #{name}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.urbcomp.start.db.metadata.entity.Database">
+        INSERT INTO sys_database(`user_id`, `name`) VALUE (#{database.userId}, #{database.name});
+    </insert>
+    <update id="update">
+        UPDATE sys_database
+        SET name=#{database.name},
+        id = #{database.id}
+        WHERE id = #{database.id};
+    </update>
+    <delete id="deleteById">
+        DELETE
+        FROM sys_database
+        WHERE id = #{id};
+    </delete>
+</mapper>
