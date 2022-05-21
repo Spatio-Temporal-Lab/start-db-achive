@@ -26,49 +26,55 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
     /**
      * select all entity in table
      * 
+     * @param commit auto_commit
      * @return list of entity instance
      */
-    List<T> selectAll();
+    List<T> selectAll(boolean commit);
 
     /**
      * select one entity from table by id
      * 
      * @param id id
+     * @param commit auto_commit
      * @return entity instance
      */
-    T selectById(long id);
+    T selectById(long id, boolean commit);
 
     /**
      * select one entity from table by name
      * 
      * @param name name
+     * @param commit auto_commit
      * @return entity instance
      */
-    T selectByName(String name);
+    T selectByName(String name, boolean commit);
 
     /**
      * insert one entity instance into table
      * 
      * @param entity entity instance
+     * @param commit auto_commit
      * @return number of affected rows
      */
-    long insert(T entity);
+    long insert(T entity, boolean commit);
 
     /**
      * update one entity instance in table
      * 
      * @param entity entity instance
+     * @param commit auto_commit
      * @return number of affected rows
      */
-    long update(T entity);
+    long update(T entity, boolean commit);
 
     /**
      * delete one entity instance in table
      * 
      * @param id id
+     * @param commit auto_commit
      * @return number of affected rows
      */
-    long deleteById(long id);
+    long deleteById(long id, boolean commit);
 
     /**
      * commit operation
@@ -86,4 +92,11 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
      * @return IMapper<T>
      */
     IMapper<T> getMapper();
+
+    /**
+     * get mapper instance(Manual Commit)
+     * 
+     * @return IMapper<T>
+     */
+    IMapper<T> getMapperManual();
 }

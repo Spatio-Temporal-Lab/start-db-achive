@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.urbcomp.start.db.metadata.mapper.FieldMapper">
+    <select id="selectAll" resultType="org.urbcomp.start.db.metadata.entity.Field">
+        SELECT *
+        FROM sys_field;
+    </select>
+    <select id="selectById" resultType="org.urbcomp.start.db.metadata.entity.Field">
+        SELECT *
+        FROM sys_field
+        WHERE id = #{id};
+    </select>
+    <select id="selectByName" resultType="org.urbcomp.start.db.metadata.entity.Field">
+        SELECT *
+        FROM sys_field
+        WHERE name = #{name}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.urbcomp.start.db.metadata.entity.Field">
+        INSERT INTO sys_field(`table_id`, `name`, `type`, `is_primary`) VALUE (#{field.tableId}, #{field.name},#{field.type},#{field.isPrimary});
+    </insert>
+    <update id="update">
+        UPDATE sys_field
+        SET name=#{field.name},
+        table_id = #{field.tableId},
+        type = #{field.type},
+        is_primary = #{field.isPrimary}
+        WHERE id = #{field.id};
+    </update>
+    <delete id="deleteById">
+        DELETE
+        FROM sys_field
+        WHERE id = #{id};
+    </delete>
+</mapper>
