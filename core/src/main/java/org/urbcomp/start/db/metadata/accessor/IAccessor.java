@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.entity.AbstractEntity;
@@ -14,42 +25,48 @@ import java.util.List;
 public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
     /**
      * select all entity in table
-     * @return  list of entity instance
+     * 
+     * @return list of entity instance
      */
     List<T> selectAll();
 
     /**
      * select one entity from table by id
-     * @param id    id
-     * @return  entity instance
+     * 
+     * @param id id
+     * @return entity instance
      */
     T selectById(long id);
 
     /**
      * select one entity from table by name
-     * @param name  name
-     * @return  entity instance
+     * 
+     * @param name name
+     * @return entity instance
      */
     T selectByName(String name);
 
     /**
      * insert one entity instance into table
-     * @param entity    entity instance
-     * @return  number of affected rows
+     * 
+     * @param entity entity instance
+     * @return number of affected rows
      */
     long insert(T entity);
 
     /**
      * update one entity instance in table
-     * @param entity    entity instance
-     * @return  number of affected rows
+     * 
+     * @param entity entity instance
+     * @return number of affected rows
      */
     long update(T entity);
 
     /**
      * delete one entity instance in table
-     * @param id    id
-     * @return  number of affected rows
+     * 
+     * @param id id
+     * @return number of affected rows
      */
     long deleteById(long id);
 
@@ -65,7 +82,8 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
 
     /**
      * get mapper instance
-     * @return  IMapper<T>
+     * 
+     * @return IMapper<T>
      */
     IMapper<T> getMapper();
 }

@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.core.geomesa.model;
 
 import org.apache.calcite.linq4j.tree.ConstantExpression;
@@ -8,14 +19,15 @@ import org.opengis.filter.Filter;
 import java.lang.reflect.Type;
 
 /**
- * This class is different from the native implementation of geotools, because the
- * native implementation of GeoTools does not java basic data types, so it cannot
- * be recognized in the expression parsing of linq4j.
+ * This class is different from the native implementation of geotools, because the native
+ * implementation of GeoTools does not java basic data types, so it cannot be recognized in the
+ * expression parsing of linq4j.
+ * 
  * @see ConstantExpression#ConstantExpression(Type, Object)
  * @see Primitive
  *
- * Therefore, we need to re encapsulate the query object of geotools. When we need
- * this information, we need to present it in the form of basic data types.
+ *      Therefore, we need to re encapsulate the query object of geotools. When we need this
+ *      information, we need to present it in the form of basic data types.
  *
  * @author zaiyuan
  * @date 2022-05-01 15:17:07

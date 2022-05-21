@@ -5,7 +5,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   pull_request:
-    branches: [ main, dev ]
+    branches: [main, dev]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -36,17 +36,18 @@ jobs:
       - name: set up maven and java
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: "8"
           cache: maven
-          distribution: 'adopt'
+          distribution: "adopt"
+      - name: check format convention
+        run: |
+          mvn spotless:check
       - name: init mysql schema
         run: mvn test exec:java -f test/embedded-mysql/pom.xml
-#      - name: init hbase data
-#        run:
+      #      - name: init hbase data
+      #        run:
 
       # Runs a set of commands using the runners shell
       - name: build and test with maven
         run: |
           mvn clean test
-
-

@@ -1,0 +1,1 @@
+# Keep it here for tell mvn which one is root folder so ${maven.multiModuleProjectDirectory} can be used in pom.

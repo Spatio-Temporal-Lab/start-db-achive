@@ -1,3 +1,16 @@
+/*
+ * Copyright 2022 ST-Lab
+
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 package org.urbcomp.start.db.test;
 
 import org.apache.hadoop.hbase.HBaseTestingUtility;
@@ -8,9 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * start a embedded hbase cluster for unit test
- * bind ZK to 0.0.0.0/2181
- * need HADOOP_HOME
+ * start a embedded hbase cluster for unit test bind ZK to 0.0.0.0/2181 need HADOOP_HOME
  *
  * @author jimo
  */
@@ -26,8 +37,9 @@ public class MiniHBaseCluster {
         logger.info("Starting embedded hbase");
         cluster.getConfiguration().set("hbase.superuser", "admin");
         // bind geomesa coprocessor
-        cluster.getConfiguration().set(CoprocessorHost.USER_REGION_COPROCESSOR_CONF_KEY, HBaseIndexAdapter.CoprocessorClass());
-        //    cluster.startMiniCluster(sys.props.get("geomesa.hbase.test.region.servers").map(_.toInt).getOrElse(2))
+        cluster.getConfiguration().set(CoprocessorHost.USER_REGION_COPROCESSOR_CONF_KEY,
+                        HBaseIndexAdapter.CoprocessorClass());
+        // cluster.startMiniCluster(sys.props.get("geomesa.hbase.test.region.servers").map(_.toInt).getOrElse(2))
         cluster.startMiniHBaseCluster();
         logger.info("Started embedded hbase");
     }
