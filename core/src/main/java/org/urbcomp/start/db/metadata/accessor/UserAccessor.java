@@ -1,3 +1,16 @@
+/*
+ * Copyright 2022 ST-Lab
+
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
@@ -16,7 +29,8 @@ import java.util.List;
 public class UserAccessor implements IAccessor<User> {
     /**
      * select all users
-     * @return  list of user instance
+     * 
+     * @return list of user instance
      */
     @Override
     public List<User> selectAll() {
@@ -25,8 +39,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select one user in table
-     * @param id    id
-     * @return  user instance
+     * 
+     * @param id id
+     * @return user instance
      */
     @Override
     public User selectById(long id) {
@@ -35,8 +50,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select one user by name
-     * @param name  name
-     * @return  user instance
+     * 
+     * @param name name
+     * @return user instance
      */
     @Override
     public User selectByName(String name) {
@@ -45,8 +61,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * insert one user into table
-     * @param user  user instance
-     * @return  number of affected rows
+     * 
+     * @param user user instance
+     * @return number of affected rows
      */
     @Override
     public long insert(User user) {
@@ -55,8 +72,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * update one user in table
-     * @param user  user instance
-     * @return  number of affected rows
+     * 
+     * @param user user instance
+     * @return number of affected rows
      */
     @Override
     public long update(User user) {
@@ -65,8 +83,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * delete one user in table by id
-     * @param id    id
-     * @return  number of affected rows
+     * 
+     * @param id id
+     * @return number of affected rows
      */
     @Override
     public long deleteById(long id) {
@@ -99,7 +118,8 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * get mapper instance of user
-     * @return  IMapper<User>
+     * 
+     * @return IMapper<User>
      */
     @Override
     public IMapper<User> getMapper() {
