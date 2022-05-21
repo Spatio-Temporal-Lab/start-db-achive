@@ -31,6 +31,6 @@
     </environments>
     <!-- mapper xml -->
     <mappers>
-        <mapper resource="metadata/mapper/UserMapper.xml"/>
+        <package name="org.urbcomp.start.db.metadata.mapper"/>
     </mappers>
 </configuration>
