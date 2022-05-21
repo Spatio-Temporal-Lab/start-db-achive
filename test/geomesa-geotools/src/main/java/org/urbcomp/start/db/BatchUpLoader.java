@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class BatchUpLoader {
 
-    private final SimpleDateFormat sdf = new SimpleDateFormat(constant.TIME_STAMP_PARSER);
+    private final SimpleDateFormat sdf = new SimpleDateFormat(Constant.TIME_STAMP_PARSER);
     private FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
     private DataStore dataStore;
     private SimpleFeatureType sft;
@@ -167,11 +167,11 @@ public class BatchUpLoader {
 //        upLoader.mkConnection("citibike_tripdata");
         upLoader.setTable();
 //        upLoader.dataStore.createSchema(upLoader.sft);
-        BufferedReader reader = upLoader.readCsv(constant.CSV_FILE);
+        BufferedReader reader = upLoader.readCsv(Constant.CSV_FILE);
 
         String line;
         while ((line = reader.readLine()) != null) {
-            String[] split = line.split(constant.COMMA_STR);
+            String[] split = line.split(Constant.COMMA_STR);
 
             SimpleFeature feature = upLoader.dataSetUp(
                     split[0],
