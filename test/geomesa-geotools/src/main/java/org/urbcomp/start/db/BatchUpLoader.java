@@ -1,3 +1,16 @@
+/*
+ * Copyright 2022 ST-Lab
+
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 package org.urbcomp.start.db;
 
 import org.geotools.data.DataStore;
@@ -25,10 +38,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is used to ingest data into geomesa-hbase with geotools.
- * The data used is about bike-trip (https://s3.amazonaws.com/tripdata/index.html), include:
- * idx, ride_id, rideable_type, started_at, ended_at, start_station_name, start_station_id, end_station_name, end_station_id
- * start_lat, start_lng, end_lat, end_lng, member_casual, which can be described as Integer, Point, String, Double, LineString, TimeStamp in conclusion.
+ * This is used to ingest data into geomesa-hbase with geotools. The data used is about bike-trip
+ * (https://s3.amazonaws.com/tripdata/index.html), include: idx, ride_id, rideable_type, started_at,
+ * ended_at, start_station_name, start_station_id, end_station_name, end_station_id start_lat,
+ * start_lng, end_lat, end_lng, member_casual, which can be described as Integer, Point, String,
+ * Double, LineString, TimeStamp in conclusion.
  *
  * @author stan
  * @since 0.1.0
@@ -56,9 +70,9 @@ public class BatchUpLoader {
      */
     private void mkConnection(String tableName) throws IOException {
 
-        Map<String,String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params.put("hbase.catalog", tableName);
-        params.put("hbase.zookeepers", "xxx:xxxx,xxx:xxxx....");
+        params.put("hbase.zookeepers", "localhost:2181,...");
 
         this.dataStore = DataStoreFinder.getDataStore(params);
     }
@@ -68,35 +82,29 @@ public class BatchUpLoader {
      */
     private void setTable() throws IOException {
 
-        this.sft = SimpleFeatureTypes.createType(
-                "citibike-tripdata",
-                "idx:Integer," +
-                        "ride_id:String," +
-                        "rideable_type:String," +
-                        "started_at:Timestamp," +
-                        "ended_at:Timestamp," +
-                        "start_station_name:String," +
-                        "start_station_id:Double," +
-                        "start_point:Point:srid=4326," +
-                        "end_station_name:String," +
-                        "end_station_id:Double," +
-                        "end_point:Point:srid=4326," +
-                        "track:LineString:srid=4326," +
-                        "member_casual:String");
+        this.sft = SimpleFeatureTypes.createType("citibike-tripdata",
+                        "idx:Integer," + "ride_id:String," + "rideable_type:String,"
+                                        + "started_at:Timestamp," + "ended_at:Timestamp,"
+                                        + "start_station_name:String," + "start_station_id:Double,"
+                                        + "start_point:Point:srid=4326,"
+                                        + "end_station_name:String," + "end_station_id:Double,"
+                                        + "end_point:Point:srid=4326,"
+                                        + "track:LineString:srid=4326," + "member_casual:String");
 
-//        this.dataStore.createSchema(this.sft);
+        // this.dataStore.createSchema(this.sft);
     }
 
     /**
      * used to ingest data into geomesa-hbase
      */
-    private void writeFeature(DataStore dataStore, SimpleFeatureType sft, SimpleFeature feature) throws IOException {
+    private void writeFeature(DataStore dataStore, SimpleFeatureType sft, SimpleFeature feature)
+                    throws IOException {
 
         this.writer = dataStore.getFeatureWriterAppend(sft.getTypeName(), Transaction.AUTO_COMMIT);
         SimpleFeature toWrite = this.writer.next();
         toWrite.setAttributes(feature.getAttributes());
         ((FeatureIdImpl) toWrite.getIdentifier()).setID(feature.getID());
-        toWrite.getUserData().put(Hints.USE_PROVIDED_FID,Boolean.TRUE);
+        toWrite.getUserData().put(Hints.USE_PROVIDED_FID, Boolean.TRUE);
         toWrite.getUserData().putAll(feature.getUserData());
 
         this.writer.write();
@@ -114,7 +122,9 @@ public class BatchUpLoader {
      * used to read csv file
      */
     private BufferedReader readCsv(String csvFile) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(csvFile), StandardCharsets.UTF_8));
+        BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(new FileInputStream(csvFile),
+                                        StandardCharsets.UTF_8));
         System.out.println("Header : \n" + reader.readLine());
 
         return reader;
@@ -123,38 +133,44 @@ public class BatchUpLoader {
     /**
      * used to create simpleFeature
      */
-    private SimpleFeature dataSetUp(String idx, String ride_id, String rideable_type, String started_at, String ended_at, String start_station_name, String start_station_id, String start_lng, String start_lat, String end_station_name, String end_station_id, String end_lng, String end_lat, String member_casual) throws ParseException {
+    private SimpleFeature dataSetUp(String idx, String ride_id, String rideable_type,
+                    String started_at, String ended_at, String start_station_name,
+                    String start_station_id, String start_lng, String start_lat,
+                    String end_station_name, String end_station_id, String end_lng, String end_lat,
+                    String member_casual) throws ParseException {
 
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(this.sft);
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
 
-        featureBuilder.set("idx",Integer.parseInt(idx));
-        featureBuilder.set("ride_id",ride_id);
-        featureBuilder.set("rideable_type",rideable_type);
+        featureBuilder.set("idx", Integer.parseInt(idx));
+        featureBuilder.set("ride_id", ride_id);
+        featureBuilder.set("rideable_type", rideable_type);
 
-        featureBuilder.set("started_at",this.date2time(started_at));
-        featureBuilder.set("ended_at",this.date2time(ended_at));
+        featureBuilder.set("started_at", this.date2time(started_at));
+        featureBuilder.set("ended_at", this.date2time(ended_at));
 
-        featureBuilder.set("start_station_name",start_station_name);
-        featureBuilder.set("start_station_id",Double.parseDouble(start_station_id));
+        featureBuilder.set("start_station_name", start_station_name);
+        featureBuilder.set("start_station_id", Double.parseDouble(start_station_id));
 
-        Point startPoint = geometryFactory.createPoint(new Coordinate(Double.parseDouble(start_lng),Double.parseDouble(start_lat)));
-        featureBuilder.set("start_point",startPoint);
+        Point startPoint = geometryFactory.createPoint(new Coordinate(Double.parseDouble(start_lng),
+                        Double.parseDouble(start_lat)));
+        featureBuilder.set("start_point", startPoint);
 
-        featureBuilder.set("end_station_name",end_station_name);
-        featureBuilder.set("end_station_id",Double.parseDouble(end_station_id));
+        featureBuilder.set("end_station_name", end_station_name);
+        featureBuilder.set("end_station_id", Double.parseDouble(end_station_id));
 
-        Point endPoint = geometryFactory.createPoint(new Coordinate(Double.parseDouble(end_lng),Double.parseDouble(end_lat)));
-        featureBuilder.set("end_point",endPoint);
+        Point endPoint = geometryFactory.createPoint(
+                        new Coordinate(Double.parseDouble(end_lng), Double.parseDouble(end_lat)));
+        featureBuilder.set("end_point", endPoint);
 
         Coordinate[] coordinates = {startPoint.getCoordinate(), endPoint.getCoordinate()};
         LineString lineString = geometryFactory.createLineString(coordinates);
 
-        featureBuilder.set("track",lineString);
+        featureBuilder.set("track", lineString);
 
-        featureBuilder.set("member_casual",member_casual);
+        featureBuilder.set("member_casual", member_casual);
 
-        featureBuilder.featureUserData(Hints.USE_PROVIDED_FID,Boolean.TRUE);
+        featureBuilder.featureUserData(Hints.USE_PROVIDED_FID, Boolean.TRUE);
 
         return featureBuilder.buildFeature(String.valueOf(Integer.parseInt(idx)));
     }
@@ -164,36 +180,23 @@ public class BatchUpLoader {
      */
     public static void main(String[] args) throws ParseException, IOException {
         BatchUpLoader upLoader = new BatchUpLoader();
-//        upLoader.mkConnection("citibike_tripdata");
+        // upLoader.mkConnection("citibike_tripdata");
         upLoader.setTable();
-//        upLoader.dataStore.createSchema(upLoader.sft);
+        // upLoader.dataStore.createSchema(upLoader.sft);
         BufferedReader reader = upLoader.readCsv(Constant.CSV_FILE);
 
         String line;
         while ((line = reader.readLine()) != null) {
             String[] split = line.split(Constant.COMMA_STR);
 
-            SimpleFeature feature = upLoader.dataSetUp(
-                    split[0],
-                    split[1],
-                    split[2],
-                    split[3],
-                    split[4],
-                    split[5],
-                    split[6],
-                    split[10],
-                    split[9],
-                    split[7],
-                    split[8],
-                    split[12],
-                    split[11],
-                    split[13]
-            );
+            SimpleFeature feature = upLoader.dataSetUp(split[0], split[1], split[2], split[3],
+                            split[4], split[5], split[6], split[10], split[9], split[7], split[8],
+                            split[12], split[11], split[13]);
 
             System.out.println(feature);
-//            upLoader.writeFeature(upLoader.dataStore, upLoader.sft, feature);
-//            upLoader.writeClose();
+            // upLoader.writeFeature(upLoader.dataStore, upLoader.sft, feature);
+            // upLoader.writeClose();
         }
-//        upLoader.dataStore.dispose();
+        // upLoader.dataStore.dispose();
     }
 }
