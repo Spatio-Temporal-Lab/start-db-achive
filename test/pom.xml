@@ -20,5 +20,6 @@
     <modules>
         <module>mini-hbase</module>
         <module>embedded-mysql</module>
+        <module>geomesa-geotools</module>
     </modules>
 </project>
