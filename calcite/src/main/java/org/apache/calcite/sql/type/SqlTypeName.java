@@ -178,6 +178,15 @@ public enum SqlTypeName {
      * Spatial type. Though not standard, it is common to several DBs, so we do not flag it
      * 'special' (internal).
      */
+    // start-db add start
+    POINT(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
+    MULTIPOINT(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
+    LINESTRING(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
+    MULTILINESTRING(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
+    POLYGON(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
+    MULTIPOLYGON(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
+    GEOMETRYCOLLECTION(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
+    // start-db add end
     GEOMETRY(PrecScale.NO_NO, false, ExtraSqlTypes.GEOMETRY, SqlTypeFamily.GEO),
     SARG(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ANY);
 

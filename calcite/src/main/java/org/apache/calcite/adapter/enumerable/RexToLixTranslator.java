@@ -69,6 +69,7 @@ import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
 
 import com.google.common.collect.ImmutableList;
+import org.locationtech.jts.geom.Geometry;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -821,14 +822,18 @@ public class RexToLixTranslator implements RexVisitor<RexToLixTranslator.Result>
                     ByteString.class,
                     Expressions.constant(literal.getValueAs(byte[].class), byte[].class)
                 );
+            case POINT:
+            case MULTIPOINT:
+            case LINESTRING:
+            case MULTILINESTRING:
+            case POLYGON:
+            case MULTIPOLYGON:
+            case GEOMETRYCOLLECTION:
             case GEOMETRY:
-                final Geometries.Geom geom = literal.getValueAs(Geometries.Geom.class);
-                final String wkt = GeoFunctions.ST_AsWKT(geom);
-                return Expressions.call(
-                    null,
-                    BuiltInMethod.ST_GEOM_FROM_TEXT.method,
-                    Expressions.constant(wkt)
-                );
+                final Geometry geom = literal.getValueAs(Geometry.class);
+                final String wkt = geom.toString();
+                return Expressions.call(null, BuiltInMethod.ST_GEOM_FROM_TEXT.method,
+                        Expressions.constant(wkt));
             case SYMBOL:
                 value2 = literal.getValueAs(Enum.class);
                 javaClass = value2.getClass();

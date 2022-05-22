@@ -43,6 +43,7 @@ import org.apache.calcite.sql.type.SqlTypeName;
 import org.apache.calcite.sql.type.SqlTypeUtil;
 import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
+import org.locationtech.jts.geom.Geometry;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -223,8 +224,17 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
                 case BINARY:
                 case VARBINARY:
                     return ByteString.class;
+                    // start-db add start
+                case POINT:
+                case MULTIPOINT:
+                case LINESTRING:
+                case MULTILINESTRING:
+                case POLYGON:
+                case MULTIPOLYGON:
+                case GEOMETRYCOLLECTION:
                 case GEOMETRY:
-                    return Geometries.Geom.class;
+                    return Geometry.class;
+                    // start-db add end
                 case SYMBOL:
                     return Enum.class;
                 case ANY:

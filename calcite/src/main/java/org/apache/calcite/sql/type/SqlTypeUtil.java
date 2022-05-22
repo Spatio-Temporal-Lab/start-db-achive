@@ -822,6 +822,14 @@ public abstract class SqlTypeUtil {
 
         final SqlTypeName fromTypeName = fromType.getSqlTypeName();
         final SqlTypeName toTypeName = toType.getSqlTypeName();
+
+        // start-db start add
+        if (toTypeName.equals(fromTypeName)
+                || (toType.getSqlTypeName() == SqlTypeName.GEOMETRY && fromTypeName.getFamily() == SqlTypeFamily.GEOMETRY)) {
+            return true;
+        }
+        // start-db start end
+
         if (toType.isStruct() || fromType.isStruct()) {
             if (toTypeName == SqlTypeName.DISTINCT) {
                 if (fromTypeName == SqlTypeName.DISTINCT) {
@@ -1010,7 +1018,9 @@ public abstract class SqlTypeUtil {
         assert typeName != null;
 
         final SqlTypeNameSpec typeNameSpec;
-        if (isAtomic(type) || isNull(type)) {
+        // start-db modified start
+        if (isAtomic(type) || isNull(type) || typeName == SqlTypeName.GEOMETRY) {
+            //start-db modified end
             int precision = typeName.allowsPrec() ? type.getPrecision() : -1;
             // fix up the precision.
             if (maxPrecision > 0 && precision > maxPrecision) {

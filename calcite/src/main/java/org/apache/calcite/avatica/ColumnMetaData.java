@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.protobuf.Descriptors.FieldDescriptor;
+import org.locationtech.jts.geom.*;
 
 import java.lang.reflect.Type;
 import java.sql.Array;
@@ -407,6 +408,16 @@ public class ColumnMetaData {
         BYTE_STRING(ByteString.class, Types.VARBINARY),
         STRING(String.class, Types.VARCHAR),
 
+        // start-db add start
+        POINT(Point.class,100001),
+        MULTI_POINT(MultiPoint.class,100002),
+        LINESTRING(LineString.class,100003),
+        MULTI_LINESTRING(MultiLineString.class,100004),
+        POLYGON(Polygon.class,100005),
+        MULTI_POLYGON(MultiPolygon.class,100006),
+        GEOMETRY(Geometry.class,100007),
+        // start-db add end
+
         /**
          * Values are represented as some sub-class of {@link Number}. The JSON encoding does this.
          */
@@ -599,7 +610,11 @@ public class ColumnMetaData {
         }
 
         public String columnClassName() {
-            return SqlType.valueOf(id).boxedClass().getName();
+            // start-db modified start
+            final Class<?> originCls = SqlType.valueOf(id).boxedClass();
+            final Class<?> deepCls = this.rep.clazz;
+            return originCls == Object.class || Geometry.class.isAssignableFrom(deepCls) ? deepCls.getName() : originCls.getName();
+            // start-db modified end
         }
 
         public String getName() {

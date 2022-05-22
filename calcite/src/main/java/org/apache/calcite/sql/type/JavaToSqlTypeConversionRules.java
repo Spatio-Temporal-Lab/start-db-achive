@@ -26,6 +26,7 @@ import org.apache.calcite.avatica.util.ArrayImpl;
 import org.apache.calcite.runtime.Geometries;
 
 import com.google.common.collect.ImmutableMap;
+import org.locationtech.jts.geom.*;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -46,43 +47,52 @@ public class JavaToSqlTypeConversionRules {
     // ~ Instance fields --------------------------------------------------------
 
     private final Map<Class<?>, SqlTypeName> rules = ImmutableMap.<Class<?>, SqlTypeName>builder()
-        .put(Integer.class, SqlTypeName.INTEGER)
-        .put(int.class, SqlTypeName.INTEGER)
-        .put(Long.class, SqlTypeName.BIGINT)
-        .put(long.class, SqlTypeName.BIGINT)
-        .put(Short.class, SqlTypeName.SMALLINT)
-        .put(short.class, SqlTypeName.SMALLINT)
-        .put(byte.class, SqlTypeName.TINYINT)
-        .put(Byte.class, SqlTypeName.TINYINT)
+            .put(Integer.class, SqlTypeName.INTEGER)
+            .put(int.class, SqlTypeName.INTEGER)
+            .put(Long.class, SqlTypeName.BIGINT)
+            .put(long.class, SqlTypeName.BIGINT)
+            .put(Short.class, SqlTypeName.SMALLINT)
+            .put(short.class, SqlTypeName.SMALLINT)
+            .put(byte.class, SqlTypeName.TINYINT)
+            .put(Byte.class, SqlTypeName.TINYINT)
 
-        .put(Float.class, SqlTypeName.REAL)
-        .put(float.class, SqlTypeName.REAL)
-        .put(Double.class, SqlTypeName.DOUBLE)
-        .put(double.class, SqlTypeName.DOUBLE)
+            .put(Float.class, SqlTypeName.REAL)
+            .put(float.class, SqlTypeName.REAL)
+            .put(Double.class, SqlTypeName.DOUBLE)
+            .put(double.class, SqlTypeName.DOUBLE)
 
-        .put(boolean.class, SqlTypeName.BOOLEAN)
-        .put(Boolean.class, SqlTypeName.BOOLEAN)
-        .put(byte[].class, SqlTypeName.VARBINARY)
-        .put(String.class, SqlTypeName.VARCHAR)
-        .put(char[].class, SqlTypeName.VARCHAR)
-        .put(Character.class, SqlTypeName.CHAR)
-        .put(char.class, SqlTypeName.CHAR)
+            .put(boolean.class, SqlTypeName.BOOLEAN)
+            .put(Boolean.class, SqlTypeName.BOOLEAN)
+            .put(byte[].class, SqlTypeName.VARBINARY)
+            .put(String.class, SqlTypeName.VARCHAR)
+            .put(char[].class, SqlTypeName.VARCHAR)
+            .put(Character.class, SqlTypeName.CHAR)
+            .put(char.class, SqlTypeName.CHAR)
 
-        .put(java.util.Date.class, SqlTypeName.TIMESTAMP)
-        .put(Date.class, SqlTypeName.DATE)
-        .put(Timestamp.class, SqlTypeName.TIMESTAMP)
-        .put(Time.class, SqlTypeName.TIME)
-        .put(BigDecimal.class, SqlTypeName.DECIMAL)
+            .put(java.util.Date.class, SqlTypeName.TIMESTAMP)
+            .put(Date.class, SqlTypeName.DATE)
+            .put(Timestamp.class, SqlTypeName.TIMESTAMP)
+            .put(Time.class, SqlTypeName.TIME)
+            .put(BigDecimal.class, SqlTypeName.DECIMAL)
 
-        .put(Geometries.Geom.class, SqlTypeName.GEOMETRY)
+            // start-db add start
+            .put(Point.class, SqlTypeName.POINT)
+            .put(MultiPoint.class, SqlTypeName.MULTIPOINT)
+            .put(LineString.class, SqlTypeName.LINESTRING)
+            .put(MultiLineString.class, SqlTypeName.MULTILINESTRING)
+            .put(Polygon.class, SqlTypeName.POLYGON)
+            .put(MultiPolygon.class, SqlTypeName.MULTIPOLYGON)
+            .put(Geometry.class, SqlTypeName.GEOMETRY)
+            .put(GeometryCollection.class, SqlTypeName.GEOMETRYCOLLECTION)
+            // start-db add end
 
-        .put(ResultSet.class, SqlTypeName.CURSOR)
-        .put(ColumnList.class, SqlTypeName.COLUMN_LIST)
-        .put(ArrayImpl.class, SqlTypeName.ARRAY)
-        .put(List.class, SqlTypeName.ARRAY)
-        .put(Map.class, SqlTypeName.MAP)
-        .put(Void.class, SqlTypeName.NULL)
-        .build();
+            .put(ResultSet.class, SqlTypeName.CURSOR)
+            .put(ColumnList.class, SqlTypeName.COLUMN_LIST)
+            .put(ArrayImpl.class, SqlTypeName.ARRAY)
+            .put(List.class, SqlTypeName.ARRAY)
+            .put(Map.class, SqlTypeName.MAP)
+            .put(Void.class, SqlTypeName.NULL)
+            .build();
 
     // ~ Methods ----------------------------------------------------------------
 
@@ -107,5 +117,6 @@ public class JavaToSqlTypeConversionRules {
      * Make this public when needed. To represent COLUMN_LIST SQL value, we need a type
      * distinguishable from {@link List} in user-defined types.
      */
-    private interface ColumnList extends List {}
+    private interface ColumnList extends List {
+    }
 }
