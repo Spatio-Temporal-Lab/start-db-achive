@@ -40,10 +40,10 @@ public class GeomesaFilterRule extends RelRule<GeomesaFilterRule.Config> {
      * Configuration of Filter Push Down Rule.
      */
     public interface Config extends RelRule.Config {
-        Config DEFAULT = EMPTY
-                        .withOperandSupplier(b0 -> b0.operand(LogicalFilter.class).oneInput(
-                                        b1 -> b1.operand(GeomesaTableScan.class).noInputs()))
-                        .as(Config.class);
+        Config DEFAULT = EMPTY.withOperandSupplier(
+            b0 -> b0.operand(LogicalFilter.class)
+                .oneInput(b1 -> b1.operand(GeomesaTableScan.class).noInputs())
+        ).as(Config.class);
 
         /**
          * Creates a rule that uses this configuration.
@@ -70,9 +70,15 @@ public class GeomesaFilterRule extends RelRule<GeomesaFilterRule.Config> {
         LogicalFilter filter = call.rel(0);
         if (filter.getTraitSet().contains(Convention.NONE)) {
             RelTraitSet traits = filter.getTraitSet().replace(GeomesaConstant.CONVENTION());
-            call.transformTo(new GeomesaFilter(filter.getCluster(), traits,
-                            convert(filter.getInput(), GeomesaConstant.CONVENTION()),
-                            filter.getRowType(), filter.getCondition()));
+            call.transformTo(
+                new GeomesaFilter(
+                    filter.getCluster(),
+                    traits,
+                    convert(filter.getInput(), GeomesaConstant.CONVENTION()),
+                    filter.getRowType(),
+                    filter.getCondition()
+                )
+            );
         }
     }
 }

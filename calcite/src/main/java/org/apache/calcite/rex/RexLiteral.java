@@ -1,12 +1,23 @@
 /*
- * Copyright 2022 ST-Lab
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the
- * GNU General Public License version 2 as published by the Free Software Foundation.
+ * https://github.com/apache/calcite
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to you under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.calcite.rex;
@@ -185,8 +196,9 @@ public class RexLiteral extends RexNode {
      */
     private final SqlTypeName typeName;
 
-    private static final ImmutableList<TimeUnit> TIME_UNITS =
-                    ImmutableList.copyOf(TimeUnit.values());
+    private static final ImmutableList<TimeUnit> TIME_UNITS = ImmutableList.copyOf(
+        TimeUnit.values()
+    );
 
     // ~ Constructors -----------------------------------------------------------
 
@@ -334,8 +346,9 @@ public class RexLiteral extends RexNode {
             case CHAR:
                 // A SqlLiteral's charset and collation are optional; not so a
                 // RexLiteral.
-                return (value instanceof NlsString) && (((NlsString) value).getCharset() != null)
-                                && (((NlsString) value).getCollation() != null);
+                return (value instanceof NlsString)
+                    && (((NlsString) value).getCharset() != null)
+                    && (((NlsString) value).getCollation() != null);
             case SARG:
                 return value instanceof Sarg;
             case SYMBOL:
@@ -371,13 +384,18 @@ public class RexLiteral extends RexNode {
         }
     }
 
-    private static String toJavaString(Comparable value, SqlTypeName typeName, RelDataType type,
-                    RexDigestIncludeType includeType) {
+    private static String toJavaString(
+        Comparable value,
+        SqlTypeName typeName,
+        RelDataType type,
+        RexDigestIncludeType includeType
+    ) {
         assert includeType != RexDigestIncludeType.OPTIONAL
-                        : "toJavaString must not be called with includeType=OPTIONAL";
+            : "toJavaString must not be called with includeType=OPTIONAL";
         if (value == null) {
-            return includeType == RexDigestIncludeType.NO_TYPE ? "null"
-                            : "null:" + type.getFullTypeString();
+            return includeType == RexDigestIncludeType.NO_TYPE
+                ? "null"
+                : "null:" + type.getFullTypeString();
         }
         StringBuilder sb = new StringBuilder();
         appendAsJava(value, sb, typeName, type, false, includeType);
@@ -424,8 +442,8 @@ public class RexLiteral extends RexNode {
         // once
         final RexDigestIncludeType includeType;
         if (type.getSqlTypeName() == SqlTypeName.BOOLEAN
-                        || type.getSqlTypeName() == SqlTypeName.INTEGER
-                        || type.getSqlTypeName() == SqlTypeName.SYMBOL) {
+            || type.getSqlTypeName() == SqlTypeName.INTEGER
+            || type.getSqlTypeName() == SqlTypeName.SYMBOL) {
             // We don't want false:BOOLEAN NOT NULL, so we don't print type information for
             // non-nullable BOOLEAN and INTEGER
             includeType = RexDigestIncludeType.NO_TYPE;
@@ -434,24 +452,25 @@ public class RexLiteral extends RexNode {
 
             // Ignore type information for 'Bar':CHAR(3)
             if (((nlsString.getCharset() != null
-                            && type.getCharset().equals(nlsString.getCharset()))
-                            || (nlsString.getCharset() == null && SqlCollation.IMPLICIT.getCharset()
-                                            .equals(type.getCharset())))
-                            && nlsString.getCollation().equals(type.getCollation())
-                            && ((NlsString) value).getValue().length() == type.getPrecision()) {
+                && type.getCharset().equals(nlsString.getCharset()))
+                || (nlsString.getCharset() == null
+                    && SqlCollation.IMPLICIT.getCharset().equals(type.getCharset())))
+                && nlsString.getCollation().equals(type.getCollation())
+                && ((NlsString) value).getValue().length() == type.getPrecision()) {
                 includeType = RexDigestIncludeType.NO_TYPE;
             } else {
                 includeType = RexDigestIncludeType.ALWAYS;
             }
-        } else if (type.getPrecision() == 0 && (type.getSqlTypeName() == SqlTypeName.TIME
-                        || type.getSqlTypeName() == SqlTypeName.TIMESTAMP
-                        || type.getSqlTypeName() == SqlTypeName.DATE)) {
-            // Ignore type information for '12:23:20':TIME(0)
-            // Note that '12:23:20':TIME WITH LOCAL TIME ZONE
-            includeType = RexDigestIncludeType.NO_TYPE;
-        } else {
-            includeType = RexDigestIncludeType.ALWAYS;
-        }
+        } else if (type.getPrecision() == 0
+            && (type.getSqlTypeName() == SqlTypeName.TIME
+                || type.getSqlTypeName() == SqlTypeName.TIMESTAMP
+                || type.getSqlTypeName() == SqlTypeName.DATE)) {
+                    // Ignore type information for '12:23:20':TIME(0)
+                    // Note that '12:23:20':TIME WITH LOCAL TIME ZONE
+                    includeType = RexDigestIncludeType.NO_TYPE;
+                } else {
+                    includeType = RexDigestIncludeType.ALWAYS;
+                }
         return includeType;
     }
 
@@ -460,8 +479,11 @@ public class RexLiteral extends RexNode {
      * {@link #valueMatchesType}.
      */
     public static boolean validConstant(Object o, Litmus litmus) {
-        if (o == null || o instanceof BigDecimal || o instanceof NlsString
-                        || o instanceof ByteString || o instanceof Boolean) {
+        if (o == null
+            || o instanceof BigDecimal
+            || o instanceof NlsString
+            || o instanceof ByteString
+            || o instanceof Boolean) {
             return litmus.succeed();
         } else if (o instanceof List) {
             List list = (List) o;
@@ -552,8 +574,10 @@ public class RexLiteral extends RexNode {
      * Prints the value this literal as a Java string constant.
      */
     public void printAsJava(PrintWriter pw) {
-        Util.asStringBuilder(pw, sb -> appendAsJava(value, sb, typeName, type, true,
-                        RexDigestIncludeType.NO_TYPE));
+        Util.asStringBuilder(
+            pw,
+            sb -> appendAsJava(value, sb, typeName, type, true, RexDigestIncludeType.NO_TYPE)
+        );
     }
 
     /**
@@ -578,8 +602,14 @@ public class RexLiteral extends RexNode {
      * @param type Type to be used for the transformation of the value to a Java string
      * @param includeType Whether to include the data type in the Java representation
      */
-    private static void appendAsJava(Comparable value, StringBuilder sb, SqlTypeName typeName,
-                    RelDataType type, boolean java, RexDigestIncludeType includeType) {
+    private static void appendAsJava(
+        Comparable value,
+        StringBuilder sb,
+        SqlTypeName typeName,
+        RelDataType type,
+        boolean java,
+        RexDigestIncludeType includeType
+    ) {
         switch (typeName) {
             case CHAR:
                 NlsString nlsString = (NlsString) value;
@@ -587,8 +617,8 @@ public class RexLiteral extends RexNode {
                     Util.printJavaString(sb, nlsString.getValue(), true);
                 } else {
                     boolean includeCharset = (nlsString.getCharsetName() != null)
-                                    && !nlsString.getCharsetName().equals(
-                                                    CalciteSystemProperty.DEFAULT_CHARSET.value());
+                        && !nlsString.getCharsetName()
+                            .equals(CalciteSystemProperty.DEFAULT_CHARSET.value());
                     sb.append(nlsString.asSql(includeCharset, false));
                 }
                 break;
@@ -664,8 +694,14 @@ public class RexLiteral extends RexNode {
             case MULTISET:
             case ROW:
                 final List<RexLiteral> list = (List) value;
-                Util.asStringBuilder(sb, sb2 -> Util.printList(sb, list.size(),
-                                (sb3, i) -> sb3.append(list.get(i).computeDigest(includeType))));
+                Util.asStringBuilder(
+                    sb,
+                    sb2 -> Util.printList(
+                        sb,
+                        list.size(),
+                        (sb3, i) -> sb3.append(list.get(i).computeDigest(includeType))
+                    )
+                );
                 break;
             case GEOMETRY:
                 final String wkt = GeoFunctions.ST_AsWKT((Geometries.Geom) value);
@@ -677,8 +713,11 @@ public class RexLiteral extends RexNode {
         }
     }
 
-    private static <C extends Comparable<C>> void printSarg(StringBuilder sb, Sarg<C> sarg,
-                    RelDataType type) {
+    private static <C extends Comparable<C>> void printSarg(
+        StringBuilder sb,
+        Sarg<C> sarg,
+        RelDataType type
+    ) {
         sarg.printTo(sb, (sb2, value) -> sb2.append(toLiteral(type, value)));
     }
 
@@ -692,16 +731,22 @@ public class RexLiteral extends RexNode {
             case ROW:
                 final List<Comparable<?>> fieldValues = (List) value;
                 final List<RelDataTypeField> fields = type.getFieldList();
-                final List<RexLiteral> fieldLiterals = FlatLists.of(Functions.generate(
-                                fieldValues.size(),
-                                i -> toLiteral(fields.get(i).getType(), fieldValues.get(i))));
+                final List<RexLiteral> fieldLiterals = FlatLists.of(
+                    Functions.generate(
+                        fieldValues.size(),
+                        i -> toLiteral(fields.get(i).getType(), fieldValues.get(i))
+                    )
+                );
                 return new RexLiteral((Comparable) fieldLiterals, type, typeName);
 
             case MULTISET:
                 final List<Comparable<?>> elementValues = (List) value;
-                final List<RexLiteral> elementLiterals = FlatLists.of(Functions.generate(
-                                elementValues.size(),
-                                i -> toLiteral(type.getComponentType(), elementValues.get(i))));
+                final List<RexLiteral> elementLiterals = FlatLists.of(
+                    Functions.generate(
+                        elementValues.size(),
+                        i -> toLiteral(type.getComponentType(), elementValues.get(i))
+                    )
+                );
                 return new RexLiteral((Comparable) elementLiterals, type, typeName);
 
             default:
@@ -723,8 +768,11 @@ public class RexLiteral extends RexNode {
      *        return a column as a string
      * @return a typed RexLiteral, or null
      */
-    public static RexLiteral fromJdbcString(RelDataType type, SqlTypeName typeName,
-                    String literal) {
+    public static RexLiteral fromJdbcString(
+        RelDataType type,
+        SqlTypeName typeName,
+        String literal
+    ) {
         if (literal == null) {
             return null;
         }
@@ -772,33 +820,41 @@ public class RexLiteral extends RexNode {
                 final Comparable v;
                 switch (typeName) {
                     case DATE:
-                        final Calendar cal = DateTimeUtils.parseDateFormat(literal,
-                                        new SimpleDateFormat(format, Locale.ROOT), tz);
+                        final Calendar cal = DateTimeUtils.parseDateFormat(
+                            literal,
+                            new SimpleDateFormat(format, Locale.ROOT),
+                            tz
+                        );
                         if (cal == null) {
-                            throw new AssertionError("fromJdbcString: invalid date/time value '"
-                                            + literal + "'");
+                            throw new AssertionError(
+                                "fromJdbcString: invalid date/time value '" + literal + "'"
+                            );
                         }
                         v = DateString.fromCalendarFields(cal);
                         break;
                     default:
                         // Allow fractional seconds for times and timestamps
                         assert format != null;
-                        final DateTimeUtils.PrecisionTime ts =
-                                        DateTimeUtils.parsePrecisionDateTimeLiteral(literal,
-                                                        new SimpleDateFormat(format, Locale.ROOT),
-                                                        tz, -1);
+                        final DateTimeUtils.PrecisionTime ts = DateTimeUtils
+                            .parsePrecisionDateTimeLiteral(
+                                literal,
+                                new SimpleDateFormat(format, Locale.ROOT),
+                                tz,
+                                -1
+                            );
                         if (ts == null) {
-                            throw new AssertionError("fromJdbcString: invalid date/time value '"
-                                            + literal + "'");
+                            throw new AssertionError(
+                                "fromJdbcString: invalid date/time value '" + literal + "'"
+                            );
                         }
                         switch (typeName) {
                             case TIMESTAMP:
                                 v = TimestampString.fromCalendarFields(ts.getCalendar())
-                                                .withFraction(ts.getFraction());
+                                    .withFraction(ts.getFraction());
                                 break;
                             case TIME:
                                 v = TimeString.fromCalendarFields(ts.getCalendar())
-                                                .withFraction(ts.getFraction());
+                                    .withFraction(ts.getFraction());
                                 break;
                             default:
                                 throw new AssertionError();
@@ -1087,8 +1143,9 @@ public class RexLiteral extends RexNode {
         if (this == obj) {
             return true;
         }
-        return (obj instanceof RexLiteral) && equals(((RexLiteral) obj).value, value)
-                        && equals(((RexLiteral) obj).type, type);
+        return (obj instanceof RexLiteral)
+            && equals(((RexLiteral) obj).value, value)
+            && equals(((RexLiteral) obj).type, type);
     }
 
     public int hashCode() {

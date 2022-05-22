@@ -33,8 +33,9 @@ public class GeomesaToEnumerableConverterRule extends ConverterRule {
     /**
      * ConverterRule Instance
      */
-    public static final ConverterRule INSTANCE =
-                    new GeomesaToEnumerableConverterRule(RelFactories.LOGICAL_BUILDER);
+    public static final ConverterRule INSTANCE = new GeomesaToEnumerableConverterRule(
+        RelFactories.LOGICAL_BUILDER
+    );
 
     /**
      * Construct Function with only One Parameter
@@ -42,9 +43,14 @@ public class GeomesaToEnumerableConverterRule extends ConverterRule {
      * @param relBuilderFactory RelNoade Factory
      */
     public GeomesaToEnumerableConverterRule(RelBuilderFactory relBuilderFactory) {
-        super(RelNode.class, (Predicate<? super RelNode>) relNode -> true,
-                        GeomesaConstant.CONVENTION(), EnumerableConvention.INSTANCE,
-                        relBuilderFactory, "GeomesaToEnumerableConverterRule");
+        super(
+            RelNode.class,
+            (Predicate<? super RelNode>) relNode -> true,
+            GeomesaConstant.CONVENTION(),
+            EnumerableConvention.INSTANCE,
+            relBuilderFactory,
+            "GeomesaToEnumerableConverterRule"
+        );
     }
 
     /**

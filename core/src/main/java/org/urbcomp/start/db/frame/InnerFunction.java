@@ -21,7 +21,7 @@ import java.lang.annotation.*;
  * @since 0.1.0
  */
 @Documented
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InnerFunction {
     String functionName();
