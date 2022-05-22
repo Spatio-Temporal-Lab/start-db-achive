@@ -191,12 +191,19 @@ public enum SqlTypeFamily implements RelDataTypeFamily {
                 return ImmutableList.of(SqlTypeName.CURSOR);
             case COLUMN_LIST:
                 return ImmutableList.of(SqlTypeName.COLUMN_LIST);
-                // start-db add start
+            // start-db add start
             case GEOMETRY:
-                return ImmutableList.of(SqlTypeName.GEOMETRY, SqlTypeName.POINT,
-                        SqlTypeName.MULTIPOINT, SqlTypeName.LINESTRING, SqlTypeName.MULTILINESTRING,
-                        SqlTypeName.POLYGON, SqlTypeName.MULTIPOLYGON, SqlTypeName.GEOMETRYCOLLECTION);
-                // start-db add end
+                return ImmutableList.of(
+                    SqlTypeName.GEOMETRY,
+                    SqlTypeName.POINT,
+                    SqlTypeName.MULTIPOINT,
+                    SqlTypeName.LINESTRING,
+                    SqlTypeName.MULTILINESTRING,
+                    SqlTypeName.POLYGON,
+                    SqlTypeName.MULTIPOLYGON,
+                    SqlTypeName.GEOMETRYCOLLECTION
+                );
+            // start-db add end
             default:
                 throw new IllegalArgumentException();
         }
@@ -256,10 +263,10 @@ public enum SqlTypeFamily implements RelDataTypeFamily {
                 return factory.createSqlType(SqlTypeName.CURSOR);
             case COLUMN_LIST:
                 return factory.createSqlType(SqlTypeName.COLUMN_LIST);
-                // start-db add start
+            // start-db add start
             case GEOMETRY:
                 return factory.createSqlType(SqlTypeName.GEOMETRY);
-                // start-db add end
+            // start-db add end
             default:
                 return null;
         }

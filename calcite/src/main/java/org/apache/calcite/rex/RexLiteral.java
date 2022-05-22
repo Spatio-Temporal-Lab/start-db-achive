@@ -356,7 +356,7 @@ public class RexLiteral extends RexNode {
             case ROW:
             case MULTISET:
                 return value instanceof List;
-                // start-db add start
+            // start-db add start
             case POINT:
             case MULTIPOINT:
             case LINESTRING:

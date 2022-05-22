@@ -409,13 +409,13 @@ public class ColumnMetaData {
         STRING(String.class, Types.VARCHAR),
 
         // start-db add start
-        POINT(Point.class,100001),
-        MULTI_POINT(MultiPoint.class,100002),
-        LINESTRING(LineString.class,100003),
-        MULTI_LINESTRING(MultiLineString.class,100004),
-        POLYGON(Polygon.class,100005),
-        MULTI_POLYGON(MultiPolygon.class,100006),
-        GEOMETRY(Geometry.class,100007),
+        POINT(Point.class, 100001),
+        MULTI_POINT(MultiPoint.class, 100002),
+        LINESTRING(LineString.class, 100003),
+        MULTI_LINESTRING(MultiLineString.class, 100004),
+        POLYGON(Polygon.class, 100005),
+        MULTI_POLYGON(MultiPolygon.class, 100006),
+        GEOMETRY(Geometry.class, 100007),
         // start-db add end
 
         /**
@@ -613,7 +613,9 @@ public class ColumnMetaData {
             // start-db modified start
             final Class<?> originCls = SqlType.valueOf(id).boxedClass();
             final Class<?> deepCls = this.rep.clazz;
-            return originCls == Object.class || Geometry.class.isAssignableFrom(deepCls) ? deepCls.getName() : originCls.getName();
+            return originCls == Object.class || Geometry.class.isAssignableFrom(deepCls)
+                ? deepCls.getName()
+                : originCls.getName();
             // start-db modified end
         }
 

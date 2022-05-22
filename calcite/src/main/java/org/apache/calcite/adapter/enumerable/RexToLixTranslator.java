@@ -832,8 +832,11 @@ public class RexToLixTranslator implements RexVisitor<RexToLixTranslator.Result>
             case GEOMETRY:
                 final Geometry geom = literal.getValueAs(Geometry.class);
                 final String wkt = geom.toString();
-                return Expressions.call(null, BuiltInMethod.ST_GEOM_FROM_TEXT.method,
-                        Expressions.constant(wkt));
+                return Expressions.call(
+                    null,
+                    BuiltInMethod.ST_GEOM_FROM_TEXT.method,
+                    Expressions.constant(wkt)
+                );
             case SYMBOL:
                 value2 = literal.getValueAs(Enum.class);
                 javaClass = value2.getClass();

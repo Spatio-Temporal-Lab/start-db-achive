@@ -224,7 +224,7 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
                 case BINARY:
                 case VARBINARY:
                     return ByteString.class;
-                    // start-db add start
+                // start-db add start
                 case POINT:
                 case MULTIPOINT:
                 case LINESTRING:
@@ -234,7 +234,7 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
                 case GEOMETRYCOLLECTION:
                 case GEOMETRY:
                     return Geometry.class;
-                    // start-db add end
+                // start-db add end
                 case SYMBOL:
                     return Enum.class;
                 case ANY:

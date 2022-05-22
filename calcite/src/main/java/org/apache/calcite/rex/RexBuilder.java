@@ -1623,7 +1623,7 @@ public class RexBuilder {
                     operands.add(e);
                 }
                 return new RexLiteral((Comparable) FlatLists.of(operands), type, sqlTypeName);
-                // start-db add start
+            // start-db add start
             case POINT:
             case MULTIPOINT:
             case LINESTRING:
@@ -1633,7 +1633,7 @@ public class RexBuilder {
             case GEOMETRYCOLLECTION:
             case GEOMETRY:
                 return new RexLiteral((Comparable) value, guessType(value), SqlTypeName.GEOMETRY);
-                // start-db add end
+            // start-db add end
             case ANY:
                 return makeLiteral(value, guessType(value), allowCast);
             default:
