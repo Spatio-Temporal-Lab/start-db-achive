@@ -1,12 +1,23 @@
 /*
- * Copyright 2022 ST-Lab
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the
- * GNU General Public License version 2 as published by the Free Software Foundation.
+ * https://github.com/apache/calcite
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to you under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.calcite.jdbc;
@@ -54,7 +65,7 @@ import java.util.stream.Collectors;
  */
 public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeFactory {
     private final Map<List<Pair<Type, Boolean>>, SyntheticRecordType> syntheticTypes =
-                    new HashMap<>();
+        new HashMap<>();
 
     public JavaTypeFactoryImpl() {
         this(RelDataTypeSystem.DEFAULT);
@@ -70,8 +81,9 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
             if (!Modifier.isStatic(field.getModifiers())) {
                 // FIXME: watch out for recursion
                 final Type fieldType = fieldType(field);
-                list.add(new RelDataTypeFieldImpl(field.getName(), list.size(),
-                                createType(fieldType)));
+                list.add(
+                    new RelDataTypeFieldImpl(field.getName(), list.size(), createType(fieldType))
+                );
             }
         }
         return canonize(new JavaRecordType(list, type));
@@ -85,17 +97,26 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
      */
     private Type fieldType(Field field) {
         final Class<?> klass = field.getType();
-        final org.apache.calcite.adapter.java.Array array =
-                        field.getAnnotation(org.apache.calcite.adapter.java.Array.class);
+        final org.apache.calcite.adapter.java.Array array = field.getAnnotation(
+            org.apache.calcite.adapter.java.Array.class
+        );
         if (array != null) {
-            return new Types.ArrayType(array.component(), array.componentIsNullable(),
-                            array.maximumCardinality());
+            return new Types.ArrayType(
+                array.component(),
+                array.componentIsNullable(),
+                array.maximumCardinality()
+            );
         }
-        final org.apache.calcite.adapter.java.Map map =
-                        field.getAnnotation(org.apache.calcite.adapter.java.Map.class);
+        final org.apache.calcite.adapter.java.Map map = field.getAnnotation(
+            org.apache.calcite.adapter.java.Map.class
+        );
         if (map != null) {
-            return new Types.MapType(map.key(), map.keyIsNullable(), map.value(),
-                            map.valueIsNullable());
+            return new Types.MapType(
+                map.key(),
+                map.keyIsNullable(),
+                map.value(),
+                map.valueIsNullable()
+            );
         }
         return klass;
     }
@@ -112,16 +133,18 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
             final Types.ArrayType arrayType = (Types.ArrayType) type;
             final RelDataType componentRelType = createType(arrayType.getComponentType());
             return createArrayType(
-                            createTypeWithNullability(componentRelType,
-                                            arrayType.componentIsNullable()),
-                            arrayType.maximumCardinality());
+                createTypeWithNullability(componentRelType, arrayType.componentIsNullable()),
+                arrayType.maximumCardinality()
+            );
         }
         if (type instanceof Types.MapType) {
             final Types.MapType mapType = (Types.MapType) type;
             final RelDataType keyRelType = createType(mapType.getKeyType());
             final RelDataType valueRelType = createType(mapType.getValueType());
-            return createMapType(createTypeWithNullability(keyRelType, mapType.keyIsNullable()),
-                            createTypeWithNullability(valueRelType, mapType.valueIsNullable()));
+            return createMapType(
+                createTypeWithNullability(keyRelType, mapType.keyIsNullable()),
+                createTypeWithNullability(valueRelType, mapType.valueIsNullable())
+            );
         }
         if (!(type instanceof Class)) {
             throw new UnsupportedOperationException("TODO: implement " + type);
@@ -138,11 +161,15 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
         } else if (clazz.isArray()) {
             return createMultisetType(createType(clazz.getComponentType()), -1);
         } else if (List.class.isAssignableFrom(clazz)) {
-            return createArrayType(createTypeWithNullability(createSqlType(SqlTypeName.ANY), true),
-                            -1);
+            return createArrayType(
+                createTypeWithNullability(createSqlType(SqlTypeName.ANY), true),
+                -1
+            );
         } else if (Map.class.isAssignableFrom(clazz)) {
-            return createMapType(createTypeWithNullability(createSqlType(SqlTypeName.ANY), true),
-                            createTypeWithNullability(createSqlType(SqlTypeName.ANY), true));
+            return createMapType(
+                createTypeWithNullability(createSqlType(SqlTypeName.ANY), true),
+                createTypeWithNullability(createSqlType(SqlTypeName.ANY), true)
+            );
         } else {
             return createStructType(clazz);
         }
@@ -230,13 +257,16 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
     /** Converts a type in Java format to a SQL-oriented type. */
     public static RelDataType toSql(final RelDataTypeFactory typeFactory, RelDataType type) {
         if (type instanceof RelRecordType) {
-            return typeFactory
-                            .createTypeWithNullability(typeFactory.createStructType(
-                                            type.getFieldList().stream()
-                                                            .map(field -> toSql(typeFactory,
-                                                                            field.getType()))
-                                                            .collect(Collectors.toList()),
-                                            type.getFieldNames()), type.isNullable());
+            return typeFactory.createTypeWithNullability(
+                typeFactory.createStructType(
+                    type.getFieldList()
+                        .stream()
+                        .map(field -> toSql(typeFactory, field.getType()))
+                        .collect(Collectors.toList()),
+                    type.getFieldNames()
+                ),
+                type.isNullable()
+            );
         } else if (type instanceof JavaType) {
             SqlTypeName sqlTypeName = type.getSqlTypeName();
             final RelDataType relDataType;
@@ -245,13 +275,17 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
                 // 1. type.getJavaClass() is collection with erased generic type
                 // 2. ElementType returned by JavaType is also of JavaType,
                 // and needs conversion using typeFactory
-                final RelDataType elementType =
-                                toSqlTypeWithNullToAny(typeFactory, type.getComponentType());
+                final RelDataType elementType = toSqlTypeWithNullToAny(
+                    typeFactory,
+                    type.getComponentType()
+                );
                 relDataType = typeFactory.createArrayType(elementType, -1);
             } else if (SqlTypeUtil.isMap(type)) {
                 final RelDataType keyType = toSqlTypeWithNullToAny(typeFactory, type.getKeyType());
-                final RelDataType valueType =
-                                toSqlTypeWithNullToAny(typeFactory, type.getValueType());
+                final RelDataType valueType = toSqlTypeWithNullToAny(
+                    typeFactory,
+                    type.getValueType()
+                );
                 relDataType = typeFactory.createMapType(keyType, valueType);
             } else {
                 relDataType = typeFactory.createSqlType(sqlTypeName);
@@ -261,8 +295,10 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
         return type;
     }
 
-    private static RelDataType toSqlTypeWithNullToAny(final RelDataTypeFactory typeFactory,
-                    RelDataType type) {
+    private static RelDataType toSqlTypeWithNullToAny(
+        final RelDataTypeFactory typeFactory,
+        RelDataType type
+    ) {
         if (type == null) {
             return typeFactory.createSqlType(SqlTypeName.ANY);
         }
@@ -278,8 +314,15 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
         final String name = "Record" + types.size() + "_" + syntheticTypes.size();
         final SyntheticRecordType syntheticType = new SyntheticRecordType(null, name);
         for (final Ord<Type> ord : Ord.zip(types)) {
-            syntheticType.fields.add(new RecordFieldImpl(syntheticType, "f" + ord.i, ord.e,
-                            !Primitive.is(ord.e), Modifier.PUBLIC));
+            syntheticType.fields.add(
+                new RecordFieldImpl(
+                    syntheticType,
+                    "f" + ord.i,
+                    ord.e,
+                    !Primitive.is(ord.e),
+                    Modifier.PUBLIC
+                )
+            );
         }
         return register(syntheticType);
     }
@@ -313,10 +356,14 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
         for (final RelDataTypeField recordField : type.getFieldList()) {
             final Type javaClass = getJavaClass(recordField.getType());
             syntheticType.fields.add(
-                            new RecordFieldImpl(syntheticType, recordField.getName(), javaClass,
-                                            recordField.getType().isNullable()
-                                                            && !Primitive.is(javaClass),
-                                            Modifier.PUBLIC));
+                new RecordFieldImpl(
+                    syntheticType,
+                    recordField.getName(),
+                    javaClass,
+                    recordField.getType().isNullable() && !Primitive.is(javaClass),
+                    Modifier.PUBLIC
+                )
+            );
         }
         return register(syntheticType);
     }
@@ -331,7 +378,7 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
             this.relType = relType;
             this.name = name;
             assert relType == null || Util.isDistinct(relType.getFieldNames())
-                            : "field names not distinct: " + relType;
+                : "field names not distinct: " + relType;
         }
 
         public String getName() {
@@ -355,8 +402,13 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
         private final boolean nullable;
         private final int modifiers;
 
-        RecordFieldImpl(SyntheticRecordType syntheticType, String name, Type type, boolean nullable,
-                        int modifiers) {
+        RecordFieldImpl(
+            SyntheticRecordType syntheticType,
+            String name,
+            Type type,
+            boolean nullable,
+            int modifiers
+        ) {
             this.syntheticType = Objects.requireNonNull(syntheticType);
             this.name = Objects.requireNonNull(name);
             this.type = Objects.requireNonNull(type);

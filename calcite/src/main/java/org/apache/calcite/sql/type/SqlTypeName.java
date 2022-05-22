@@ -1,12 +1,23 @@
 /*
- * Copyright 2022 ST-Lab
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the
- * GNU General Public License version 2 as published by the Free Software Foundation.
+ * https://github.com/apache/calcite
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to you under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.calcite.sql.type;
@@ -44,184 +55,131 @@ import java.util.Set;
  * </ul>
  */
 public enum SqlTypeName {
-    BOOLEAN(PrecScale.NO_NO, false, Types.BOOLEAN, SqlTypeFamily.BOOLEAN), TINYINT(PrecScale.NO_NO,
-                    false, Types.TINYINT, SqlTypeFamily.NUMERIC), SMALLINT(PrecScale.NO_NO, false,
-                                    Types.SMALLINT, SqlTypeFamily.NUMERIC), INTEGER(PrecScale.NO_NO,
-                                                    false, Types.INTEGER,
-                                                    SqlTypeFamily.NUMERIC), BIGINT(PrecScale.NO_NO,
-                                                                    false, Types.BIGINT,
-                                                                    SqlTypeFamily.NUMERIC), DECIMAL(
-                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                    | PrecScale.YES_YES,
-                                                                                    false,
-                                                                                    Types.DECIMAL,
-                                                                                    SqlTypeFamily.NUMERIC), FLOAT(
-                                                                                                    PrecScale.NO_NO,
-                                                                                                    false,
-                                                                                                    Types.FLOAT,
-                                                                                                    SqlTypeFamily.NUMERIC), REAL(
-                                                                                                                    PrecScale.NO_NO,
-                                                                                                                    false,
-                                                                                                                    Types.REAL,
-                                                                                                                    SqlTypeFamily.NUMERIC), DOUBLE(
-                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                    false,
-                                                                                                                                    Types.DOUBLE,
-                                                                                                                                    SqlTypeFamily.NUMERIC), DATE(
-                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                    false,
-                                                                                                                                                    Types.DATE,
-                                                                                                                                                    SqlTypeFamily.DATE), TIME(
-                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO,
-                                                                                                                                                                    false,
-                                                                                                                                                                    Types.TIME,
-                                                                                                                                                                    SqlTypeFamily.TIME), TIME_WITH_LOCAL_TIME_ZONE(
-                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO,
-                                                                                                                                                                                    false,
-                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                    SqlTypeFamily.TIME), TIMESTAMP(
-                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO,
-                                                                                                                                                                                                    false,
-                                                                                                                                                                                                    Types.TIMESTAMP,
-                                                                                                                                                                                                    SqlTypeFamily.TIMESTAMP), TIMESTAMP_WITH_LOCAL_TIME_ZONE(
-                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO,
-                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                    SqlTypeFamily.TIMESTAMP), INTERVAL_YEAR(
-                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_YEAR_MONTH), INTERVAL_YEAR_MONTH(
-                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_YEAR_MONTH), INTERVAL_MONTH(
-                                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_YEAR_MONTH), INTERVAL_DAY(
-                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_DAY_HOUR(
-                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_DAY_MINUTE(
-                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_DAY_SECOND(
-                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_HOUR(
-                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_HOUR_MINUTE(
-                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_HOUR_SECOND(
-                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_MINUTE(
-                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_MINUTE_SECOND(
-                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), INTERVAL_SECOND(
-                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.INTERVAL_DAY_TIME), CHAR(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.CHAR,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.CHARACTER), VARCHAR(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.VARCHAR,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.CHARACTER), BINARY(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.BINARY,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.BINARY), VARBINARY(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.VARBINARY,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.BINARY), NULL(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    true,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.NULL), ANY(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    true,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.JAVA_OBJECT,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.ANY), SYMBOL(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    true,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    null), MULTISET(PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.ARRAY,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.MULTISET), ARRAY(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.ARRAY,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.ARRAY), MAP(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.MAP), DISTINCT(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.DISTINCT,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    null), STRUCTURED(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.STRUCT,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    null), ROW(PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.STRUCT,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    null), OTHER(PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    null), CURSOR(PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ExtraSqlTypes.REF_CURSOR,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.CURSOR), COLUMN_LIST(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.OTHER + 2,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.COLUMN_LIST), DYNAMIC_STAR(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    PrecScale.NO_NO | PrecScale.YES_NO
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | PrecScale.YES_YES,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    true,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Types.JAVA_OBJECT,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    SqlTypeFamily.ANY),
+    BOOLEAN(PrecScale.NO_NO, false, Types.BOOLEAN, SqlTypeFamily.BOOLEAN),
+    TINYINT(PrecScale.NO_NO, false, Types.TINYINT, SqlTypeFamily.NUMERIC),
+    SMALLINT(PrecScale.NO_NO, false, Types.SMALLINT, SqlTypeFamily.NUMERIC),
+    INTEGER(PrecScale.NO_NO, false, Types.INTEGER, SqlTypeFamily.NUMERIC),
+    BIGINT(PrecScale.NO_NO, false, Types.BIGINT, SqlTypeFamily.NUMERIC),
+    DECIMAL(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.DECIMAL,
+        SqlTypeFamily.NUMERIC
+    ),
+    FLOAT(PrecScale.NO_NO, false, Types.FLOAT, SqlTypeFamily.NUMERIC),
+    REAL(PrecScale.NO_NO, false, Types.REAL, SqlTypeFamily.NUMERIC),
+    DOUBLE(PrecScale.NO_NO, false, Types.DOUBLE, SqlTypeFamily.NUMERIC),
+    DATE(PrecScale.NO_NO, false, Types.DATE, SqlTypeFamily.DATE),
+    TIME(PrecScale.NO_NO | PrecScale.YES_NO, false, Types.TIME, SqlTypeFamily.TIME),
+    TIME_WITH_LOCAL_TIME_ZONE(
+        PrecScale.NO_NO | PrecScale.YES_NO,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.TIME
+    ),
+    TIMESTAMP(PrecScale.NO_NO | PrecScale.YES_NO, false, Types.TIMESTAMP, SqlTypeFamily.TIMESTAMP),
+    TIMESTAMP_WITH_LOCAL_TIME_ZONE(
+        PrecScale.NO_NO | PrecScale.YES_NO,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.TIMESTAMP
+    ),
+    INTERVAL_YEAR(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.INTERVAL_YEAR_MONTH),
+    INTERVAL_YEAR_MONTH(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.INTERVAL_YEAR_MONTH),
+    INTERVAL_MONTH(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.INTERVAL_YEAR_MONTH),
+    INTERVAL_DAY(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_DAY_HOUR(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_DAY_MINUTE(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_DAY_SECOND(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_HOUR(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_HOUR_MINUTE(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_HOUR_SECOND(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_MINUTE(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_MINUTE_SECOND(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    INTERVAL_SECOND(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        false,
+        Types.OTHER,
+        SqlTypeFamily.INTERVAL_DAY_TIME
+    ),
+    CHAR(PrecScale.NO_NO | PrecScale.YES_NO, false, Types.CHAR, SqlTypeFamily.CHARACTER),
+    VARCHAR(PrecScale.NO_NO | PrecScale.YES_NO, false, Types.VARCHAR, SqlTypeFamily.CHARACTER),
+    BINARY(PrecScale.NO_NO | PrecScale.YES_NO, false, Types.BINARY, SqlTypeFamily.BINARY),
+    VARBINARY(PrecScale.NO_NO | PrecScale.YES_NO, false, Types.VARBINARY, SqlTypeFamily.BINARY),
+    NULL(PrecScale.NO_NO, true, Types.NULL, SqlTypeFamily.NULL),
+    ANY(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        true,
+        Types.JAVA_OBJECT,
+        SqlTypeFamily.ANY
+    ),
+    SYMBOL(PrecScale.NO_NO, true, Types.OTHER, null),
+    MULTISET(PrecScale.NO_NO, false, Types.ARRAY, SqlTypeFamily.MULTISET),
+    ARRAY(PrecScale.NO_NO, false, Types.ARRAY, SqlTypeFamily.ARRAY),
+    MAP(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.MAP),
+    DISTINCT(PrecScale.NO_NO, false, Types.DISTINCT, null),
+    STRUCTURED(PrecScale.NO_NO, false, Types.STRUCT, null),
+    ROW(PrecScale.NO_NO, false, Types.STRUCT, null),
+    OTHER(PrecScale.NO_NO, false, Types.OTHER, null),
+    CURSOR(PrecScale.NO_NO, false, ExtraSqlTypes.REF_CURSOR, SqlTypeFamily.CURSOR),
+    COLUMN_LIST(PrecScale.NO_NO, false, Types.OTHER + 2, SqlTypeFamily.COLUMN_LIST),
+    DYNAMIC_STAR(
+        PrecScale.NO_NO | PrecScale.YES_NO | PrecScale.YES_YES,
+        true,
+        Types.JAVA_OBJECT,
+        SqlTypeFamily.ANY
+    ),
     /**
      * Spatial type. Though not standard, it is common to several DBs, so we do not flag it
      * 'special' (internal).
      */
-    GEOMETRY(PrecScale.NO_NO, false, ExtraSqlTypes.GEOMETRY,
-                    SqlTypeFamily.GEO), SARG(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ANY);
+    GEOMETRY(PrecScale.NO_NO, false, ExtraSqlTypes.GEOMETRY, SqlTypeFamily.GEO),
+    SARG(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ANY);
 
     public static final int MAX_DATETIME_PRECISION = 3;
 
@@ -236,90 +194,161 @@ public enum SqlTypeName {
     public static final int MAX_INTERVAL_FRACTIONAL_SECOND_PRECISION = 9;
 
     // Cached map of enum values
-    private static final Map<String, SqlTypeName> VALUES_MAP =
-                    Util.enumConstants(SqlTypeName.class);
+    private static final Map<String, SqlTypeName> VALUES_MAP = Util.enumConstants(
+        SqlTypeName.class
+    );
 
     // categorizations used by SqlTypeFamily definitions
 
     // you probably want to use JDK 1.5 support for treating enumeration
     // as collection instead; this is only here to support
     // SqlTypeFamily.ANY
-    public static final List<SqlTypeName> ALL_TYPES = ImmutableList.of(BOOLEAN, INTEGER, VARCHAR,
-                    DATE, TIME, TIMESTAMP, NULL, DECIMAL, ANY, CHAR, BINARY, VARBINARY, TINYINT,
-                    SMALLINT, BIGINT, REAL, DOUBLE, SYMBOL, INTERVAL_YEAR, INTERVAL_YEAR_MONTH,
-                    INTERVAL_MONTH, INTERVAL_DAY, INTERVAL_DAY_HOUR, INTERVAL_DAY_MINUTE,
-                    INTERVAL_DAY_SECOND, INTERVAL_HOUR, INTERVAL_HOUR_MINUTE, INTERVAL_HOUR_SECOND,
-                    INTERVAL_MINUTE, INTERVAL_MINUTE_SECOND, INTERVAL_SECOND,
-                    TIME_WITH_LOCAL_TIME_ZONE, TIMESTAMP_WITH_LOCAL_TIME_ZONE, FLOAT, MULTISET,
-                    DISTINCT, STRUCTURED, ROW, CURSOR, COLUMN_LIST);
+    public static final List<SqlTypeName> ALL_TYPES = ImmutableList.of(
+        BOOLEAN,
+        INTEGER,
+        VARCHAR,
+        DATE,
+        TIME,
+        TIMESTAMP,
+        NULL,
+        DECIMAL,
+        ANY,
+        CHAR,
+        BINARY,
+        VARBINARY,
+        TINYINT,
+        SMALLINT,
+        BIGINT,
+        REAL,
+        DOUBLE,
+        SYMBOL,
+        INTERVAL_YEAR,
+        INTERVAL_YEAR_MONTH,
+        INTERVAL_MONTH,
+        INTERVAL_DAY,
+        INTERVAL_DAY_HOUR,
+        INTERVAL_DAY_MINUTE,
+        INTERVAL_DAY_SECOND,
+        INTERVAL_HOUR,
+        INTERVAL_HOUR_MINUTE,
+        INTERVAL_HOUR_SECOND,
+        INTERVAL_MINUTE,
+        INTERVAL_MINUTE_SECOND,
+        INTERVAL_SECOND,
+        TIME_WITH_LOCAL_TIME_ZONE,
+        TIMESTAMP_WITH_LOCAL_TIME_ZONE,
+        FLOAT,
+        MULTISET,
+        DISTINCT,
+        STRUCTURED,
+        ROW,
+        CURSOR,
+        COLUMN_LIST
+    );
 
     public static final List<SqlTypeName> BOOLEAN_TYPES = ImmutableList.of(BOOLEAN);
 
     public static final List<SqlTypeName> BINARY_TYPES = ImmutableList.of(BINARY, VARBINARY);
 
-    public static final List<SqlTypeName> INT_TYPES =
-                    ImmutableList.of(TINYINT, SMALLINT, INTEGER, BIGINT);
+    public static final List<SqlTypeName> INT_TYPES = ImmutableList.of(
+        TINYINT,
+        SMALLINT,
+        INTEGER,
+        BIGINT
+    );
 
-    public static final List<SqlTypeName> EXACT_TYPES =
-                    combine(INT_TYPES, ImmutableList.of(DECIMAL));
+    public static final List<SqlTypeName> EXACT_TYPES = combine(
+        INT_TYPES,
+        ImmutableList.of(DECIMAL)
+    );
 
     public static final List<SqlTypeName> APPROX_TYPES = ImmutableList.of(FLOAT, REAL, DOUBLE);
 
     public static final List<SqlTypeName> NUMERIC_TYPES = combine(EXACT_TYPES, APPROX_TYPES);
 
-    public static final List<SqlTypeName> FRACTIONAL_TYPES =
-                    combine(APPROX_TYPES, ImmutableList.of(DECIMAL));
+    public static final List<SqlTypeName> FRACTIONAL_TYPES = combine(
+        APPROX_TYPES,
+        ImmutableList.of(DECIMAL)
+    );
 
     public static final List<SqlTypeName> CHAR_TYPES = ImmutableList.of(CHAR, VARCHAR);
 
     public static final List<SqlTypeName> STRING_TYPES = combine(CHAR_TYPES, BINARY_TYPES);
 
-    public static final List<SqlTypeName> DATETIME_TYPES = ImmutableList.of(DATE, TIME,
-                    TIME_WITH_LOCAL_TIME_ZONE, TIMESTAMP, TIMESTAMP_WITH_LOCAL_TIME_ZONE);
+    public static final List<SqlTypeName> DATETIME_TYPES = ImmutableList.of(
+        DATE,
+        TIME,
+        TIME_WITH_LOCAL_TIME_ZONE,
+        TIMESTAMP,
+        TIMESTAMP_WITH_LOCAL_TIME_ZONE
+    );
 
-    public static final Set<SqlTypeName> YEAR_INTERVAL_TYPES =
-                    Sets.immutableEnumSet(SqlTypeName.INTERVAL_YEAR,
-                                    SqlTypeName.INTERVAL_YEAR_MONTH, SqlTypeName.INTERVAL_MONTH);
+    public static final Set<SqlTypeName> YEAR_INTERVAL_TYPES = Sets.immutableEnumSet(
+        SqlTypeName.INTERVAL_YEAR,
+        SqlTypeName.INTERVAL_YEAR_MONTH,
+        SqlTypeName.INTERVAL_MONTH
+    );
 
     public static final Set<SqlTypeName> DAY_INTERVAL_TYPES = Sets.immutableEnumSet(
-                    SqlTypeName.INTERVAL_DAY, SqlTypeName.INTERVAL_DAY_HOUR,
-                    SqlTypeName.INTERVAL_DAY_MINUTE, SqlTypeName.INTERVAL_DAY_SECOND,
-                    SqlTypeName.INTERVAL_HOUR, SqlTypeName.INTERVAL_HOUR_MINUTE,
-                    SqlTypeName.INTERVAL_HOUR_SECOND, SqlTypeName.INTERVAL_MINUTE,
-                    SqlTypeName.INTERVAL_MINUTE_SECOND, SqlTypeName.INTERVAL_SECOND);
+        SqlTypeName.INTERVAL_DAY,
+        SqlTypeName.INTERVAL_DAY_HOUR,
+        SqlTypeName.INTERVAL_DAY_MINUTE,
+        SqlTypeName.INTERVAL_DAY_SECOND,
+        SqlTypeName.INTERVAL_HOUR,
+        SqlTypeName.INTERVAL_HOUR_MINUTE,
+        SqlTypeName.INTERVAL_HOUR_SECOND,
+        SqlTypeName.INTERVAL_MINUTE,
+        SqlTypeName.INTERVAL_MINUTE_SECOND,
+        SqlTypeName.INTERVAL_SECOND
+    );
 
-    public static final Set<SqlTypeName> INTERVAL_TYPES = Sets
-                    .immutableEnumSet(Iterables.concat(YEAR_INTERVAL_TYPES, DAY_INTERVAL_TYPES));
+    public static final Set<SqlTypeName> INTERVAL_TYPES = Sets.immutableEnumSet(
+        Iterables.concat(YEAR_INTERVAL_TYPES, DAY_INTERVAL_TYPES)
+    );
 
-    private static final Map<Integer, SqlTypeName> JDBC_TYPE_TO_NAME = ImmutableMap
-                    .<Integer, SqlTypeName>builder().put(Types.TINYINT, TINYINT)
-                    .put(Types.SMALLINT, SMALLINT).put(Types.BIGINT, BIGINT)
-                    .put(Types.INTEGER, INTEGER).put(Types.NUMERIC, DECIMAL) // REVIEW
-                    .put(Types.DECIMAL, DECIMAL)
+    private static final Map<Integer, SqlTypeName> JDBC_TYPE_TO_NAME = ImmutableMap.<
+        Integer,
+        SqlTypeName>builder()
+        .put(Types.TINYINT, TINYINT)
+        .put(Types.SMALLINT, SMALLINT)
+        .put(Types.BIGINT, BIGINT)
+        .put(Types.INTEGER, INTEGER)
+        .put(Types.NUMERIC, DECIMAL) // REVIEW
+        .put(Types.DECIMAL, DECIMAL)
 
-                    .put(Types.FLOAT, FLOAT).put(Types.REAL, REAL).put(Types.DOUBLE, DOUBLE)
+        .put(Types.FLOAT, FLOAT)
+        .put(Types.REAL, REAL)
+        .put(Types.DOUBLE, DOUBLE)
 
-                    .put(Types.CHAR, CHAR).put(Types.VARCHAR, VARCHAR)
+        .put(Types.CHAR, CHAR)
+        .put(Types.VARCHAR, VARCHAR)
 
-                    // TODO: provide real support for these eventually
-                    .put(ExtraSqlTypes.NCHAR, CHAR).put(ExtraSqlTypes.NVARCHAR, VARCHAR)
+        // TODO: provide real support for these eventually
+        .put(ExtraSqlTypes.NCHAR, CHAR)
+        .put(ExtraSqlTypes.NVARCHAR, VARCHAR)
 
-                    // TODO: additional types not yet supported. See ExtraSqlTypes.
-                    // .put(Types.LONGVARCHAR, Longvarchar)
-                    // .put(Types.CLOB, Clob)
-                    // .put(Types.LONGVARBINARY, Longvarbinary)
-                    // .put(Types.BLOB, Blob)
-                    // .put(Types.LONGNVARCHAR, Longnvarchar)
-                    // .put(Types.NCLOB, Nclob)
-                    // .put(Types.ROWID, Rowid)
-                    // .put(Types.SQLXML, Sqlxml)
+        // TODO: additional types not yet supported. See ExtraSqlTypes.
+        // .put(Types.LONGVARCHAR, Longvarchar)
+        // .put(Types.CLOB, Clob)
+        // .put(Types.LONGVARBINARY, Longvarbinary)
+        // .put(Types.BLOB, Blob)
+        // .put(Types.LONGNVARCHAR, Longnvarchar)
+        // .put(Types.NCLOB, Nclob)
+        // .put(Types.ROWID, Rowid)
+        // .put(Types.SQLXML, Sqlxml)
 
-                    .put(Types.BINARY, BINARY).put(Types.VARBINARY, VARBINARY)
+        .put(Types.BINARY, BINARY)
+        .put(Types.VARBINARY, VARBINARY)
 
-                    .put(Types.DATE, DATE).put(Types.TIME, TIME).put(Types.TIMESTAMP, TIMESTAMP)
-                    .put(Types.BIT, BOOLEAN).put(Types.BOOLEAN, BOOLEAN)
-                    .put(Types.DISTINCT, DISTINCT).put(Types.STRUCT, STRUCTURED)
-                    .put(Types.ARRAY, ARRAY).build();
+        .put(Types.DATE, DATE)
+        .put(Types.TIME, TIME)
+        .put(Types.TIMESTAMP, TIMESTAMP)
+        .put(Types.BIT, BOOLEAN)
+        .put(Types.BOOLEAN, BOOLEAN)
+        .put(Types.DISTINCT, DISTINCT)
+        .put(Types.STRUCT, STRUCTURED)
+        .put(Types.ARRAY, ARRAY)
+        .build();
 
     /**
      * Bitwise-or of flags indicating allowable precision/scale combinations.
@@ -394,8 +423,9 @@ public enum SqlTypeName {
      * @return Whether this combination of precision/scale is valid
      */
     public boolean allowsPrecScale(boolean precision, boolean scale) {
-        int mask = precision ? (scale ? PrecScale.YES_YES : PrecScale.YES_NO)
-                        : (scale ? 0 : PrecScale.NO_NO);
+        int mask = precision
+            ? (scale ? PrecScale.YES_YES : PrecScale.YES_NO)
+            : (scale ? 0 : PrecScale.NO_NO);
         return (signatures & mask) != 0;
     }
 
@@ -579,8 +609,13 @@ public enum SqlTypeName {
                 // a DECIMAL(19, 0) is 2^63 - 1, not 10^19 - 1.
                 switch (limit) {
                     case OVERFLOW:
-                        final BigDecimal other =
-                                        (BigDecimal) BIGINT.getLimit(sign, limit, beyond, -1, -1);
+                        final BigDecimal other = (BigDecimal) BIGINT.getLimit(
+                            sign,
+                            limit,
+                            beyond,
+                            -1,
+                            -1
+                        );
                         if (decimal.compareTo(other) == (sign ? 1 : -1)) {
                             decimal = other;
                         }
@@ -640,7 +675,7 @@ public enum SqlTypeName {
                             // smallest value.
                             return null;
                         }
-                        bytes = new byte[] {0x00};
+                        bytes = new byte[] { 0x00 };
                         break;
                     case OVERFLOW:
                         bytes = new byte[precision + (beyond ? 1 : 0)];
@@ -716,8 +751,9 @@ public enum SqlTypeName {
                         calendar.set(Calendar.HOUR_OF_DAY, 23);
                         calendar.set(Calendar.MINUTE, 59);
                         calendar.set(Calendar.SECOND, 59);
-                        int millis = (precision >= 3) ? 999
-                                        : ((precision == 2) ? 990 : ((precision == 1) ? 900 : 0));
+                        int millis = (precision >= 3)
+                            ? 999
+                            : ((precision == 2) ? 990 : ((precision == 1) ? 900 : 0));
                         calendar.set(Calendar.MILLISECOND, millis);
                         break;
                 }
@@ -760,9 +796,9 @@ public enum SqlTypeName {
                             calendar.set(Calendar.HOUR_OF_DAY, 23);
                             calendar.set(Calendar.MINUTE, 59);
                             calendar.set(Calendar.SECOND, 59);
-                            int millis = (precision >= 3) ? 999
-                                            : ((precision == 2) ? 990
-                                                            : ((precision == 1) ? 900 : 0));
+                            int millis = (precision >= 3)
+                                ? 999
+                                : ((precision == 2) ? 990 : ((precision == 1) ? 900 : 0));
                             calendar.set(Calendar.MILLISECOND, millis);
                         } else {
                             calendar.set(Calendar.YEAR, 1);
@@ -919,11 +955,18 @@ public enum SqlTypeName {
 
     /** Limit. */
     public enum Limit {
-        ZERO, UNDERFLOW, OVERFLOW
+        ZERO,
+        UNDERFLOW,
+        OVERFLOW
     }
 
-    private BigDecimal getNumericLimit(int radix, int exponent, boolean sign, Limit limit,
-                    boolean beyond) {
+    private BigDecimal getNumericLimit(
+        int radix,
+        int exponent,
+        boolean sign,
+        Limit limit,
+        boolean beyond
+    ) {
         switch (limit) {
             case OVERFLOW:
 
@@ -971,18 +1014,27 @@ public enum SqlTypeName {
                 return SqlLiteral.createBinaryString((byte[]) o, pos);
             case DATE:
                 return SqlLiteral.createDate(
-                                o instanceof Calendar ? DateString.fromCalendarFields((Calendar) o)
-                                                : (DateString) o,
-                                pos);
+                    o instanceof Calendar
+                        ? DateString.fromCalendarFields((Calendar) o)
+                        : (DateString) o,
+                    pos
+                );
             case TIME:
                 return SqlLiteral.createTime(
-                                o instanceof Calendar ? TimeString.fromCalendarFields((Calendar) o)
-                                                : (TimeString) o,
-                                0 /* todo */, pos);
+                    o instanceof Calendar
+                        ? TimeString.fromCalendarFields((Calendar) o)
+                        : (TimeString) o,
+                    0 /* todo */,
+                    pos
+                );
             case TIMESTAMP:
-                return SqlLiteral.createTimestamp(o instanceof Calendar
-                                ? TimestampString.fromCalendarFields((Calendar) o)
-                                : (TimestampString) o, 0 /* todo */, pos);
+                return SqlLiteral.createTimestamp(
+                    o instanceof Calendar
+                        ? TimestampString.fromCalendarFields((Calendar) o)
+                        : (TimestampString) o,
+                    0 /* todo */,
+                    pos
+                );
             default:
                 throw Util.unexpected(this);
         }
