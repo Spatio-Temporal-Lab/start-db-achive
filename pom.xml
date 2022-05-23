@@ -12,6 +12,7 @@
         <module>test</module>
         <module>calcite</module>
         <module>core</module>
+        <module>server</module>
     </modules>
 
     <properties>
