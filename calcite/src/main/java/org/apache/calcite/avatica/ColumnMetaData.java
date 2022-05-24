@@ -410,12 +410,13 @@ public class ColumnMetaData {
 
         // start-db add start
         POINT(Point.class, 100001),
-        MULTI_POINT(MultiPoint.class, 100002),
+        MULTIPOINT(MultiPoint.class, 100002),
         LINESTRING(LineString.class, 100003),
-        MULTI_LINESTRING(MultiLineString.class, 100004),
+        MULTILINESTRING(MultiLineString.class, 100004),
         POLYGON(Polygon.class, 100005),
-        MULTI_POLYGON(MultiPolygon.class, 100006),
+        MULTIPOLYGON(MultiPolygon.class, 100006),
         GEOMETRY(Geometry.class, 100007),
+        GEOMETRYCOLLECTION(GeometryCollection.class, 100008),
         // start-db add end
 
         /**

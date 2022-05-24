@@ -187,7 +187,7 @@ public enum SqlTypeName {
     MULTIPOLYGON(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
     GEOMETRYCOLLECTION(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
     // start-db add end
-    GEOMETRY(PrecScale.NO_NO, false, ExtraSqlTypes.GEOMETRY, SqlTypeFamily.GEO),
+    GEOMETRY(PrecScale.NO_NO, false, ExtraSqlTypes.GEOMETRY, SqlTypeFamily.GEOMETRY),
     SARG(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ANY);
 
     public static final int MAX_DATETIME_PRECISION = 3;
