@@ -11,14 +11,12 @@
 
 package org.urbcomp.start.db;
 
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
-import org.geotools.data.FeatureWriter;
-import org.geotools.data.Transaction;
+import org.geotools.data.*;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.filter.identity.FeatureIdImpl;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.util.factory.Hints;
+import org.junit.Test;
 import org.locationtech.geomesa.utils.geotools.SimpleFeatureTypes;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -43,16 +41,22 @@ import java.util.Map;
  * Double, LineString, TimeStamp in conclusion.
  *
  * @author stan
- * @since 0.1.0
  * @date 2022/05/21 0:46
+ * @since 0.1.0
  */
 
-public class BatchUpLoader {
+public class BatchUpLoader implements Closeable {
 
     private final SimpleDateFormat sdf = new SimpleDateFormat(Constant.TIME_STAMP_PARSER);
     private FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
     private DataStore dataStore;
     private SimpleFeatureType sft;
+    private final String TABLE_NAME = "citibike-tripdata";
+
+    public BatchUpLoader() throws IOException {
+        mkConnection();
+        createTable();
+    }
 
     /**
      * used to change type 'date' into 'timestamp'
@@ -66,11 +70,10 @@ public class BatchUpLoader {
     /**
      * used to make connection with geomesa-hbase datastore
      */
-    private void mkConnection(String tableName) throws IOException {
-
+    private void mkConnection() throws IOException {
         Map<String, String> params = new HashMap<>();
-        params.put("hbase.catalog", tableName);
-        params.put("hbase.zookeepers", "localhost:2181,...");
+        params.put("hbase.catalog", TABLE_NAME);
+        params.put("hbase.zookeepers", "localhost:2181");
 
         this.dataStore = DataStoreFinder.getDataStore(params);
     }
@@ -78,34 +81,34 @@ public class BatchUpLoader {
     /**
      * used to set up a simple feature type
      */
-    private void setTable() throws IOException {
-
+    private void createTable() throws IOException {
+        if (this.dataStore.getSchema(TABLE_NAME) != null) {
+            return;
+        }
         this.sft = SimpleFeatureTypes.createType(
-            "citibike-tripdata",
-            "idx:Integer,"
-                + "ride_id:String,"
-                + "rideable_type:String,"
-                + "started_at:Timestamp,"
-                + "ended_at:Timestamp,"
-                + "start_station_name:String,"
-                + "start_station_id:Double,"
-                + "start_point:Point:srid=4326,"
-                + "end_station_name:String,"
-                + "end_station_id:Double,"
-                + "end_point:Point:srid=4326,"
-                + "track:LineString:srid=4326,"
-                + "member_casual:String"
+                TABLE_NAME,
+                "idx:Integer,"
+                        + "ride_id:String,"
+                        + "rideable_type:String,"
+                        + "started_at:Timestamp,"
+                        + "ended_at:Timestamp,"
+                        + "start_station_name:String,"
+                        + "start_station_id:Double,"
+                        + "start_point:Point:srid=4326,"
+                        + "end_station_name:String,"
+                        + "end_station_id:Double,"
+                        + "end_point:Point:srid=4326,"
+                        + "track:LineString:srid=4326,"
+                        + "member_casual:String"
         );
-
-        // this.dataStore.createSchema(this.sft);
+        this.dataStore.createSchema(this.sft);
     }
 
     /**
      * used to ingest data into geomesa-hbase
      */
     private void writeFeature(DataStore dataStore, SimpleFeatureType sft, SimpleFeature feature)
-        throws IOException {
-
+            throws IOException {
         this.writer = dataStore.getFeatureWriterAppend(sft.getTypeName(), Transaction.AUTO_COMMIT);
         SimpleFeature toWrite = this.writer.next();
         toWrite.setAttributes(feature.getAttributes());
@@ -120,7 +123,6 @@ public class BatchUpLoader {
      * used to close datastore of geomesa-hbase
      */
     private void writeClose() throws IOException {
-
         this.writer.close();
     }
 
@@ -129,7 +131,7 @@ public class BatchUpLoader {
      */
     private BufferedReader readCsv(String csvFile) throws IOException {
         BufferedReader reader = new BufferedReader(
-            new InputStreamReader(new FileInputStream(csvFile), StandardCharsets.UTF_8)
+                new InputStreamReader(new FileInputStream(csvFile), StandardCharsets.UTF_8)
         );
         System.out.println("Header : \n" + reader.readLine());
 
@@ -140,20 +142,20 @@ public class BatchUpLoader {
      * used to create simpleFeature
      */
     private SimpleFeature dataSetUp(
-        String idx,
-        String ride_id,
-        String rideable_type,
-        String started_at,
-        String ended_at,
-        String start_station_name,
-        String start_station_id,
-        String start_lng,
-        String start_lat,
-        String end_station_name,
-        String end_station_id,
-        String end_lng,
-        String end_lat,
-        String member_casual
+            String idx,
+            String ride_id,
+            String rideable_type,
+            String started_at,
+            String ended_at,
+            String start_station_name,
+            String start_station_id,
+            String start_lng,
+            String start_lat,
+            String end_station_name,
+            String end_station_id,
+            String end_lng,
+            String end_lat,
+            String member_casual
     ) throws ParseException {
 
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(this.sft);
@@ -170,7 +172,7 @@ public class BatchUpLoader {
         featureBuilder.set("start_station_id", Double.parseDouble(start_station_id));
 
         Point startPoint = geometryFactory.createPoint(
-            new Coordinate(Double.parseDouble(start_lng), Double.parseDouble(start_lat))
+                new Coordinate(Double.parseDouble(start_lng), Double.parseDouble(start_lat))
         );
         featureBuilder.set("start_point", startPoint);
 
@@ -178,11 +180,11 @@ public class BatchUpLoader {
         featureBuilder.set("end_station_id", Double.parseDouble(end_station_id));
 
         Point endPoint = geometryFactory.createPoint(
-            new Coordinate(Double.parseDouble(end_lng), Double.parseDouble(end_lat))
+                new Coordinate(Double.parseDouble(end_lng), Double.parseDouble(end_lat))
         );
         featureBuilder.set("end_point", endPoint);
 
-        Coordinate[] coordinates = { startPoint.getCoordinate(), endPoint.getCoordinate() };
+        Coordinate[] coordinates = {startPoint.getCoordinate(), endPoint.getCoordinate()};
         LineString lineString = geometryFactory.createLineString(coordinates);
 
         featureBuilder.set("track", lineString);
@@ -194,41 +196,70 @@ public class BatchUpLoader {
         return featureBuilder.buildFeature(String.valueOf(Integer.parseInt(idx)));
     }
 
+    public void readData() throws IOException {
+        final FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(new Query(TABLE_NAME), Transaction.AUTO_COMMIT);
+
+        while (reader.hasNext()) {
+            final SimpleFeature f = reader.next();
+            System.out.println(f);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (dataStore != null) {
+            dataStore.dispose();
+        }
+    }
+
     /**
      * 若取消对应的注释，则为插入至geomesa-hbase，否则只构建并打印geotools要素
      */
-    public static void main(String[] args) throws ParseException, IOException {
-        BatchUpLoader upLoader = new BatchUpLoader();
-        // upLoader.mkConnection("citibike_tripdata");
-        upLoader.setTable();
-        // upLoader.dataStore.createSchema(upLoader.sft);
-        BufferedReader reader = upLoader.readCsv(Constant.CSV_FILE);
+    @Test
+    public void insert() throws ParseException, IOException {
+        // 数据量有点多，测试时插一部分
+        int n = 100;
+        try (BatchUpLoader upLoader = new BatchUpLoader()) {
+            BufferedReader reader = upLoader.readCsv(Constant.CSV_FILE);
 
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] split = line.split(Constant.COMMA_STR);
+            String line;
+            int i = 0;
+            while ((line = reader.readLine()) != null) {
+                i++;
+                String[] split = line.split(Constant.COMMA_STR);
 
-            SimpleFeature feature = upLoader.dataSetUp(
-                split[0],
-                split[1],
-                split[2],
-                split[3],
-                split[4],
-                split[5],
-                split[6],
-                split[10],
-                split[9],
-                split[7],
-                split[8],
-                split[12],
-                split[11],
-                split[13]
-            );
+                SimpleFeature feature = upLoader.dataSetUp(
+                        split[0],
+                        split[1],
+                        split[2],
+                        split[3],
+                        split[4],
+                        split[5],
+                        split[6],
+                        split[10],
+                        split[9],
+                        split[7],
+                        split[8],
+                        split[12],
+                        split[11],
+                        split[13]
+                );
 
-            System.out.println(feature);
-            // upLoader.writeFeature(upLoader.dataStore, upLoader.sft, feature);
-            // upLoader.writeClose();
+                System.out.println(feature);
+                upLoader.writeFeature(upLoader.dataStore, upLoader.sft, feature);
+                upLoader.writeClose();
+                if (i > n) {
+                    break;
+                }
+            }
         }
-        // upLoader.dataStore.dispose();
     }
+
+    @Test
+    public void read() throws IOException {
+        try (BatchUpLoader upLoader = new BatchUpLoader()) {
+            upLoader.readData();
+        }
+    }
+
 }
