@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.urbcomp</groupId>
@@ -9,6 +10,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>test</module>
+        <module>calcite</module>
         <module>core</module>
     </modules>
 
@@ -41,6 +43,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- start-db modules -->
+            <dependency>
+                <groupId>org.urbcomp</groupId>
+                <artifactId>calcite</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
             <!--  Calcite Dependency  -->
             <dependency>
                 <groupId>org.apache.calcite</groupId>
@@ -260,19 +269,28 @@
                 <configuration>
                     <java>
                         <eclipse>
-                            <file>${maven.multiModuleProjectDirectory}/conventions/eclipse-formatter.xml</file>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <file>
+                                ${maven.multiModuleProjectDirectory}/conventions/eclipse-formatter.xml
+                            </file>
                         </eclipse>
                         <licenseHeader>
-                            <file>${maven.multiModuleProjectDirectory}/conventions/license-header</file>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <file>${maven.multiModuleProjectDirectory}/conventions/license-header
+                            </file>
                         </licenseHeader>
                     </java>
                     <scala>
                         <scalafmt>
                             <version>2.0.1</version>
-                            <file>${maven.multiModuleProjectDirectory}/conventions/scalafmt.conf</file>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <file>${maven.multiModuleProjectDirectory}/conventions/scalafmt.conf
+                            </file>
                         </scalafmt>
                         <licenseHeader>
-                            <file>${maven.multiModuleProjectDirectory}/conventions/license-header</file>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <file>${maven.multiModuleProjectDirectory}/conventions/license-header
+                            </file>SQlTy
                         </licenseHeader>
                     </scala>
                 </configuration>

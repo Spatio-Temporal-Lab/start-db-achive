@@ -18,6 +18,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.urbcomp</groupId>
+            <artifactId>calcite</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.calcite</groupId>
             <artifactId>calcite-core</artifactId>
         </dependency>
