@@ -21,11 +21,11 @@ import org.urbcomp.start.db.metadata.mapper.TableMapper;
 import java.util.List;
 
 /**
- * This class is the implementation class of IAccessor.The basic function of metadata interaction of
- * fields is realized.
+ * @Description This class is the implementation class of IAccessor.The basic functions of metadata
+ *              interaction of fields are realized.
  * 
  * @author Wang Bohong
- * @Date: 2022-05-20
+ * @Date 2022-05-20
  */
 public class FieldAccessor implements IAccessor<Field> {
 

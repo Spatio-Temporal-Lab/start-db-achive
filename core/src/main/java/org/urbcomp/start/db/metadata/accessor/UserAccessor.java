@@ -19,8 +19,8 @@ import org.urbcomp.start.db.metadata.mapper.UserMapper;
 import java.util.List;
 
 /**
- * @Description This class is the implementation class of IAccessor.The basic function of metadata
- *              interaction of users is realized.
+ * @Description This class is the implementation class of IAccessor.The basic functions of metadata
+ *              interaction of users are realized.
  *
  * @author zaiyuan
  * @date 2022-05-01 15:17:07

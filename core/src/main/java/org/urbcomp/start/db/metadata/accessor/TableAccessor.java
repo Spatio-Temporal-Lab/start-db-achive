@@ -21,12 +21,12 @@ import org.urbcomp.start.db.metadata.mapper.TableMapper;
 import java.util.List;
 
 /**
- * @Description: This class is the implementation class of IAccessor.The basic function of metadata
- *               interaction of tables is realized.
+ * @Description This class is the implementation class of IAccessor.The basic functions of metadata
+ *              interaction of tables are realized.
  * 
- * @author : Wang Bohong
- * @Since: 0.1.0
- * @Date: 2022-05-21
+ * @author Wang Bohong
+ * @Since 0.1.0
+ * @Date 2022-05-21
  */
 public class TableAccessor implements IAccessor<Table> {
 

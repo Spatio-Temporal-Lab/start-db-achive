@@ -12,7 +12,7 @@
 package org.urbcomp.start.db.metadata.entity;
 
 /**
- * This class is used to encapsulate the basic information of field
+ * @Description This class is used to encapsulate the basic information of field
  *
  * @author Wang Bohong
  * @date 2022-05-20 16:40:19
