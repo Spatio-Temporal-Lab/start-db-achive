@@ -612,7 +612,9 @@ public class ColumnMetaData {
 
         public String columnClassName() {
             // start-db modified start
+            // SQL Data Type
             final Class<?> originCls = SqlType.valueOf(id).boxedClass();
+            // Java Data Type
             final Class<?> deepCls = this.rep.clazz;
             return originCls == Object.class || Geometry.class.isAssignableFrom(deepCls)
                 ? deepCls.getName()
