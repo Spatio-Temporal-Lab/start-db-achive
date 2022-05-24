@@ -9,3 +9,10 @@ services:
       MYSQL_DATABASE: meta_data
     ports:
       - '3306:3306'
+  geomesa-hbase:
+    image: jimolonely1234/geomesa-hbase:latest
+    hostname: geomesa-hbase-local
+    ports:
+      - '2181:2181'
+      - '16000:16000'
+      - '16020:16020'
