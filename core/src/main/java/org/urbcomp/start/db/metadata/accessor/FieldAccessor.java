@@ -21,8 +21,8 @@ import org.urbcomp.start.db.metadata.mapper.TableMapper;
 import java.util.List;
 
 /**
- * @Description This class is the implementation class of IAccessor.The basic functions of metadata
- *              interaction of fields are realized.
+ * This class is the implementation class of IAccessor.The basic functions of metadata interaction
+ * of fields are realized.
  * 
  * @author Wang Bohong
  * @Date 2022-05-20
@@ -41,8 +41,9 @@ public class FieldAccessor implements IAccessor<Field> {
     }
 
     /**
-     *
-     * @return
+     * overloading method
+     * 
+     * @return list of fields
      */
     public List<Field> selectAll() {
         return selectAll(true);
@@ -63,7 +64,7 @@ public class FieldAccessor implements IAccessor<Field> {
     /**
      * overloading method
      * 
-     * @param id
+     * @param id id
      * @return field instance
      */
     public Field selectById(long id) {
@@ -85,7 +86,7 @@ public class FieldAccessor implements IAccessor<Field> {
     /**
      * overloading method
      * 
-     * @param name
+     * @param name field name
      * @return field instance
      */
     public Field selectByName(String name) {
@@ -224,14 +225,14 @@ public class FieldAccessor implements IAccessor<Field> {
      * close operation
      */
     @Override
-    public void close() throws Exception {
+    public void close() {
         SqlSessionUtil.getSession(false).close();
     }
 
     /**
      * constraint check
      * 
-     * @param field
+     * @param field field to be inserted
      * @return whether the instance to be inserted is valid
      */
     private boolean isValid(Field field) {

@@ -21,11 +21,10 @@ import org.urbcomp.start.db.metadata.mapper.TableMapper;
 import java.util.List;
 
 /**
- * @Description This class is the implementation class of IAccessor.The basic functions of metadata
- *              interaction of tables are realized.
+ * This class is the implementation class of IAccessor.The basic functions of metadata interaction
+ * of tables are realized.
  * 
  * @author Wang Bohong
- * @Since 0.1.0
  * @Date 2022-05-21
  */
 public class TableAccessor implements IAccessor<Table> {
@@ -178,7 +177,7 @@ public class TableAccessor implements IAccessor<Table> {
     /**
      * overloeading method
      * 
-     * @param id
+     * @param id id
      * @return number of affected rows
      */
     public long deleteById(long id) {
@@ -216,14 +215,14 @@ public class TableAccessor implements IAccessor<Table> {
 
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         SqlSessionUtil.getSession(false).close();
     }
 
     /**
      * constraint about insert
      * 
-     * @param table
+     * @param table table to be inserted
      * @return isValid
      */
     private boolean isValid(Table table) {

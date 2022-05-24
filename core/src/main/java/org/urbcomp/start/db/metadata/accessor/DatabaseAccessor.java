@@ -20,11 +20,11 @@ import org.urbcomp.start.db.metadata.mapper.UserMapper;
 import java.util.List;
 
 /**
- * @Description This class is the implementation class of IAccessor.The basic functions of metadata
- *              interaction of databases are realized.
+ * This class is the implementation class of IAccessor.The basic functions of metadata interaction
+ * of databases are realized.
  * 
- * @authour WangBohong
- * @Date 2022-05-21
+ * @author WangBohong
+ * @date 2022-05-21
  */
 public class DatabaseAccessor implements IAccessor<Database> {
 
@@ -217,7 +217,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
      * close session
      */
     @Override
-    public void close() throws Exception {
+    public void close() {
         SqlSessionUtil.getSession(false).close();
     }
 
@@ -243,7 +243,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
         // make sure dbName does not exist.
         List<String> names = getMapper(true).selectAllName();
         for (String curName : names) {
-            if (names.equals(curName))
+            if (name.equals(curName))
                 return false;
 
         }
