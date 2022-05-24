@@ -138,7 +138,9 @@ public class DatabaseAccessor implements IAccessor<Database> {
      */
     @Override
     public long insert(Database database, boolean commit) {
-        if (!isValid(database)) return -1;
+        if (!isValid(database)) {
+            return -1;
+        }
         return getMapper(commit).insert(database);
     }
 
@@ -237,10 +239,11 @@ public class DatabaseAccessor implements IAccessor<Database> {
             }
         }
         // make sure dbName does not exist.
-        List<String> names = getMapper(true).selectAllName();
-        for (String curName : names) {
-            if (name.equals(curName)) return false;
-
+        List<Database> names = getMapper(true).selectAll();
+        for (Database curDb : names) {
+            if (curDb.getName().equals(name) && curDb.getUserId() == userId) {
+                return false;
+            }
         }
         return valid;
     }
