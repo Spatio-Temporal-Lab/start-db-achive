@@ -12,6 +12,14 @@
         FROM sys_table
         WHERE id = #{id};
     </select>
+    <select id="selectAllId" resultType="java.lang.Long">
+        SELECT id
+        FROM sys_table
+    </select>
+    <select id="selectAllName" resultType="java.lang.String">
+        SELECT distinct name
+        from sys_table
+    </select>
     <select id="selectByName" resultType="org.urbcomp.start.db.metadata.entity.Table">
         SELECT *
         FROM sys_table

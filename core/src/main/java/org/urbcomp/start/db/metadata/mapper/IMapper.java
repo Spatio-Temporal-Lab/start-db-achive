@@ -25,11 +25,25 @@ import java.util.List;
 public interface IMapper<T extends AbstractEntity> {
 
     /**
-     * select all entity in table
+     * select all entities in table
      * 
      * @return list of entity instance
      */
     List<T> selectAll();
+
+    /**
+     *  select all ids in table
+     *
+     * @return  list of entity id
+     */
+    List<Long> selectAllId();
+
+    /**
+     * select all names in table
+     *
+     * @return
+     */
+    List<String> selectAllName();
 
     /**
      * select one entity in table based on id

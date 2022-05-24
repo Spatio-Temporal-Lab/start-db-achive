@@ -12,9 +12,7 @@
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
-import org.urbcomp.start.db.metadata.SqlSessionUtilManual;
 import org.urbcomp.start.db.metadata.entity.Database;
-import org.urbcomp.start.db.metadata.entity.User;
 import org.urbcomp.start.db.metadata.mapper.DatabaseMapper;
 import org.urbcomp.start.db.metadata.mapper.IMapper;
 import org.urbcomp.start.db.metadata.mapper.UserMapper;
@@ -22,7 +20,7 @@ import org.urbcomp.start.db.metadata.mapper.UserMapper;
 import java.util.List;
 
 /**
- * Accessor for Database
+ * @Description:    This class is the implementation class of IAccessor.The basic function of metadata interaction of databases is realized.
  * 
  * @authour: wangbohong
  * @Date: 2022-05-21
@@ -36,13 +34,13 @@ public class DatabaseAccessor implements IAccessor<Database> {
      */
     @Override
     public List<Database> selectAll(boolean commit) {
-        if (commit) {
-            return getMapper().selectAll();
-        } else {
-            return getMapperManual().selectAll();
-        }
+        return getMapper(commit).selectAll();
     }
 
+    /**
+     * overloading method
+     * @return list of database instance
+     */
     public List<Database> selectAll() {
         return selectAll(true);
     }
@@ -56,34 +54,72 @@ public class DatabaseAccessor implements IAccessor<Database> {
      */
     @Override
     public Database selectById(long id, boolean commit) {
-        if (commit) {
-            return getMapper().selectById(id);
-        } else {
-            return getMapperManual().selectById(id);
-        }
+        return getMapper(commit).selectById(id);
     }
 
+    /**
+     * overloading method
+     * @param id    id
+     * @return one database instance
+     */
     public Database selectById(long id) {
         return selectById(id, true);
     }
 
     /**
-     * select one datavase by name
+     * select one database by name
      * 
-     * @param name name
-     * @return database instance
+     * @param name db name
+     * @return one database instance
      */
     @Override
     public Database selectByName(String name, boolean commit) {
-        if (commit) {
-            return getMapper().selectByName(name);
-        } else {
-            return getMapperManual().selectByName(name);
-        }
+        return getMapper(commit).selectByName(name);
     }
 
+    /**
+     * overloading method
+     * @param name  db name
+     * @return  one database instance
+     */
     public Database selectByName(String name) {
         return selectByName(name, true);
+    }
+
+    /**
+     * select all ids in table
+     * @param commit    auto_commit
+     * @return  list of ids
+     */
+    @Override
+    public List<Long> selectAllId(boolean commit) {
+        return getMapper(commit).selectAllId();
+    }
+
+    /**
+     * overloading method
+     * @return list of ids
+     */
+    public List<Long> selectAllId() {
+        return selectAllId(true);
+    }
+
+    /**
+     * select all names in table
+     * @param commit    auto_commit
+     * @return  list of names
+     */
+    @Override
+    public List<String> selectAllName(boolean commit) {
+        return getMapper(commit).selectAllName();
+    }
+
+    /**
+     * overloading method
+     * @return list of names
+     */
+    public List<String> selectAllName() {
+        return selectAllName(true);
     }
 
     /**
@@ -91,19 +127,20 @@ public class DatabaseAccessor implements IAccessor<Database> {
      * 
      * @param database database instance
      * @param commit auto_commit
-     * @return
+     * @return  number of affected rows
      */
     @Override
     public long insert(Database database, boolean commit) {
         if (!isValid(database))
             return -1;
-        if (commit) {
-            return getMapper().insert(database);
-        } else {
-            return getMapperManual().insert(database);
-        }
+        return getMapper(commit).insert(database);
     }
 
+    /**
+     * overloading method
+     * @param database  database instance
+     * @return  number of affected rows
+     */
     public long insert(Database database) {
         return insert(database, true);
     }
@@ -116,11 +153,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
      */
     @Override
     public long update(Database database, boolean commit) {
-        if (commit) {
-            return getMapper().update(database);
-        } else {
-            return getMapperManual().update(database);
-        }
+        return getMapper(commit).update(database);
     }
 
     public long update(Database database) {
@@ -135,11 +168,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
      */
     @Override
     public long deleteById(long id, boolean commit) {
-        if (commit) {
-            return getMapper().deleteById(id);
-        } else {
-            return getMapperManual().deleteById(id);
-        }
+        return getMapper(commit).deleteById(id);
     }
 
     public long deleteById(long id) {
@@ -151,7 +180,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
      */
     @Override
     public void commit() {
-        SqlSessionUtilManual.getSession().commit();
+        SqlSessionUtil.getSession(false).commit();
     }
 
     /**
@@ -159,35 +188,27 @@ public class DatabaseAccessor implements IAccessor<Database> {
      */
     @Override
     public void rollback() {
-        SqlSessionUtilManual.getSession().rollback();
+        SqlSessionUtil.getSession(false).rollback();
     }
 
     /**
      * get mapper instance of database
-     * 
+     * @param commit auto-commit
      * @return IMapper<Database>
      */
     @Override
-    public IMapper<Database> getMapper() {
-        return SqlSessionUtil.getSession().getMapper(DatabaseMapper.class);
+    public IMapper<Database> getMapper(boolean commit) {
+        return SqlSessionUtil.getSession(commit).getMapper(DatabaseMapper.class);
     }
 
-    /**
-     * get mapper instance of database (manual commit)
-     * 
-     * @return IMapper<Database>
-     */
-    @Override
-    public IMapper<Database> getMapperManual() {
-        return SqlSessionUtilManual.getSession().getMapper(DatabaseMapper.class);
-    }
+
 
     /**
      * close session
      */
     @Override
     public void close() throws Exception {
-        SqlSessionUtilManual.getSession().close();
+        SqlSessionUtil.getSession(false).close();
     }
 
     /**
@@ -200,19 +221,20 @@ public class DatabaseAccessor implements IAccessor<Database> {
         boolean valid = false;
         long userId = db.getUserId();
         String name = db.getName();
-        UserMapper userMapper = SqlSessionUtil.getSession().getMapper(UserMapper.class);
-        List<User> users = userMapper.selectAll();
-        for (User user : users) {
-            if (userId == user.getId()) {
+        UserMapper userMapper = SqlSessionUtil.getSession(true).getMapper(UserMapper.class);
+        // make sure that userId exists.
+        List<Long> userIds = userMapper.selectAllId();
+        for (Long id : userIds) {
+            if (userId == id) {
                 valid = true;
                 break;
             }
         }
-        List<Database> databases = getMapper().selectAll();
-        for (Database database : databases) {
-            if (database.getName().equals(name)) {
-                return false;
-            }
+        // make sure dbName does not exist.
+        List<String> names = getMapper(true).selectAllName();
+        for (String curName : names) {
+            if (names.equals(curName)) return false;
+
         }
         return valid;
     }

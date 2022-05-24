@@ -12,6 +12,14 @@
         FROM sys_user
         WHERE id = #{id}
     </select>
+    <select id="selectAllId" resultType="java.lang.Long">
+        SELECT id
+        FROM sys_user
+    </select>
+    <select id="selectAllName" resultType="java.lang.String">
+        SELECT DISTINCT name
+        FROM sys_user
+    </select>
     <select id="selectByName" resultType="org.urbcomp.start.db.metadata.entity.User">
         SELECT *
         FROM sys_user

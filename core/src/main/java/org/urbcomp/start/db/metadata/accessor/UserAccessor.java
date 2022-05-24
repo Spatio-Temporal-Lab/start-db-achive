@@ -12,7 +12,6 @@
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
-import org.urbcomp.start.db.metadata.SqlSessionUtilManual;
 import org.urbcomp.start.db.metadata.entity.User;
 import org.urbcomp.start.db.metadata.mapper.IMapper;
 import org.urbcomp.start.db.metadata.mapper.UserMapper;
@@ -20,7 +19,7 @@ import org.urbcomp.start.db.metadata.mapper.UserMapper;
 import java.util.List;
 
 /**
- * Accessor for User
+ * @Description This class is the implementation class of IAccessor.The basic function of metadata interaction of users is realized.
  *
  * @author zaiyuan
  * @date 2022-05-01 15:17:07
@@ -28,35 +27,22 @@ import java.util.List;
 public class UserAccessor implements IAccessor<User> {
 
     /**
-     * select all users
-     * 
-     * @return list of user instance
-     */
-    public List<User> selectAll() {
-        return getMapper().selectAll();
-    }
-
-    /**
+     * select all users in table
+     *
      * @param commit auto-commit select all users
      * @return list of user instance
      */
     @Override
     public List<User> selectAll(boolean commit) {
-        if (commit) {
-            return getMapper().selectAll();
-        } else {
-            return getMapperManual().selectAll();
-        }
+        return getMapper(commit).selectAll();
     }
 
     /**
-     * select one user in table
-     * 
-     * @param id id
-     * @return user instance
+     * overloading method
+     * @return list of user instance
      */
-    public User selectById(long id) {
-        return getMapper().selectById(id);
+    public List<User> selectAll() {
+        return selectAll(true);
     }
 
     /**
@@ -68,11 +54,7 @@ public class UserAccessor implements IAccessor<User> {
      */
     @Override
     public User selectById(long id, boolean commit) {
-        if (commit) {
-            return getMapper().selectById(id);
-        } else {
-            return getMapperManual().selectById(id);
-        }
+        return getMapper(commit).selectById(id);
     }
 
     /**
@@ -82,7 +64,43 @@ public class UserAccessor implements IAccessor<User> {
      * @return user instance
      */
     public User selectByName(String name) {
-        return getMapper().selectByName(name);
+        return selectByName(name, true);
+    }
+
+    /**
+     * select all ids in table
+     * @param commit    auto_commit
+     * @return  list of ids
+     */
+    @Override
+    public List<Long> selectAllId(boolean commit) {
+        return getMapper(commit).selectAllId();
+    }
+
+    /**
+     * overloading method
+     * @return list of ids
+     */
+    public List<Long> selectAllId() {
+        return selectAllId(true);
+    }
+
+    /**
+     * select all names in table
+     * @param commit    auto_commit
+     * @return  list of names
+     */
+    @Override
+    public List<String> selectAllName(boolean commit) {
+        return getMapper(commit).selectAllName();
+    }
+
+    /**
+     * overloading method
+     * @return list of names
+     */
+    public List<String> selectAllName() {
+        return selectAllName(true);
     }
 
     /**
@@ -94,22 +112,9 @@ public class UserAccessor implements IAccessor<User> {
      */
     @Override
     public User selectByName(String name, boolean commit) {
-        if (commit) {
-            return getMapper().selectByName(name);
-        } else {
-            return getMapperManual().selectByName(name);
-        }
+        return getMapper(commit).selectByName(name);
     }
 
-    /**
-     * insert one user into table
-     * 
-     * @param user user instance
-     * @return number of affected rows
-     */
-    public long insert(User user) {
-        return getMapper().insert(user);
-    }
 
     /**
      * insert one user into table
@@ -120,11 +125,17 @@ public class UserAccessor implements IAccessor<User> {
      */
     @Override
     public long insert(User user, boolean commit) {
-        if (commit) {
-            return getMapper().insert(user);
-        } else {
-            return getMapperManual().insert(user);
-        }
+        return getMapper(commit).insert(user);
+    }
+
+    /**
+     * insert one user into table
+     *
+     * @param user user instance
+     * @return number of affected rows
+     */
+    public long insert(User user) {
+        return insert(user, true);
     }
 
     /**
@@ -134,7 +145,7 @@ public class UserAccessor implements IAccessor<User> {
      * @return number of affected rows
      */
     public long update(User user) {
-        return getMapper().update(user);
+        return insert(user, true);
     }
 
     /**
@@ -146,11 +157,7 @@ public class UserAccessor implements IAccessor<User> {
      */
     @Override
     public long update(User user, boolean commit) {
-        if (commit) {
-            return getMapper().update(user);
-        } else {
-            return getMapperManual().update(user);
-        }
+        return getMapper(commit).update(user);
     }
 
     /**
@@ -160,7 +167,7 @@ public class UserAccessor implements IAccessor<User> {
      * @return number of affected rows
      */
     public long deleteById(long id) {
-        return getMapper().deleteById(id);
+        return getMapper(true).deleteById(id);
     }
 
     /**
@@ -172,11 +179,7 @@ public class UserAccessor implements IAccessor<User> {
      */
     @Override
     public long deleteById(long id, boolean commit) {
-        if (commit) {
-            return getMapper().deleteById(id);
-        } else {
-            return getMapperManual().deleteById(id);
-        }
+        return getMapper(commit).deleteById(id);
     }
 
     /**
@@ -184,7 +187,7 @@ public class UserAccessor implements IAccessor<User> {
      */
     @Override
     public void commit() {
-        SqlSessionUtil.getSession().commit();
+        SqlSessionUtil.getSession(false).commit();
     }
 
     /**
@@ -192,7 +195,7 @@ public class UserAccessor implements IAccessor<User> {
      */
     @Override
     public void rollback() {
-        SqlSessionUtil.getSession().rollback();
+        SqlSessionUtil.getSession(false).rollback();
     }
 
     /**
@@ -200,27 +203,17 @@ public class UserAccessor implements IAccessor<User> {
      */
     @Override
     public void close() {
-        SqlSessionUtil.getSession().close();
+        SqlSessionUtil.getSession(false).close();
     }
 
     /**
      * get mapper instance of user
-     * 
+     * @param commit auto-commit
      * @return IMapper<User>
      */
     @Override
-    public IMapper<User> getMapper() {
-        return SqlSessionUtil.getSession().getMapper(UserMapper.class);
-    }
-
-    /**
-     * get mapper instance of user (manual commit)
-     * 
-     * @return IMapper<User>
-     */
-    @Override
-    public IMapper<User> getMapperManual() {
-        return SqlSessionUtilManual.getSession().getMapper(UserMapper.class);
+    public IMapper<User> getMapper(boolean commit) {
+        return SqlSessionUtil.getSession(commit).getMapper(UserMapper.class);
     }
 
 }

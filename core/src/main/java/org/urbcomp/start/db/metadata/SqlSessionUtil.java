@@ -41,6 +41,11 @@ public class SqlSessionUtil {
     private final SqlSession sqlSession;
 
     /**
+     *
+     */
+    private final SqlSession sqlSessionManualCommit;
+
+    /**
      * Nonparametric construction method We use the method of reading the configuration file to
      * construct the sqlsession singleton. TODO: Maybe we should support reading configuration in
      * other ways, such as Mysql, full pathname, Zookeeper, Apollo configuration center, etc.
@@ -49,6 +54,7 @@ public class SqlSessionUtil {
         InputStream inputStream = ResourceUtil.readResource(ConfigFileConstant.MYBATIS_CONFIG_PATH);
         SqlSessionFactory build = new SqlSessionFactoryBuilder().build(inputStream);
         sqlSession = build.openSession(true);
+        sqlSessionManualCommit = build.openSession();
     }
 
     /**
@@ -69,11 +75,16 @@ public class SqlSessionUtil {
     }
 
     /**
+     * @param autoCommit    autoCommit
      * get instance of SqlSession
      *
      * @return SqlSession
      */
-    public static SqlSession getSession() {
-        return SqlSessionUtilHolder.INSTANCE.sqlSession;
+    public static SqlSession getSession(boolean autoCommit) {
+        if (autoCommit) {
+            return SqlSessionUtilHolder.INSTANCE.sqlSession;
+        } else {
+            return SqlSessionUtilHolder.INSTANCE.sqlSessionManualCommit;
+        }
     }
 }
