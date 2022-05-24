@@ -1,4 +1,9 @@
 /*
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
+ *
+ * https://github.com/apache/calcite
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.calcite.schema.impl;
 
 import org.apache.calcite.adapter.enumerable.CallImplementor;
@@ -41,7 +47,9 @@ import static org.apache.calcite.util.Static.RESOURCE;
  * Implementation of {@link org.apache.calcite.schema.ScalarFunction}.
  */
 public class ScalarFunctionImpl extends ReflectiveFunctionBase
-        implements ScalarFunction, ImplementableFunction {
+    implements
+        ScalarFunction,
+        ImplementableFunction {
     private final CallImplementor implementor;
 
     /** Private constructor. */
@@ -55,16 +63,15 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
      * a given class.
      */
     @Deprecated // to be removed before 2.0
-    public static ImmutableMultimap<String, ScalarFunction> createAll(
-            Class<?> clazz) {
-        final ImmutableMultimap.Builder<String, ScalarFunction> builder =
-                ImmutableMultimap.builder();
+    public static ImmutableMultimap<String, ScalarFunction> createAll(Class<?> clazz) {
+        final ImmutableMultimap.Builder<String, ScalarFunction> builder = ImmutableMultimap
+            .builder();
         for (Method method : clazz.getMethods()) {
             if (method.getDeclaringClass() == Object.class) {
                 continue;
             }
             if (!Modifier.isStatic(method.getModifiers())
-                    && !classHasPublicZeroArgsConstructor(clazz)) {
+                && !classHasPublicZeroArgsConstructor(clazz)) {
                 continue;
             }
             final ScalarFunction function = create(method);
@@ -80,14 +87,13 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
      * and {@link org.apache.calcite.schema.TableFunction}.
      */
     public static ImmutableMultimap<String, Function> functions(Class<?> clazz) {
-        final ImmutableMultimap.Builder<String, Function> builder =
-                ImmutableMultimap.builder();
+        final ImmutableMultimap.Builder<String, Function> builder = ImmutableMultimap.builder();
         for (Method method : clazz.getMethods()) {
             if (method.getDeclaringClass() == Object.class) {
                 continue;
             }
             if (!Modifier.isStatic(method.getModifiers())
-                    && !classHasPublicZeroArgsConstructor(clazz)) {
+                && !classHasPublicZeroArgsConstructor(clazz)) {
                 continue;
             }
             final TableFunction tableFunction = TableFunctionImpl.create(method);
@@ -137,7 +143,6 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
         return new ScalarFunctionImpl(method, implementor);
     }
 
-
     /**
      * Creates unsafe version of {@link ScalarFunction} from any method. The method
      * does not need to be static or belong to a class with default constructor. It is
@@ -162,7 +167,10 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
     private static CallImplementor createImplementor(final Method method) {
         final NullPolicy nullPolicy = getNullPolicy(method);
         return RexImpTable.createImplementor(
-                new ReflectiveCallNotNullImplementor(method), nullPolicy, false);
+            new ReflectiveCallNotNullImplementor(method),
+            nullPolicy,
+            false
+        );
     }
 
     private static NullPolicy getNullPolicy(Method m) {
@@ -179,8 +187,7 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
         }
     }
 
-    public RelDataType getReturnType(RelDataTypeFactory typeFactory,
-                                     SqlOperatorBinding opBinding) {
+    public RelDataType getReturnType(RelDataTypeFactory typeFactory, SqlOperatorBinding opBinding) {
         // Strict and semi-strict functions can return null even if their Java
         // functions return a primitive type. Because when one of their arguments
         // is null, they won't even be called.
