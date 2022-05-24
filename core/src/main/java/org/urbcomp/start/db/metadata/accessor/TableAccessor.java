@@ -69,7 +69,6 @@ public class TableAccessor implements IAccessor<Table> {
         return selectById(id, true);
     }
 
-
     /**
      * select one table by name
      * 
@@ -139,8 +138,7 @@ public class TableAccessor implements IAccessor<Table> {
      */
     @Override
     public long insert(Table table, boolean commit) {
-        if (!isValid(table))
-            return -1;
+        if (!isValid(table)) return -1;
         return getMapper(commit).insert(table);
     }
 
@@ -200,7 +198,6 @@ public class TableAccessor implements IAccessor<Table> {
         SqlSessionUtil.getSession(false).rollback();
     }
 
-
     /**
      * get mapper instance of table
      * 
@@ -212,7 +209,6 @@ public class TableAccessor implements IAccessor<Table> {
     public IMapper<Table> getMapper(boolean commit) {
         return SqlSessionUtil.getSession(commit).getMapper(TableMapper.class);
     }
-
 
     @Override
     public void close() {
@@ -229,8 +225,8 @@ public class TableAccessor implements IAccessor<Table> {
         boolean valid = false;
         long dbId = table.getDbId();
         String name = table.getName();
-        DatabaseMapper databaseMapper =
-                        SqlSessionUtil.getSession(true).getMapper(DatabaseMapper.class);
+        DatabaseMapper databaseMapper = SqlSessionUtil.getSession(true)
+            .getMapper(DatabaseMapper.class);
         // Judge whether dbId exists.
         List<Long> dbIds = databaseMapper.selectAllId();
         for (Long curDbId : dbIds) {
@@ -244,8 +240,7 @@ public class TableAccessor implements IAccessor<Table> {
         for (String tableName : tableNames) {
             if (tableName.equals(name)) {
                 // names
-                if (getMapper(true).selectByName(tableName).getId() == dbId)
-                    return false;
+                if (getMapper(true).selectByName(tableName).getId() == dbId) return false;
             }
         }
         return valid;

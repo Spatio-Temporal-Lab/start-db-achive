@@ -47,7 +47,6 @@ public class DatabaseAccessor implements IAccessor<Database> {
         return selectAll(true);
     }
 
-
     /**
      * select one database in table
      * 
@@ -139,8 +138,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
      */
     @Override
     public long insert(Database database, boolean commit) {
-        if (!isValid(database))
-            return -1;
+        if (!isValid(database)) return -1;
         return getMapper(commit).insert(database);
     }
 
@@ -211,8 +209,6 @@ public class DatabaseAccessor implements IAccessor<Database> {
         return SqlSessionUtil.getSession(commit).getMapper(DatabaseMapper.class);
     }
 
-
-
     /**
      * close session
      */
@@ -243,12 +239,10 @@ public class DatabaseAccessor implements IAccessor<Database> {
         // make sure dbName does not exist.
         List<String> names = getMapper(true).selectAllName();
         for (String curName : names) {
-            if (name.equals(curName))
-                return false;
+            if (name.equals(curName)) return false;
 
         }
         return valid;
     }
-
 
 }

@@ -141,8 +141,7 @@ public class FieldAccessor implements IAccessor<Field> {
      */
     @Override
     public long insert(Field field, boolean commit) {
-        if (!isValid(field))
-            return -1;
+        if (!isValid(field)) return -1;
         return getMapper(commit).insert(field);
     }
 
@@ -220,7 +219,6 @@ public class FieldAccessor implements IAccessor<Field> {
         return SqlSessionUtil.getSession(commit).getMapper(FieldMapper.class);
     }
 
-
     /**
      * close operation
      */
@@ -253,8 +251,7 @@ public class FieldAccessor implements IAccessor<Field> {
         for (String fieldName : fieldNames) {
             if (fieldName.equals(name)) {
                 // names
-                if (getMapper(true).selectByName(fieldName).getId() == tableId)
-                    return false;
+                if (getMapper(true).selectByName(fieldName).getId() == tableId) return false;
             }
         }
         return valid;

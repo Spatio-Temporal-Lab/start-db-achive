@@ -34,7 +34,6 @@ public class Field extends AbstractEntity {
      */
     private int isPrimary;
 
-
     public Field(long id, long tableId, String name, String type, int isPrimary) {
         super(id, name);
         this.tableId = tableId;
@@ -68,8 +67,20 @@ public class Field extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "Field{" + "id=" + id + ", name='" + name + '\'' + ", tableId=" + tableId
-                        + ", type='" + type + '\'' + ", isPrimary=" + isPrimary + '}';
+        return "Field{"
+            + "id="
+            + id
+            + ", name='"
+            + name
+            + '\''
+            + ", tableId="
+            + tableId
+            + ", type='"
+            + type
+            + '\''
+            + ", isPrimary="
+            + isPrimary
+            + '}';
     }
 
 }

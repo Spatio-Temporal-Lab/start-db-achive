@@ -121,7 +121,6 @@ public class UserAccessor implements IAccessor<User> {
         return getMapper(commit).selectByName(name);
     }
 
-
     /**
      * insert one user into table
      * 

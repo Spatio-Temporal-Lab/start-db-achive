@@ -110,5 +110,4 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
      */
     IMapper<T> getMapper(boolean commit);
 
-
 }

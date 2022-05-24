@@ -53,7 +53,17 @@ public class Table extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "Table{" + "id=" + id + ", name='" + name + '\'' + ", dbId=" + dbId
-                        + ", storageEngine='" + storageEngine + '\'' + '}';
+        return "Table{"
+            + "id="
+            + id
+            + ", name='"
+            + name
+            + '\''
+            + ", dbId="
+            + dbId
+            + ", storageEngine='"
+            + storageEngine
+            + '\''
+            + '}';
     }
 }
