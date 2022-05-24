@@ -75,8 +75,7 @@ public class SqlSessionUtil {
     }
 
     /**
-     * @param autoCommit    autoCommit
-     * get instance of SqlSession
+     * @param autoCommit autoCommit get instance of SqlSession
      *
      * @return SqlSession
      */

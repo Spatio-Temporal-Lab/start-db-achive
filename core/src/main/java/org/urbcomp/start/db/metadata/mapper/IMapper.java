@@ -32,9 +32,9 @@ public interface IMapper<T extends AbstractEntity> {
     List<T> selectAll();
 
     /**
-     *  select all ids in table
+     * select all ids in table
      *
-     * @return  list of entity id
+     * @return list of entity id
      */
     List<Long> selectAllId();
 

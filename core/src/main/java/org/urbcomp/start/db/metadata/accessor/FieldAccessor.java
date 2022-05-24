@@ -21,7 +21,8 @@ import org.urbcomp.start.db.metadata.mapper.TableMapper;
 import java.util.List;
 
 /**
- * This class is the implementation class of IAccessor.The basic function of metadata interaction of fields is realized.
+ * This class is the implementation class of IAccessor.The basic function of metadata interaction of
+ * fields is realized.
  * 
  * @author Wang Bohong
  * @Date: 2022-05-20
@@ -30,6 +31,7 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * select all fields
+     * 
      * @param commit auto-commit
      * @return list of fields instance
      */
@@ -55,11 +57,12 @@ public class FieldAccessor implements IAccessor<Field> {
      */
     @Override
     public Field selectById(long id, boolean commit) {
-       return getMapper(commit).selectById(id);
+        return getMapper(commit).selectById(id);
     }
 
     /**
      * overloading method
+     * 
      * @param id
      * @return field instance
      */
@@ -69,6 +72,7 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * select one field by name
+     * 
      * @param commit auto-commit
      * @param name name
      * @return field instance
@@ -80,8 +84,9 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * overloading method
+     * 
      * @param name
-     * @return  field instance
+     * @return field instance
      */
     public Field selectByName(String name) {
         return selectByName(name, true);
@@ -89,8 +94,9 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * select all ids in table
-     * @param commit    auto_commit
-     * @return  list of ids
+     * 
+     * @param commit auto_commit
+     * @return list of ids
      */
     @Override
     public List<Long> selectAllId(boolean commit) {
@@ -99,6 +105,7 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * overloading method
+     * 
      * @return list of ids
      */
     public List<Long> selectAllId() {
@@ -107,8 +114,9 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * select all names in table
-     * @param commit    auto_commit
-     * @return  list of names
+     * 
+     * @param commit auto_commit
+     * @return list of names
      */
     @Override
     public List<String> selectAllName(boolean commit) {
@@ -117,6 +125,7 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * overloading method
+     * 
      * @return list of names
      */
     public List<String> selectAllName() {
@@ -131,7 +140,8 @@ public class FieldAccessor implements IAccessor<Field> {
      */
     @Override
     public long insert(Field field, boolean commit) {
-        if (!isValid(field))  return -1;
+        if (!isValid(field))
+            return -1;
         return getMapper(commit).insert(field);
     }
 
@@ -153,6 +163,7 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * overloading method
+     * 
      * @param field a field instance
      * @return field instance
      */
@@ -174,6 +185,7 @@ public class FieldAccessor implements IAccessor<Field> {
 
     /**
      * overloading method
+     * 
      * @param id a field instance
      * @return number of affected rows
      */
@@ -240,7 +252,8 @@ public class FieldAccessor implements IAccessor<Field> {
         for (String fieldName : fieldNames) {
             if (fieldName.equals(name)) {
                 // names
-                if (getMapper(true).selectByName(fieldName).getId() == tableId) return false;
+                if (getMapper(true).selectByName(fieldName).getId() == tableId)
+                    return false;
             }
         }
         return valid;

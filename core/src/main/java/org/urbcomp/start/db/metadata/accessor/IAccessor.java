@@ -51,15 +51,17 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
 
     /**
      * select all ids from table
-     * @param commit    auto_commit
-     * @return   list of ids
+     * 
+     * @param commit auto_commit
+     * @return list of ids
      */
     List<Long> selectAllId(boolean commit);
 
     /**
      * select all names from table
-     * @param commit    auto_commit
-     * @return  list of names
+     * 
+     * @param commit auto_commit
+     * @return list of names
      */
     List<String> selectAllName(boolean commit);
 
@@ -102,6 +104,7 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
 
     /**
      * get mapper instance
+     * 
      * @param commit auto-commit
      * @return IMapper<T>
      */

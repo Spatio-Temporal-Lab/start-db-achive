@@ -19,7 +19,8 @@ import org.urbcomp.start.db.metadata.mapper.UserMapper;
 import java.util.List;
 
 /**
- * @Description This class is the implementation class of IAccessor.The basic function of metadata interaction of users is realized.
+ * @Description This class is the implementation class of IAccessor.The basic function of metadata
+ *              interaction of users is realized.
  *
  * @author zaiyuan
  * @date 2022-05-01 15:17:07
@@ -39,6 +40,7 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * overloading method
+     * 
      * @return list of user instance
      */
     public List<User> selectAll() {
@@ -69,8 +71,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select all ids in table
-     * @param commit    auto_commit
-     * @return  list of ids
+     * 
+     * @param commit auto_commit
+     * @return list of ids
      */
     @Override
     public List<Long> selectAllId(boolean commit) {
@@ -79,6 +82,7 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * overloading method
+     * 
      * @return list of ids
      */
     public List<Long> selectAllId() {
@@ -87,8 +91,9 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * select all names in table
-     * @param commit    auto_commit
-     * @return  list of names
+     * 
+     * @param commit auto_commit
+     * @return list of names
      */
     @Override
     public List<String> selectAllName(boolean commit) {
@@ -97,6 +102,7 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * overloading method
+     * 
      * @return list of names
      */
     public List<String> selectAllName() {
@@ -208,6 +214,7 @@ public class UserAccessor implements IAccessor<User> {
 
     /**
      * get mapper instance of user
+     * 
      * @param commit auto-commit
      * @return IMapper<User>
      */

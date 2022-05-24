@@ -20,7 +20,8 @@ import org.urbcomp.start.db.metadata.mapper.UserMapper;
 import java.util.List;
 
 /**
- * @Description:    This class is the implementation class of IAccessor.The basic function of metadata interaction of databases is realized.
+ * @Description: This class is the implementation class of IAccessor.The basic function of metadata
+ *               interaction of databases is realized.
  * 
  * @authour: wangbohong
  * @Date: 2022-05-21
@@ -39,6 +40,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * overloading method
+     * 
      * @return list of database instance
      */
     public List<Database> selectAll() {
@@ -59,7 +61,8 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * overloading method
-     * @param id    id
+     * 
+     * @param id id
      * @return one database instance
      */
     public Database selectById(long id) {
@@ -79,8 +82,9 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * overloading method
-     * @param name  db name
-     * @return  one database instance
+     * 
+     * @param name db name
+     * @return one database instance
      */
     public Database selectByName(String name) {
         return selectByName(name, true);
@@ -88,8 +92,9 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * select all ids in table
-     * @param commit    auto_commit
-     * @return  list of ids
+     * 
+     * @param commit auto_commit
+     * @return list of ids
      */
     @Override
     public List<Long> selectAllId(boolean commit) {
@@ -98,6 +103,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * overloading method
+     * 
      * @return list of ids
      */
     public List<Long> selectAllId() {
@@ -106,8 +112,9 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * select all names in table
-     * @param commit    auto_commit
-     * @return  list of names
+     * 
+     * @param commit auto_commit
+     * @return list of names
      */
     @Override
     public List<String> selectAllName(boolean commit) {
@@ -116,6 +123,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * overloading method
+     * 
      * @return list of names
      */
     public List<String> selectAllName() {
@@ -127,7 +135,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
      * 
      * @param database database instance
      * @param commit auto_commit
-     * @return  number of affected rows
+     * @return number of affected rows
      */
     @Override
     public long insert(Database database, boolean commit) {
@@ -138,8 +146,9 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * overloading method
-     * @param database  database instance
-     * @return  number of affected rows
+     * 
+     * @param database database instance
+     * @return number of affected rows
      */
     public long insert(Database database) {
         return insert(database, true);
@@ -193,6 +202,7 @@ public class DatabaseAccessor implements IAccessor<Database> {
 
     /**
      * get mapper instance of database
+     * 
      * @param commit auto-commit
      * @return IMapper<Database>
      */
@@ -233,7 +243,8 @@ public class DatabaseAccessor implements IAccessor<Database> {
         // make sure dbName does not exist.
         List<String> names = getMapper(true).selectAllName();
         for (String curName : names) {
-            if (names.equals(curName)) return false;
+            if (names.equals(curName))
+                return false;
 
         }
         return valid;

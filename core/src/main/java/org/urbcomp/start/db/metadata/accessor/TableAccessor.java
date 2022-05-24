@@ -21,7 +21,8 @@ import org.urbcomp.start.db.metadata.mapper.TableMapper;
 import java.util.List;
 
 /**
- * @Description:    This class is the implementation class of IAccessor.The basic function of metadata interaction of tables is realized.
+ * @Description: This class is the implementation class of IAccessor.The basic function of metadata
+ *               interaction of tables is realized.
  * 
  * @author : Wang Bohong
  * @Since: 0.1.0
@@ -41,7 +42,8 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * overloading method
-     * @return  list of table instance
+     * 
+     * @return list of table instance
      */
     public List<Table> selectAll() {
         return selectAll(true);
@@ -60,8 +62,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * overloading method
-     * @param id    id
-     * @return  table instance
+     * 
+     * @param id id
+     * @return table instance
      */
     public Table selectById(long id) {
         return selectById(id, true);
@@ -81,8 +84,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * overloading method
-     * @param name  dbName
-     * @return  table instance
+     * 
+     * @param name dbName
+     * @return table instance
      */
     public Table selectByName(String name) {
         return selectByName(name, true);
@@ -90,8 +94,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * select all ids in table
-     * @param commit    auto_commit
-     * @return  list of ids
+     * 
+     * @param commit auto_commit
+     * @return list of ids
      */
     @Override
     public List<Long> selectAllId(boolean commit) {
@@ -100,6 +105,7 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * overloading method
+     * 
      * @return list of ids
      */
     public List<Long> selectAllId() {
@@ -108,8 +114,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * select all names in table
-     * @param commit    auto_commit
-     * @return  list of names
+     * 
+     * @param commit auto_commit
+     * @return list of names
      */
     @Override
     public List<String> selectAllName(boolean commit) {
@@ -118,6 +125,7 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * overloading method
+     * 
      * @return list of names
      */
     public List<String> selectAllName() {
@@ -169,8 +177,9 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * overloeading method
+     * 
      * @param id
-     * @return  number of affected rows
+     * @return number of affected rows
      */
     public long deleteById(long id) {
         return deleteById(id, true);
@@ -195,8 +204,10 @@ public class TableAccessor implements IAccessor<Table> {
 
     /**
      * get mapper instance of table
-     * @param commit    auto-commit
-     * @return IMapper<Table>
+     * 
+     * @param commit auto-commit
+     * @return IMapper
+     *         <Table>
      */
     @Override
     public IMapper<Table> getMapper(boolean commit) {
@@ -219,11 +230,12 @@ public class TableAccessor implements IAccessor<Table> {
         boolean valid = false;
         long dbId = table.getDbId();
         String name = table.getName();
-        DatabaseMapper databaseMapper = SqlSessionUtil.getSession(true).getMapper(DatabaseMapper.class);
+        DatabaseMapper databaseMapper =
+                        SqlSessionUtil.getSession(true).getMapper(DatabaseMapper.class);
         // Judge whether dbId exists.
         List<Long> dbIds = databaseMapper.selectAllId();
         for (Long curDbId : dbIds) {
-            if (dbId == curDbId){
+            if (dbId == curDbId) {
                 valid = true;
                 break;
             }
@@ -233,7 +245,8 @@ public class TableAccessor implements IAccessor<Table> {
         for (String tableName : tableNames) {
             if (tableName.equals(name)) {
                 // names
-                if (getMapper(true).selectByName(tableName).getId() == dbId) return false;
+                if (getMapper(true).selectByName(tableName).getId() == dbId)
+                    return false;
             }
         }
         return valid;
