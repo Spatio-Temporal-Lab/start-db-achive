@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `sys_user`(
 	`password` VARCHAR(200) NOT NULL,
 	`created_date`  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modified_date` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    `delete_time` LONG      NOT NULL DEFAULT 0 COMMENT '删除时间',
+    `delete_time` BIGINT      NOT NULL DEFAULT 0 COMMENT '删除时间',
     INDEX idx_name (`name`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `sys_database`(
 	`name` VARCHAR(200) NOT NULL,
 	`created_date`  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modified_date` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    `delete_time` LONG      NOT NULL DEFAULT 0 COMMENT '删除时间',
+    `delete_time` BIGINT      NOT NULL DEFAULT 0 COMMENT '删除时间',
 	INDEX idx_user_id_name (`user_id`, `name`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `sys_table`(
 	`storage_engine` VARCHAR(200) NOT NULL,
 	`created_date`  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modified_date` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    `delete_time` LONG      NOT NULL DEFAULT 0 COMMENT '删除时间',
+    `delete_time` BIGINT      NOT NULL DEFAULT 0 COMMENT '删除时间',
     INDEX idx_db_id_name (`db_id`, `name`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -45,6 +45,6 @@ CREATE TABLE IF NOT EXISTS `sys_field`(
 	`is_primary` TINYINT NOT NULL COMMENT '0:非主键、1:主键',
 	`created_date`  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modified_date` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    `delete_time` LONG      NOT NULL DEFAULT 0 COMMENT '删除时间',
+    `delete_time` BIGINT      NOT NULL DEFAULT 0 COMMENT '删除时间',
     INDEX idx_table_id_name (`table_id`, `name`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
