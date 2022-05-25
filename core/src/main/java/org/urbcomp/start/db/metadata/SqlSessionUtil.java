@@ -41,7 +41,7 @@ public class SqlSessionUtil {
     private final SqlSession sqlSession;
 
     /**
-     *
+     * SqlSession instance for manual commit
      */
     private final SqlSession sqlSessionManualCommit;
 

@@ -19,12 +19,9 @@ package org.urbcomp.start.db.metadata.entity;
  */
 public class Database extends AbstractEntity {
 
-    /**
-     * creatorId of the DataBase
-     */
     private long userId;
 
-    public Database(Long id, Long userId, String name) {
+    public Database(long id, long userId, String name) {
         super(id, name);
         this.userId = userId;
     }
