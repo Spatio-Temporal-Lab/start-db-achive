@@ -37,6 +37,7 @@ import org.apache.calcite.schema.TableFunction;
 import org.apache.calcite.sql.SqlOperatorBinding;
 
 import com.google.common.collect.ImmutableMultimap;
+import org.urbancomp.start.db.function.StartDBFunction;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -97,14 +98,31 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
                 continue;
             }
             final TableFunction tableFunction = TableFunctionImpl.create(method);
+            boolean isAnnotionPresent = method.isAnnotationPresent(StartDBFunction.class);
             if (tableFunction != null) {
-                builder.put(method.getName(), tableFunction);
+                builder.put(getFunctionName(method, isAnnotionPresent), tableFunction);
             } else {
                 final ScalarFunction function = create(method);
-                builder.put(method.getName(), function);
+                builder.put(getFunctionName(method, isAnnotionPresent), function);
             }
         }
         return builder.build();
+    }
+
+    /**
+     * 返回方法名
+     *
+     * @param method 方法名
+     * @param isAnnotationPresent 是否有注解
+     * @return 返回方法名
+     *
+     */
+    private static String getFunctionName(Method method, boolean isAnnotationPresent) {
+        if (isAnnotationPresent) {
+            return method.getAnnotation(StartDBFunction.class).value();
+        } else {
+            return method.getName();
+        }
     }
 
     /**
