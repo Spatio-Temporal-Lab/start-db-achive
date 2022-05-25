@@ -30,7 +30,7 @@ import org.urbancomp.start.db.function.StartDBFunction
   */
 class SpatialFunction {
 
-  @StartDBFunction
+  @StartDBFunction("intersects")
   def intersects(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.intersects(geom2)
@@ -38,7 +38,7 @@ class SpatialFunction {
     }
   }
 
-  @StartDBFunction
+  @StartDBFunction("within")
   def within(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.within(geom2)
@@ -46,7 +46,7 @@ class SpatialFunction {
     }
   }
 
-  @StartDBFunction
+  @StartDBFunction("touches")
   def touches(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.touches(geom2)
@@ -54,7 +54,7 @@ class SpatialFunction {
     }
   }
 
-  @StartDBFunction
+  @StartDBFunction("overlaps")
   def overlaps(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.overlaps(geom2)
@@ -62,7 +62,7 @@ class SpatialFunction {
     }
   }
 
-  @StartDBFunction
+  @StartDBFunction("equals")
   def equals(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.equals(geom2)
@@ -70,7 +70,7 @@ class SpatialFunction {
     }
   }
 
-  @StartDBFunction
+  @StartDBFunction("disjoint")
   def disjoint(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.disjoint(geom2)
@@ -78,7 +78,7 @@ class SpatialFunction {
     }
   }
 
-  @StartDBFunction
+  @StartDBFunction("covers")
   def covers(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.covers(geom2)
@@ -86,7 +86,7 @@ class SpatialFunction {
     }
   }
 
-  @StartDBFunction
+  @StartDBFunction("crosses")
   def crosses(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.crosses(geom2)
@@ -94,7 +94,7 @@ class SpatialFunction {
     }
   }
 
-  @StartDBFunction
+  @StartDBFunction("contains")
   def contains(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.contains(geom2)
