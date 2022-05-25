@@ -12,6 +12,7 @@
         <module>test</module>
         <module>calcite</module>
         <module>core</module>
+        <module>server</module>
     </modules>
 
     <properties>
@@ -28,6 +29,7 @@
         <hbase.version>2.2.2</hbase.version>
         <gt.version>25.5</gt.version>
         <calcite.version>1.26.0</calcite.version>
+        <avatica.version>1.17.0</avatica.version>
         <fastjson.version>1.2.54</fastjson.version>
         <junit.version>4.11</junit.version>
         <guava.version>24.1-jre</guava.version>
@@ -49,7 +51,7 @@
                 <artifactId>calcite</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
             <!--  Calcite Dependency  -->
             <dependency>
                 <groupId>org.apache.calcite</groupId>
@@ -66,6 +68,12 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.calcite.avatica</groupId>
+                <artifactId>avatica-server</artifactId>
+                <version>${avatica.version}</version>
             </dependency>
 
             <dependency>
