@@ -86,20 +86,20 @@ public class BatchUpLoader implements Closeable {
             return;
         }
         this.sft = SimpleFeatureTypes.createType(
-                TABLE_NAME,
-                "idx:Integer,"
-                        + "ride_id:String,"
-                        + "rideable_type:String,"
-                        + "started_at:Timestamp,"
-                        + "ended_at:Timestamp,"
-                        + "start_station_name:String,"
-                        + "start_station_id:Double,"
-                        + "start_point:Point:srid=4326,"
-                        + "end_station_name:String,"
-                        + "end_station_id:Double,"
-                        + "end_point:Point:srid=4326,"
-                        + "track:LineString:srid=4326,"
-                        + "member_casual:String"
+            TABLE_NAME,
+            "idx:Integer,"
+                + "ride_id:String,"
+                + "rideable_type:String,"
+                + "started_at:Timestamp,"
+                + "ended_at:Timestamp,"
+                + "start_station_name:String,"
+                + "start_station_id:Double,"
+                + "start_point:Point:srid=4326,"
+                + "end_station_name:String,"
+                + "end_station_id:Double,"
+                + "end_point:Point:srid=4326,"
+                + "track:LineString:srid=4326,"
+                + "member_casual:String"
         );
         this.dataStore.createSchema(this.sft);
     }
@@ -108,7 +108,7 @@ public class BatchUpLoader implements Closeable {
      * used to ingest data into geomesa-hbase
      */
     private void writeFeature(DataStore dataStore, SimpleFeatureType sft, SimpleFeature feature)
-            throws IOException {
+        throws IOException {
         this.writer = dataStore.getFeatureWriterAppend(sft.getTypeName(), Transaction.AUTO_COMMIT);
         SimpleFeature toWrite = this.writer.next();
         toWrite.setAttributes(feature.getAttributes());
@@ -131,7 +131,7 @@ public class BatchUpLoader implements Closeable {
      */
     private BufferedReader readCsv(String csvFile) throws IOException {
         BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(csvFile), StandardCharsets.UTF_8)
+            new InputStreamReader(new FileInputStream(csvFile), StandardCharsets.UTF_8)
         );
         System.out.println("Header : \n" + reader.readLine());
 
@@ -142,20 +142,20 @@ public class BatchUpLoader implements Closeable {
      * used to create simpleFeature
      */
     private SimpleFeature dataSetUp(
-            String idx,
-            String ride_id,
-            String rideable_type,
-            String started_at,
-            String ended_at,
-            String start_station_name,
-            String start_station_id,
-            String start_lng,
-            String start_lat,
-            String end_station_name,
-            String end_station_id,
-            String end_lng,
-            String end_lat,
-            String member_casual
+        String idx,
+        String ride_id,
+        String rideable_type,
+        String started_at,
+        String ended_at,
+        String start_station_name,
+        String start_station_id,
+        String start_lng,
+        String start_lat,
+        String end_station_name,
+        String end_station_id,
+        String end_lng,
+        String end_lat,
+        String member_casual
     ) throws ParseException {
 
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(this.sft);
@@ -172,7 +172,7 @@ public class BatchUpLoader implements Closeable {
         featureBuilder.set("start_station_id", Double.parseDouble(start_station_id));
 
         Point startPoint = geometryFactory.createPoint(
-                new Coordinate(Double.parseDouble(start_lng), Double.parseDouble(start_lat))
+            new Coordinate(Double.parseDouble(start_lng), Double.parseDouble(start_lat))
         );
         featureBuilder.set("start_point", startPoint);
 
@@ -180,11 +180,11 @@ public class BatchUpLoader implements Closeable {
         featureBuilder.set("end_station_id", Double.parseDouble(end_station_id));
 
         Point endPoint = geometryFactory.createPoint(
-                new Coordinate(Double.parseDouble(end_lng), Double.parseDouble(end_lat))
+            new Coordinate(Double.parseDouble(end_lng), Double.parseDouble(end_lat))
         );
         featureBuilder.set("end_point", endPoint);
 
-        Coordinate[] coordinates = {startPoint.getCoordinate(), endPoint.getCoordinate()};
+        Coordinate[] coordinates = { startPoint.getCoordinate(), endPoint.getCoordinate() };
         LineString lineString = geometryFactory.createLineString(coordinates);
 
         featureBuilder.set("track", lineString);
@@ -197,7 +197,10 @@ public class BatchUpLoader implements Closeable {
     }
 
     public void readData() throws IOException {
-        final FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(new Query(TABLE_NAME), Transaction.AUTO_COMMIT);
+        final FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(
+            new Query(TABLE_NAME),
+            Transaction.AUTO_COMMIT
+        );
 
         while (reader.hasNext()) {
             final SimpleFeature f = reader.next();
@@ -229,20 +232,20 @@ public class BatchUpLoader implements Closeable {
                 String[] split = line.split(Constant.COMMA_STR);
 
                 SimpleFeature feature = upLoader.dataSetUp(
-                        split[0],
-                        split[1],
-                        split[2],
-                        split[3],
-                        split[4],
-                        split[5],
-                        split[6],
-                        split[10],
-                        split[9],
-                        split[7],
-                        split[8],
-                        split[12],
-                        split[11],
-                        split[13]
+                    split[0],
+                    split[1],
+                    split[2],
+                    split[3],
+                    split[4],
+                    split[5],
+                    split[6],
+                    split[10],
+                    split[9],
+                    split[7],
+                    split[8],
+                    split[12],
+                    split[11],
+                    split[13]
                 );
 
                 System.out.println(feature);

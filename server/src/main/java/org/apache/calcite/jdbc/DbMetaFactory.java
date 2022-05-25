@@ -1,8 +1,3 @@
-package org.apache.calcite.jdbc;
-
-import lombok.SneakyThrows;
-import org.apache.calcite.avatica.Meta;
-
 /*
  * Copyright 2022 ST-Lab
  *
@@ -13,6 +8,12 @@ import org.apache.calcite.avatica.Meta;
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  */
+
+package org.apache.calcite.jdbc;
+
+import lombok.SneakyThrows;
+import org.apache.calcite.avatica.Meta;
+
 import java.net.URL;
 import java.net.URLDecoder;
 import java.sql.Connection;
