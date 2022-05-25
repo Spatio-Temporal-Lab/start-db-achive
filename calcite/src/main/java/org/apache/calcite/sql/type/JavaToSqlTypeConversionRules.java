@@ -26,6 +26,7 @@ import org.apache.calcite.avatica.util.ArrayImpl;
 import org.apache.calcite.runtime.Geometries;
 
 import com.google.common.collect.ImmutableMap;
+import org.locationtech.jts.geom.*;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -74,7 +75,16 @@ public class JavaToSqlTypeConversionRules {
         .put(Time.class, SqlTypeName.TIME)
         .put(BigDecimal.class, SqlTypeName.DECIMAL)
 
-        .put(Geometries.Geom.class, SqlTypeName.GEOMETRY)
+        // start-db add start
+        .put(Point.class, SqlTypeName.POINT)
+        .put(MultiPoint.class, SqlTypeName.MULTIPOINT)
+        .put(LineString.class, SqlTypeName.LINESTRING)
+        .put(MultiLineString.class, SqlTypeName.MULTILINESTRING)
+        .put(Polygon.class, SqlTypeName.POLYGON)
+        .put(MultiPolygon.class, SqlTypeName.MULTIPOLYGON)
+        .put(Geometry.class, SqlTypeName.GEOMETRY)
+        .put(GeometryCollection.class, SqlTypeName.GEOMETRYCOLLECTION)
+        // start-db add end
 
         .put(ResultSet.class, SqlTypeName.CURSOR)
         .put(ColumnList.class, SqlTypeName.COLUMN_LIST)

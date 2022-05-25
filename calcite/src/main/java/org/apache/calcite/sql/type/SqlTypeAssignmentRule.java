@@ -191,7 +191,17 @@ public class SqlTypeAssignmentRule implements SqlTypeMappingRule {
         );
 
         // GEOMETRY is assignable from ...
+        // rules.add(SqlTypeName.GEOMETRY, EnumSet.of(SqlTypeName.GEOMETRY));
+        // start-db add start
         rules.add(SqlTypeName.GEOMETRY, EnumSet.of(SqlTypeName.GEOMETRY));
+        rules.add(SqlTypeName.POINT, EnumSet.of(SqlTypeName.GEOMETRY));
+        rules.add(SqlTypeName.MULTIPOINT, EnumSet.of(SqlTypeName.GEOMETRY));
+        rules.add(SqlTypeName.LINESTRING, EnumSet.of(SqlTypeName.GEOMETRY));
+        rules.add(SqlTypeName.MULTILINESTRING, EnumSet.of(SqlTypeName.GEOMETRY));
+        rules.add(SqlTypeName.POLYGON, EnumSet.of(SqlTypeName.GEOMETRY));
+        rules.add(SqlTypeName.MULTIPOLYGON, EnumSet.of(SqlTypeName.GEOMETRY));
+        rules.add(SqlTypeName.GEOMETRYCOLLECTION, EnumSet.of(SqlTypeName.GEOMETRY));
+        // start-db add end
 
         // ARRAY is assignable from ...
         rules.add(SqlTypeName.ARRAY, EnumSet.of(SqlTypeName.ARRAY));

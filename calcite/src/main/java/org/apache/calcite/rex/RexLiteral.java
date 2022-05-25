@@ -356,6 +356,15 @@ public class RexLiteral extends RexNode {
             case ROW:
             case MULTISET:
                 return value instanceof List;
+            // start-db add start
+            case POINT:
+            case MULTIPOINT:
+            case LINESTRING:
+            case MULTILINESTRING:
+            case POLYGON:
+            case MULTIPOLYGON:
+            case GEOMETRYCOLLECTION:
+                // start-db add end
             case GEOMETRY:
                 return value instanceof Geometries.Geom;
             case ANY:
@@ -704,7 +713,9 @@ public class RexLiteral extends RexNode {
                 );
                 break;
             case GEOMETRY:
-                final String wkt = GeoFunctions.ST_AsWKT((Geometries.Geom) value);
+                // start-db modified start
+                final String wkt = value.toString();
+                // start-db modified end
                 sb.append(wkt);
                 break;
             default:
