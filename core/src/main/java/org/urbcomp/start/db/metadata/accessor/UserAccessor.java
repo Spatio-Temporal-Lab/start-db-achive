@@ -32,6 +32,6 @@ public class UserAccessor implements IAccessor<User> {
 
     @Override
     public boolean isNotValid(User entity) {
-        return false;
+        return getMapper(true).selectByFidAndName(0, entity.getName()) != null; // here fid is not used.
     }
 }
