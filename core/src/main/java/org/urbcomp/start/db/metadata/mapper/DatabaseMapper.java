@@ -25,7 +25,7 @@ public interface DatabaseMapper extends IMapper<Database> {
     /**
      * insert one database instance into sys_db table
      * 
-     * @param database
+     * @param database database instance
      * @return number of affected rows
      */
     @Override
@@ -34,7 +34,7 @@ public interface DatabaseMapper extends IMapper<Database> {
     /**
      * insert one database instance into sys_db table
      * 
-     * @param database
+     * @param database database instance
      * @return number of affected rows
      */
     @Override

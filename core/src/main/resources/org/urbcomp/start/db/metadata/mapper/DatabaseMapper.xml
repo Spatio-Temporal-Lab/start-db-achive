@@ -5,25 +5,18 @@
 <mapper namespace="org.urbcomp.start.db.metadata.mapper.DatabaseMapper">
     <select id="selectAll" resultType="org.urbcomp.start.db.metadata.entity.Database">
         SELECT *
-        FROM sys_database;
+        FROM sys_database
+        WHERE delete_time > 0;
     </select>
     <select id="selectById" resultType="org.urbcomp.start.db.metadata.entity.Database">
         SELECT *
         FROM sys_database
-        WHERE id = #{id};
+        WHERE id = #{id} and delete_time > 0;
     </select>
-    <select id="selectAllId" resultType="java.lang.Long">
-        SELECT id
-        FROM sys_database
-    </select>
-    <select id="selectAllName" resultType="java.lang.String">
-        SELECT distinct name
-        from sys_database
-    </select>
-    <select id="selectByName" resultType="org.urbcomp.start.db.metadata.entity.Database">
+    <select id="selectByFidAndName" resultType="org.urbcomp.start.db.metadata.entity.Database">
         SELECT *
         FROM sys_database
-        WHERE name = #{name}
+        WHERE user_id = #{fid} and name = #{name} and delete_time > 0;
     </select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.urbcomp.start.db.metadata.entity.Database">
@@ -33,11 +26,11 @@
         UPDATE sys_database
         SET name=#{database.name},
         id = #{database.id}
-        WHERE id = #{database.id};
+        WHERE id = #{database.id} and delete_time > 0;
     </update>
     <delete id="deleteById">
-        DELETE
-        FROM sys_database
+        UPDATE sys_database
+        SET delete_time = current_timestamp()
         WHERE id = #{id};
     </delete>
 </mapper>

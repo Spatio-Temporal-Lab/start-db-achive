@@ -25,7 +25,7 @@ public interface TableMapper extends IMapper<Table> {
     /**
      * insert a table instance into sys_table table
      * 
-     * @param table
+     * @param table table instance
      * @return number of affected rows
      */
     @Override
@@ -34,7 +34,7 @@ public interface TableMapper extends IMapper<Table> {
     /**
      * update a table instance into sys_table table
      * 
-     * @param table
+     * @param table table instance
      * @return number of affected rows
      */
     @Override

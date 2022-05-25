@@ -32,20 +32,6 @@ public interface IMapper<T extends AbstractEntity> {
     List<T> selectAll();
 
     /**
-     * select all ids in table
-     *
-     * @return list of entity id
-     */
-    List<Long> selectAllId();
-
-    /**
-     * select all names in table
-     *
-     * @return
-     */
-    List<String> selectAllName();
-
-    /**
      * select one entity in table based on id
      * 
      * @param id id
@@ -55,11 +41,12 @@ public interface IMapper<T extends AbstractEntity> {
 
     /**
      * select one entity in table based on name
-     * 
+     *
+     * @param fid foreign id
      * @param name name
      * @return entity instance
      */
-    T selectByName(@Param("name") String name);
+    T selectByFidAndName(@Param("fid") long fid, @Param("name") String name);
 
     /**
      * insert one entity into table

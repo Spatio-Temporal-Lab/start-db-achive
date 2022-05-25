@@ -25,7 +25,7 @@ public interface FieldMapper extends IMapper<Field> {
     /**
      * insert one field instance into sys_field table
      * 
-     * @param field
+     * @param field field instance
      * @return number of affected rows
      */
     @Override
@@ -34,7 +34,7 @@ public interface FieldMapper extends IMapper<Field> {
     /**
      * insert one field instance into sys_field table
      * 
-     * @param field
+     * @param field field instance
      * @return number of affected rows
      */
     @Override
