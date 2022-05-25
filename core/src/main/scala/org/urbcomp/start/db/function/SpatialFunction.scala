@@ -29,6 +29,7 @@ import org.locationtech.jts.geom.prep._
   */
 class SpatialFunction {
 
+  @StartDBFunction
   def intersects(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.intersects(geom2)
@@ -36,6 +37,7 @@ class SpatialFunction {
     }
   }
 
+  @StartDBFunction
   def within(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.within(geom2)
@@ -43,6 +45,7 @@ class SpatialFunction {
     }
   }
 
+  @StartDBFunction
   def touches(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.touches(geom2)
@@ -50,6 +53,7 @@ class SpatialFunction {
     }
   }
 
+  @StartDBFunction
   def overlaps(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.overlaps(geom2)
@@ -57,6 +61,7 @@ class SpatialFunction {
     }
   }
 
+  @StartDBFunction
   def equals(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.equals(geom2)
@@ -64,6 +69,7 @@ class SpatialFunction {
     }
   }
 
+  @StartDBFunction
   def disjoint(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.disjoint(geom2)
@@ -71,6 +77,7 @@ class SpatialFunction {
     }
   }
 
+  @StartDBFunction
   def covers(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.covers(geom2)
@@ -78,6 +85,7 @@ class SpatialFunction {
     }
   }
 
+  @StartDBFunction
   def crosses(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.crosses(geom2)
@@ -85,6 +93,7 @@ class SpatialFunction {
     }
   }
 
+  @StartDBFunction
   def contains(geom1: Geometry, geom2: Geometry): Boolean = {
     prepareGeometry(geom1) match {
       case None                        => geom1.contains(geom2)
