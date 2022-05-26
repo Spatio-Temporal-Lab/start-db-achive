@@ -98,12 +98,12 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
                 continue;
             }
             final TableFunction tableFunction = TableFunctionImpl.create(method);
-            boolean isAnnotionPresent = method.isAnnotationPresent(StartDBFunction.class);
+            boolean isAnnotationPresent = method.isAnnotationPresent(StartDBFunction.class);
             if (tableFunction != null) {
-                builder.put(getFunctionName(method, isAnnotionPresent), tableFunction);
+                builder.put(getFunctionName(method, isAnnotationPresent), tableFunction);
             } else {
                 final ScalarFunction function = create(method);
-                builder.put(getFunctionName(method, isAnnotionPresent), function);
+                builder.put(getFunctionName(method, isAnnotationPresent), function);
             }
         }
         return builder.build();
