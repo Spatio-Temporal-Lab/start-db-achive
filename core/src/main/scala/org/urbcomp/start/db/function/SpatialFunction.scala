@@ -13,7 +13,6 @@ package org.urbcomp.start.db.function
 
 import org.locationtech.jts.geom._
 import org.locationtech.jts.geom.prep._
-import org.urbancomp.start.db.function.StartDBFunction
 
 /**
   * This class is used to register spatial functions.

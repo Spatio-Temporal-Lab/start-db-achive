@@ -37,7 +37,7 @@ import org.apache.calcite.schema.TableFunction;
 import org.apache.calcite.sql.SqlOperatorBinding;
 
 import com.google.common.collect.ImmutableMultimap;
-import org.urbancomp.start.db.function.StartDBFunction;
+import org.urbcomp.start.db.function.StartDBFunction;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-package org.urbancomp.start.db.function;
+package org.urbcomp.start.db.function;
 
 import java.lang.annotation.*;
 
