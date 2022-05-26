@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.{assertEquals, assertNotNull}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import org.urbancomp.start.db.MiniHBaseCluster
 
@@ -46,6 +46,15 @@ class CalciteGeomesaTest extends FunSuite with BeforeAndAfterAll {
     val resultSet = statement.executeQuery("select * from test_table01 where age = 10")
     while (resultSet.next()) {
       assertNotNull(resultSet.getObject(1))
+    }
+  }
+
+  test("calcite geomesa test") {
+    val connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config)
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery("select concat('1', '2')")
+    while (resultSet.next()) {
+      assertEquals(resultSet.getObject(1), "12")
     }
   }
 
