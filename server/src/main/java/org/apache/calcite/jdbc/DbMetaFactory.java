@@ -13,9 +13,11 @@ package org.apache.calcite.jdbc;
 
 import lombok.SneakyThrows;
 import org.apache.calcite.avatica.Meta;
+import org.apache.calcite.config.CalciteConnectionProperty;
+import org.apache.calcite.schema.SchemaPlus;
+import org.apache.calcite.schema.Table;
+import org.urbcomp.start.db.geomesa.GeomesaTable;
 
-import java.net.URL;
-import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
@@ -28,13 +30,27 @@ import java.util.Properties;
  **/
 public class DbMetaFactory implements Meta.Factory {
 
+    private static SchemaPlus ROOT_SCHEMA;
+
     @SneakyThrows
     @Override
     public Meta create(List<String> list) {
         final Properties p = new Properties();
-        final URL url = this.getClass().getResource("/model.json");
-        p.put("model", URLDecoder.decode(url.toString(), "UTF-8").replace("file:", ""));
+        p.put(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), "false");
         final Connection connection = DriverManager.getConnection("jdbc:calcite:", p);
+        final CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
+        ROOT_SCHEMA = calciteConnection.getRootSchema();
+        // init UDF here
+
+        // init table temporary
+        addTable(
+            "citibike_tripdata",
+            new GeomesaTable("", "citibike_tripdata", "citibike_tripdata")
+        );
         return new CalciteMetaImpl((CalciteConnectionImpl) connection);
+    }
+
+    public static void addTable(String name, Table table) {
+        ROOT_SCHEMA.add(name, table);
     }
 }
