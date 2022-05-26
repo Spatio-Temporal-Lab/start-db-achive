@@ -11,6 +11,7 @@
     <modules>
         <module>test</module>
         <module>calcite</module>
+        <module>jdbc-driver</module>
         <module>core</module>
         <module>server</module>
     </modules>
