@@ -1,4 +1,9 @@
 /*
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
+ *
+ * https://github.com/apache/calcite
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.calcite.sql.util;
 
 import org.apache.calcite.prepare.CalciteCatalogReader;
@@ -31,13 +37,15 @@ import java.util.function.Supplier;
  */
 public class SqlOperatorTables extends ReflectiveSqlOperatorTable {
 
-    private static final Supplier<SqlOperatorTable> SPATIAL =
-            Suppliers.memoize(SqlOperatorTables::createSpatial)::get;
+    private static final Supplier<SqlOperatorTable> SPATIAL = Suppliers.memoize(
+        SqlOperatorTables::createSpatial
+    )::get;
 
     private static SqlOperatorTable createSpatial() {
         return CalciteCatalogReader.operatorTable(
-                GeoFunctions.class.getName(),
-                SqlGeoFunctions.class.getName());
+            GeoFunctions.class.getName(),
+            SqlGeoFunctions.class.getName()
+        );
     }
 
     /** Returns the Spatial operator table, creating it if necessary. */
@@ -47,8 +55,7 @@ public class SqlOperatorTables extends ReflectiveSqlOperatorTable {
 
     /** Creates a composite operator table. */
     public static SqlOperatorTable chain(Iterable<SqlOperatorTable> tables) {
-        final ImmutableList<SqlOperatorTable> list =
-                ImmutableList.copyOf(tables);
+        final ImmutableList<SqlOperatorTable> list = ImmutableList.copyOf(tables);
         if (list.size() == 1) {
             return list.get(0);
         }
