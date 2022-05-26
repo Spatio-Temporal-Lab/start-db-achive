@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.urbcomp.start.db.metadata.mapper.TableMapper">
+    <select id="selectAll" resultType="org.urbcomp.start.db.metadata.entity.Table">
+        SELECT *
+        FROM sys_table
+        WHERE delete_time > 0;
+    </select>
+    <select id="selectById" resultType="org.urbcomp.start.db.metadata.entity.Table">
+        SELECT *
+        FROM sys_table
+        WHERE id = #{id} and delete_time > 0;
+    </select>
+    <select id="selectByFidAndName" resultType="org.urbcomp.start.db.metadata.entity.Table">
+        SELECT *
+        FROM sys_table
+        WHERE db_id = #{fid} and name = #{name} and delete_time > 0
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.urbcomp.start.db.metadata.entity.Table">
+        INSERT INTO sys_table(`db_id`, `name`, `storage_engine`) VALUE (#{table.dbId}, #{table.name}, #{table.storageEngine});
+    </insert>
+    <update id="update">
+        UPDATE sys_table
+        SET name=#{table.name},
+        id = #{table.id},
+        db_id = #{table.dbId}
+        WHERE id = #{table.id} and delete_time > 0;
+    </update>
+    <delete id="deleteById">
+        UPDATE sys_table
+        SET delete_time = current_timestamp()
+        WHERE id = #{id};
+    </delete>
+</mapper>

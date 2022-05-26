@@ -12,27 +12,26 @@
 package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
-import org.urbcomp.start.db.metadata.entity.User;
+import org.urbcomp.start.db.metadata.entity.Field;
+import org.urbcomp.start.db.metadata.mapper.FieldMapper;
 import org.urbcomp.start.db.metadata.mapper.IMapper;
-import org.urbcomp.start.db.metadata.mapper.UserMapper;
 
 /**
  * This class is the implementation class of IAccessor.The basic functions of metadata interaction
- * of users are realized.
+ * of fields are realized.
  *
- * @author zaiyuan
- * @date 2022-05-01 15:17:07
+ * @author Wang Bohong
+ * @Date 2022-05-20
  */
-public class UserAccessor implements IAccessor<User> {
+public class FieldAccessor implements IAccessor<Field> {
 
     @Override
-    public IMapper<User> getMapper(boolean commit) {
-        return SqlSessionUtil.getSession(commit).getMapper(UserMapper.class);
+    public IMapper<Field> getMapper(boolean commit) {
+        return SqlSessionUtil.getSession(commit).getMapper(FieldMapper.class);
     }
 
     @Override
-    public boolean isNotValid(User entity) {
-        // here fid is not used.
-        return getMapper(true).selectByFidAndName(0, entity.getName()) != null;
+    public boolean isNotValid(Field entity) {
+        return getMapper(true).selectByFidAndName(entity.getTableId(), entity.getName()) != null;
     }
 }

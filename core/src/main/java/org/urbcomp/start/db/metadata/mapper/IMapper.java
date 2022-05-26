@@ -25,7 +25,7 @@ import java.util.List;
 public interface IMapper<T extends AbstractEntity> {
 
     /**
-     * select all entity in table
+     * select all entities in table
      * 
      * @return list of entity instance
      */
@@ -41,11 +41,12 @@ public interface IMapper<T extends AbstractEntity> {
 
     /**
      * select one entity in table based on name
-     * 
+     *
+     * @param fid foreign id
      * @param name name
      * @return entity instance
      */
-    T selectByName(@Param("name") String name);
+    T selectByFidAndName(@Param("fid") long fid, @Param("name") String name);
 
     /**
      * insert one entity into table

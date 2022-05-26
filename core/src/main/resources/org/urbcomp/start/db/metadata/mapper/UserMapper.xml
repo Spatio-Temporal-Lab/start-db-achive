@@ -6,16 +6,17 @@
     <select id="selectAll" resultType="org.urbcomp.start.db.metadata.entity.User">
         SELECT *
         FROM sys_user
+        WHERE delete_time > 0
     </select>
     <select id="selectById" resultType="org.urbcomp.start.db.metadata.entity.User">
         SELECT *
         FROM sys_user
-        WHERE id = #{id}
+        WHERE id = #{id} and delete_time > 0
     </select>
-    <select id="selectByName" resultType="org.urbcomp.start.db.metadata.entity.User">
+    <select id="selectByFidAndName" resultType="org.urbcomp.start.db.metadata.entity.User">
         SELECT *
         FROM sys_user
-        WHERE name = #{name}
+        WHERE name = #{name} and delete_time > 0
     </select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.urbcomp.start.db.metadata.entity.User">
@@ -25,11 +26,11 @@
         UPDATE sys_user
         SET name=#{user.name},
             password=md5(#{user.password})
-        WHERE id = #{user.id}
+        WHERE id = #{user.id} and delete_time > 0
     </update>
     <delete id="deleteById">
-        DELETE
-        FROM sys_user
+        UPDATE sys_user
+        SET delete_time = current_timestamp()
         WHERE id = #{id}
     </delete>
 </mapper>

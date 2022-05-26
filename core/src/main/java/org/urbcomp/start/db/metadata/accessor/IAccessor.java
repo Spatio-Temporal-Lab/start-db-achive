@@ -11,10 +11,9 @@
 
 package org.urbcomp.start.db.metadata.accessor;
 
+import org.urbcomp.start.db.metadata.SqlSessionUtil;
 import org.urbcomp.start.db.metadata.entity.AbstractEntity;
 import org.urbcomp.start.db.metadata.mapper.IMapper;
-
-import java.util.List;
 
 /**
  * This interface is used to encapsulate some accessor information.
@@ -23,67 +22,105 @@ import java.util.List;
  * @date 2022-05-01 15:17:07
  */
 public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
-    /**
-     * select all entity in table
-     * 
-     * @return list of entity instance
-     */
-    List<T> selectAll();
 
     /**
      * select one entity from table by id
-     * 
-     * @param id id
+     *
+     * @param id     id
+     * @param commit auto_commit
      * @return entity instance
      */
-    T selectById(long id);
+    default T selectById(long id, boolean commit) {
+        return getMapper(commit).selectById(id);
+    }
 
     /**
      * select one entity from table by name
-     * 
-     * @param name name
+     *
+     * @param fid    foreign id
+     * @param name   name
+     * @param commit auto_commit
      * @return entity instance
      */
-    T selectByName(String name);
+    default T selectByFidAndName(long fid, String name, boolean commit) {
+        return getMapper(commit).selectByFidAndName(fid, name);
+    }
 
     /**
      * insert one entity instance into table
-     * 
+     *
      * @param entity entity instance
+     * @param commit auto_commit
      * @return number of affected rows
      */
-    long insert(T entity);
+    default long insert(T entity, boolean commit) {
+        if (isNotValid(entity)) {
+            return -1;
+        }
+        return getMapper(commit).insert(entity);
+    }
 
     /**
      * update one entity instance in table
-     * 
+     *
      * @param entity entity instance
+     * @param commit auto_commit
      * @return number of affected rows
      */
-    long update(T entity);
+    default long update(T entity, boolean commit) {
+        if (isNotValid(entity)) {
+            return -1;
+        }
+        return getMapper(commit).update(entity);
+    }
 
     /**
      * delete one entity instance in table
-     * 
-     * @param id id
+     *
+     * @param id     id
+     * @param commit auto_commit
      * @return number of affected rows
      */
-    long deleteById(long id);
+    default long deleteById(long id, boolean commit) {
+        return getMapper(commit).deleteById(id);
+    }
 
     /**
      * commit operation
      */
-    void commit();
+    default void commit() {
+        SqlSessionUtil.getSession(false).commit();
+    }
 
     /**
      * rollback pre operation
      */
-    void rollback();
+    default void rollback() {
+        SqlSessionUtil.getSession(false).rollback();
+    }
+
+    /**
+     * Close session
+     *
+     */
+    @Override
+    default void close() {
+        SqlSessionUtil.getSession(false).close();
+    }
 
     /**
      * get mapper instance
-     * 
+     *
+     * @param commit auto-commit
      * @return IMapper<T>
      */
-    IMapper<T> getMapper();
+    IMapper<T> getMapper(boolean commit);
+
+    /**
+     * Check the entity is valid
+     *
+     * @param entity entity instance
+     * @return the check result
+     */
+    boolean isNotValid(T entity);
 }
