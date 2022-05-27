@@ -49,7 +49,7 @@ class CalciteGeomesaTest extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  test("calcite geomesa test") {
+  test("calcite geomesa test with simple function") {
     val connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config)
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select concat('1', '2')")

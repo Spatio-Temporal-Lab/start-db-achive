@@ -22,13 +22,10 @@
 
 package org.apache.calcite.sql.util;
 
-import org.apache.calcite.prepare.CalciteCatalogReader;
-import org.apache.calcite.runtime.GeoFunctions;
-import org.apache.calcite.sql.SqlOperatorTable;
-import org.apache.calcite.sql.fun.SqlGeoFunctions;
-
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
+import org.apache.calcite.prepare.CalciteCatalogReader;
+import org.apache.calcite.sql.SqlOperatorTable;
 import org.urbcomp.start.db.function.StringFunction;
 
 import java.util.function.Supplier;
