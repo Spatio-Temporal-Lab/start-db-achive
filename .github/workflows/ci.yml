@@ -27,6 +27,12 @@ jobs:
           MYSQL_DATABASE: meta_data
         ports:
           - 3306:3306
+      geomesa-hbase:
+        image: jimolonely1234/geomesa-hbase
+        ports:
+          - 2181:2181
+          - 16020:16020
+          - 16000:16000
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -44,8 +50,6 @@ jobs:
           mvn spotless:check
       - name: init mysql schema
         run: mvn test exec:java -f test/embedded-mysql/pom.xml
-      #      - name: init hbase data
-      #        run:
 
       # Runs a set of commands using the runners shell
       - name: build and test with maven

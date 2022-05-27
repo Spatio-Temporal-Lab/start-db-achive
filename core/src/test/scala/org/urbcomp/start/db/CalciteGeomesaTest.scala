@@ -13,7 +13,6 @@ package org.urbcomp.start.db
 
 import org.junit.Assert.{assertEquals, assertNotNull}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
-import org.urbancomp.start.db.MiniHBaseCluster
 
 import java.net.URLDecoder
 import java.sql.DriverManager
@@ -30,8 +29,6 @@ class CalciteGeomesaTest extends FunSuite with BeforeAndAfterAll {
   var config: Properties = _
 
   override protected def beforeAll(): Unit = {
-    MiniHBaseCluster.start()
-
     val url = this.getClass.getResource("/model.json")
     val str = URLDecoder.decode(url.toString, "UTF-8")
     config = new Properties
@@ -56,9 +53,5 @@ class CalciteGeomesaTest extends FunSuite with BeforeAndAfterAll {
     while (resultSet.next()) {
       assertEquals(resultSet.getObject(1), "12")
     }
-  }
-
-  override protected def afterAll(): Unit = {
-    MiniHBaseCluster.shutdown()
   }
 }
