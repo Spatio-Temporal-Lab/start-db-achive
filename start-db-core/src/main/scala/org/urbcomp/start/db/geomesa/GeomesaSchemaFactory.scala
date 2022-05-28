@@ -26,10 +26,5 @@ class GeomesaSchemaFactory extends SchemaFactory {
       schemaPlus: SchemaPlus,
       schemaName: String,
       operands: util.Map[String, AnyRef]
-  ): Schema =
-    new GeomesaSchema(
-      String.valueOf(operands.get("userName")),
-      String.valueOf(operands.get("dbName")),
-      String.valueOf(operands.get("tableName"))
-    )
+  ): Schema = new GeomesaSchema
 }
