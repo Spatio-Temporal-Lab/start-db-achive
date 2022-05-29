@@ -26,6 +26,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <scala.binary.version>2.12</scala.binary.version>
+        <scala.version>2.12.8</scala.version>
         <scalatest.version>3.0.8</scalatest.version>
         <geomesa.version>3.2.2</geomesa.version>
         <hbase.version>2.2.2</hbase.version>
