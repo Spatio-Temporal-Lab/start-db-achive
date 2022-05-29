@@ -19,12 +19,11 @@ import org.dom4j.io.SAXReader;
 
 import java.util.List;
 
-
 public class Dom4jXPathParseXml {
-/**
- * 个人练习
- *
- * */
+    /**
+     * 个人练习
+     *
+     * */
     public static void main(String[] args) {
         SAXReader saxReader = new SAXReader();
 

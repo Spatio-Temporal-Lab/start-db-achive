@@ -20,10 +20,10 @@ import java.net.URL;
 import java.util.List;
 
 public class Dom4jParseXml {
-/**
- * 个人练习
- *
- * */
+    /**
+     * 个人练习
+     *
+     * */
     public static void main(String[] args) {
         // 创建解析器对象
         SAXReader saxReader = new SAXReader();

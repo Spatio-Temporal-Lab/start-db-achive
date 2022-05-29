@@ -12,15 +12,13 @@
 package Integration;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
-import org.urbcomp.start.db.test.Dom4jParseXml;
+import org.urbcomp.start.db.test.dom4j.Dom4jParseXml;
 
 import java.net.URL;
-import java.security.interfaces.ECKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +26,6 @@ import java.util.Objects;
 import static org.urbcomp.start.db.test.GetCasePathByXML.*;
 import static org.urbcomp.start.db.test.GetSQLAndExpectData.*;
 import static org.urbcomp.start.db.test.CompareActualAndExpect.*;
-
 
 public class MainTest {
 
@@ -61,7 +58,7 @@ public class MainTest {
         // todo 执行指定的xml文件
         SAXReader saxReader = new SAXReader();
         URL xmlResource = Dom4jParseXml.class.getClassLoader()
-                .getResource("cases/dql/testcase.xml");
+            .getResource("cases/dql/testcase.xml");
         try {
             Document document = saxReader.read(xmlResource);
             Element rootElement = document.getRootElement();
@@ -70,7 +67,7 @@ public class MainTest {
             List<Element> caseElements = rootElement.elements();
             for (Element caseElement : caseElements) {
                 // 获取case标签下 sql子标签的文本, 以及assertion标签的属性值: parameters 和 expected-data-file
-                Element sqlElement = (Element)caseElement.selectNodes("sql").get(0);
+                Element sqlElement = (Element) caseElement.selectNodes("sql").get(0);
                 String sqlText = sqlElement.toString();
                 List<Node> assertionList = caseElement.selectNodes("assertion");
 
@@ -78,7 +75,6 @@ public class MainTest {
                     Element assertionElement = (Element) node;
                     String parameters = assertionElement.attributeValue("parameters");
                     String expectData = assertionElement.attributeValue("expected-data-file");
-
 
                     // expectData不为空的情况下去执行, 如果parameters为空的话, 就跳过sql和参数的拼接
                     String ConcatSql = sqlText;
@@ -91,11 +87,11 @@ public class MainTest {
                     }
                     // 初始化一个空的实际返回值actualValue
                     String actualValue = "";
-                    try{
-                        //todo 执行拼接后的sql, 拿到实际返回值actualValue
+                    try {
+                        // todo 执行拼接后的sql, 拿到实际返回值actualValue
                         if (!expectValue.equals("")) {
                             actualValue = ConcatSql;
-                        }else {
+                        } else {
                             // 只执行sql, 不获取返回值
                         }
                     } catch (Exception e) {
@@ -105,7 +101,7 @@ public class MainTest {
                     if (!expectValue.equals("")) {
                         try {
                             compareData(actualValue, expectValue);
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             // 通过静态变量来控制异常是否抛出
                         }
                     }
