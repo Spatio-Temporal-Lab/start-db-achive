@@ -9,7 +9,7 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.test;
+package org.urbcomp.start.db.test.dom4j;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
