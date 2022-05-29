@@ -11,7 +11,6 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.{assertEquals, assertNotNull}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 import java.net.URLDecoder

@@ -26,8 +26,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import org.apache.calcite.prepare.CalciteCatalogReader;
 import org.apache.calcite.sql.SqlOperatorTable;
-import org.urbcomp.start.db.function.GeometricConstructorFunction;
-import org.urbcomp.start.db.function.StringFunction;
+import org.urbcomp.start.db.function.*;
 
 import java.util.function.Supplier;
 
@@ -38,12 +37,15 @@ public class SqlOperatorTables extends ReflectiveSqlOperatorTable {
 
     private static final Supplier<SqlOperatorTable> SPATIAL = Suppliers.memoize(
         SqlOperatorTables::createSpatial
-    )::get;
+    );
 
     private static SqlOperatorTable createSpatial() {
         return CalciteCatalogReader.operatorTable(
             StringFunction.class.getName(),
-            GeometricConstructorFunction.class.getName()
+            GeometricConstructorFunction.class.getName(),
+            MathFunction.class.getName(),
+            TimeFunction.class.getName(),
+            DataTypeConversionFunction.class.getName()
         );
     }
 

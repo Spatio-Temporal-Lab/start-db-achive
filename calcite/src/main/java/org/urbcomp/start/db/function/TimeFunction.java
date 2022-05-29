@@ -22,14 +22,6 @@
 
 package org.urbcomp.start.db.function;
 
-/**
- * @author zaiyuan
- * @date 2022-05-26 23:12:07
- */
-public class StringFunction {
-    // TODO by Xiang He
-    @StartDBFunction("concat")
-    public String concat(String str1, String str2) {
-        return str1 + str2;
-    }
+public class TimeFunction {
+    // TODO by Hongbo Wang
 }
