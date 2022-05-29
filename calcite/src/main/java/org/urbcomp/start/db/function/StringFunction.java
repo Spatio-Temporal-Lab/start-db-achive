@@ -30,6 +30,11 @@ public class StringFunction {
     // TODO by Xiang He
     @StartDBFunction("concat")
     public String concat(String str1, String str2) {
-        return str1 + str2;
+        return str1.concat(str2);
+    }
+
+    @StartDBFunction("reverse")
+    public String reverse(String str) {
+        return new StringBuffer(str).reverse().toString();
     }
 }
