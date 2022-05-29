@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+assertion 中的属性parameters, 包含所有参数的参数值, 参数值直接拼接到SQL字符串中, 所以没有对参数的类型进行判断, 如果参数有问题, 引擎的解析层会返回异常
+
+expected-data-file 中的值 为参数对应的预期值或者预期异常,
+类型为 update的case, 也就是ddl, 无预期结果, 可能会有预期异常
+
+如果使用对应参数, SQL语句能正常执行, 则引擎返回预期值, 那么expected-data-file 中对应的是文件名, 文件中为 column表头 以及 row行内容 ,
+如果语句执行报错，则为预期异常信息,  格式  error:异常信息
+
+如果assertion中的属性值都为空的话, 可以不写assertion标签
+ -->
+<testCase>
+
+    <case type="update">
+        <sql>create table a (a int, b timestamp);</sql>
+        <assertion parameters="" expected-data-file=""/>   <!-- 可省略 -->
+    </case>
+
+    <case type="update">
+        <sql>insert into a values( ?, ? );</sql>
+        <!-- 对入参进行类型校验意义不大, 因为拼接到sql中后全都变成了字符串, 而且入参类型如果真的有问题, 引擎的解析层就会解析报错 -->
+        <!-- <assertion parameters="1:int, to_timestamp('2022-05-28 11:22:33'):timestamp" expected-data-file=""/> -->
+        <assertion parameters="2, to_timestamp('2022-05-28 22:33:44')" expected-data-file=""/>
+        <assertion parameters="2" expected-data-file="error:参数缺失"/>
+    </case>
+
+    <case type="query">
+        <sql>select * from a where a = ? and b between ? and ?;</sql>
+        <assertion parameters="1, to_timestamp('2022-05-28 11:22:33'):timestamp, to_timestamp('2022-05-28 11:22:33')" expected-data-file="select.xml"/>
+        <assertion parameters="2, to_timestamp('2022-05-28 11:22:33'):timestamp, to_timestamp('2022-05-28 11:22:33')" expected-data-file="select.xml"/>
+    </case>
+
+    <case type="update">
+        <sql>drop table a;</sql>
+        <assertion parameters="" expected-data-file=""/>    <!-- 可省略 -->
+    </case>
+
+</testCase>
+
+
+

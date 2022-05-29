@@ -20,5 +20,6 @@
     <modules>
         <module>embedded-mysql</module>
         <module>geomesa-geotools</module>
+        <module>test-it</module>
     </modules>
 </project>
