@@ -16,26 +16,27 @@ import org.junit.Assert.assertEquals
 import java.sql.Timestamp
 
 /**
- * Time UDF functions test
- * @author Wang Bohong
- * @Date  2022-05-29
- */
+  * Time UDF functions test
+  * @author Wang Bohong
+  * @Date  2022-05-29
+  */
 class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   // TODO by Bohong Wang
 
   /**
-   * test for toTimestamp(two parameter)
-   */
+    * test for toTimestamp(two parameter)
+    */
   test("toTimestamp") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select toTimestamp('20210520 11:21:01', 'yyyyMMdd HH:mm:ss')")
+    val resultSet =
+      statement.executeQuery("select toTimestamp('20210520 11:21:01', 'yyyyMMdd HH:mm:ss')")
     resultSet.next()
     assertEquals(new Timestamp(1621480861000L), resultSet.getObject(1))
   }
 
   /**
-   * test for toTimestamp(one parameter)
-   */
+    * test for toTimestamp(one parameter)
+    */
   test("toTimestamp1") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select toTimestamp('2021-05-20 11:21:01')")
@@ -44,8 +45,8 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for currentTimestamp
-   */
+    * test for currentTimestamp
+    */
   test("currentTimestamp") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select currentTimestamp()")
@@ -55,10 +56,10 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for timestampToLong
-   * ToDO If the input parameter contains milliseconds, the millisecond precision will be lost.
-   * for instance, if input parameter is '2022-05-29 20:59:46.345', '.345' will be lost.
-   */
+    * test for timestampToLong
+    * ToDO If the input parameter contains milliseconds, the millisecond precision will be lost.
+    * for instance, if input parameter is '2022-05-29 20:59:46.345', '.345' will be lost.
+    */
   test("timestampToLong") {
     val statement = connect.createStatement()
     //ToDO  If the input parameter contains milliseconds, the millisecond precision will be lost.
@@ -68,8 +69,8 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for longToTimestamp
-   */
+    * test for longToTimestamp
+    */
   test("longToTimestamp") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select longToTimestamp('1653829186356')")
@@ -78,11 +79,12 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for timestampFormat
-   */
+    * test for timestampFormat
+    */
   test("timestampFormat") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select timestampFormat('2022-05-29 20:59:46', 'yyyyMMdd')")
+    val resultSet =
+      statement.executeQuery("select timestampFormat('2022-05-29 20:59:46', 'yyyyMMdd')")
     resultSet.next()
     assertEquals("20220529", resultSet.getObject(1))
   }
