@@ -57,8 +57,7 @@ public class MainTest {
     public void singleSQLCaseTest() throws Exception {
         // todo 执行指定的xml文件
         SAXReader saxReader = new SAXReader();
-        URL xmlResource = MainTest.class.getClassLoader()
-            .getResource("cases/dql/testcase.xml");
+        URL xmlResource = MainTest.class.getClassLoader().getResource("cases/dql/testcase.xml");
         try {
             Document document = saxReader.read(xmlResource);
             Element rootElement = document.getRootElement();
