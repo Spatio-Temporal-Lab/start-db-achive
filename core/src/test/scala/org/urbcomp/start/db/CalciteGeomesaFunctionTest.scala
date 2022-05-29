@@ -15,7 +15,7 @@ import org.junit.Assert.{assertEquals, assertNotNull}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 import java.net.URLDecoder
-import java.sql.DriverManager
+import java.sql.{Connection, DriverManager}
 import java.util.Properties
 
 /**
@@ -24,34 +24,20 @@ import java.util.Properties
   * @author zaiyuan
   * @since 0.1.0
   */
-class CalciteGeomesaTest extends FunSuite with BeforeAndAfterAll {
+class CalciteGeomesaFunctionTest extends FunSuite with BeforeAndAfterAll {
 
-  var config: Properties = _
+  var connect: Connection = _
 
   override protected def beforeAll(): Unit = {
     val url = this.getClass.getResource("/model.json")
     val str = URLDecoder.decode(url.toString, "UTF-8")
-    config = new Properties
+    val config = new Properties
     config.put("model", str.replace("file:", ""))
     config.put("caseSensitive", "false")
+    connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config)
   }
 
-  // TODO create table first
-  ignore("calcite geomesa test") {
-    val connect = DriverManager.getConnection("jdbc:calcite:", config)
-    val statement = connect.createStatement
-    val resultSet = statement.executeQuery("select * from test_table01 where age = 10")
-    while (resultSet.next()) {
-      assertNotNull(resultSet.getObject(1))
-    }
-  }
-
-  test("calcite geomesa test with simple function") {
-    val connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config)
-    val statement = connect.createStatement
-    val resultSet = statement.executeQuery("select st_makePoint(1, 2)")
-    while (resultSet.next()) {
-      println(resultSet.getObject(1))
-    }
+  override protected def afterAll(): Unit = {
+    connect.close()
   }
 }
