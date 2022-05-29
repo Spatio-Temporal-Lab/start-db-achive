@@ -22,6 +22,90 @@
 
 package org.urbcomp.start.db.function;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * Time UDF functions
+ * @author Wang Bohong
+ * @Date  2022-05-29
+ */
 public class TimeFunction {
-    // TODO by Hongbo Wang
+
+    /**
+     * default time format
+     */
+    String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    /**
+     * Converts a date string to a timestamp
+     * @param dateString    date(time) String
+     * @param format    date format
+     * @return timestamp
+     * @throws ParseException parse exception
+     */
+    @StartDBFunction("toTimestamp")
+    public Timestamp toTimestamp(String dateString, String format) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        Date date = simpleDateFormat.parse(dateString);
+        long time = date.getTime();
+        return new Timestamp(time);
+    }
+
+    /**
+     * Converts a date string to a timestamp
+     * @param dateString date(time) String
+     * @return timestamp
+     * @throws ParseException parse exception
+     */
+    @StartDBFunction("toTimestamp")
+    public Timestamp toTimestamp(String dateString) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DEFAULT_FORMAT);
+        Date date = simpleDateFormat.parse(dateString);
+        long time = date.getTime();
+        return new Timestamp(time);
+    }
+
+    /**
+     * get current timestamp
+     * @return current timestamp
+     */
+    @StartDBFunction("currentTimestamp")
+    public Timestamp currentTimestamp() {
+        return new Timestamp(System.currentTimeMillis());
+    }
+
+    /**
+     * Convert the timestamp to a Long instance
+     * @param ts timestamp
+     * @return long instance
+     */
+    @StartDBFunction("timestampToLong")
+    public Long timestampToLong(Timestamp ts) {
+        return ts.getTime();
+    }
+
+    /**
+     * Converts a long instance to a timestamp
+     * @param num one long instance
+     * @return timestamp instance
+     */
+    @StartDBFunction("longToTimestamp")
+    public Timestamp longToTimestamp(Long num) {
+        return new Timestamp(num);
+    }
+
+    /**
+     * Formats the timestamp in the specified format
+     * @param ts    timestamp
+     * @param string  time format
+     * @return the specified format instance
+     */
+    @StartDBFunction("timestampFormat")
+    public String timestampFormat(Timestamp ts, String string) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(string);
+        return simpleDateFormat.format(new Date(ts.getTime()));
+    }
 }
