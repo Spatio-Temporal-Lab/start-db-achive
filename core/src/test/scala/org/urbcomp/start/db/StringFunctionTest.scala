@@ -21,4 +21,11 @@ class StringFunctionTest extends CalciteGeomesaFunctionTest {
     resultSet.next()
     assertEquals("12", resultSet.getObject(1))
   }
+
+  test("reverse") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery("select reverse('abcde')")
+    resultSet.next()
+    assertEquals("edcba", resultSet.getObject(1))
+  }
 }
