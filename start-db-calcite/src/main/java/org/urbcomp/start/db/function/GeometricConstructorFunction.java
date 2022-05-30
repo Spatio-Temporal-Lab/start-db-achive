@@ -42,20 +42,28 @@ public class GeometricConstructorFunction {
     @StartDBFunction("st_makeLineString")
     public LineString st_makeLineString(List<Point> points) {
         GeometryFactory geometryFactory = new GeometryFactory();
-        return geometryFactory.createLineString(points.stream().map(Point::getCoordinate).toArray(Coordinate[]::new));
+        return geometryFactory.createLineString(
+            points.stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
+        );
     }
 
     @StartDBFunction("st_makePolygon")
     public Polygon st_makePolygon(LineString shell) {
         GeometryFactory geometryFactory = new GeometryFactory();
-        return geometryFactory.createPolygon(geometryFactory.createLinearRing(shell.getCoordinateSequence()));
+        return geometryFactory.createPolygon(
+            geometryFactory.createLinearRing(shell.getCoordinateSequence())
+        );
     }
 
     @StartDBFunction("st_makePolygon")
     public Polygon st_makePolygon(LineString shell, List<LineString> holes) {
         GeometryFactory geometryFactory = new GeometryFactory();
-        return geometryFactory.createPolygon(geometryFactory.createLinearRing(shell.getCoordinateSequence()),
-                holes.stream().map(o -> geometryFactory.createLinearRing(o.getCoordinateSequence())).toArray(LinearRing[]::new));
+        return geometryFactory.createPolygon(
+            geometryFactory.createLinearRing(shell.getCoordinateSequence()),
+            holes.stream()
+                .map(o -> geometryFactory.createLinearRing(o.getCoordinateSequence()))
+                .toArray(LinearRing[]::new)
+        );
     }
 
     @StartDBFunction("st_makeBBox")
