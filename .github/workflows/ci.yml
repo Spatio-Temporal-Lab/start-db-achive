@@ -49,7 +49,7 @@ jobs:
         run: |
           mvn spotless:check
       - name: init mysql schema
-        run: mvn test exec:java -f test/embedded-mysql/pom.xml
+        run: mvn test exec:java -f start-db-test/start-db-test-embedded-mysql/pom.xml
 
       # Runs a set of commands using the runners shell
       - name: build and test with maven
