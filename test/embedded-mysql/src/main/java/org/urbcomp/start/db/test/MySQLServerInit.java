@@ -37,7 +37,7 @@ public class MySQLServerInit {
         String password = "start_db";
         Class.forName("com.mysql.cj.jdbc.Driver");
         final String sqlTxt = Files.readAllLines(
-            Paths.get("core/src/main/resources/metadata/ddl.sql")
+            Paths.get("start-db-core/src/main/resources/metadata/ddl.sql")
         )
             .stream()
             .filter(line -> !line.trim().startsWith("#") && !line.trim().startsWith("--"))
