@@ -8,7 +8,7 @@ Running environment need to be setup before build or test START-DB.
 2. init mysql schema
 
 ```shell
-mvn test exec:java -f test/embedded-mysql/pom.xml
+mvn test exec:java -f start-db-test/start-db-test-embedded-mysql/pom.xml
 ```
 
 then
