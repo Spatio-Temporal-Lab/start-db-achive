@@ -22,9 +22,11 @@
 
 package org.urbcomp.start.db.function;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.*;
+import org.urbcomp.start.db.util.GeoFunctions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ruiyuan li
@@ -35,5 +37,45 @@ public class GeometricConstructorFunction {
     public Point st_makePoint(double x, double y) {
         GeometryFactory geometryFactory = new GeometryFactory();
         return geometryFactory.createPoint(new Coordinate(x, y));
+    }
+
+    @StartDBFunction("st_makeLineString")
+    public LineString st_makeLineString(List<Point> points) {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        return geometryFactory.createLineString(points.stream().map(Point::getCoordinate).toArray(Coordinate[]::new));
+    }
+
+    @StartDBFunction("st_makePolygon")
+    public Polygon st_makePolygon(LineString shell) {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        return geometryFactory.createPolygon(geometryFactory.createLinearRing(shell.getCoordinateSequence()));
+    }
+
+    @StartDBFunction("st_makePolygon")
+    public Polygon st_makePolygon(LineString shell, List<LineString> holes) {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        return geometryFactory.createPolygon(geometryFactory.createLinearRing(shell.getCoordinateSequence()),
+                holes.stream().map(o -> geometryFactory.createLinearRing(o.getCoordinateSequence())).toArray(LinearRing[]::new));
+    }
+
+    @StartDBFunction("st_makeBBox")
+    public Polygon st_makeBBox(double lowerX, double lowerY, double upperX, double upperY) {
+        List<Point> points = new ArrayList<>(5);
+        points.add(st_makePoint(lowerX, lowerY));
+        points.add(st_makePoint(lowerX, upperY));
+        points.add(st_makePoint(upperX, upperY));
+        points.add(st_makePoint(upperX, lowerY));
+        points.add(st_makePoint(lowerX, lowerY));
+        return st_makePolygon(st_makeLineString(points));
+    }
+
+    @StartDBFunction("st_makeBBox")
+    public Polygon st_makeBBox(Point point1, Point point2) {
+        return st_makeBBox(point1.getX(), point1.getY(), point2.getX(), point2.getY());
+    }
+
+    @StartDBFunction("st_makeCircle")
+    public Polygon st_makeCircle(Point center, double radiusInM) {
+        return (Polygon) center.buffer(GeoFunctions.getDegreeFromM(radiusInM));
     }
 }
