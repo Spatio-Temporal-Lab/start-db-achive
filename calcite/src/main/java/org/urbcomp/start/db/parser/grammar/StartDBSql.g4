@@ -1,21 +1,14 @@
-/**
-   Licensed to the Apache Software Foundation (ASF) under one or more 
-   contributor license agreements.  See the NOTICE file distributed with 
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with 
-   the License.  You may obtain a copy of the License at
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
 
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-
-// HPL/SQL Procedural SQL Extension Grammar 
 grammar StartDBSql;
 
 program : stmt T_SEMICOLON? EOF;
@@ -100,43 +93,29 @@ showTablesStmt :
      ;
 
 dtype :                  // Data types
-       T_CHAR
-     | T_CHARACTER
-     | T_BIGINT
-     | T_BINARY_DOUBLE
-     | T_BINARY_FLOAT
-     | T_BINARY_INTEGER
-     | T_BIT
-     | T_DATE
-     | T_DATETIME
-     | T_DEC
-     | T_DECIMAL
-     | T_DOUBLE T_PRECISION?
+       T_DATETIME
+     | T_DOUBLE
      | T_FLOAT
      | T_INT
-     | T_INT2
-     | T_INT4
-     | T_INT8
      | T_INTEGER
-     | T_NCHAR
-     | T_NVARCHAR
-     | T_NUMBER
-     | T_NUMERIC
-     | T_PLS_INTEGER
-     | T_REAL
-     | T_RESULT_SET_LOCATOR T_VARYING
-     | T_SIMPLE_FLOAT
-     | T_SIMPLE_DOUBLE
-     | T_SIMPLE_INTEGER
-     | T_SMALLINT
-     | T_SMALLDATETIME
      | T_STRING
      | T_SYS_REFCURSOR
      | T_TIMESTAMP
-     | T_TINYINT
-     | T_VARCHAR
-     | T_VARCHAR2
-     | T_XML
+     | T_LONG
+     | T_BOOLEAN
+     | T_BOOL
+     | T_BINARY
+     | T_GEOMETRY
+     | T_POINT
+     | T_LINESTRING
+     | T_POLYGON
+     | T_MULTIPOINT
+     | T_MULTILINESTRING
+     | T_MULTIPOLYGON
+     | T_GEOMETRYCOLLECTION
+     | T_TRAJECTORY
+     | T_ROADSEGMENT
+     | T_ROADNETWORK
      | ident ('%' (T_TYPE | T_ROWTYPE))?             // User-defined or derived data type
      ;
 
@@ -1312,6 +1291,22 @@ T_SYSDATE              : S Y S D A T E ;
 T_VARIANCE             : V A R I A N C E ;
 T_USER                 : U S E R ;
 T_METADATA             : M E T A D A T A ;
+
+T_LONG  : L O N G ;
+T_BOOLEAN   : B O O L E A N ;
+T_BOOL  : B O O L ;
+T_BINARY    : B I N A R Y ;
+T_GEOMETRY  : G E O M E T R Y ;
+T_POINT : P O I N T ;
+T_LINESTRING    : L I N E S T R I N G ;
+T_POLYGON   : P O L Y G O N ;
+T_MULTIPOINT    : M U L T I P O I N T ;
+T_MULTILINESTRING   : M U L T I L I N E S T R I N G ;
+T_MULTIPOLYGON    : M U L T I P O L Y G O N ;
+T_GEOMETRYCOLLECTION  : G E O M E T R Y C O L L E C T I O N ;
+T_TRAJECTORY    : T R A J E C T O R Y ;
+T_ROADSEGMENT   : R O A D S E G M E N T ;
+T_ROADNETWORK   : R O A D N E T W O R K ;
 
 T_ADD          : '+' ;
 T_COLON        : ':' ;

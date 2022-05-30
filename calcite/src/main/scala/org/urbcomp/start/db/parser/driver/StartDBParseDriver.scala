@@ -1,8 +1,9 @@
-package org.urbcomp.start.db.parser.visitor
+package org.urbcomp.start.db.parser.driver
 
 import org.antlr.v4.runtime.{CharStream, CharStreams, CommonTokenStream}
 import org.apache.calcite.sql.SqlNode
 import org.urbcomp.start.db.parser.parser.{StartDBSqlLexer, StartDBSqlParser}
+import org.urbcomp.start.db.parser.visitor.StartDBVisitor
 
 /**
  * Start DB parse driver
