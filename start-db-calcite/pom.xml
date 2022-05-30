@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>calcite</artifactId>
+    <artifactId>start-db-calcite</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

@@ -19,7 +19,8 @@
     <dependencies>
         <dependency>
             <groupId>org.urbcomp</groupId>
-            <artifactId>calcite</artifactId>
+            <artifactId>start-db-calcite</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.calcite</groupId>
