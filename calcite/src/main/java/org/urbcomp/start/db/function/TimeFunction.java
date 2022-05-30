@@ -131,7 +131,7 @@ public class TimeFunction {
      * @return timestamp instance
      */
     @StartDBFunction("longToTimestamp")
-    public Timestamp longToTimestamp(Long num) {
+    public Timestamp longToTimestamp(long num) {
         return new Timestamp(num);
     }
 
