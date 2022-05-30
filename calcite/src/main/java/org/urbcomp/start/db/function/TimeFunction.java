@@ -29,20 +29,26 @@ import java.util.Date;
 
 /**
  * Time UDF functions
+ *
  * @author Wang Bohong
- * @Date  2022-05-29
+ * @Date 2022-05-29
  */
 public class TimeFunction {
 
     /**
-     * default time format
+     * default time format, the order is important
      */
-    String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private final String[] DEFAULT_FORMATS = new String[]{
+            "yyyy-MM-dd HH:mm:ss.SSS",
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd"
+    };
 
     /**
      * Converts a date string to a timestamp
-     * @param dateString    date(time) String
-     * @param format    date format
+     *
+     * @param dateString date(time) String
+     * @param format     date format
      * @return timestamp
      * @throws ParseException parse exception
      */
@@ -56,20 +62,37 @@ public class TimeFunction {
 
     /**
      * Converts a date string to a timestamp
+     *
      * @param dateString date(time) String
      * @return timestamp
      * @throws ParseException parse exception
      */
     @StartDBFunction("toTimestamp")
     public Timestamp toTimestamp(String dateString) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DEFAULT_FORMAT);
-        Date date = simpleDateFormat.parse(dateString);
-        long time = date.getTime();
+        long time = 0;
+        boolean isCorrect = false;
+        ParseException pe = null;
+        for (String format : DEFAULT_FORMATS) {
+            try {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+                Date date = simpleDateFormat.parse(dateString);
+                time = date.getTime();
+                isCorrect = true;
+                break;
+            } catch (ParseException ex) {
+                pe = ex;
+            }
+        }
+        if (!isCorrect && pe != null) {
+            throw new ParseException("Date format is error. Only receive " + String.join(",", DEFAULT_FORMATS),
+                    pe.getErrorOffset());
+        }
         return new Timestamp(time);
     }
 
     /**
      * get current timestamp
+     *
      * @return current timestamp
      */
     @StartDBFunction("currentTimestamp")
@@ -79,16 +102,31 @@ public class TimeFunction {
 
     /**
      * Convert the timestamp to a Long instance
+     *
      * @param ts timestamp
      * @return long instance
      */
     @StartDBFunction("timestampToLong")
-    public Long timestampToLong(Timestamp ts) {
+    public long timestampToLong(Timestamp ts) {
         return ts.getTime();
+    }
+
+
+    /**
+     * Convert the timestamp string to a Long instance
+     *
+     * @param tsStr timestamp string
+     * @return long instance
+     */
+    @StartDBFunction("timestampToLong")
+    public long timestampToLong(String tsStr) throws ParseException {
+        Timestamp timestamp = toTimestamp(tsStr);
+        return timestamp.getTime();
     }
 
     /**
      * Converts a long instance to a timestamp
+     *
      * @param num one long instance
      * @return timestamp instance
      */
@@ -99,8 +137,9 @@ public class TimeFunction {
 
     /**
      * Formats the timestamp in the specified format
-     * @param ts    timestamp
-     * @param string  time format
+     *
+     * @param ts     timestamp
+     * @param string time format
      * @return the specified format instance
      */
     @StartDBFunction("timestampFormat")
