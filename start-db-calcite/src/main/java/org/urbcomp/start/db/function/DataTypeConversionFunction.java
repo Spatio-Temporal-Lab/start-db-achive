@@ -23,7 +23,7 @@
 package org.urbcomp.start.db.function;
 
 public class DataTypeConversionFunction {
-    // TODO by Yongxin Tang
+
     @StartDBFunction("castToInteger")
     public Integer castToInteger(String str) { return Integer.valueOf(str); }
 
