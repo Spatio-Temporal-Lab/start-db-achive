@@ -25,7 +25,7 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   /**
    * test for toTimestamp(two parameter)
    */
-  test("toTimestamp") {
+  test("toTimestamp(str, format)") {
     val statement = connect.createStatement()
     val resultSet =
       statement.executeQuery("select toTimestamp('20210520 11:21:01', 'yyyyMMdd HH:mm:ss')")
@@ -36,7 +36,7 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   /**
    * test for toTimestamp(one parameter)
    */
-  test("toTimestamp1") {
+  test("toTimestamp(str)") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select toTimestamp('2021-05-20 11:21:01.234')")
     resultSet.next()
@@ -57,9 +57,23 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   /**
    * test for timestampToLong
    */
-  test("timestampToLong") {
+  test("timestampToLong(str)") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select timestampToLong('2022-05-29 20:59:46.345')")
+    var resultSet = statement.executeQuery("select timestampToLong('2022-05-29 20:59:46.345')")
+    resultSet.next()
+    assertEquals(1653829186345L, resultSet.getObject(1))
+
+    resultSet = statement.executeQuery("select timestampToLong('2022-05-29 20:59:46')")
+    resultSet.next()
+    assertEquals(1653829186000L, resultSet.getObject(1))
+  }
+
+  /**
+   * test for timestampToLong
+   */
+  test("timestampToLong(timestamp)") {
+    val statement = connect.createStatement()
+    var resultSet = statement.executeQuery("select timestampToLong(longToTimestamp(1653829186345))")
     resultSet.next()
     assertEquals(1653829186345L, resultSet.getObject(1))
   }
@@ -67,7 +81,7 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   /**
    * test for longToTimestamp
    */
-  test("longToTimestamp") {
+  test("longToTimestamp(long)") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select longToTimestamp('1653829186356')")
     resultSet.next()
@@ -77,7 +91,7 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   /**
    * test for timestampFormat
    */
-  test("timestampFormat") {
+  test("timestampFormat(str, format)") {
     val statement = connect.createStatement()
     val resultSet =
       statement.executeQuery("select timestampFormat('2022-05-29 20:59:46', 'yyyyMMdd')")
