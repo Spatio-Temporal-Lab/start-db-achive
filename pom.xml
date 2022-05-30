@@ -14,7 +14,7 @@
         <module>jdbc-driver</module>
         <module>start-db-cmd</module>
         <module>core</module>
-        <module>server</module>
+        <module>start-db-server</module>
     </modules>
 
     <properties>
