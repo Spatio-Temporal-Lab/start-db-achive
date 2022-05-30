@@ -38,11 +38,10 @@ public class TimeFunction {
     /**
      * default time format, the order is important
      */
-    private final String[] DEFAULT_FORMATS = new String[]{
-            "yyyy-MM-dd HH:mm:ss.SSS",
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd"
-    };
+    private final String[] DEFAULT_FORMATS = new String[] {
+        "yyyy-MM-dd HH:mm:ss.SSS",
+        "yyyy-MM-dd HH:mm:ss",
+        "yyyy-MM-dd" };
 
     /**
      * Converts a date string to a timestamp
@@ -84,8 +83,10 @@ public class TimeFunction {
             }
         }
         if (!isCorrect && pe != null) {
-            throw new ParseException("Date format is error. Only receive " + String.join(",", DEFAULT_FORMATS),
-                    pe.getErrorOffset());
+            throw new ParseException(
+                "Date format is error. Only receive " + String.join(",", DEFAULT_FORMATS),
+                pe.getErrorOffset()
+            );
         }
         return new Timestamp(time);
     }
@@ -110,7 +111,6 @@ public class TimeFunction {
     public long timestampToLong(Timestamp ts) {
         return ts.getTime();
     }
-
 
     /**
      * Convert the timestamp string to a Long instance
