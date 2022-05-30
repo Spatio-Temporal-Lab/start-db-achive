@@ -13,7 +13,7 @@
         <module>start-db-calcite</module>
         <module>jdbc-driver</module>
         <module>start-db-cmd</module>
-        <module>core</module>
+        <module>start-db-core</module>
         <module>start-db-server</module>
     </modules>
 
