@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>jdbc-driver</artifactId>
+    <artifactId>start-db-jdbc-driver</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

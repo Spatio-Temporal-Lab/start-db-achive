@@ -9,9 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>test</module>
+        <module>start-db-test</module>
         <module>start-db-calcite</module>
-        <module>jdbc-driver</module>
+        <module>start-db-jdbc-driver</module>
         <module>start-db-cmd</module>
         <module>start-db-core</module>
         <module>start-db-server</module>
