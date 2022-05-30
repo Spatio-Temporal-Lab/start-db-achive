@@ -26,7 +26,7 @@
         </dependency>
         <dependency>
             <groupId>org.urbcomp</groupId>
-            <artifactId>jdbc-driver</artifactId>
+            <artifactId>start-db-jdbc-driver</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
