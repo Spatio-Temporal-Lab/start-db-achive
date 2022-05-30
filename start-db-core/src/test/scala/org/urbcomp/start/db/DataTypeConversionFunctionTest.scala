@@ -14,7 +14,7 @@ package org.urbcomp.start.db
 import org.junit.Assert.assertEquals
 
 class DataTypeConversionFunctionTest extends CalciteGeomesaFunctionTest {
-  // TODO by Yongxin Tang
+
 
   test("castToInteger") {
     val statement = connect.createStatement
