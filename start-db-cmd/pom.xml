@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cmd</artifactId>
+    <artifactId>start-db-cmd</artifactId>
     <packaging>jar</packaging>
 
     <properties>
