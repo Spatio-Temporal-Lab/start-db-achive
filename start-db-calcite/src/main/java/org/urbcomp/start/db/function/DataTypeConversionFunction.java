@@ -40,16 +40,16 @@ public class DataTypeConversionFunction {
     public Boolean castToBoolean(String str) { return Boolean.valueOf(str); }
 
     @StartDBFunction("castToString")
-    public String castToString(Object any) { return String.valueOf(any); }
+    public String castToString(Object any) { return any.toString(); }
 
     @StartDBFunction("parseInteger")
-    public  Integer parseInteger(Object num) { return Integer.valueOf((String) num);}
+    public  Integer parseInteger(Object num) { return Integer.valueOf(num.toString());}
 
     @StartDBFunction("parseLong")
-    public Long parseLong(Object num) { return Long.valueOf(String.valueOf(num)); }
+    public Long parseLong(Object num) { return Long.valueOf(num.toString()); }
 
     @StartDBFunction("parseDouble")
-    public Double parseDouble(Object num) { return Double.valueOf(String.valueOf(num)); }
+    public Double parseDouble(Object num) { return Double.valueOf(num.toString()); }
 
 
 }
