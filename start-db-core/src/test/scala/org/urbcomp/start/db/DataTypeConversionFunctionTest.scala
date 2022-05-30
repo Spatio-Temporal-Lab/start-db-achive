@@ -15,7 +15,6 @@ import org.junit.Assert.assertEquals
 
 class DataTypeConversionFunctionTest extends CalciteGeomesaFunctionTest {
 
-
   test("castToInteger") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select castToInteger('1234')")
@@ -34,14 +33,14 @@ class DataTypeConversionFunctionTest extends CalciteGeomesaFunctionTest {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select castToFloat('123.1')")
     resultSet.next()
-    assertEquals(123.1F, resultSet.getObject(1))
+    assertEquals(123.1f, resultSet.getObject(1))
   }
 
   test("castToDouble") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select castToDouble('123444555.3')")
     resultSet.next()
-    assertEquals(123444555.3D, resultSet.getObject(1))
+    assertEquals(123444555.3d, resultSet.getObject(1))
   }
 
   test("castToBoolean") {
@@ -76,7 +75,7 @@ class DataTypeConversionFunctionTest extends CalciteGeomesaFunctionTest {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select parseDouble('1234')")
     resultSet.next()
-    assertEquals(1234D, resultSet.getObject(1))
+    assertEquals(1234d, resultSet.getObject(1))
   }
 
 }
