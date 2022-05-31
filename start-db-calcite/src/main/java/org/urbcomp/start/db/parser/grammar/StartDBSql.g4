@@ -99,7 +99,6 @@ dtype :                  // Data types
      | T_INT
      | T_INTEGER
      | T_STRING
-     | T_SYS_REFCURSOR
      | T_TIMESTAMP
      | T_LONG
      | T_BOOLEAN
