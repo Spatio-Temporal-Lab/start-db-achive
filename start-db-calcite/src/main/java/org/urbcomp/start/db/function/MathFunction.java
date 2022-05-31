@@ -23,7 +23,6 @@
 package org.urbcomp.start.db.function;
 
 public class MathFunction {
-    // TODO by Zheng Li
     /**
      * Returns the natural logarithm (base) of a double value (num).
      *
@@ -38,7 +37,6 @@ public class MathFunction {
 
     /**
      * The double value that is closer than any other to pi
-     * the ratio of the circumference of a circle to its diameter.
      *
      * @return PI double.
      */
@@ -49,7 +47,7 @@ public class MathFunction {
 
     @StartDBFunction("log2")
     public double log2(double num) {
-        return Math.log(num) / Math.log(2);
+        return Math.log(num) / Math.log(2.0D);
     }
 
     @StartDBFunction("log1p")
@@ -65,5 +63,85 @@ public class MathFunction {
     @StartDBFunction("log10")
     public double log10(double num) {
         return Math.log10(num);
+    }
+
+    @StartDBFunction("abs")
+    public int abs(int num) {
+        return (num < 0) ? -num : num;
+    }
+
+    @StartDBFunction("abs")
+    public long abs(long num) {
+        return (num < 0) ? -num : num;
+    }
+
+    @StartDBFunction("abs")
+    public float abs(float num) {
+        return (num <= 0.0F) ? 0.0F - num : num;
+    }
+
+    @StartDBFunction("abs")
+    public double abs(double num) {
+        return (num <= 0.0D) ? 0.0D - num : num;
+    }
+
+    @StartDBFunction("ceil")
+    public double ceil(double num) {
+        return Math.ceil(num);
+    }
+
+    @StartDBFunction("floor")
+    public double floor(double num) {
+        return Math.floor(num);
+    }
+
+//    @StartDBFunction("round")
+//    public long round(double num) {
+//        return Math.round(num);
+//    }
+
+//    @StartDBFunction("round")
+//    public int round(float num) {
+//        return Math.round(num);
+//    }
+
+    @StartDBFunction("signum")
+    public float signum(float num) {
+        return Math.signum(num);
+    }
+
+    @StartDBFunction("signum")
+    public double signum(double num) {
+        return Math.signum(num);
+    }
+
+    @StartDBFunction("mod")
+    public int mod(int num1, int num2) {
+        return Math.floorMod(num1, num2);
+    }
+
+    @StartDBFunction("sin")
+    public double sin(double num) {
+        return Math.sin(num);
+    }
+
+    @StartDBFunction("cos")
+    public double cos(double num) {
+        return Math.cos(num);
+    }
+
+    @StartDBFunction("tan")
+    public double tan(double num) {
+        return Math.tan(num);
+    }
+
+    @StartDBFunction("asin")
+    public double asin(double num) {
+        return Math.asin(num);
+    }
+
+    @StartDBFunction("acos")
+    public double acos(double num) {
+        return Math.acos(num);
     }
 }
