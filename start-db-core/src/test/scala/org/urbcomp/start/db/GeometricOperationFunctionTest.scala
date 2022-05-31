@@ -12,6 +12,7 @@
 package org.urbcomp.start.db
 
 import org.junit.Assert.assertEquals
+import org.urbcomp.start.db.util.GeoFunctions
 
 class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_translate(geom, deltaX, deltaY)") {
@@ -26,7 +27,8 @@ class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
 
   test("st_x(point)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery("select st_x(st_makePoint(1, 2)), st_x(st_makeBBox(1, 2, 3, 4))")
+    val resultSet =
+      statement.executeQuery("select st_x(st_makePoint(1, 2)), st_x(st_makeBBox(1, 2, 3, 4))")
     resultSet.next()
     assertEquals("1.0", resultSet.getObject(1).toString)
     assertEquals(null, resultSet.getObject(2))
@@ -34,7 +36,8 @@ class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
 
   test("st_y(point)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery("select st_y(st_makePoint(1, 2)), st_y(st_makeBBox(1, 2, 3, 4))")
+    val resultSet =
+      statement.executeQuery("select st_y(st_makePoint(1, 2)), st_y(st_makeBBox(1, 2, 3, 4))")
     resultSet.next()
     assertEquals("2.0", resultSet.getObject(1).toString)
     assertEquals(null, resultSet.getObject(2))
@@ -52,7 +55,9 @@ class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_numPoints(geom)") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_numPoints(st_makePoint(1, 2)), st_numPoints(st_makeBBox(1, 2, 3, 4))")
+      statement.executeQuery(
+        "select st_numPoints(st_makePoint(1, 2)), st_numPoints(st_makeBBox(1, 2, 3, 4))"
+      )
     resultSet.next()
     assertEquals("1", resultSet.getObject(1).toString)
     assertEquals("5", resultSet.getObject(2).toString)
@@ -61,7 +66,9 @@ class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_pointN(geom, n)") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_pointN(st_makePoint(1, 2), 1), st_pointN(st_makeBBox(1, 2, 3, 4), 1)")
+      statement.executeQuery(
+        "select st_pointN(st_makePoint(1, 2), 1), st_pointN(st_makeBBox(1, 2, 3, 4), 1)"
+      )
     resultSet.next()
     assertEquals(null, resultSet.getObject(1))
     assertEquals(null, resultSet.getObject(2))
@@ -80,7 +87,9 @@ class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_centroid(geom)") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_centroid(st_makePoint(1, 2)), st_centroid(st_makeBBox(1, 2, 3, 4))")
+      statement.executeQuery(
+        "select st_centroid(st_makePoint(1, 2)), st_centroid(st_makeBBox(1, 2, 3, 4))"
+      )
     resultSet.next()
     assertEquals("POINT (1 2)", resultSet.getObject(1).toString)
     assertEquals("POINT (2 3)", resultSet.getObject(2).toString)
@@ -97,13 +106,23 @@ class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_distance(geom1, geom2)") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_distance(st_makePoint(1, 2), st_makeBBox(1, 2, 3, 4)), st_distance(st_makePoint(0, 0), st_makeBBox(1, 2, 3, 4))")
+      statement.executeQuery(
+        "select st_distance(st_makePoint(1, 2), st_makeBBox(1, 2, 3, 4)), " +
+          "st_distance(st_makePoint(0, 0), st_makeBBox(1, 2, 3, 4))"
+      )
     resultSet.next()
     assertEquals(0.0, resultSet.getObject(1))
     assertEquals(Math.sqrt(5), resultSet.getObject(2))
   }
 
   test("st_distanceSphere(geom1, geom2)") {
-    // todo
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery(
+        "select st_distanceSphere(st_makePoint(116.307683,39.978879), st_makePoint(116.337579,39.984186))"
+      )
+    resultSet.next()
+    System.out.print(GeoFunctions.getDistanceInM(116.307683, 39.978879, 116.337579, 39.984186))
+    assertEquals(2614.7025275922806, resultSet.getObject(1))
   }
 }

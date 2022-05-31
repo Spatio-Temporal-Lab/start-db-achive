@@ -49,6 +49,11 @@
             <artifactId>spatial4j</artifactId>
             <version>${spatial4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-referencing</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

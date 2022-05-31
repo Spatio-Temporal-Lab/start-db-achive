@@ -108,7 +108,14 @@ public class GeometricOperationFunction {
         Coordinate c1 = geom1.getCoordinate();
         Coordinate c2 = geom2.getCoordinate();
         DistanceCalculator ca = JtsSpatialContext.GEO.getDistCalc();
-        org.locationtech.spatial4j.shape.Point startPoint = JtsSpatialContext.GEO.getShapeFactory().pointXY(c1.x, c1.y);
+        org.locationtech.spatial4j.shape.Point startPoint = JtsSpatialContext.GEO.getShapeFactory()
+            .pointXY(c1.x, c1.y);
         return DistanceUtils.DEG_TO_KM * ca.distance(startPoint, c2.x, c2.y) * 1000;
+    }
+
+    @StartDBFunction("st_distanceSpheroid")
+    public double st_distanceSpheroid(Geometry geom1, Geometry geom2) {
+        // todo
+        return 0.0;
     }
 }
