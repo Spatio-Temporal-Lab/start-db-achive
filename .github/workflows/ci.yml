@@ -22,18 +22,18 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: cache docker image
-        uses: actions/cache@v3
-        with:
-          path: /var/lib/docker/image
-          key: ${{ runner.os }}-docker-images-${{ hashFiles('**/docker-compose.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-docker-images-
-
       # run docker for meta data and user data
       - name: run docker
         run: |
           docker-compose -f docker/docker-compose.yml up -d
+
+      - name: cache docker image
+        uses: actions/cache@v3
+        with:
+          path: /var/lib/docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
 
       # Runs a single command using the runners shell
       - name: set up maven and java
