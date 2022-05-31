@@ -22,6 +22,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.1.3
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles('**/docker-compose.yml') }}
+
       # run docker for meta data and user data
       - name: run docker
         run: |
