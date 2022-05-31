@@ -32,7 +32,7 @@ public class MySQLServerInit {
 
     public static void init() throws Exception {
         String jdbcUrl =
-            "jdbc:mysql://localhost:3306/meta_data?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8";
+            "jdbc:mysql://localhost:3307/meta_data?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8";
         String user = "start_db";
         String password = "start_db";
         Class.forName("com.mysql.cj.jdbc.Driver");
