@@ -24,4 +24,46 @@ package org.urbcomp.start.db.function;
 
 public class MathFunction {
     // TODO by Zheng Li
+    /**
+     * Returns the natural logarithm (base) of a double value (num).
+     *
+     * @param base  base double
+     * @param num   num double
+     * @return log result
+     */
+    @StartDBFunction("log")
+    public double log(double base, double num) {
+        return Math.log(num) / Math.log(base);
+    }
+
+    /**
+     * The double value that is closer than any other to pi
+     * the ratio of the circumference of a circle to its diameter.
+     *
+     * @return PI double.
+     */
+    @StartDBFunction("pi")
+    public double pi() {
+        return Math.PI;
+    }
+
+    @StartDBFunction("log2")
+    public double log2(double num) {
+        return Math.log(num) / Math.log(2);
+    }
+
+    @StartDBFunction("log1p")
+    public double log1p(double num) {
+        return Math.log1p(num);
+    }
+
+    @StartDBFunction("ln")
+    public double ln(double num) {
+        return Math.log(num);
+    }
+
+    @StartDBFunction("log10")
+    public double log10(double num) {
+        return Math.log10(num);
+    }
 }
