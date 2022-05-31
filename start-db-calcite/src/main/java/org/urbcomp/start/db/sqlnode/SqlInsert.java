@@ -1,3 +1,25 @@
+/*
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
+ *
+ * https://github.com/apache/calcite
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to you under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.urbcomp.start.db.sqlnode;
 
 import org.apache.calcite.sql.*;
@@ -25,7 +47,13 @@ public class SqlInsert extends SqlBasicCall {
         super(operator, new SqlNode[0], pos);
     }
 
-    public SqlInsert(SqlParserPos pos, SqlIdentifier targetTable, List<String> columnNameList, List<List<String>> rowList, String select) {
+    public SqlInsert(
+        SqlParserPos pos,
+        SqlIdentifier targetTable,
+        List<String> columnNameList,
+        List<List<String>> rowList,
+        String select
+    ) {
         this(new SqlSpecialOperator("INSERT", SqlKind.INSERT), pos);
         this.targetTable = targetTable;
         this.columnNameList = columnNameList;
@@ -67,11 +95,15 @@ public class SqlInsert extends SqlBasicCall {
 
     @Override
     public String toString() {
-        return "SqlInsert{" +
-                "targetTable=" + targetTable +
-                ", columnNameList=" + columnNameList +
-                ", rowList=" + rowList +
-                ", select=" + select +
-                '}';
+        return "SqlInsert{"
+            + "targetTable="
+            + targetTable
+            + ", columnNameList="
+            + columnNameList
+            + ", rowList="
+            + rowList
+            + ", select="
+            + select
+            + '}';
     }
 }
