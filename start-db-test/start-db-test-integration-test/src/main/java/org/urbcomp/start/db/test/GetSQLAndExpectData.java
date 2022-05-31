@@ -21,6 +21,7 @@ public class GetSQLAndExpectData {
 
     public static String getExpectData(String expectData) {
         // todo 将返回的预期结果或者预期异常信息返回
+        expectData = "";
         if (expectData.startsWith("error")) {
 
         } else {
