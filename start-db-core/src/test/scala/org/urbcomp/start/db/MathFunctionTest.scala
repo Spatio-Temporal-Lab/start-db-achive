@@ -14,9 +14,10 @@ package org.urbcomp.start.db
 import org.junit.Assert.assertEquals
 
 class MathFunctionTest extends CalciteGeomesaFunctionTest {
+
   /**
-   * test for log
-   */
+    * test for log
+    */
   test("log") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select log(3,9)")
@@ -25,8 +26,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for pi
-   */
+    * test for pi
+    */
   test("pi") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select pi")
@@ -35,8 +36,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for log1p
-   */
+    * test for log1p
+    */
   test("log1p") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select log1p(1)")
@@ -45,8 +46,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for log2
-   */
+    * test for log2
+    */
   test("log2") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select log2(8)")
@@ -55,8 +56,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for ln
-   */
+    * test for ln
+    */
   test("ln") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select ln(2)")
@@ -65,8 +66,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for log10
-   */
+    * test for log10
+    */
   test("log10") {
     val statement = connect.createStatement()
     var resultSet = statement.executeQuery("select log10(1000)")
@@ -75,8 +76,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for abs(int)
-   */
+    * test for abs(int)
+    */
   test("abs(int)") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select abs(-19)")
@@ -85,8 +86,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for abs(long)
-   */
+    * test for abs(long)
+    */
   test("abs(long)") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select abs(-1653829186356786)")
@@ -95,8 +96,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for abs(float)
-   */
+    * test for abs(float)
+    */
   test("abs(float)") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select abs('-2.23')")
@@ -105,8 +106,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for ceil
-   */
+    * test for ceil
+    */
   test("ceil") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select ceil('2.23')")
@@ -115,8 +116,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for floor
-   */
+    * test for floor
+    */
   test("floor") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select floor('2.23')")
@@ -125,17 +126,18 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for signum
-   */
+    * test for signum
+    */
   test("signum") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select signum('2.23')")
     resultSet.next()
     assertEquals(1.0, resultSet.getObject(1))
   }
+
   /**
-   * test for mod
-   */
+    * test for mod
+    */
   test("mod") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select mod(10,3)")
@@ -144,8 +146,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for sin
-   */
+    * test for sin
+    */
   test("sin") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select sin(90)")
@@ -154,8 +156,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for cos
-   */
+    * test for cos
+    */
   test("cos") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select cos(90)")
@@ -164,17 +166,18 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for tan
-   */
+    * test for tan
+    */
   test("tan") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select tan('0.9')")
     resultSet.next()
     assertEquals(1.2601582175503392, resultSet.getObject(1))
   }
+
   /**
-   * test for asin
-   */
+    * test for asin
+    */
   test("asin") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select asin('0.9')")
@@ -183,8 +186,8 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for acos
-   */
+    * test for acos
+    */
   test("acos") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select acos('0.9')")
