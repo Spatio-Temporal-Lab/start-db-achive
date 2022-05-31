@@ -26,7 +26,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /var/lib/docker/
-          key: ${{ runner.os }}-docker-images-${{ hashFiles('**/docker-compose.yml' }}
+          key: ${{ runner.os }}-docker-images-${{ hashFiles('**/docker-compose.yml') }}
           restore-keys: |
             ${{ runner.os }}-docker-images-
 
