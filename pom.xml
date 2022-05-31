@@ -18,6 +18,7 @@
     </modules>
 
     <properties>
+        <antlr.version>4.9.2</antlr.version>
         <junit.version>4.13.1</junit.version>
         <checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
         <checkstyle.version>9.3</checkstyle.version>
@@ -25,6 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <scala.version>2.12.8</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
         <scalatest.version>3.0.8</scalatest.version>
         <geomesa.version>3.2.2</geomesa.version>
