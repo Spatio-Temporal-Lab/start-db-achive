@@ -22,7 +22,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Create Cache Registry
+      - name: cache docker image
         uses: actions/cache@v3
         with:
           path: /var/lib/docker/
