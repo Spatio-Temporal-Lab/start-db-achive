@@ -122,6 +122,16 @@ class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
         "select st_distanceSphere(st_makePoint(116.307683,39.978879), st_makePoint(116.337579,39.984186))"
       )
     resultSet.next()
+    assertEquals(2614.7025275922806, resultSet.getObject(1))
+  }
+
+  test("st_distanceSpheroid(geom1, geom2)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery(
+        "select st_distanceSpheroid(st_makePoint(116.307683,39.978879), st_makePoint(116.337579,39.984186))"
+      )
+    resultSet.next()
     System.out.print(GeoFunctions.getDistanceInM(116.307683, 39.978879, 116.337579, 39.984186))
     assertEquals(2614.7025275922806, resultSet.getObject(1))
   }

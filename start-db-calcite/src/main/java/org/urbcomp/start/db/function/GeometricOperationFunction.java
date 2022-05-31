@@ -22,6 +22,8 @@
 
 package org.urbcomp.start.db.function;
 
+import org.geotools.referencing.GeodeticCalculator;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.util.AffineTransformation;
 import org.locationtech.jts.operation.distance.DistanceOp;
@@ -115,7 +117,11 @@ public class GeometricOperationFunction {
 
     @StartDBFunction("st_distanceSpheroid")
     public double st_distanceSpheroid(Geometry geom1, Geometry geom2) {
-        // todo
-        return 0.0;
+        Coordinate c1 = geom1.getCoordinate();
+        Coordinate c2 = geom2.getCoordinate();
+        GeodeticCalculator gc = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+        gc.setStartingGeographicPoint(c1.x, c1.y);
+        gc.setDestinationGeographicPoint(c2.x, c2.y);
+        return gc.getOrthodromicDistance();
     }
 }
