@@ -22,8 +22,6 @@
 
 package org.urbcomp.start.db.function;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 /**
@@ -71,14 +69,16 @@ public class StringFunction {
     public String ltrim(String str) {
         int i = 0;
         int n = str.length();
-        while (i < n && str.charAt(i) == ' ') ++i;
+        while (i < n && str.charAt(i) == ' ')
+            ++i;
         return str.substring(i);
     }
 
     @StartDBFunction("rtrim")
     public String rtrim(String str) {
         int i = str.length() - 1;
-        while (i >= 0 && str.charAt(i) == ' ') --i;
+        while (i >= 0 && str.charAt(i) == ' ')
+            --i;
         return str.substring(0, i + 1);
     }
 
@@ -146,8 +146,23 @@ public class StringFunction {
 
     @StartDBFunction("md5")
     public String md5(String str) {
-        final char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7',
-                '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        final char[] hexDigits = {
+            '0',
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+            '9',
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F' };
         try {
             byte[] btInput = str.getBytes();
             MessageDigest mdInst = MessageDigest.getInstance("MD5");
