@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+assertion 的属性parameters, 包含所有参数的参数值, 参数值直接拼接到SQL字符串中
+
+expected-data-file 中的值 为参数对应的预期值或者预期异常,
+
+如果使用对应参数, SQL语句能正常执行, 并返回预期值, 那么expected-data-file 中对应的是预期结果文件名, 文件内容为 column表头 以及 row行内容
+如果语句执行报错，则为预期异常信息,  格式  error:异常信息
+
+如果assertion中的属性值都为空的话, 可以不写assertion标签
+expected-data-file的属性为空的话, 表示语句无预期值, 也无预期异常, 可省略不写
+ -->
+<testCase>
+
+    <case type="update">
+        <sql>create table t1 (oid int, name string);</sql>
+        <assertion parameters="" expected-data-file=""/>   <!-- 可省略 -->
+    </case>
+
+    <case type="update">
+        <sql>insert into t1 values( ?, ? );</sql>
+        <assertion parameters="1, '小白'" expected-data-file=""/>
+        <assertion parameters="2, '小黑'"/>
+        <assertion parameters="3" expected-data-file="error:参数缺失"/>
+    </case>
+
+    <!-- 通过xsd约束文件限制 caseId 的值唯一 , 使用data_{caseId} 作为预期文件的文件名, 即可保证case与预期文件一一对应 -->
+    <case type="query" caseId="001">
+        <sql>select * from t1 where name = ? ;</sql>
+        <assertion parameters="'小白'" expected-data-file="data_001.xml"/>
+        <assertion parameters="'小黑'" expected-data-file="data_001.xml"/>
+        <assertion parameters="1234" expected-data-file="error:参数异常"/>
+    </case>
+
+    <case type="query" caseId="002">
+        <sql>select name from t1 where oid = ? ;</sql>
+        <assertion parameters="1" expected-data-file="data_002.xml"/>
+        <assertion parameters="2" expected-data-file="data_002.xml"/>
+        <assertion parameters="@#￥%" expected-data-file="error:参数异常"/>
+    </case>
+
+    <case type="update">
+        <sql>drop table t1;</sql>
+        <assertion parameters="" expected-data-file=""/>    <!-- 可省略 -->
+    </case>
+
+</testCase>
+
+
+
