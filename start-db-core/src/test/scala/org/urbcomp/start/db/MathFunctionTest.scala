@@ -126,14 +126,13 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for round
-   */
+    * test for round
+    */
   test("round") {
     val statement = connect.createStatement()
     var resultSet = statement.executeQuery("select round('4.527',2)")
     resultSet.next()
     assertEquals("4.53", resultSet.getObject(1).toString)
-
     resultSet = statement.executeQuery("select round('456.527',-1)")
     resultSet.next()
     assertEquals("460", resultSet.getObject(1).toString)
