@@ -27,6 +27,18 @@ import java.math.RoundingMode;
 
 public class MathFunction {
     /**
+     * The double value that is closer than any other to e,
+     * the base of the natural logarithms.
+     */
+    public static final double E = 2.7182818284590452354;
+
+    /**
+     * The double value that is closer than any other to pi,
+     * the ratio of the circumference of a circle to its diameter.
+     */
+    public static final double PI = 3.14159265358979323846;
+
+    /**
      * Returns the (base) logarithm of a double value (num).
      *
      * @param base double
@@ -245,6 +257,17 @@ public class MathFunction {
     }
 
     /**
+     * Returns the trigonometric cotangent of an angle.
+     *
+     * @param num double
+     * @return double
+     */
+    @StartDBFunction("cot")
+    public double cot(double num) {
+        return 1 / Math.tan(num);
+    }
+
+    /**
      * Returns the arc sine of a value; the returned angle is in the range -pi/2 through pi/2.
      *
      * @param num double
@@ -264,5 +287,51 @@ public class MathFunction {
     @StartDBFunction("acos")
     public double acos(double num) {
         return Math.acos(num);
+    }
+
+    /**
+     * Returns the correctly rounded positive square root of a double value.
+     *
+     * @param num double
+     * @return double
+     */
+    @StartDBFunction("sqrt")
+    public double sqrt(double num) {
+        return Math.sqrt(num);
+    }
+
+    /**
+     * Returns the cube root of a double value.
+     *
+     * @param num double
+     * @return double
+     */
+    @StartDBFunction("cbrt")
+    public double cbrt(double num) {
+        return Math.cbrt(num);
+    }
+
+    /**
+     * Returns the value of the first argument raised to the power of the second argument.
+     *
+     * @param a double
+     * @param b double
+     * @return double
+     */
+    @StartDBFunction("pow")
+    public double pow(double a, double b) {
+        return Math.pow(a, b);
+    }
+
+    /**
+     * Converts an angle measured in degrees to an approximately equivalent angle measured in radians.
+     * The conversion from degrees to radians is generally inexact.
+     *
+     * @param angDeg double
+     * @return double
+     */
+    @StartDBFunction("toRadians")
+    public double toRadians(double angDeg) {
+        return angDeg / 180.0 * PI;
     }
 }

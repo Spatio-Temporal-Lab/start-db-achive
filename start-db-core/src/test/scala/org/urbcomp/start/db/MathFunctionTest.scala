@@ -183,9 +183,19 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
     */
   test("tan") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select tan('0.9')")
+    val resultSet = statement.executeQuery("select tan('0')")
     resultSet.next()
-    assertEquals(1.2601582175503392, resultSet.getObject(1))
+    assertEquals(0.0, resultSet.getObject(1))
+  }
+
+  /**
+    * test for cot
+    */
+  test("cot") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select cot('0.0')")
+    resultSet.next()
+    assertEquals(Double.PositiveInfinity, resultSet.getObject(1))
   }
 
   /**
@@ -206,6 +216,46 @@ class MathFunctionTest extends CalciteGeomesaFunctionTest {
     val resultSet = statement.executeQuery("select acos('0.9')")
     resultSet.next()
     assertEquals(0.45102681179626236, resultSet.getObject(1))
+  }
+
+  /**
+    * test for sqrt
+    */
+  test("sqrt") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select sqrt('1.21')")
+    resultSet.next()
+    assertEquals(1.1, resultSet.getObject(1))
+  }
+
+  /**
+    * test for cbrt
+    */
+  test("cbrt") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select cbrt('-0.125')")
+    resultSet.next()
+    assertEquals(-0.5, resultSet.getObject(1))
+  }
+
+  /**
+    * test for pow
+    */
+  test("pow") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select pow('0.5',3)")
+    resultSet.next()
+    assertEquals(0.125, resultSet.getObject(1))
+  }
+
+  /**
+    * test for toRadians
+    */
+  test("toRadians") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select toRadians('90')")
+    resultSet.next()
+    assertEquals(1.5707963267948966, resultSet.getObject(1))
   }
 
 }
