@@ -24,12 +24,12 @@ jobs:
 
       # cache docker image
       - name: cache docker image
-      uses: actions/cache@v3
-      with:
-        path: /var/lib/docker
-        key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}
-        restore-keys: |
-          ${{ runner.os }}-docker-
+        uses: actions/cache@v3
+        with:
+          path: /var/lib/docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/docker-compose.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
 
       # run docker for meta data and user data
       - name: run docker
@@ -43,6 +43,7 @@ jobs:
           java-version: "8"
           cache: 'maven'
           distribution: "adopt"
+
       - name: check format convention
         run: |
           mvn spotless:check
