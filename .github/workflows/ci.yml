@@ -35,6 +35,9 @@ jobs:
       - name: run docker
         run: |
           docker-compose -f docker/docker-compose.yml up -d
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # Runs a single command using the runners shell
       - name: set up maven and java
