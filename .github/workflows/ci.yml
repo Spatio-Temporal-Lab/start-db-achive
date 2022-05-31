@@ -23,11 +23,15 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: cache docker
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
-          docker pull docker.pkg.github.com/$GITHUB_REPOSITORY/build-cache-no-buildkit || true
-          docker build . -t thing --cache-from=docker.pkg.github.com/$GITHUB_REPOSITORY/build-cache-no-buildkit
-          docker tag thing docker.pkg.github.com/$GITHUB_REPOSITORY/build-cache-no-buildkit && docker push docker.pkg.github.com/$GITHUB_REPOSITORY/build-cache-no-buildkit || true
+        uses: actions/cache@v1
+        with:
+          path: /tmp/docker-registry
+          key: docker-registry-no-buildkit-${{ hashFiles('../docker-compose.yml') }}
+      - run: docker run -d -p 5000:5000 --restart=always --name registry -v /tmp/docker-registry:/var/lib/registry registry:2 && npx wait-on tcp:5000
+      - run: docker pull localhost:5000/thing || true
+      - run: docker build . -t thing --cache-from=localhost:5000/thing
+      - run: docker tag thing localhost:5000/thing && docker push localhost:5000/thing || true
+        if: steps.cache.outputs.cache-hit != 'true'
 
       # run docker for meta data and user data
       - name: run docker
