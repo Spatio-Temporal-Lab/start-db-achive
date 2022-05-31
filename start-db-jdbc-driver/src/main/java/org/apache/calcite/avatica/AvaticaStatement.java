@@ -1,19 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to you under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2022 ST-Lab
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
+
 package org.apache.calcite.avatica;
 
 import org.apache.calcite.avatica.remote.TypedValue;
@@ -29,8 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Implementation of {@link Statement}
  * for the Avatica engine.
  */
-public abstract class AvaticaStatement
-        implements Statement {
+public abstract class AvaticaStatement implements Statement {
     /**
      * The default value for {@link Statement#getFetchSize()}.
      */
@@ -98,15 +92,24 @@ public abstract class AvaticaStatement
      * @param resultSetConcurrency Result set concurrency
      * @param resultSetHoldability Result set holdability
      */
-    protected AvaticaStatement(AvaticaConnection connection,
-                               Meta.StatementHandle h, int resultSetType, int resultSetConcurrency,
-                               int resultSetHoldability) {
+    protected AvaticaStatement(
+        AvaticaConnection connection,
+        Meta.StatementHandle h,
+        int resultSetType,
+        int resultSetConcurrency,
+        int resultSetHoldability
+    ) {
         this(connection, h, resultSetType, resultSetConcurrency, resultSetHoldability, null);
     }
 
-    protected AvaticaStatement(AvaticaConnection connection,
-                               Meta.StatementHandle h, int resultSetType, int resultSetConcurrency,
-                               int resultSetHoldability, Meta.Signature signature) {
+    protected AvaticaStatement(
+        AvaticaConnection connection,
+        Meta.StatementHandle h,
+        int resultSetType,
+        int resultSetConcurrency,
+        int resultSetHoldability,
+        Meta.Signature signature
+    ) {
         this.connection = Objects.requireNonNull(connection);
         this.resultSetType = resultSetType;
         this.resultSetConcurrency = resultSetConcurrency;
@@ -141,10 +144,10 @@ public abstract class AvaticaStatement
     }
 
     private void checkNotPreparedOrCallable(String s) throws SQLException {
-        if (this instanceof PreparedStatement
-                || this instanceof CallableStatement) {
-            throw AvaticaConnection.HELPER.createException("Cannot call " + s
-                    + " on prepared or callable statement");
+        if (this instanceof PreparedStatement || this instanceof CallableStatement) {
+            throw AvaticaConnection.HELPER.createException(
+                "Cannot call " + s + " on prepared or callable statement"
+            );
         }
     }
 
@@ -157,20 +160,28 @@ public abstract class AvaticaStatement
             for (int i = 0; i < connection.maxRetriesPerExecute; i++) {
                 try {
                     @SuppressWarnings("unused")
-                    Meta.ExecuteResult x =
-                            connection.prepareAndExecuteInternal(this, sql, maxRowCount1);
+                    Meta.ExecuteResult x = connection.prepareAndExecuteInternal(
+                        this,
+                        sql,
+                        maxRowCount1
+                    );
                     return;
                 } catch (NoSuchStatementException e) {
                     resetStatement();
                 }
             }
         } catch (RuntimeException e) {
-            throw AvaticaConnection.HELPER.createException("Error while executing SQL \"" + sql + "\": "
-                    + e.getMessage(), e);
+            throw AvaticaConnection.HELPER.createException(
+                "Error while executing SQL \"" + sql + "\": " + e.getMessage(),
+                e
+            );
         }
 
-        throw new RuntimeException("Failed to successfully execute query after "
-                + connection.maxRetriesPerExecute + " attempts.");
+        throw new RuntimeException(
+            "Failed to successfully execute query after "
+                + connection.maxRetriesPerExecute
+                + " attempts."
+        );
     }
 
     /**
@@ -187,8 +198,11 @@ public abstract class AvaticaStatement
             }
         }
 
-        throw new RuntimeException("Failed to successfully execute batch update after "
-                + connection.maxRetriesPerExecute + " attempts");
+        throw new RuntimeException(
+            "Failed to successfully execute batch update after "
+                + connection.maxRetriesPerExecute
+                + " attempts"
+        );
     }
 
     protected void resetStatement() {
@@ -233,12 +247,15 @@ public abstract class AvaticaStatement
             executeInternal(sql);
             if (openResultSet == null) {
                 throw AvaticaConnection.HELPER.createException(
-                        "Statement did not return a result set");
+                    "Statement did not return a result set"
+                );
             }
             return openResultSet;
         } catch (RuntimeException e) {
-            throw AvaticaConnection.HELPER.createException("Error while executing SQL \"" + sql + "\": "
-                    + e.getMessage(), e);
+            throw AvaticaConnection.HELPER.createException(
+                "Error while executing SQL \"" + sql + "\": " + e.getMessage(),
+                e
+            );
         }
     }
 
@@ -291,8 +308,7 @@ public abstract class AvaticaStatement
     public void setMaxFieldSize(int max) throws SQLException {
         checkOpen();
         if (max != 0) {
-            throw AvaticaConnection.HELPER.createException(
-                    "illegal maxField value: " + max);
+            throw AvaticaConnection.HELPER.createException("illegal maxField value: " + max);
         }
     }
 
@@ -312,8 +328,7 @@ public abstract class AvaticaStatement
     public void setLargeMaxRows(long maxRowCount) throws SQLException {
         checkOpen();
         if (maxRowCount < 0) {
-            throw AvaticaConnection.HELPER.createException(
-                    "illegal maxRows value: " + maxRowCount);
+            throw AvaticaConnection.HELPER.createException("illegal maxRows value: " + maxRowCount);
         }
         this.maxRowCount = maxRowCount;
     }
@@ -342,8 +357,7 @@ public abstract class AvaticaStatement
     public void setQueryTimeout(int seconds) throws SQLException {
         checkOpen();
         if (seconds < 0) {
-            throw AvaticaConnection.HELPER.createException(
-                    "illegal timeout value " + seconds);
+            throw AvaticaConnection.HELPER.createException("illegal timeout value " + seconds);
         }
         setQueryTimeoutMillis(seconds * 1000);
     }
@@ -474,8 +488,11 @@ public abstract class AvaticaStatement
                 break;
 
             default:
-                throw AvaticaConnection.HELPER.createException("value " + current
-                        + " is not one of CLOSE_CURRENT_RESULT, KEEP_CURRENT_RESULT or CLOSE_ALL_RESULTS");
+                throw AvaticaConnection.HELPER.createException(
+                    "value "
+                        + current
+                        + " is not one of CLOSE_CURRENT_RESULT, KEEP_CURRENT_RESULT or CLOSE_ALL_RESULTS"
+                );
         }
 
         if (openResultSet != null) {
@@ -488,34 +505,34 @@ public abstract class AvaticaStatement
         throw AvaticaConnection.HELPER.unsupported();
     }
 
-    public int executeUpdate(
-            String sql, int autoGeneratedKeys) throws SQLException {
+    public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
         throw AvaticaConnection.HELPER.unsupported();
     }
 
-    public int executeUpdate(
-            String sql, int[] columnIndexes) throws SQLException {
+    public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
         throw AvaticaConnection.HELPER.unsupported();
     }
 
-    public int executeUpdate(
-            String sql, String[] columnNames) throws SQLException {
+    public int executeUpdate(String sql, String[] columnNames) throws SQLException {
         throw AvaticaConnection.HELPER.unsupported();
     }
 
-    public boolean execute(
-            String sql, int autoGeneratedKeys) throws SQLException {
-        throw AvaticaConnection.HELPER.unsupported();
+    public boolean execute(String sql, int autoGeneratedKeys) throws SQLException {
+        // start
+        return execute(sql);
+        // end
     }
 
-    public boolean execute(
-            String sql, int[] columnIndexes) throws SQLException {
-        throw AvaticaConnection.HELPER.unsupported();
+    public boolean execute(String sql, int[] columnIndexes) throws SQLException {
+        // start
+        return execute(sql);
+        // end
     }
 
-    public boolean execute(
-            String sql, String[] columnNames) throws SQLException {
-        throw AvaticaConnection.HELPER.unsupported();
+    public boolean execute(String sql, String[] columnNames) throws SQLException {
+        // start
+        return execute(sql);
+        // end
     }
 
     public int getResultSetHoldability() throws SQLException {
@@ -554,8 +571,7 @@ public abstract class AvaticaStatement
         if (iface.isInstance(this)) {
             return iface.cast(this);
         }
-        throw AvaticaConnection.HELPER.createException(
-                "does not implement '" + iface + "'");
+        throw AvaticaConnection.HELPER.createException("does not implement '" + iface + "'");
     }
 
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
@@ -571,7 +587,7 @@ public abstract class AvaticaStatement
      * @throws SQLException if a database error occurs
      */
     protected boolean executeInternal(Meta.Signature signature, boolean isUpdate)
-            throws SQLException {
+        throws SQLException {
         ResultSet resultSet = executeQueryInternal(signature, isUpdate);
         // user may have cancelled the query
         if (resultSet.isClosed()) {
@@ -589,7 +605,7 @@ public abstract class AvaticaStatement
      * @throws SQLException if a database error occurs
      */
     protected ResultSet executeQueryInternal(Meta.Signature signature, boolean isUpdate)
-            throws SQLException {
+        throws SQLException {
         return connection.executeQueryInternal(this, signature, null, null, isUpdate);
     }
 
