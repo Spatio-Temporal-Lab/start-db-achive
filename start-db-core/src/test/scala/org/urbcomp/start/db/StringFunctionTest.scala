@@ -14,10 +14,9 @@ package org.urbcomp.start.db
 import org.junit.Assert.assertEquals
 
 /**
- * String Function test
- * @author zaiyuan, XiangHe
- */
-
+  * String Function test
+  * @author zaiyuan, XiangHe
+  */
 class StringFunctionTest extends CalciteGeomesaFunctionTest {
   test("concat") {
     val statement = connect.createStatement
