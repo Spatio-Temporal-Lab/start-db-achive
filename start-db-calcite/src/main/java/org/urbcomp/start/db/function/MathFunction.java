@@ -26,8 +26,8 @@ public class MathFunction {
     /**
      * Returns the natural logarithm (base) of a double value (num).
      *
-     * @param base  base double
-     * @param num   num double
+     * @param base base double
+     * @param num  num double
      * @return log result
      */
     @StartDBFunction("log")
@@ -94,16 +94,6 @@ public class MathFunction {
     public double floor(double num) {
         return Math.floor(num);
     }
-
-//    @StartDBFunction("round")
-//    public long round(double num) {
-//        return Math.round(num);
-//    }
-
-//    @StartDBFunction("round")
-//    public int round(float num) {
-//        return Math.round(num);
-//    }
 
     @StartDBFunction("signum")
     public float signum(float num) {
