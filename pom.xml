@@ -318,4 +318,11 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <!--for geotools-->
+        <repository>
+            <id>osgeo-alt</id>
+            <url>https://repo.osgeo.org/repository/release/</url>
+        </repository>
+    </repositories>
 </project>
