@@ -19,24 +19,24 @@ expected-data-file的属性为空的话, 表示语句无预期值, 也无预期�
 
     <case type="update">
         <sql>insert into t1 values( ?, ? );</sql>
-        <assertion parameters="1, '小白'" expected-data-file=""/>
-        <assertion parameters="2, '小黑'"/>
-        <assertion parameters="3" expected-data-file="error:参数缺失"/>
+        <assertion id="1" parameters="1, '小白'" expected-data-file=""/>
+        <assertion id="2" parameters="2, '小黑'"/>
+        <assertion id="3" parameters="3" expected-data-file="error:参数缺失"/>
     </case>
 
     <!-- 通过xsd约束文件限制 caseId 的值唯一 , 使用data_{caseId} 作为预期文件的文件名, 即可保证case与预期文件一一对应 -->
     <case type="query" caseId="001">
         <sql>select * from t1 where name = ? ;</sql>
-        <assertion parameters="'小白'" expected-data-file="data_001.xml"/>
-        <assertion parameters="'小黑'" expected-data-file="data_001.xml"/>
-        <assertion parameters="1234" expected-data-file="error:参数异常"/>
+        <assertion id="1" parameters="'小白'" expected-data-file="data_001.xml"/>
+        <assertion id="2" parameters="'小黑'" expected-data-file="data_001.xml"/>
+        <assertion id="3" parameters="1234" expected-data-file="error:参数异常"/>
     </case>
 
     <case type="query" caseId="002">
         <sql>select name from t1 where oid = ? ;</sql>
-        <assertion parameters="1" expected-data-file="data_002.xml"/>
-        <assertion parameters="2" expected-data-file="data_002.xml"/>
-        <assertion parameters="@#￥%" expected-data-file="error:参数异常"/>
+        <assertion id="1" parameters="1" expected-data-file="data_002.xml"/>
+        <assertion id="2" parameters="2" expected-data-file="data_002.xml"/>
+        <assertion id="3" parameters="@#￥%" expected-data-file="error:参数异常"/>
     </case>
 
     <case type="update">

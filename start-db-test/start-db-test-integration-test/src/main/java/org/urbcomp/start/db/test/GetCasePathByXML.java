@@ -36,7 +36,7 @@ public class GetCasePathByXML {
     }
 
     // 传入文件夹名称, 返回文件夹下的文件路径列表, 不包括文件夹
-    public static ArrayList<String> getFilesInFold(String foldPath) {
+    private static ArrayList<String> getFilesInFold(String foldPath) {
         String[] fileList = new File(foldPath).list();
         ArrayList<String> fileArrayList = new ArrayList<>();
         if (fileList != null) {
