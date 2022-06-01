@@ -15,6 +15,7 @@
         <module>start-db-cmd</module>
         <module>start-db-core</module>
         <module>start-db-server</module>
+        <module>start-db-common</module>
     </modules>
 
     <properties>
