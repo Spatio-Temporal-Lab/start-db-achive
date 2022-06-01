@@ -103,22 +103,22 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * DatetimeFunctionDemo Tests
-   */
-
+    * DatetimeFunctionDemo Tests
+    */
   /**
-   * test for toDatetime (two parameters)
-   */
+    * test for toDatetime (two parameters)
+    */
   test("toDatetime(str, format)") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select toDatetime('20220529 11:35:01', 'yyyyMMdd HH:mm:ss')")
+    val resultSet =
+      statement.executeQuery("select toDatetime('20220529 11:35:01', 'yyyyMMdd HH:mm:ss')")
     resultSet.next()
     assertEquals("2022-05-29T11:35:01", resultSet.getObject(1).toString)
   }
 
   /**
-   * test for toDatetime (one parameter)
-   */
+    * test for toDatetime (one parameter)
+    */
   test("toDatetime(str)") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select toDatetime('2022-05-29 11:35:01')")
@@ -127,18 +127,19 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * test for toTimestamp(with timezone)
-   */
+    * test for toTimestamp(with timezone)
+    */
   test("toTimestamp(str, format, ?)") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select toTimestamp('20220529 11:35:01', 'yyyyMMdd HH:mm:ss', '?')")
+    val resultSet =
+      statement.executeQuery("select toTimestamp('20220529 11:35:01', 'yyyyMMdd HH:mm:ss', '?')")
     resultSet.next()
     assertEquals("2022-05-29T11:35:01+08:00[Asia/Shanghai]", resultSet.getObject(1).toString)
   }
 
   /**
-   * test for datetimeToTimestamp
-   */
+    * test for datetimeToTimestamp
+    */
   test("datetimeToTimestamp(str)") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select datetimeToTimestamp('2022-05-29 11:35:01')")

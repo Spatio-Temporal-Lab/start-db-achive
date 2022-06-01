@@ -155,7 +155,6 @@ public class TimeFunction {
         return simpleDateFormat.format(new Date(ts.getTime()));
     }
 
-
     /**
      * 以下为区分Datetime与Timestamp的Demo（不需要合并）
      * 初步思路为采用java8中的java.time包下的类替代java.sql.Timestamp去实现日期时间的类型
@@ -163,7 +162,6 @@ public class TimeFunction {
      * 用ZonedDateTime实现timestamp （保留时区）
      * ToDO：当前获取时区的方法是用“TimeZone.getDefault();“ 获取用户时区，该时区为jvm启动时的系统时区，并非实时的系统时区。这种处理是否符合使用需求？
      */
-
 
     /**
      * Converts a String to Datetime as the given format
@@ -201,8 +199,9 @@ public class TimeFunction {
         }
         if (!isCorrect && pe != null) {
             throw new DateTimeParseException(
-                    "Date format is error. Only receive " , String.join(",", DEFAULT_FORMATS),
-                    pe.getErrorIndex()
+                "Date format is error. Only receive ",
+                String.join(",", DEFAULT_FORMATS),
+                pe.getErrorIndex()
             );
         }
         return localDateTime;
@@ -217,7 +216,8 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("toTimestamp")
-    public ZonedDateTime toTimeStamp(String dateString, String format, String test) throws DateTimeException {
+    public ZonedDateTime toTimeStamp(String dateString, String format, String test)
+        throws DateTimeException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
         LocalDateTime localDateTime = LocalDateTime.parse(dateString, formatter);
         ZoneId zoneId = TimeZone.getDefault().toZoneId();
