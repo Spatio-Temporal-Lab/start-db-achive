@@ -31,7 +31,9 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   test("toTimestamp(str, format)") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select toTimestamp('" + DEFAULT_TIME_STR + "', '" + DEFAULT_FORMAT + "')")
+      statement.executeQuery(
+        "select toTimestamp('" + DEFAULT_TIME_STR + "', '" + DEFAULT_FORMAT + "')"
+      )
     resultSet.next()
     assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
   }
@@ -70,7 +72,9 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     */
   test("timestampToLong(timestamp)") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select timestampToLong(longToTimestamp(" + DEFAULT_TIMESTAMP.getTime + "))")
+    val resultSet = statement.executeQuery(
+      "select timestampToLong(longToTimestamp(" + DEFAULT_TIMESTAMP.getTime + "))"
+    )
     resultSet.next()
     assertEquals(DEFAULT_TIMESTAMP.getTime, resultSet.getObject(1))
   }
@@ -80,7 +84,8 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     */
   test("longToTimestamp(long)") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select longToTimestamp('" + DEFAULT_TIMESTAMP.getTime + "')")
+    val resultSet =
+      statement.executeQuery("select longToTimestamp('" + DEFAULT_TIMESTAMP.getTime + "')")
     resultSet.next()
     assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
   }
