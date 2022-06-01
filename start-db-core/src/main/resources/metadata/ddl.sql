@@ -3,6 +3,7 @@
 # use meta_data;
 
 -- 表一 User
+DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE IF NOT EXISTS `sys_user`(
 	`id` INT PRIMARY KEY AUTO_INCREMENT,
 	`name` VARCHAR(200) NOT NULL,
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `sys_user`(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 表二 DataBase
+DROP TABLE IF EXISTS `sys_database`;
 CREATE TABLE IF NOT EXISTS `sys_database`(
 	`id` INT PRIMARY KEY AUTO_INCREMENT,
 	`user_id` INT NOT NULL,
@@ -25,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `sys_database`(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 表三 Table
+DROP TABLE IF EXISTS `sys_table`;
 CREATE TABLE IF NOT EXISTS `sys_table`(
 	`id` INT PRIMARY KEY AUTO_INCREMENT,
 	`db_id` INT NOT NULL,
@@ -37,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `sys_table`(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 表四 Field
+DROP TABLE IF EXISTS `sys_field`;
 CREATE TABLE IF NOT EXISTS `sys_field`(
 	`id` INT PRIMARY KEY AUTO_INCREMENT,
 	`table_id` INT NOT NULL,

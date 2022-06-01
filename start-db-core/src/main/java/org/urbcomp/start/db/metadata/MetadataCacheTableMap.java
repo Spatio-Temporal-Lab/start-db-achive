@@ -11,14 +11,16 @@
 
 package org.urbcomp.start.db.metadata;
 
+import org.apache.calcite.avatica.Meta;
 import org.apache.calcite.schema.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.urbcomp.start.db.geomesa.GeomesaTable;
+import org.urbcomp.start.db.metadata.accessor.TableAccessor;
+import org.urbcomp.start.db.metadata.entity.UserDbTable;
 
 import javax.annotation.Nonnull;
-import java.util.AbstractMap;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * supply dynamic table metadata for calcite
@@ -27,12 +29,21 @@ import java.util.Set;
  **/
 public class MetadataCacheTableMap extends AbstractMap<String, Table> {
 
+    private static Logger logger = LoggerFactory.getLogger(MetadataCacheTableMap.class);
+
     private static final Set<Entry<String, Table>> tableNameCache = refreshTableNames();
 
     private static Set<Entry<String, Table>> refreshTableNames() {
         Set<Entry<String, Table>> tableNames = new HashSet<>(32);
-        // TODO query from metadata
-        tableNames.add(new NullTableEntry("citibike_tripdata"));
+        // query from metadata
+        try (final TableAccessor tableAccessor = AccessorFactory.getTableAccessor()) {
+            final List<UserDbTable> allUserDbTable = tableAccessor.getAllUserDbTable();
+            for (UserDbTable udt : allUserDbTable) {
+                tableNames.add(new NullTableEntry(
+                        MetadataUtil.combineUserDbTableKey(udt.getUsername(), udt.getDbName(), udt.getTableName())));
+            }
+        }
+        logger.info("Load Table Name Cache Size: {}", tableNames.size());
         return tableNames;
     }
 
@@ -100,7 +111,8 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
      */
     @Override
     public Table get(Object key) {
-        // TODO split key , key maybe [[user.]db.]table
-        return new GeomesaTable("", "citibike_tripdata", "citibike_tripdata");
+        // split key , key must be user.db.table
+        final UserDbTable udt = MetadataUtil.splitUserDbTable(key.toString());
+        return new GeomesaTable(udt.getUsername(), udt.getDbName(), udt.getTableName());
     }
 }

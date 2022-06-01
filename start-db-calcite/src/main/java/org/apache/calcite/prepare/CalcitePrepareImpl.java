@@ -78,6 +78,7 @@ import org.apache.calcite.tools.Frameworks;
 import org.apache.calcite.util.ImmutableIntList;
 import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
+import org.urbcomp.start.db.parser.driver.StartDBParseDriver;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -594,15 +595,15 @@ public class CalcitePrepareImpl implements CalcitePrepare {
             if (parserFactory != null) {
                 parserConfig = parserConfig.withParserFactory(parserFactory);
             }
-            SqlParser parser = createParser(query.sql, parserConfig);
+            // modify start
             SqlNode sqlNode;
             try {
-                sqlNode = parser.parseStmt();
+                sqlNode = StartDBParseDriver.parseSql(query.sql);
                 statementType = getStatementType(sqlNode.getKind());
-            } catch (SqlParseException e) {
-                throw new RuntimeException(
-                        "parse failed: " + e.getMessage(), e);
+            } catch (Exception e) {
+                throw new RuntimeException("parse failed: " + e.getMessage(), e);
             }
+            // modify end
 
             Hook.PARSE_TREE.run(new Object[]{query.sql, sqlNode});
 
