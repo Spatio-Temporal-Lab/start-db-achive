@@ -25,6 +25,7 @@ package org.urbcomp.start.db.function;
 import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.util.GeoFunctions;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +35,9 @@ import java.util.List;
  */
 public class GeometricConstructorFunction {
     @StartDBFunction("st_makePoint")
-    public Point st_makePoint(double x, double y) {
+    public Point st_makePoint(BigDecimal x, BigDecimal y) {
         GeometryFactory geometryFactory = new GeometryFactory();
-        return geometryFactory.createPoint(new Coordinate(x, y));
+        return geometryFactory.createPoint(new Coordinate(x.doubleValue(), y.doubleValue()));
     }
 
     @StartDBFunction("st_makeLineString")
@@ -67,7 +68,12 @@ public class GeometricConstructorFunction {
     }
 
     @StartDBFunction("st_makeBBox")
-    public Polygon st_makeBBox(double lowerX, double lowerY, double upperX, double upperY) {
+    public Polygon st_makeBBox(
+        BigDecimal lowerX,
+        BigDecimal lowerY,
+        BigDecimal upperX,
+        BigDecimal upperY
+    ) {
         List<Point> points = new ArrayList<>(5);
         points.add(st_makePoint(lowerX, lowerY));
         points.add(st_makePoint(lowerX, upperY));
@@ -79,7 +85,12 @@ public class GeometricConstructorFunction {
 
     @StartDBFunction("st_makeBBox")
     public Polygon st_makeBBox(Point point1, Point point2) {
-        return st_makeBBox(point1.getX(), point1.getY(), point2.getX(), point2.getY());
+        return st_makeBBox(
+            BigDecimal.valueOf(point1.getX()),
+            BigDecimal.valueOf(point1.getY()),
+            BigDecimal.valueOf(point2.getX()),
+            BigDecimal.valueOf(point2.getY())
+        );
     }
 
     @StartDBFunction("st_makeCircle")

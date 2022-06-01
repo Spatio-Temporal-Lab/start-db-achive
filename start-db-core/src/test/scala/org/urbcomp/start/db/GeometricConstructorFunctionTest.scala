@@ -16,9 +16,9 @@ import org.junit.Assert.{assertEquals, assertNotNull}
 class GeometricConstructorFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_makePoint(x, y)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery("select st_makePoint(1, 2)")
+    val resultSet = statement.executeQuery("select st_makePoint(1.1, 2)")
     resultSet.next()
-    assertEquals("POINT (1 2)", resultSet.getObject(1).toString)
+    assertEquals("POINT (1.1 2)", resultSet.getObject(1).toString)
   }
 
   test("st_makeLineString(points)") {
@@ -35,9 +35,9 @@ class GeometricConstructorFunctionTest extends CalciteGeomesaFunctionTest {
 
   test("st_makeBBox(lowerX, lowerY, upperX, upperY)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery("select st_makeBBox(1, 2, 3, 4)")
+    val resultSet = statement.executeQuery("select st_makeBBox(1.2, 2, 3, 4)")
     resultSet.next()
-    assertEquals("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))", resultSet.getObject(1).toString)
+    assertEquals("POLYGON ((1.2 2, 1.2 4, 3 4, 3 2, 1.2 2))", resultSet.getObject(1).toString)
   }
 
   test("st_makeBBox(point1, point2)") {
