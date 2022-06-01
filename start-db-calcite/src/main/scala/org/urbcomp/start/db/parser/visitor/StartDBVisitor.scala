@@ -505,10 +505,15 @@ class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
   override def visitInsertStmt(ctx: InsertStmtContext): SqlInsert = {
     val keyWords = SqlNodeList.EMPTY
     val targetTale = visitIdent(ctx.tableName().ident())
-    val rows: Array[SqlNode] = ctx.insertStmtRows().insertStmtRow().asScala.map{ i =>
-      val objs = i.expr().asScala.map(visitExpr).toArray
-      new SqlBasicCall(SqlStdOperatorTable.ROW, objs, pos)
-    }.toArray
+    val rows: Array[SqlNode] = ctx
+      .insertStmtRows()
+      .insertStmtRow()
+      .asScala
+      .map { i =>
+        val objs = i.expr().asScala.map(visitExpr).toArray
+        new SqlBasicCall(SqlStdOperatorTable.ROW, objs, pos)
+      }
+      .toArray
     val source = new SqlBasicCall(SqlStdOperatorTable.VALUES, rows, pos)
     val columnList =
       new SqlNodeList(ctx.insertStmtCols().ident().asScala.map(visitIdent).asJava, pos)
