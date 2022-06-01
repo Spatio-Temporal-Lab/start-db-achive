@@ -133,8 +133,8 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     val statement = connect.createStatement()
     val resultSet =
       statement.executeQuery("select toTimestamp('20220529 11:35:01', 'yyyyMMdd HH:mm:ss', '?')")
-    resultSet.next()
-    assertEquals("2022-05-29T11:35:01+08:00[Asia/Shanghai]", resultSet.getObject(1).toString)
+    resultSet.next
+    assertEquals("2022-05-29T11:35:01Z[UTC]", resultSet.getObject(1).toString)
   }
 
   /**
@@ -144,6 +144,6 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select datetimeToTimestamp('2022-05-29 11:35:01')")
     resultSet.next()
-    assertEquals("2022-05-29T11:35:01+08:00[Asia/Shanghai]", resultSet.getObject(1).toString)
+    assertEquals("2022-05-29T11:35:01Z[UTC]", resultSet.getObject(1).toString)
   }
 }
