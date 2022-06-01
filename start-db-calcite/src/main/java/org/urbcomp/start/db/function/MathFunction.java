@@ -83,235 +83,6 @@ public class MathFunction {
     }
 
     /**
-     * Returns the natural logarithm of a double value (num)
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("ln")
-    public double ln(double num) {
-        return Math.log(num);
-    }
-
-    /**
-     * Returns the base 10 logarithm of a double value (num).
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("log10")
-    public double log10(double num) {
-        return Math.log10(num);
-    }
-
-    /**
-     * Returns the absolute value of an int value.
-     *
-     * @param num int
-     * @return int
-     */
-    @StartDBFunction("abs")
-    public int abs(int num) {
-        return (num < 0) ? -num : num;
-    }
-
-    /**
-     * Returns the absolute value of a long value.
-     *
-     * @param num long
-     * @return long
-     */
-    @StartDBFunction("abs")
-    public long abs(long num) {
-        return (num < 0) ? -num : num;
-    }
-
-    /**
-     * Returns the absolute value of a float value.
-     *
-     * @param num float
-     * @return float
-     */
-    @StartDBFunction("abs")
-    public float abs(float num) {
-        return (num <= 0.0F) ? 0.0F - num : num;
-    }
-
-    /**
-     * Returns the absolute value of a double value.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("abs")
-    public double abs(double num) {
-        return (num <= 0.0D) ? 0.0D - num : num;
-    }
-
-    /**
-     * Returns the smallest (closest to negative infinity) double value that is
-     * greater than or equal to the argument and is equal to a mathematical integer.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("ceil")
-    public double ceil(double num) {
-        return Math.ceil(num);
-    }
-
-    /**
-     * Returns the largest (closest to positive infinity) double value that is
-     * less than or equal to the argument and is equal to a mathematical integer.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("floor")
-    public double floor(double num) {
-        return Math.floor(num);
-    }
-
-    /**
-     * Returns the rounded value of the precision(num_digits)
-     *
-     * @param num        double
-     * @param num_digits int
-     * @return double
-     */
-    @StartDBFunction("round")
-    public double round(double num, int num_digits) {
-        BigDecimal bd = new BigDecimal(num);
-
-        return bd.setScale(num_digits, RoundingMode.HALF_UP).doubleValue();
-    }
-
-    /**
-     * Returns the signum function of the argument; zero if the argument is zero,
-     * 1.0f if the argument is greater than zero, -1.0f if the argument is less than zero.
-     *
-     * @param num float
-     * @return float
-     */
-    @StartDBFunction("signum")
-    public float signum(float num) {
-        return Math.signum(num);
-    }
-
-    /**
-     * Returns the signum function of the argument; zero if the argument is zero,
-     * 1.0f if the argument is greater than zero, -1.0f if the argument is less than zero.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("signum")
-    public double signum(double num) {
-        return Math.signum(num);
-    }
-
-    /**
-     * Returns the floor modulus of the int arguments.
-     * x%y
-     *
-     * @param num1 int x
-     * @param num2 int y
-     * @return int
-     */
-    @StartDBFunction("mod")
-    public int mod(int num1, int num2) {
-        return Math.floorMod(num1, num2);
-    }
-
-    /**
-     * Returns the trigonometric sine of an angle.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("sin")
-    public double sin(double num) {
-        return Math.sin(num);
-    }
-
-    /**
-     * Returns the trigonometric cosine of an angle.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("cos")
-    public double cos(double num) {
-        return Math.cos(num);
-    }
-
-    /**
-     * Returns the trigonometric tangent of an angle.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("tan")
-    public double tan(double num) {
-        return Math.tan(num);
-    }
-
-    /**
-     * Returns the trigonometric cotangent of an angle.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("cot")
-    public double cot(double num) {
-        return 1 / Math.tan(num);
-    }
-
-    /**
-     * Returns the arc sine of a value; the returned angle is in the range -pi/2 through pi/2.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("asin")
-    public double asin(double num) {
-        return Math.asin(num);
-    }
-
-    /**
-     * Returns the arc cosine of a value; the returned angle is in the range -pi/2 through pi/2.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("acos")
-    public double acos(double num) {
-        return Math.acos(num);
-    }
-
-    /**
-     * Returns the correctly rounded positive square root of a double value.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("sqrt")
-    public double sqrt(double num) {
-        return Math.sqrt(num);
-    }
-
-    /**
-     * Returns the cube root of a double value.
-     *
-     * @param num double
-     * @return double
-     */
-    @StartDBFunction("cbrt")
-    public double cbrt(double num) {
-        return Math.cbrt(num);
-    }
-
-    /**
      * Returns the value of the first argument raised to the power of the second argument.
      *
      * @param a double
@@ -332,6 +103,19 @@ public class MathFunction {
      */
     @StartDBFunction("toRadians")
     public double toRadians(double angDeg) {
-        return angDeg / 180.0 * PI;
+        return Math.toRadians(angDeg);
+    }
+
+    /**
+     * Converts an angle measured in radians to an approximately equivalent angle measured in degrees.
+     * The conversion from radians to degrees is generally inexact;
+     * users should not expect cos(toRadians(90.0)) to exactly equal 0.0.
+     *
+     * @param angRad double
+     * @return double
+     */
+    @StartDBFunction("toDegrees")
+    public double toDegrees(double angRad) {
+        return Math.toDegrees(angRad);
     }
 }
