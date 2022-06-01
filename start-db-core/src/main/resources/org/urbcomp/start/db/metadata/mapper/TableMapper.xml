@@ -6,20 +6,20 @@
     <select id="selectAll" resultType="org.urbcomp.start.db.metadata.entity.Table">
         SELECT *
         FROM sys_table
-        WHERE delete_time > 0;
+        WHERE delete_time = 0;
     </select>
     <select id="selectById" resultType="org.urbcomp.start.db.metadata.entity.Table">
         SELECT *
         FROM sys_table
         WHERE id = #{id}
-          and delete_time > 0;
+          and delete_time = 0;
     </select>
     <select id="selectByFidAndName" resultType="org.urbcomp.start.db.metadata.entity.Table">
         SELECT *
         FROM sys_table
         WHERE db_id = #{fid}
           and name = #{name}
-          and delete_time > 0
+          and delete_time = 0
     </select>
     <select id="getAllUserDbTable" resultType="org.urbcomp.start.db.metadata.entity.UserDbTable">
         SELECT t.name as table_name, db.name as db_name, u.name as username
@@ -28,7 +28,7 @@
              sys_user as u
         where t.db_id = db.id
           and db.user_id = u.id
-          and t.delete_time > 0
+          and t.delete_time = 0
     </select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.urbcomp.start.db.metadata.entity.Table">
@@ -40,7 +40,7 @@
             id = #{table.id},
             db_id = #{table.dbId}
         WHERE id = #{table.id}
-          and delete_time > 0;
+          and delete_time = 0;
     </update>
     <delete id="deleteById">
         UPDATE sys_table

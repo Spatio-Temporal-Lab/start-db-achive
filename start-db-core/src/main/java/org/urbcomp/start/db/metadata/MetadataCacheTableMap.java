@@ -11,7 +11,9 @@
 
 package org.urbcomp.start.db.metadata;
 
-import org.apache.calcite.avatica.Meta;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.calcite.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,7 @@ import org.urbcomp.start.db.metadata.entity.UserDbTable;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * supply dynamic table metadata for calcite
@@ -29,7 +32,19 @@ import java.util.*;
  **/
 public class MetadataCacheTableMap extends AbstractMap<String, Table> {
 
-    private static Logger logger = LoggerFactory.getLogger(MetadataCacheTableMap.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetadataCacheTableMap.class);
+
+    private static final Cache<UserDbTable, Table> tableCache = Caffeine.newBuilder()
+            .initialCapacity(16)
+            .maximumSize(256)
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build(new CacheLoader<UserDbTable, Table>() {
+                @Override
+                public Table load(@Nonnull UserDbTable udt) throws Exception {
+                    // query metadata table and check TODO
+                    return new GeomesaTable(udt.getUsername(), udt.getDbName(), udt.getTableName());
+                }
+            });
 
     private static final Set<Entry<String, Table>> tableNameCache = refreshTableNames();
 
@@ -113,6 +128,6 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
     public Table get(Object key) {
         // split key , key must be user.db.table
         final UserDbTable udt = MetadataUtil.splitUserDbTable(key.toString());
-        return new GeomesaTable(udt.getUsername(), udt.getDbName(), udt.getTableName());
+        return tableCache.getIfPresent(udt);
     }
 }

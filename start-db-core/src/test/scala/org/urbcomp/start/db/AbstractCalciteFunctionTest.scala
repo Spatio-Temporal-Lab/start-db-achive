@@ -39,7 +39,7 @@ class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterAll {
 
   test("test query") {
     val stmt = connect.createStatement()
-    val rs = stmt.executeQuery("select count(1) from citibike_tripdata")
+    val rs = stmt.executeQuery("select count(1) from t_test")
     rs.next()
     assertTrue(rs.getInt(1) >= 0)
   }

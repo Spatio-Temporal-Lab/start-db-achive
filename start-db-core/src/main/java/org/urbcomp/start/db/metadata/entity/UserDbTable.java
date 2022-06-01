@@ -1,5 +1,7 @@
 package org.urbcomp.start.db.metadata.entity;
 
+import java.util.Objects;
+
 /**
  * @author jimo
  **/
@@ -48,5 +50,18 @@ public class UserDbTable {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDbTable that = (UserDbTable) o;
+        return Objects.equals(username, that.username) && Objects.equals(dbName, that.dbName) && Objects.equals(tableName, that.tableName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, dbName, tableName);
     }
 }

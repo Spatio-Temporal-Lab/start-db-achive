@@ -8,7 +8,7 @@ import org.urbcomp.start.db.metadata.entity.UserDbTable;
  **/
 public class MetadataUtil {
 
-    private static final String UDT_SPLITTER = "\\.";
+    private static final String UDT_SPLITTER = ".";
 
     /**
      * combine to an unique key
@@ -22,7 +22,7 @@ public class MetadataUtil {
      */
     public static UserDbTable splitUserDbTable(String key) {
         Assert.isTrue(key != null && key.length() > 0, "key is empty");
-        final String[] items = key.split(UDT_SPLITTER);
+        final String[] items = key.split("\\" + UDT_SPLITTER);
         switch (items.length) {
             case 1:
                 return new UserDbTable(null, null, items[0]);
@@ -31,5 +31,12 @@ public class MetadataUtil {
             default:
                 return new UserDbTable(items[items.length - 3], items[items.length - 2], items[items.length - 1]);
         }
+    }
+
+    /**
+     * geomesa catalog
+     */
+    public static String makeCatalog(String user, String db) {
+        return user + UDT_SPLITTER + db;
     }
 }
