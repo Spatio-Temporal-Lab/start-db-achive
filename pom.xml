@@ -303,7 +303,7 @@
                         <licenseHeader>
                             <!--suppress UnresolvedMavenProperty -->
                             <file>${maven.multiModuleProjectDirectory}/conventions/license-header
-                            </file>SQlTy
+                            </file>
                         </licenseHeader>
                     </scala>
                 </configuration>
