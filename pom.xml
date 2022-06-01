@@ -45,6 +45,7 @@
         <lombok.version>1.18.22</lombok.version>
         <argLine>-Dfile.encoding=UTF-8</argLine>
         <spotless-maven-plugin.version>2.22.5</spotless-maven-plugin.version>
+        <spatial4j.version>0.8</spatial4j.version>
     </properties>
 
     <dependencyManagement>
@@ -302,7 +303,7 @@
                         <licenseHeader>
                             <!--suppress UnresolvedMavenProperty -->
                             <file>${maven.multiModuleProjectDirectory}/conventions/license-header
-                            </file>
+                            </file>SQlTy
                         </licenseHeader>
                     </scala>
                 </configuration>

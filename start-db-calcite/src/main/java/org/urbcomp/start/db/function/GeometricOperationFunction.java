@@ -22,9 +22,12 @@
 
 package org.urbcomp.start.db.function;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.util.AffineTransformation;
+import org.locationtech.jts.operation.distance.DistanceOp;
+import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
+import org.locationtech.spatial4j.distance.DistanceCalculator;
+import org.locationtech.spatial4j.distance.DistanceUtils;
 
 public class GeometricOperationFunction {
     @StartDBFunction("st_translate")
@@ -35,17 +38,77 @@ public class GeometricOperationFunction {
     }
 
     @StartDBFunction("st_x")
-    public double st_x(Point point) {
-        return point.getX();
+    public Double st_x(Geometry geom) {
+        if (geom instanceof Point) {
+            return ((Point) geom).getX();
+        } else {
+            return null;
+        }
     }
 
     @StartDBFunction("st_y")
-    public double st_y(Point point) {
-        return point.getY();
+    public Double st_y(Geometry geom) {
+        if (geom instanceof Point) {
+            return ((Point) geom).getY();
+        } else {
+            return null;
+        }
     }
 
     @StartDBFunction("st_BBox")
     public Geometry st_BBox(Geometry geom) {
         return geom.getEnvelope();
+    }
+
+    @StartDBFunction("st_numPoints")
+    public int st_numPoints(Geometry geom) {
+        return geom.getNumPoints();
+    }
+
+    @StartDBFunction("st_pointN")
+    public Point st_pointN(Geometry geom, int n) {
+        if (geom instanceof LineString) {
+            if (n > 0 && n <= geom.getNumPoints()) {
+                return ((LineString) geom).getPointN(n - 1);
+            } else if (n < 0 && n + geom.getNumPoints() >= 0) {
+                return ((LineString) geom).getPointN(n + geom.getNumPoints());
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @StartDBFunction("st_area")
+    public double st_area(Geometry geom) {
+        return geom.getArea();
+    }
+
+    @StartDBFunction("st_centroid")
+    public Point st_centroid(Geometry geom) {
+        return geom.getCentroid();
+    }
+
+    @StartDBFunction("st_closestPoint")
+    public Point st_closestPoint(Geometry geom1, Geometry geom2) {
+        DistanceOp op = new DistanceOp(geom1, geom2);
+        GeometryFactory geomFactory = new GeometryFactory();
+        return geomFactory.createPoint(op.nearestPoints()[0]);
+    }
+
+    @StartDBFunction("st_distance")
+    public double st_distance(Geometry geom1, Geometry geom2) {
+        DistanceOp op = new DistanceOp(geom1, geom2);
+        return op.distance();
+    }
+
+    @StartDBFunction("st_distanceSphere")
+    public double st_distanceSphere(Geometry geom1, Geometry geom2) {
+        Coordinate c1 = geom1.getCoordinate();
+        Coordinate c2 = geom2.getCoordinate();
+        DistanceCalculator ca = JtsSpatialContext.GEO.getDistCalc();
+        org.locationtech.spatial4j.shape.Point startPoint = JtsSpatialContext.GEO.getShapeFactory().pointXY(c1.x, c1.y);
+        return DistanceUtils.DEG_TO_KM * ca.distance(startPoint, c2.x, c2.y) * 1000;
     }
 }
