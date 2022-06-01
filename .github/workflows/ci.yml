@@ -33,7 +33,7 @@ jobs:
         with:
           java-version: "8"
           cache: 'maven'
-          distribution: "adopt"
+          distribution: "temurin"
 
       - name: check format convention
         run: |
