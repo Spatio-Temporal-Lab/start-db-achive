@@ -26,81 +26,81 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   val DEFAULT_TIMESTAMP: Timestamp = Timestamp.valueOf(DEFAULT_TIME_STR)
   val DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
 
-  /**
-    * test for toTimestamp(two parameter)
-    */
-  test("toTimestamp(str, format)") {
-    val statement = connect.createStatement()
-    val resultSet =
-      statement.executeQuery(
-        "select toTimestamp('" + DEFAULT_TIME_STR + "', '" + DEFAULT_FORMAT + "')"
-      )
-    resultSet.next()
-    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
-  }
-
-  /**
-    * test for toTimestamp(one parameter)
-    */
-  test("toTimestamp(str)") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select toTimestamp('" + DEFAULT_TIME_STR + "')")
-    resultSet.next()
-    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
-  }
-
-  /**
-    * test for currentTimestamp
-    */
-  test("currentTimestamp") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select currentTimestamp()")
-    assertTrue(resultSet.next())
-  }
-
-  /**
-    * test for timestampToLong
-    */
-  test("timestampToLong(str)") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select timestampToLong('" + DEFAULT_TIME_STR + "')")
-    resultSet.next()
-    assertEquals(DEFAULT_TIMESTAMP.getTime, resultSet.getObject(1))
-  }
-
-  /**
-    * test for timestampToLong
-    */
-  test("timestampToLong(timestamp)") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery(
-      "select timestampToLong(longToTimestamp(" + DEFAULT_TIMESTAMP.getTime + "))"
-    )
-    resultSet.next()
-    assertEquals(DEFAULT_TIMESTAMP.getTime, resultSet.getObject(1))
-  }
-
-  /**
-    * test for longToTimestamp
-    */
-  test("longToTimestamp(long)") {
-    val statement = connect.createStatement()
-    val resultSet =
-      statement.executeQuery("select longToTimestamp('" + DEFAULT_TIMESTAMP.getTime + "')")
-    resultSet.next()
-    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
-  }
-
-  /**
-    * test for timestampFormat
-    */
-  test("timestampFormat(str, format)") {
-    val statement = connect.createStatement()
-    val resultSet =
-      statement.executeQuery("select timestampFormat('" + DEFAULT_TIME_STR + "', 'yyyy-MM-dd')")
-    resultSet.next()
-    assertEquals(DEFAULT_TIME_STR.substring(0, "yyyy-MM-dd".length), resultSet.getObject(1))
-  }
+//  /**
+//    * test for toTimestamp(two parameter)
+//    */
+//  test("toTimestamp(str, format)") {
+//    val statement = connect.createStatement()
+//    val resultSet =
+//      statement.executeQuery(
+//        "select toTimestamp('" + DEFAULT_TIME_STR + "', '" + DEFAULT_FORMAT + "')"
+//      )
+//    resultSet.next()
+//    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
+//  }
+//
+//  /**
+//    * test for toTimestamp(one parameter)
+//    */
+//  test("toTimestamp(str)") {
+//    val statement = connect.createStatement()
+//    val resultSet = statement.executeQuery("select toTimestamp('" + DEFAULT_TIME_STR + "')")
+//    resultSet.next()
+//    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
+//  }
+//
+//  /**
+//    * test for currentTimestamp
+//    */
+//  test("currentTimestamp") {
+//    val statement = connect.createStatement()
+//    val resultSet = statement.executeQuery("select currentTimestamp()")
+//    assertTrue(resultSet.next())
+//  }
+//
+//  /**
+//    * test for timestampToLong
+//    */
+//  test("timestampToLong(str)") {
+//    val statement = connect.createStatement()
+//    val resultSet = statement.executeQuery("select timestampToLong('" + DEFAULT_TIME_STR + "')")
+//    resultSet.next()
+//    assertEquals(DEFAULT_TIMESTAMP.getTime, resultSet.getObject(1))
+//  }
+//
+//  /**
+//    * test for timestampToLong
+//    */
+//  test("timestampToLong(timestamp)") {
+//    val statement = connect.createStatement()
+//    val resultSet = statement.executeQuery(
+//      "select timestampToLong(longToTimestamp(" + DEFAULT_TIMESTAMP.getTime + "))"
+//    )
+//    resultSet.next()
+//    assertEquals(DEFAULT_TIMESTAMP.getTime, resultSet.getObject(1))
+//  }
+//
+//  /**
+//    * test for longToTimestamp
+//    */
+//  test("longToTimestamp(long)") {
+//    val statement = connect.createStatement()
+//    val resultSet =
+//      statement.executeQuery("select longToTimestamp('" + DEFAULT_TIMESTAMP.getTime + "')")
+//    resultSet.next()
+//    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
+//  }
+//
+//  /**
+//    * test for timestampFormat
+//    */
+//  test("timestampFormat(str, format)") {
+//    val statement = connect.createStatement()
+//    val resultSet =
+//      statement.executeQuery("select timestampFormat('" + DEFAULT_TIME_STR + "', 'yyyy-MM-dd')")
+//    resultSet.next()
+//    assertEquals(DEFAULT_TIME_STR.substring(0, "yyyy-MM-dd".length), resultSet.getObject(1))
+//  }
 
   /**
     * DatetimeFunctionDemo Tests
