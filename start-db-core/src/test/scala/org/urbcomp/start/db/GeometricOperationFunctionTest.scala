@@ -11,13 +11,12 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.assertEquals
-import org.urbcomp.start.db.util.GeoFunctions
+import org.junit.Assert.{assertEquals, assertTrue}
 
 class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_translate(geom, deltaX, deltaY)") {
     val statement = connect.createStatement
-    var resultSet = statement.executeQuery(
+    val resultSet = statement.executeQuery(
       "select st_translate(st_makePoint(1, 2), 1, 1), st_translate(st_makeBBox(1, 2, 3, 4), 1, 1)"
     )
     resultSet.next()
@@ -132,7 +131,74 @@ class GeometricOperationFunctionTest extends CalciteGeomesaFunctionTest {
         "select st_distanceSpheroid(st_makePoint(116.307683,39.978879), st_makePoint(116.337579,39.984186))"
       )
     resultSet.next()
-    System.out.print(GeoFunctions.getDistanceInM(116.307683, 39.978879, 116.337579, 39.984186))
-    assertEquals(2614.7025275922806, resultSet.getObject(1))
+    assertEquals(2620.727593714579, resultSet.getObject(1))
+  }
+
+  test("st_intersection(geom1, geom2)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery(
+        "select st_intersection(st_makePoint(116.307683,39.978879), st_makePoint(116.337579,39.984186)), " +
+          "st_intersection(st_makeBBox(1, 2, 3, 4), st_makePoint(2, 3)), " +
+          "st_intersection(st_makeBBox(1, 2, 3, 4), st_makeBBOX(2, 3, 4, 5))"
+      )
+    resultSet.next()
+    assertEquals("POINT EMPTY", resultSet.getObject(1))
+    assertEquals("POINT (2 3)", resultSet.getObject(2))
+    assertEquals("POLYGON ((2 4, 3 4, 3 3, 2 3, 2 4))", resultSet.getObject(3))
+  }
+
+  test("st_length(geom)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery(
+        "select st_length(st_makePoint(116.307683,39.978879)), st_length(st_makeBBox(1, 2, 3, 4))"
+      )
+    resultSet.next()
+    assertEquals(0.0, resultSet.getObject(1))
+    assertEquals(8.0, resultSet.getObject(2))
+  }
+
+  test("st_lengthSphere(lineString)") {
+    // todo 测试linestring的结果
+  }
+
+  test("st_lengthSpheroid(lineString)") {
+    // todo 测试linestring的结果
+  }
+
+  test("st_difference(geom1, geom2)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery(
+        "select st_difference(st_makeBBox(1, 2, 3, 4), st_makeBBox(2, 3, 4, 5))"
+      )
+    resultSet.next()
+    assertEquals("POLYGON ((1 2, 1 4, 2 4, 2 3, 3 3, 3 2, 1 2))", resultSet.getObject(1))
+  }
+
+  test("st_isValid(geom)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_isValid(st_makeBBox(1, 2, 3, 4))")
+    resultSet.next()
+    assertEquals(true, resultSet.getObject(1))
+    // todo 一个不符合的测试
+  }
+
+  test("st_bufferPoint(point, distanceInM)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_bufferPoint(st_makePoint(116.307683,39.978879), 2000)")
+    assertTrue(resultSet.next())
+  }
+
+  test("st_convexHull(geom)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_convexHull(st_makePoint(116.307683,39.978879))")
+    resultSet.next()
+    assertEquals("POINT (116.307683 39.978879)", resultSet.getObject(1))
+    // todo LineString等完成之后，再测
   }
 }

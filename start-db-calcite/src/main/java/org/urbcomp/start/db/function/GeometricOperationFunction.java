@@ -23,13 +23,17 @@
 package org.urbcomp.start.db.function;
 
 import org.geotools.referencing.GeodeticCalculator;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.util.AffineTransformation;
 import org.locationtech.jts.operation.distance.DistanceOp;
+import org.locationtech.jts.util.GeometricShapeFactory;
 import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
 import org.locationtech.spatial4j.distance.DistanceCalculator;
 import org.locationtech.spatial4j.distance.DistanceUtils;
+import org.locationtech.spatial4j.shape.Circle;
+import org.locationtech.spatial4j.shape.Shape;
+import org.locationtech.spatial4j.shape.jts.JtsPoint;
+import org.urbcomp.start.db.util.GeoFunctions;
 
 public class GeometricOperationFunction {
     @StartDBFunction("st_translate")
@@ -109,7 +113,7 @@ public class GeometricOperationFunction {
     public double st_distanceSphere(Geometry geom1, Geometry geom2) {
         Coordinate c1 = geom1.getCoordinate();
         Coordinate c2 = geom2.getCoordinate();
-        DistanceCalculator ca = JtsSpatialContext.GEO.getDistCalc();
+        DistanceCalculator ca = ThreadLocal.withInitial(JtsSpatialContext.GEO::getDistCalc).get();
         org.locationtech.spatial4j.shape.Point startPoint = JtsSpatialContext.GEO.getShapeFactory()
             .pointXY(c1.x, c1.y);
         return DistanceUtils.DEG_TO_KM * ca.distance(startPoint, c2.x, c2.y) * 1000;
@@ -119,9 +123,108 @@ public class GeometricOperationFunction {
     public double st_distanceSpheroid(Geometry geom1, Geometry geom2) {
         Coordinate c1 = geom1.getCoordinate();
         Coordinate c2 = geom2.getCoordinate();
-        GeodeticCalculator gc = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+        GeodeticCalculator gc = ThreadLocal.withInitial(GeodeticCalculator::new).get();
         gc.setStartingGeographicPoint(c1.x, c1.y);
         gc.setDestinationGeographicPoint(c2.x, c2.y);
         return gc.getOrthodromicDistance();
+    }
+
+    @StartDBFunction("st_intersection")
+    public Geometry st_intersection(Geometry geom1, Geometry geom2) {
+        return geom1.intersection(geom2);
+    }
+
+    @StartDBFunction("st_length")
+    public double st_length(Geometry geom) {
+        return geom.getLength();
+    }
+
+    @StartDBFunction("st_lengthSphere")
+    public double st_lengthSphere(LineString geom) {
+        double sum = 0.0;
+        DistanceCalculator ca = ThreadLocal.withInitial(JtsSpatialContext.GEO::getDistCalc).get();
+        Coordinate[] cs = geom.getCoordinates();
+        for (int i = 1; i < cs.length; i++) {
+            org.locationtech.spatial4j.shape.Point startPoint = JtsSpatialContext.GEO
+                .getShapeFactory()
+                .pointXY(cs[i - 1].x, cs[i - 1].y);
+            sum += ca.distance(startPoint, cs[i].x, cs[i].y);
+        }
+        return sum * DistanceUtils.DEG_TO_KM * 1000;
+    }
+
+    @StartDBFunction("st_lengthSpheroid")
+    public double st_lengthSpheroid(LineString geom) {
+        double sum = 0.0;
+
+        GeodeticCalculator gc = ThreadLocal.withInitial(GeodeticCalculator::new).get();
+        Coordinate[] cs = geom.getCoordinates();
+        for (int i = 1; i < cs.length; i++) {
+            gc.setStartingGeographicPoint(cs[i - 1].x, cs[i - 1].y);
+            gc.setDestinationGeographicPoint(cs[i].x, cs[i].y);
+            sum += gc.getOrthodromicDistance();
+        }
+        return sum;
+    }
+
+    @StartDBFunction("st_difference")
+    public Geometry st_difference(Geometry geom1, Geometry geom2) {
+        return geom1.difference(geom2);
+    }
+
+    @StartDBFunction("st_isValid")
+    public boolean st_isValid(Geometry geom) {
+        return geom.isValid();
+    }
+
+    @StartDBFunction("st_bufferPoint")
+    public Geometry st_bufferPoint(Point point, double distanceInM) {
+        double degrees = GeoFunctions.getDegreeFromM(distanceInM);
+        JtsPoint jstPoint = new JtsPoint(point, JtsSpatialContext.GEO);
+        Circle circle = jstPoint.getBuffered(degrees, JtsSpatialContext.GEO);
+        GeometricShapeFactory gsf = ThreadLocal.withInitial(
+            () -> new GeometricShapeFactory(new GeometryFactory())
+        ).get();
+        gsf.setSize(circle.getBoundingBox().getWidth());
+        gsf.setNumPoints(4 * 25);
+        gsf.setCentre(new Coordinate(circle.getCenter().getX(), circle.getCenter().getY()));
+        Geometry geomTemp = gsf.createCircle();
+        Geometry geomCopy = new GeometryFactory().createGeometry(geomTemp);
+        if (geomCopy.getEnvelopeInternal().getMinX() < -180
+            || geomCopy.getEnvelopeInternal().getMaxX() > 180) {
+            geomCopy.apply(new CoordinateSequenceFilter() {
+                @Override
+                public void filter(CoordinateSequence seq, int i) {
+                    seq.setOrdinate(
+                        i,
+                        CoordinateSequence.X,
+                        seq.getX(i) + degreesToTranslate(seq.getX(i))
+                    );
+                }
+
+                @Override
+                public boolean isDone() {
+                    return false;
+                }
+
+                @Override
+                public boolean isGeometryChanged() {
+                    return true;
+                }
+            });
+        }
+        Shape datelineSafeShape = JtsSpatialContext.GEO.getShapeFactory()
+            .makeShapeFromGeometry(geomCopy);
+        return JtsSpatialContext.GEO.getShapeFactory().getGeometryFrom(datelineSafeShape);
+    }
+
+    @StartDBFunction("st_convexHull")
+    public Geometry st_convexHull(Geometry geom) {
+        return geom.convexHull();
+    }
+
+    // 经度有可能会跨
+    private double degreesToTranslate(double x) {
+        return (int) (Math.floor((x + 180) / 360.0) * -360);
     }
 }
