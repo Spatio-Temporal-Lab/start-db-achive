@@ -22,13 +22,27 @@
 
 package org.urbcomp.start.db.function;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class MathFunction {
-    // TODO by Zheng Li
     /**
-     * Returns the natural logarithm (base) of a double value (num).
+     * The double value that is closer than any other to e,
+     * the base of the natural logarithms.
+     */
+    public static final double E = 2.7182818284590452354;
+
+    /**
+     * The double value that is closer than any other to pi,
+     * the ratio of the circumference of a circle to its diameter.
+     */
+    public static final double PI = 3.14159265358979323846;
+
+    /**
+     * Returns the (base) logarithm of a double value (num).
      *
-     * @param base  base double
-     * @param num   num double
+     * @param base double
+     * @param num  double
      * @return log result
      */
     @StartDBFunction("log")
@@ -38,7 +52,6 @@ public class MathFunction {
 
     /**
      * The double value that is closer than any other to pi
-     * the ratio of the circumference of a circle to its diameter.
      *
      * @return PI double.
      */
@@ -47,23 +60,62 @@ public class MathFunction {
         return Math.PI;
     }
 
+    /**
+     * Returns the base 2 logarithm of a double value (num).
+     *
+     * @param num double
+     * @return double
+     */
     @StartDBFunction("log2")
     public double log2(double num) {
-        return Math.log(num) / Math.log(2);
+        return Math.log(num) / Math.log(2.0D);
     }
 
+    /**
+     * Returns the natural logarithm of a double value (num) + 1.
+     *
+     * @param num double
+     * @return double
+     */
     @StartDBFunction("log1p")
     public double log1p(double num) {
         return Math.log1p(num);
     }
 
-    @StartDBFunction("ln")
-    public double ln(double num) {
-        return Math.log(num);
+    /**
+     * Returns the value of the first argument raised to the power of the second argument.
+     *
+     * @param a double
+     * @param b double
+     * @return double
+     */
+    @StartDBFunction("pow")
+    public double pow(double a, double b) {
+        return Math.pow(a, b);
     }
 
-    @StartDBFunction("log10")
-    public double log10(double num) {
-        return Math.log10(num);
+    /**
+     * Converts an angle measured in degrees to an approximately equivalent angle measured in radians.
+     * The conversion from degrees to radians is generally inexact.
+     *
+     * @param angDeg double
+     * @return double
+     */
+    @StartDBFunction("toRadians")
+    public double toRadians(double angDeg) {
+        return Math.toRadians(angDeg);
+    }
+
+    /**
+     * Converts an angle measured in radians to an approximately equivalent angle measured in degrees.
+     * The conversion from radians to degrees is generally inexact;
+     * users should not expect cos(toRadians(90.0)) to exactly equal 0.0.
+     *
+     * @param angRad double
+     * @return double
+     */
+    @StartDBFunction("toDegrees")
+    public double toDegrees(double angRad) {
+        return Math.toDegrees(angRad);
     }
 }

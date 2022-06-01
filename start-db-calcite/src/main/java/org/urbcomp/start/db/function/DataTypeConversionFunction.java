@@ -23,5 +23,50 @@
 package org.urbcomp.start.db.function;
 
 public class DataTypeConversionFunction {
-    // TODO by Yongxin Tang
+
+    @StartDBFunction("castToInteger")
+    public Integer castToInteger(String str) {
+        return Integer.valueOf(str);
+    }
+
+    @StartDBFunction("castToLong")
+    public Long castToLong(String str) {
+        return Long.valueOf(str);
+    }
+
+    @StartDBFunction("castToFloat")
+    public Float castToFloat(String str) {
+        return Float.valueOf(str);
+    }
+
+    @StartDBFunction("castToDouble")
+    public Double castToDouble(String str) {
+        return Double.valueOf(str);
+    }
+
+    @StartDBFunction("castToBoolean")
+    public Boolean castToBoolean(String str) {
+        return Boolean.valueOf(str);
+    }
+
+    @StartDBFunction("castToString")
+    public String castToString(Object any) {
+        return any.toString();
+    }
+
+    @StartDBFunction("parseInteger")
+    public Integer parseInteger(Object num) {
+        return Integer.valueOf(num.toString());
+    }
+
+    @StartDBFunction("parseLong")
+    public Long parseLong(Object num) {
+        return Long.valueOf(num.toString());
+    }
+
+    @StartDBFunction("parseDouble")
+    public Double parseDouble(Object num) {
+        return Double.valueOf(num.toString());
+    }
+
 }
