@@ -20,9 +20,9 @@ import org.junit.Assert.assertEquals
 class StringFunctionTest extends CalciteGeomesaFunctionTest {
 
   /**
-   * Calcite's function
-   * returns the string after converting each letter of the original string to uppercase
-   */
+    * Calcite's function
+    * returns the string after converting each letter of the original string to uppercase
+    */
   test("upper") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select upper('abcde')")
@@ -31,9 +31,9 @@ class StringFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * Calcite's function
-   * returns the string after converting each letter of the original string to lowercase
-   */
+    * Calcite's function
+    * returns the string after converting each letter of the original string to lowercase
+    */
   test("lower") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select lower('ABCDE')")
@@ -42,10 +42,10 @@ class StringFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * Calcite's function
-   * index start from 1
-   * return the substring which start at index 2 and the length is 3
-   */
+    * Calcite's function
+    * index start from 1
+    * return the substring which start at index 2 and the length is 3
+    */
   test("substring1") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select substring('abcde', 2, 3)")
@@ -54,10 +54,10 @@ class StringFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * Calcite's function
-   * index start from 1
-   * return the substring which start at index 2, the end is input's end
-   */
+    * Calcite's function
+    * index start from 1
+    * return the substring which start at index 2, the end is input's end
+    */
   test("substring2") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select substring('abcde', 2)")
@@ -66,9 +66,9 @@ class StringFunctionTest extends CalciteGeomesaFunctionTest {
   }
 
   /**
-   * Calcite's function
-   * returns a string without leading and trailing spaces
-   */
+    * Calcite's function
+    * returns a string without leading and trailing spaces
+    */
   test("trim") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select trim('  abcde ')")
