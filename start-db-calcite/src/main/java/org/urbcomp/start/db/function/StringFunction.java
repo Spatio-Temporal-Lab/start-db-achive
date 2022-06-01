@@ -23,13 +23,13 @@
 package org.urbcomp.start.db.function;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @author zaiyuan, XiangHe
  * @date 2022-05-26 23:12:07
  */
 public class StringFunction {
-    // TODO by Xiang He
     @StartDBFunction("concat")
     public String concat(String str1, String str2) {
         return str1.concat(str2);
@@ -38,31 +38,6 @@ public class StringFunction {
     @StartDBFunction("reverse")
     public String reverse(String str) {
         return new StringBuffer(str).reverse().toString();
-    }
-
-    @StartDBFunction("upper")
-    public String upper(String str) {
-        return str.toUpperCase();
-    }
-
-    @StartDBFunction("lower")
-    public String lower(String str) {
-        return str.toLowerCase();
-    }
-
-    @StartDBFunction("substring")
-    public String substring(String str, int start, int end) {
-        return str.substring(start, end);
-    }
-
-    @StartDBFunction("substring")
-    public String substring(String str, int start) {
-        return str.substring(start);
-    }
-
-    @StartDBFunction("trim")
-    public String trim(String str) {
-        return str.trim();
     }
 
     @StartDBFunction("ltrim")
@@ -88,7 +63,7 @@ public class StringFunction {
         for (int i = 0; i < len; ++i) {
             sb.append(' ');
         }
-        return sb.toString() + str;
+        return sb + str;
     }
 
     @StartDBFunction("lpad")
@@ -97,7 +72,7 @@ public class StringFunction {
         for (int i = 0; i < len; ++i) {
             sb.append(pad);
         }
-        return sb.toString() + str;
+        return sb + str;
     }
 
     @StartDBFunction("rpad")
@@ -106,7 +81,7 @@ public class StringFunction {
         for (int i = 0; i < len; ++i) {
             sb.append(' ');
         }
-        return str + sb.toString();
+        return str + sb;
     }
 
     @StartDBFunction("rpad")
@@ -115,7 +90,7 @@ public class StringFunction {
         for (int i = 0; i < len; ++i) {
             sb.append(pad);
         }
-        return str + sb.toString();
+        return str + sb;
     }
 
     @StartDBFunction("length")
@@ -145,7 +120,7 @@ public class StringFunction {
     }
 
     @StartDBFunction("md5")
-    public String md5(String str) {
+    public String md5(String str) throws NoSuchAlgorithmException {
         final char[] hexDigits = {
             '0',
             '1',
@@ -163,23 +138,18 @@ public class StringFunction {
             'D',
             'E',
             'F' };
-        try {
-            byte[] btInput = str.getBytes();
-            MessageDigest mdInst = MessageDigest.getInstance("MD5");
-            mdInst.update(btInput);
-            byte[] md = mdInst.digest();
-            int j = md.length;
-            char[] code = new char[j * 2];
-            int k = 0;
-            for (byte byte0 : md) {
-                code[k++] = hexDigits[byte0 >>> 4 & 0xf];
-                code[k++] = hexDigits[byte0 & 0xf];
-            }
-            return new String(code);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+        byte[] btInput = str.getBytes();
+        MessageDigest mdInst = MessageDigest.getInstance("MD5");
+        mdInst.update(btInput);
+        byte[] md = mdInst.digest();
+        int j = md.length;
+        char[] code = new char[j * 2];
+        int k = 0;
+        for (byte byte0 : md) {
+            code[k++] = hexDigits[byte0 >>> 4 & 0xf];
+            code[k++] = hexDigits[byte0 & 0xf];
         }
+        return new String(code);
     }
 
 }
