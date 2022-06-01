@@ -17,41 +17,24 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-20.04
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: start_db
-          MYSQL_USER: start_db
-          MYSQL_PASSWORD: start_db
-          MYSQL_DATABASE: meta_data
-        ports:
-          - 3306:3306
-      geomesa-hbase:
-        image: jimolonely1234/geomesa-hbase
-        ports:
-          - 2181:2181
-          - 16020:16020
-          - 16000:16000
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+
+      # run docker for meta data and user data
+      - name: run docker
+        run: |
+          docker-compose -f docker/docker-compose.yml up -d
 
       # Runs a single command using the runners shell
       - name: set up maven and java
         uses: actions/setup-java@v3
         with:
           java-version: "8"
-          cache: maven
+          cache: 'maven'
           distribution: "adopt"
-      # Step that does that actual cache save and restore
-      - uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+
       - name: check format convention
         run: |
           mvn spotless:check
