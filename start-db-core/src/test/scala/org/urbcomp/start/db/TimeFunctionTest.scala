@@ -14,6 +14,7 @@ package org.urbcomp.start.db
 import org.junit.Assert.{assertEquals, assertTrue}
 
 import java.sql.Timestamp
+import java.time.LocalDateTime
 
 /**
   * Time UDF functions test
@@ -101,4 +102,47 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     assertEquals(DEFAULT_TIME_STR.substring(0, "yyyy-MM-dd".length), resultSet.getObject(1))
   }
 
+  /**
+   * DatetimeFunctionDemo Tests
+   */
+
+  /**
+   * test for toDatetime (two parameters)
+   */
+  test("toDatetime(str, format)") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select toDatetime('20220529 11:35:01', 'yyyyMMdd HH:mm:ss')")
+    resultSet.next()
+    assertEquals("2022-05-29T11:35:01", resultSet.getObject(1).toString)
+  }
+
+  /**
+   * test for toDatetime (one parameter)
+   */
+  test("toDatetime(str)") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select toDatetime('2022-05-29 11:35:01')")
+    resultSet.next()
+    assertEquals("2022-05-29T11:35:01", resultSet.getObject(1).toString)
+  }
+
+  /**
+   * test for toTimestamp(with timezone)
+   */
+  test("toTimestamp(str, format, ?)") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select toTimestamp('20220529 11:35:01', 'yyyyMMdd HH:mm:ss', '?')")
+    resultSet.next()
+    assertEquals("2022-05-29T11:35:01+08:00[Asia/Shanghai]", resultSet.getObject(1).toString)
+  }
+
+  /**
+   * test for datetimeToTimestamp
+   */
+  test("datetimeToTimestamp(str)") {
+    val statement = connect.createStatement()
+    val resultSet = statement.executeQuery("select datetimeToTimestamp('2022-05-29 11:35:01')")
+    resultSet.next()
+    assertEquals("2022-05-29T11:35:01+08:00[Asia/Shanghai]", resultSet.getObject(1).toString)
+  }
 }

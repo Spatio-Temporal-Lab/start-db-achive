@@ -25,7 +25,14 @@ package org.urbcomp.start.db.function;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Time UDF functions
@@ -146,5 +153,86 @@ public class TimeFunction {
     public String timestampFormat(Timestamp ts, String string) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(string);
         return simpleDateFormat.format(new Date(ts.getTime()));
+    }
+
+
+    /**
+     * 以下为区分Datetime与Timestamp的Demo（不需要合并）
+     * 初步思路为采用java8中的java.time包下的类替代java.sql.Timestamp去实现日期时间的类型
+     * 用LocalDateTime实现datetime类型 （只存储时间值，不存储时区）
+     * 用ZonedDateTime实现timestamp （保留时区）
+     * ToDO：当前获取时区的方法是用“TimeZone.getDefault();“ 获取用户时区，该时区为jvm启动时的系统时区，并非实时的系统时区。这种处理是否符合使用需求？
+     */
+
+
+    /**
+     * Converts a String to Datetime as the given format
+     * @param dateString date(time) String
+     * @param format date format
+     * @return datetime
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("toDatetime")
+    public LocalDateTime toDatetime(String dateString, String format) throws DateTimeException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        return LocalDateTime.parse(dateString, formatter);
+    }
+
+    /**
+     * Converts a String to Datetime
+     * @param dateString date(time) String
+     * @return Datetime instance
+     * @throws DateTimeParseException parse exception
+     */
+    @StartDBFunction("toDatetime")
+    public LocalDateTime toDateTime(String dateString) throws DateTimeParseException {
+        LocalDateTime localDateTime = LocalDateTime.MIN;
+        boolean isCorrect = false;
+        DateTimeParseException pe = null;
+        for (String format : DEFAULT_FORMATS) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+                localDateTime = LocalDateTime.parse(dateString, formatter);
+                isCorrect = true;
+                break;
+            } catch (DateTimeParseException exception) {
+                pe = exception;
+            }
+        }
+        if (!isCorrect && pe != null) {
+            throw new DateTimeParseException(
+                    "Date format is error. Only receive " , String.join(",", DEFAULT_FORMATS),
+                    pe.getErrorIndex()
+            );
+        }
+        return localDateTime;
+    }
+
+    /**
+     * Converts a String to a timestamp(with TimeZone)
+     * @param dateString date(time) String
+     * @param format date format String
+     * @param test  used to distinguish between two methods
+     * @return timestamp
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("toTimestamp")
+    public ZonedDateTime toTimeStamp(String dateString, String format, String test) throws DateTimeException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDateTime localDateTime = LocalDateTime.parse(dateString, formatter);
+        ZoneId zoneId = TimeZone.getDefault().toZoneId();
+        return ZonedDateTime.of(localDateTime, zoneId);
+    }
+
+    /**
+     * Converts a Datetime instance to timestamp(with TimeZone)
+     * @param dtString datetime String
+     * @return timestamp
+     */
+    @StartDBFunction("datetimeToTimestamp")
+    public ZonedDateTime datetimeToTimestamp(String dtString) {
+        LocalDateTime dt = toDateTime(dtString);
+        ZoneId zoneId = TimeZone.getDefault().toZoneId();
+        return ZonedDateTime.of(dt, zoneId);
     }
 }
