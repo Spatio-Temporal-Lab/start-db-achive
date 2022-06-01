@@ -46,6 +46,7 @@
         <argLine>-Dfile.encoding=UTF-8</argLine>
         <spotless-maven-plugin.version>2.22.5</spotless-maven-plugin.version>
         <spatial4j.version>0.8</spatial4j.version>
+        <scalatest.maven.plugin.version>2.0.2</scalatest.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -275,6 +276,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
