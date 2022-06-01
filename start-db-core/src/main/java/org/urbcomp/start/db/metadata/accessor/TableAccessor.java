@@ -13,25 +13,31 @@ package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
 import org.urbcomp.start.db.metadata.entity.Table;
-import org.urbcomp.start.db.metadata.mapper.IMapper;
+import org.urbcomp.start.db.metadata.entity.UserDbTable;
 import org.urbcomp.start.db.metadata.mapper.TableMapper;
+
+import java.util.List;
 
 /**
  * This class is the implementation class of IAccessor.The basic functions of metadata interaction
  * of tables are realized.
  *
  * @author Wang Bohong
- * @Date 2022-05-21
+ * @date 2022-05-21
  */
-public class TableAccessor implements IAccessor<Table> {
+public class TableAccessor implements IAccessor<Table, TableMapper> {
 
     @Override
-    public IMapper<Table> getMapper(boolean commit) {
+    public TableMapper getMapper(boolean commit) {
         return SqlSessionUtil.getSession(commit).getMapper(TableMapper.class);
     }
 
     @Override
     public boolean isNotValid(Table entity) {
         return getMapper(true).selectByFidAndName(entity.getDbId(), entity.getName()) != null;
+    }
+
+    public List<UserDbTable> getAllUserDbTable() {
+        return getMapper(true).getAllUserDbTable();
     }
 }
