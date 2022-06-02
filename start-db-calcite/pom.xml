@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.urbcomp</groupId>
+            <artifactId>start-db-common</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>${antlr.version}</version>
