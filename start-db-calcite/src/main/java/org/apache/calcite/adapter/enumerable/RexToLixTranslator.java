@@ -912,13 +912,11 @@ public class RexToLixTranslator implements RexVisitor<RexToLixTranslator.Result>
             // desiredType is still a hint, thus we might get any kind of output
             // (boxed or not) when hint was provided.
             // It is favourable to get the type matching desired type
-            if (desiredType == null && !isNullable(rex)) {
-                assert !Primitive.isBox(translate.getType())
-                    : "Not-null boxed primitive should come back as primitive: "
-                        + rex
-                        + ", "
-                        + translate.getType();
-            }
+            assert desiredType != null || isNullable(rex) || !Primitive.isBox(translate.getType())
+                : "Not-null boxed primitive should come back as primitive: "
+                    + rex
+                    + ", "
+                    + translate.getType();
         }
         return list;
     }
@@ -1582,7 +1580,7 @@ public class RexToLixTranslator implements RexVisitor<RexToLixTranslator.Result>
      * Implementation of {@link InputGetter} that calls {@link PhysType#fieldReference}.
      */
     public static class InputGetterImpl implements InputGetter {
-        private List<Pair<Expression, PhysType>> inputs;
+        private final List<Pair<Expression, PhysType>> inputs;
 
         public InputGetterImpl(List<Pair<Expression, PhysType>> inputs) {
             this.inputs = inputs;
