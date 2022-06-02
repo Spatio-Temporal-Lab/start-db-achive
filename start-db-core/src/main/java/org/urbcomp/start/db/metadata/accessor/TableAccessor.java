@@ -13,7 +13,7 @@ package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
 import org.urbcomp.start.db.metadata.entity.Table;
-import org.urbcomp.start.db.metadata.entity.UserDbTable;
+import org.urbcomp.start.db.util.UserDbTable;
 import org.urbcomp.start.db.metadata.mapper.TableMapper;
 
 import java.util.List;

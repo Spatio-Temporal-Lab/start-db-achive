@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 import java.net.URLDecoder
@@ -41,7 +41,7 @@ class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterAll {
     val stmt = connect.createStatement()
     val rs = stmt.executeQuery("select count(1) from t_test")
     rs.next()
-    assertTrue(rs.getInt(1) >= 0)
+    assertEquals(101, rs.getInt(1))
   }
 
   override protected def afterAll(): Unit = {

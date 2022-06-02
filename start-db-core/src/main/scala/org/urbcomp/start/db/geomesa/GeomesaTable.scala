@@ -20,24 +20,24 @@ import org.apache.calcite.schema.{SchemaPlus, TranslatableTable}
 import org.geotools.data.{DataStoreFinder, Query}
 import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan
-import org.urbcomp.start.db.metadata.MetadataUtil
+import org.urbcomp.start.db.util.MetadataUtil
 
 import java.lang.reflect.Type
 import scala.collection.JavaConverters._
 
 /**
- * Table of Geomesa
- *
- * @author zaiyuan
- * @since 0.1.0
- */
+  * Table of Geomesa
+  *
+  * @author zaiyuan
+  * @since 0.1.0
+  */
 case class GeomesaTable(userName: String, dbName: String, tableName: String)
-  extends AbstractQueryableTable(classOf[Type])
+    extends AbstractQueryableTable(classOf[Type])
     with TranslatableTable {
 
   /**
-   * convert table instance to table scan instance
-   */
+    * convert table instance to table scan instance
+    */
   override def toRel(toRelContext: RelOptTable.ToRelContext, relOptTable: RelOptTable): RelNode =
     new GeomesaTableScan(
       toRelContext.getCluster,
@@ -47,24 +47,25 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     )
 
   /**
-   * convert to queryable instance
-   */
+    * convert to queryable instance
+    */
   override def asQueryable[T](
-                               queryProvider: QueryProvider,
-                               schemaPlus: SchemaPlus,
-                               s: String
-                             ): Queryable[T] =
+      queryProvider: QueryProvider,
+      schemaPlus: SchemaPlus,
+      s: String
+  ): Queryable[T] =
     new GeomesaQueryable[T](queryProvider, schemaPlus, this, s)
 
   /**
-   * get Schema of the table
-   *
-   * @param relDataTypeFactory RelDataTypeFactory
-   * @return RelDataType
-   */
+    * get Schema of the table
+    *
+    * @param relDataTypeFactory RelDataTypeFactory
+    * @return RelDataType
+    */
   override def getRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
     val catalog = MetadataUtil.makeCatalog(userName, dbName)
-    val dataStore = DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
+    val dataStore =
+      DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
     val query = new Query(tableName)
     val sft = dataStore.getSchema(query.getTypeName)
     // TODO Geometry type should be supported

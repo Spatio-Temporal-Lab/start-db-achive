@@ -14,24 +14,24 @@ package org.urbcomp.start.db.parser.visitor
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.misc.Interval
 import org.apache.calcite.sql._
-import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
-import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
-import org.urbcomp.start.db.parser.visitor.StartDBVisitor._
-
-import java.util
-import scala.collection.mutable
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
+import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
+import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
+import org.urbcomp.start.db.parser.visitor.StartDBVisitor._
+import org.urbcomp.start.db.util.MetadataUtil
 
+import java.util
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 /**
   * Start DB grammar visitor
   *
   * @author : zaiyuan
   */
-class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
+class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[AnyRef] {
 
   private val pos: SqlParserPos = SqlParserPos.ZERO
 
@@ -285,8 +285,18 @@ class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
     // keep username case sensitive
     if (names.length >= 3)
       names = names.takeRight(2).map(v => v.toLowerCase).+:(names(names.length - 3))
-    // TODO consider database.table
-    new SqlIdentifier(List(names.head).asJava, pos)
+    // consider user.database.table
+    names.length match {
+      case 1 => new SqlIdentifier(MetadataUtil.combineUserDbTableKey(user, db, names.head), pos)
+      case 2 =>
+        new SqlIdentifier(MetadataUtil.combineUserDbTableKey(user, names.head, names.last), pos)
+      case _ =>
+        new SqlIdentifier(
+          MetadataUtil
+            .combineUserDbTableKey(names(names.length - 3), names(names.length - 2), names.last),
+          pos
+        )
+    }
   }
 
   //////////////////////////////////////////////////////

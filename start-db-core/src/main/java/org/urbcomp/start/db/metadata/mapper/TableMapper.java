@@ -13,7 +13,7 @@ package org.urbcomp.start.db.metadata.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.urbcomp.start.db.metadata.entity.Table;
-import org.urbcomp.start.db.metadata.entity.UserDbTable;
+import org.urbcomp.start.db.util.UserDbTable;
 
 import java.util.List;
 

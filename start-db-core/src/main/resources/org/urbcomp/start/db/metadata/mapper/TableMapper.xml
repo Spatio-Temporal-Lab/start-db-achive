@@ -21,7 +21,7 @@
           and name = #{name}
           and delete_time = 0
     </select>
-    <select id="getAllUserDbTable" resultType="org.urbcomp.start.db.metadata.entity.UserDbTable">
+    <select id="getAllUserDbTable" resultType="org.urbcomp.start.db.util.UserDbTable">
         SELECT t.name as table_name, db.name as db_name, u.name as username
         FROm sys_table as t,
              sys_database as db,
