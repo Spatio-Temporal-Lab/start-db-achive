@@ -14,11 +14,10 @@ package org.urbcomp.start.db
 import org.junit.Assert.{assertEquals, assertNotNull, assertTrue}
 
 /**
- * Geometry relation Function test
- *
- * @author XiangHe
- */
-
+  * Geometry relation Function test
+  *
+  * @author XiangHe
+  */
 // TODO test the relation between linestring and polygon
 class GeometryRelationFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_equals") {
@@ -53,8 +52,7 @@ class GeometryRelationFunctionTest extends CalciteGeomesaFunctionTest {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
       "select st_crosses(st_makeBBox(0, 0, 4, 4), st_makePoint(1, 2))," +
-        "st_crosses(st_makeBBox(1, 1, 3, 2), st_makeBBox(2, 1, 4, 2))," +
-        "st_crosses(st_makeBBox(1, 1, 3, 2), "
+        "st_crosses(st_makeBBox(1, 1, 3, 2), st_makeBBox(2, 1, 4, 2))"
     )
     resultSet.next()
     assertEquals(false, resultSet.getObject(1))
