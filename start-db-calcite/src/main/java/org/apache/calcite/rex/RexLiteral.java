@@ -633,11 +633,11 @@ public class RexLiteral extends RexNode {
                 break;
             case BOOLEAN:
                 assert value instanceof Boolean;
-                sb.append(value.toString());
+                sb.append(value);
                 break;
             case DECIMAL:
                 assert value instanceof BigDecimal;
-                sb.append(value.toString());
+                sb.append(value);
                 break;
             case DOUBLE:
                 assert value instanceof BigDecimal;
@@ -646,7 +646,7 @@ public class RexLiteral extends RexNode {
             case BIGINT:
                 assert value instanceof BigDecimal;
                 long narrowLong = ((BigDecimal) value).longValue();
-                sb.append(String.valueOf(narrowLong));
+                sb.append(narrowLong);
                 sb.append('L');
                 break;
             case BINARY:
@@ -667,22 +667,22 @@ public class RexLiteral extends RexNode {
             case SYMBOL:
                 assert value instanceof Enum;
                 sb.append("FLAG(");
-                sb.append(value.toString());
+                sb.append(value);
                 sb.append(")");
                 break;
             case DATE:
                 assert value instanceof DateString;
-                sb.append(value.toString());
+                sb.append(value);
                 break;
             case TIME:
             case TIME_WITH_LOCAL_TIME_ZONE:
                 assert value instanceof TimeString;
-                sb.append(value.toString());
+                sb.append(value);
                 break;
             case TIMESTAMP:
             case TIMESTAMP_WITH_LOCAL_TIME_ZONE:
                 assert value instanceof TimestampString;
-                sb.append(value.toString());
+                sb.append(value);
                 break;
             case INTERVAL_YEAR:
             case INTERVAL_YEAR_MONTH:
@@ -698,7 +698,7 @@ public class RexLiteral extends RexNode {
             case INTERVAL_MINUTE_SECOND:
             case INTERVAL_SECOND:
                 assert value instanceof BigDecimal;
-                sb.append(value.toString());
+                sb.append(value);
                 break;
             case MULTISET:
             case ROW:

@@ -790,9 +790,7 @@ public abstract class SqlTypeUtil {
         Charset cs1 = t1.getCharset();
         Charset cs2 = t2.getCharset();
         if ((cs1 != null) && (cs2 != null)) {
-            if (!cs1.equals(cs2)) {
-                return true;
-            }
+            return !cs1.equals(cs2);
         }
         return false;
     }
@@ -1424,12 +1422,8 @@ public abstract class SqlTypeUtil {
         }
 
         // We can implicitly convert from character to date
-        if (family1 == SqlTypeFamily.CHARACTER && canConvertStringInCompare(family2)
-            || family2 == SqlTypeFamily.CHARACTER && canConvertStringInCompare(family1)) {
-            return true;
-        }
-
-        return false;
+        return family1 == SqlTypeFamily.CHARACTER && canConvertStringInCompare(family2)
+            || family2 == SqlTypeFamily.CHARACTER && canConvertStringInCompare(family1);
     }
 
     /**

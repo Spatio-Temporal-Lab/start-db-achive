@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.assertEquals
+import org.junit.Assert.{assertEquals, assertTrue}
 
 import java.sql.Timestamp
 
@@ -19,9 +19,11 @@ import java.sql.Timestamp
   * Time UDF functions test
   *
   * @author Wang Bohong
-  * @Date 2022-05-29
   */
 class TimeFunctionTest extends CalciteGeomesaFunctionTest {
+  val DEFAULT_TIME_STR = "2021-05-20 11:21:01.234"
+  val DEFAULT_TIMESTAMP: Timestamp = Timestamp.valueOf(DEFAULT_TIME_STR)
+  val DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
 
   /**
     * test for toTimestamp(two parameter)
@@ -29,9 +31,11 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   test("toTimestamp(str, format)") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select toTimestamp('20210520 11:21:01', 'yyyyMMdd HH:mm:ss')")
+      statement.executeQuery(
+        "select toTimestamp('" + DEFAULT_TIME_STR + "', '" + DEFAULT_FORMAT + "')"
+      )
     resultSet.next()
-    assertEquals(new Timestamp(1621480861000L), resultSet.getObject(1))
+    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
   }
 
   /**
@@ -39,9 +43,9 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     */
   test("toTimestamp(str)") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select toTimestamp('2021-05-20 11:21:01.234')")
+    val resultSet = statement.executeQuery("select toTimestamp('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
-    assertEquals(new Timestamp(1621480861234L), resultSet.getObject(1))
+    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
   }
 
   /**
@@ -50,9 +54,7 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   test("currentTimestamp") {
     val statement = connect.createStatement()
     val resultSet = statement.executeQuery("select currentTimestamp()")
-    resultSet.next()
-    // The result is different every time
-    // assertEquals("xxx", resultSet.getObject(1))
+    assertTrue(resultSet.next())
   }
 
   /**
@@ -60,13 +62,9 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     */
   test("timestampToLong(str)") {
     val statement = connect.createStatement()
-    var resultSet = statement.executeQuery("select timestampToLong('2022-05-29 20:59:46.345')")
+    val resultSet = statement.executeQuery("select timestampToLong('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
-    assertEquals(1653829186345L, resultSet.getObject(1))
-
-    resultSet = statement.executeQuery("select timestampToLong('2022-05-29 20:59:46')")
-    resultSet.next()
-    assertEquals(1653829186000L, resultSet.getObject(1))
+    assertEquals(DEFAULT_TIMESTAMP.getTime, resultSet.getObject(1))
   }
 
   /**
@@ -74,9 +72,11 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     */
   test("timestampToLong(timestamp)") {
     val statement = connect.createStatement()
-    var resultSet = statement.executeQuery("select timestampToLong(longToTimestamp(1653829186345))")
+    val resultSet = statement.executeQuery(
+      "select timestampToLong(longToTimestamp(" + DEFAULT_TIMESTAMP.getTime + "))"
+    )
     resultSet.next()
-    assertEquals(1653829186345L, resultSet.getObject(1))
+    assertEquals(DEFAULT_TIMESTAMP.getTime, resultSet.getObject(1))
   }
 
   /**
@@ -84,9 +84,10 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
     */
   test("longToTimestamp(long)") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select longToTimestamp('1653829186356')")
+    val resultSet =
+      statement.executeQuery("select longToTimestamp('" + DEFAULT_TIMESTAMP.getTime + "')")
     resultSet.next()
-    assertEquals(new Timestamp(1653829186356L), resultSet.getObject(1))
+    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
   }
 
   /**
@@ -95,9 +96,9 @@ class TimeFunctionTest extends CalciteGeomesaFunctionTest {
   test("timestampFormat(str, format)") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select timestampFormat('2022-05-29 20:59:46', 'yyyyMMdd')")
+      statement.executeQuery("select timestampFormat('" + DEFAULT_TIME_STR + "', 'yyyy-MM-dd')")
     resultSet.next()
-    assertEquals("20220529", resultSet.getObject(1))
+    assertEquals(DEFAULT_TIME_STR.substring(0, "yyyy-MM-dd".length), resultSet.getObject(1))
   }
 
 }
