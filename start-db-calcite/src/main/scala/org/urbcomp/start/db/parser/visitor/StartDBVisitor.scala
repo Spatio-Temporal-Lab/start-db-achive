@@ -20,7 +20,7 @@ import org.apache.calcite.util.{DateString, TimestampString}
 import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
 import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
 import org.urbcomp.start.db.parser.visitor.StartDBVisitor._
-import org.urbcomp.start.db.util.MetadataUtil
+import org.urbcomp.start.db.util.{MetadataUtil, StringUtil}
 
 import java.util
 import scala.collection.JavaConverters._
@@ -649,7 +649,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
     case c: TimestampLiteralContext => // TODO 此处的precision仍需调研
       SqlLiteral.createTimestamp(new TimestampString(c.getText), 10, pos)
     case c: BoolLiteralContext => SqlLiteral.createBoolean(c.getText.toBoolean, pos)
-    case c: StringContext      => SqlLiteral.createCharString(c.getText, pos) // TODO String drop quota
+    case c: StringContext      => SqlLiteral.createCharString(StringUtil.dropQuota(c.getText), pos)
     case c: IdentContext       => visitIdent(c) // 封装标识符
     case c: DecNumberContext   => SqlLiteral.createExactNumeric(c.getText, pos)
     case c: IntNumberContext   => SqlLiteral.createExactNumeric(c.getText, pos) // 封装整型数字
