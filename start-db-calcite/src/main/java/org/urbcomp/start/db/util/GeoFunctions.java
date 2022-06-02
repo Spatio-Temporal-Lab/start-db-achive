@@ -40,4 +40,26 @@ public class GeoFunctions {
         double degreePerM = 360 / perimeter;
         return distance * degreePerM;
     }
+
+    /**
+     * 计算两经纬度间距离
+     *
+     * @param lng1 经度1
+     * @param lat1 纬度1
+     * @param lng2 经度2
+     * @param lat2 纬度2
+     * @return meter，有误差
+     */
+    public static double getDistanceInM(double lng1, double lat1, double lng2, double lat2) {
+        double radLat1 = Math.toRadians(lat1);
+        double radLat2 = Math.toRadians(lat2);
+        double radLatDistance = radLat1 - radLat2;
+        double radLngDistance = Math.toRadians(lng1) - Math.toRadians(lng2);
+        return 2 * Math.asin(
+            Math.sqrt(
+                Math.pow(Math.sin(radLatDistance / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2)
+                    * Math.pow(Math.sin(radLngDistance / 2), 2)
+            )
+        ) * EARTH_RADIUS_IN_METER;
+    }
 }

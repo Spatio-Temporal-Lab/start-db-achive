@@ -36,30 +36,26 @@ import java.util.function.Supplier;
 public class SqlOperatorTables extends ReflectiveSqlOperatorTable {
 
     private static final Supplier<SqlOperatorTable> SPATIAL = Suppliers.memoize(
-            SqlOperatorTables::createSpatial
+        SqlOperatorTables::createSpatial
     );
 
     private static SqlOperatorTable createSpatial() {
         return CalciteCatalogReader.operatorTable(
-                StringFunction.class.getName(),
-                GeometricConstructorFunction.class.getName(),
-                MathFunction.class.getName(),
-                TimeFunction.class.getName(),
-                DataTypeConversionFunction.class.getName(),
-                GeometryRelationFunction.class.getName()
+            StringFunction.class.getName(),
+            GeometricConstructorFunction.class.getName(),
+            MathFunction.class.getName(),
+            TimeFunction.class.getName(),
+            DataTypeConversionFunction.class.getName(),
+            GeometricOperationFunction.class.getName()
         );
     }
 
-    /**
-     * Returns the Spatial operator table, creating it if necessary.
-     */
+    /** Returns the Spatial operator table, creating it if necessary. */
     public static SqlOperatorTable spatialInstance() {
         return SPATIAL.get();
     }
 
-    /**
-     * Creates a composite operator table.
-     */
+    /** Creates a composite operator table. */
     public static SqlOperatorTable chain(Iterable<SqlOperatorTable> tables) {
         final ImmutableList<SqlOperatorTable> list = ImmutableList.copyOf(tables);
         if (list.size() == 1) {
@@ -68,9 +64,7 @@ public class SqlOperatorTables extends ReflectiveSqlOperatorTable {
         return new ChainedSqlOperatorTable(list);
     }
 
-    /**
-     * Creates a composite operator table from an array of tables.
-     */
+    /** Creates a composite operator table from an array of tables. */
     public static SqlOperatorTable chain(SqlOperatorTable... tables) {
         return chain(ImmutableList.copyOf(tables));
     }
