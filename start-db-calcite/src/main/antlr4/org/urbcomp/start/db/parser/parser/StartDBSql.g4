@@ -15,7 +15,7 @@ program : stmt T_SEMICOLON? EOF;
 
 stmt :
        createDatabaseStmt
-     | createTableStmt  // TODO
+     | create_table_stmt
      | describeStmt
      | dropDatabaseStmt
      | dropTableStmt
@@ -62,34 +62,152 @@ showCreateTableStmt :
        T_SHOW T_CREATE T_TABLE relation=ident
      ;
 
-createTableStmt :
-       // TODO: createTableWithColums
-       createTableWithSelect
-     | createTableWithLike
+create_table_stmt :
+       T_CREATE T_TABLE (T_IF T_NOT T_EXISTS)? table_name create_table_preoptions? create_table_definition
      ;
 
-createTableWithSelect :
-       T_CREATE (T_OR T_REPLACE)? T_TABLE (T_IF T_NOT T_EXISTS)? tableName T_AS  selectStmt withOption?
+create_table_definition :
+      (T_AS? T_OPEN_P selectStmt T_CLOSE_P | T_AS? selectStmt | T_OPEN_P create_table_columns T_CLOSE_P | T_LIKE table_name) create_table_options?
      ;
 
-createTableWithLike :
-       T_CREATE (T_OR T_REPLACE)? T_TABLE (T_IF T_NOT T_EXISTS)? destination=tableName T_LIKE origination=tableName
+create_table_columns :
+       create_table_columns_item (T_COMMA create_table_columns_item)*
      ;
 
-withOption :
-       T_WITH T_OPEN_P withOptionItems T_CLOSE_P
+create_table_columns_item :
+       column_name dtype dtype_attr* create_table_column_inline_cons*
+     | (T_CONSTRAINT qident)? create_table_column_cons
      ;
 
-withOptionItems:
-    withOptionItem (T_COMMA withOptionItem)*
+sql_type :
+    qident '%' (T_TYPE | T_ROWTYPE)
     ;
 
-withOptionItem :
-       left=(L_ID|L_D_STRING|L_S_STRING) T_EQUAL right=(L_ID|L_D_STRING|L_S_STRING)
+column_name :
+       qident
+     ;
+
+create_table_column_inline_cons :
+       dtype_default
+     | T_NOT? T_NULL
+     | T_PRIMARY T_KEY
+     | T_UNIQUE
+     | T_REFERENCES table_name T_OPEN_P qident T_CLOSE_P create_table_fk_action*
+     | T_IDENTITY T_OPEN_P L_INT (T_COMMA L_INT)* T_CLOSE_P
+     | T_AUTO_INCREMENT
+     | T_ENABLE
+     ;
+
+create_table_column_cons :
+       T_PRIMARY T_KEY T_CLUSTERED? T_OPEN_P qident (T_ASC | T_DESC)? (T_COMMA qident (T_ASC | T_DESC)?)* T_CLOSE_P T_ENABLE? index_storage_clause?
+     | T_FOREIGN T_KEY T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P T_REFERENCES table_name T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P create_table_fk_action*
+    ;
+
+create_table_fk_action :
+       T_ON (T_UPDATE | T_DELETE) (T_NO T_ACTION | T_RESTRICT | T_SET T_NULL | T_SET T_DEFAULT | T_CASCADE)
+     ;
+
+create_table_preoptions :
+      create_table_preoptions_item+
+     ;
+
+create_table_preoptions_item :
+        T_COMMA create_table_preoptions_td_item
+      | create_table_options_hive_item
+     ;
+
+create_table_preoptions_td_item :
+       T_NO? (T_LOG | T_FALLBACK)
+     ;
+
+create_table_options :
+       create_table_options_item+
+     ;
+
+index_storage_clause :
+      index_mssql_storage_clause
+    ;
+
+index_mssql_storage_clause :
+      T_WITH T_OPEN_P qident T_EQUAL qident (T_COMMA qident T_EQUAL qident)* T_CLOSE_P create_table_options_mssql_item*
+    ;
+
+create_table_options_item :
+       T_ON T_COMMIT (T_DELETE | T_PRESERVE) T_ROWS
+     | create_table_options_ora_item
+     | create_table_options_db2_item
+     | create_table_options_td_item
+     | create_table_options_hive_item
+     | create_table_options_mssql_item
+     | create_table_options_mysql_item
+     ;
+
+create_table_options_ora_item :
+       T_SEGMENT T_CREATION (T_IMMEDIATE | T_DEFERRED)
+     | (T_PCTFREE | T_PCTUSED | T_INITRANS | T_MAXTRANS) L_INT
+     | T_NOCOMPRESS
+     | (T_LOGGING | T_NOLOGGING)
+     | T_STORAGE T_OPEN_P (qident | L_INT)+ T_CLOSE_P
+     | T_TABLESPACE qident
+     ;
+
+create_table_options_db2_item :
+       T_INDEX? T_IN qident
+     | T_WITH T_REPLACE
+     | T_DISTRIBUTE T_BY T_HASH T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P
+     | T_NOT? T_LOGGED
+     | T_COMPRESS (T_YES | T_NO)
+     | T_DEFINITION T_ONLY
+     | T_WITH T_RESTRICT T_ON T_DROP
+     ;
+
+create_table_options_td_item :
+       T_UNIQUE? T_PRIMARY T_INDEX T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P
+     | T_WITH T_DATA
+     ;
+
+create_table_options_hive_item :
+       create_table_hive_row_format
+     | T_STORED T_AS qident
+     ;
+
+create_table_hive_row_format :
+       T_ROW T_FORMAT T_DELIMITED create_table_hive_row_format_fields*
+     ;
+
+create_table_hive_row_format_fields :
+       T_FIELDS T_TERMINATED T_BY expr (T_ESCAPED T_BY expr)?
+     | T_COLLECTION T_ITEMS T_TERMINATED T_BY expr
+     | T_MAP T_KEYS T_TERMINATED T_BY expr
+     | T_LINES T_TERMINATED T_BY expr
+     | T_NULL T_DEFINED T_AS expr
+     ;
+
+create_table_options_mssql_item :
+       T_ON qident
+     | T_TEXTIMAGE_ON qident
+     ;
+
+create_table_options_mysql_item :
+       T_AUTO_INCREMENT T_EQUAL? expr
+     | T_COMMENT T_EQUAL? expr
+     | T_DEFAULT? (T_CHARACTER T_SET | T_CHARSET) T_EQUAL? expr
+     | T_ENGINE T_EQUAL? expr
+     ;
+
+dtype_default :
+       T_COLON? T_EQUAL expr
+     | T_WITH? T_DEFAULT expr?
      ;
 
 showTablesStmt :
         T_SHOW T_TABLES
+     ;
+
+dtype_attr :
+       T_NOT? T_NULL
+     | T_CHARACTER T_SET ident
+     | T_NOT? (T_CASESPECIFIC | T_CS)
      ;
 
 dtype :                  // Data types
@@ -551,6 +669,14 @@ funcParam :
      |  T_MUL
      ;
 
+table_name :
+       qident
+     ;
+
+qident :                                  // qualified identifier e.g: table_name.col_name or db_name._table_name
+       ident ('.'ident)*
+     ;
+
 /*---------------------------- third party parser----------------------------*/
 
 dateLiteral :                             // DATE 'YYYY-MM-DD' literal
@@ -724,8 +850,6 @@ nonReservedWords :                      // Tokens that are not reserved words an
      | T_HANDLER
      | T_HASH
      | T_HAVING
-     | T_HDFS
-     | T_HIVE
      | T_HOST
      | T_IDENTITY
      | T_IF
