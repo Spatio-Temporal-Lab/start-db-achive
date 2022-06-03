@@ -284,6 +284,7 @@
                 <version>${spotless-maven-plugin.version}</version>
                 <configuration>
                     <java>
+                        <removeUnusedImports />
                         <eclipse>
                             <!--suppress UnresolvedMavenProperty -->
                             <file>

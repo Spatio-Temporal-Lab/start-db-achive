@@ -69,6 +69,7 @@
                 <version>${spotless-maven-plugin.version}</version>
                 <configuration combine.self="override">
                     <java>
+                        <removeUnusedImports />
                         <eclipse>
                             <!--suppress UnresolvedMavenProperty -->
                             <file>
@@ -98,6 +99,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
