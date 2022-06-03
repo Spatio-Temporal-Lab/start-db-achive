@@ -13,7 +13,7 @@ package org.urbcomp.start.db
 
 import org.junit.Assert.{assertEquals, assertNotNull}
 
-class GeometricConstructorFunctionTest extends CalciteGeomesaFunctionTest {
+class GeometricConstructorFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("st_makePoint(x, y)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select st_makePoint(1.1, 2)")
