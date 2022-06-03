@@ -489,10 +489,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
 
   override def visitUseStmt(ctx: UseStmtContext): SqlNode = null // TODO
 
-  override def visitCreateTableStmt(ctx: CreateTableStmtContext): SqlNode = ctx.getChild(0) match {
-    case c: CreateTableWithSelectContext => null // TODO
-    case c: CreateTableWithLikeContext   => null // TODO
-  }
+  override def visitCreateTableStmt(ctx: CreateTableStmtContext): SqlNode = null // TODO
 
   override def visitDescribeStmt(ctx: DescribeStmtContext): SqlNode = null // TODO
 

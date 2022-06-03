@@ -15,7 +15,7 @@ program : stmt T_SEMICOLON? EOF;
 
 stmt :
        createDatabaseStmt
-     | create_table_stmt
+     | createTableStmt
      | describeStmt
      | dropDatabaseStmt
      | dropTableStmt
@@ -62,7 +62,7 @@ showCreateTableStmt :
        T_SHOW T_CREATE T_TABLE relation=ident
      ;
 
-create_table_stmt :
+createTableStmt :
        T_CREATE T_TABLE (T_IF T_NOT T_EXISTS)? table_name create_table_preoptions? create_table_definition
      ;
 
