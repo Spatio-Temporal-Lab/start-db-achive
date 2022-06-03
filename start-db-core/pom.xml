@@ -20,7 +20,12 @@
         <dependency>
             <groupId>org.urbcomp</groupId>
             <artifactId>start-db-calcite</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.urbcomp</groupId>
+            <artifactId>start-db-common</artifactId>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.calcite</groupId>
