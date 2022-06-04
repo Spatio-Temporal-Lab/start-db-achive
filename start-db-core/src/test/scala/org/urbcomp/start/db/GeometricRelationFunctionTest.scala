@@ -14,12 +14,12 @@ package org.urbcomp.start.db
 import org.junit.Assert.{assertEquals, assertNotNull, assertTrue}
 
 /**
-  * Geometry relation Function test
-  *
-  * @author XiangHe
-  */
+ * Geometry relation Function test
+ *
+ * @author XiangHe
+ */
 // TODO test the relation between linestring and polygon
-class GeometricRelationFunctionTest extends CalciteGeomesaFunctionTest {
+class GeometricRelationFunctionTest extends AbstractCalciteFunctionTest {
   test("st_equals") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
