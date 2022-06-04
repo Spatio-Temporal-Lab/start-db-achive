@@ -24,6 +24,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   val DEFAULT_TIME_STR = "2021-05-20 11:21:01.234"
   val DEFAULT_TIMESTAMP: Timestamp = Timestamp.valueOf(DEFAULT_TIME_STR)
   val DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
+  val DEFAULT_DT_STR = "2021-05-20T11:21:01.234"
 
   /**
     * test for toTimestamp(two parameter)
@@ -102,4 +103,167 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
     assertEquals(DEFAULT_TIME_STR.substring(0, "yyyy-MM-dd".length), resultSet.getObject(1))
   }
 
+  /**
+   * test for toDatetime
+   */
+  test("toDatetime(str, format)") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select toDatetime('" + DEFAULT_TIME_STR + "', '"+ DEFAULT_FORMAT +"')")
+    resultSet.next()
+    assertEquals(DEFAULT_DT_STR, resultSet.getObject(1).toString)
+  }
+
+  /**
+   * test for toDatetime
+   */
+  test("toDatetime(str)") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select toDatetime('" + DEFAULT_TIME_STR + "')")
+    resultSet.next()
+    assertEquals(DEFAULT_DT_STR, resultSet.getObject(1).toString)
+  }
+
+  /**
+   * test for datetimeToTimestamp
+   */
+  test("datetimeToTimestamp") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select datetimeToTimestamp('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(DEFAULT_TIME_STR, resultSet.getObject(1).toString)
+  }
+
+  /**
+   * test for timestampToDatetime
+   */
+  test("timestampToDatetime") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select timestampToDatetime('" + DEFAULT_TIME_STR + "')")
+    resultSet.next()
+    assertEquals(DEFAULT_DT_STR, resultSet.getObject(1).toString)
+  }
+
+  /**
+   * test for currentDatetime
+   */
+  test("currentDatetime") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select currentDatetime()")
+    assertTrue(resultSet.next())
+  }
+
+  /**
+   * test for datetimeFormat
+   */
+  test("datetimeFormat") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select datetimeFormat('" + DEFAULT_DT_STR + "', '"+ DEFAULT_FORMAT +"')")
+    resultSet.next()
+    assertEquals(DEFAULT_TIME_STR, resultSet.getObject(1))
+  }
+
+  /**
+   * test for hour
+   */
+  test("hour") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select hour('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(11, resultSet.getObject(1))
+  }
+
+  /**
+   * test for minute
+   */
+  test("minute") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select minute('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(21, resultSet.getObject(1))
+  }
+
+  /**
+   * test for second
+   */
+  test("second") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select second('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(1, resultSet.getObject(1))
+  }
+
+  /**
+   * test for week
+   */
+  test("week") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select week('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(20, resultSet.getObject(1))
+  }
+
+  /**
+   * test for month
+   */
+  test("month") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select month('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(5, resultSet.getObject(1))
+  }
+
+  /**
+   * test for year
+   */
+  test("year") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select year('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(2021, resultSet.getObject(1))
+  }
+
+  /**
+   * test for dayOfMonth
+   */
+  test("dayOfMonth") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select dayOfMonth('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(20, resultSet.getObject(1))
+  }
+
+  /**
+   * test for dayOfWeek
+   */
+  test("dayOfWeek") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select dayOfWeek('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(4, resultSet.getObject(1))
+  }
+
+  /**
+   * test for dayOfYear
+   */
+  test("dayOfYear") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select dayOfYear('" + DEFAULT_DT_STR + "')")
+    resultSet.next()
+    assertEquals(140, resultSet.getObject(1))
+  }
 }
