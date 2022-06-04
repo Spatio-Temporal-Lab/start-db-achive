@@ -44,9 +44,9 @@ public class TimeFunction {
      * default time format, the order is important
      */
     private final String[] DEFAULT_FORMATS = new String[] {
-            "yyyy-MM-dd HH:mm:ss.SSS",
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd" };
+        "yyyy-MM-dd HH:mm:ss.SSS",
+        "yyyy-MM-dd HH:mm:ss",
+        "yyyy-MM-dd" };
 
     /**
      * replace 'T' in string (2021-05-11T11:30:02 -> )
@@ -100,8 +100,8 @@ public class TimeFunction {
         }
         if (!isCorrect && pe != null) {
             throw new ParseException(
-                    "Date format is error. Only receive " + String.join(",", DEFAULT_FORMATS),
-                    pe.getErrorOffset()
+                "Date format is error. Only receive " + String.join(",", DEFAULT_FORMATS),
+                pe.getErrorOffset()
             );
         }
         return new Timestamp(time);
@@ -201,9 +201,9 @@ public class TimeFunction {
         }
         if (!isCorrect && pe != null) {
             throw new DateTimeParseException(
-                    "Date format is error. Only receive ",
-                    String.join(",", DEFAULT_FORMATS),
-                    pe.getErrorIndex()
+                "Date format is error. Only receive ",
+                String.join(",", DEFAULT_FORMATS),
+                pe.getErrorIndex()
             );
         }
         return localDateTime;
@@ -269,7 +269,7 @@ public class TimeFunction {
      * @return datetime string
      */
     @StartDBFunction("datetimeFormat")
-    public String datetimeFormat(LocalDateTime dt, String format) throws DateTimeException{
+    public String datetimeFormat(LocalDateTime dt, String format) throws DateTimeException {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(format.trim());
         return dateTimeFormatter.format(dt);
     }
@@ -281,7 +281,7 @@ public class TimeFunction {
      * @return datetime string
      */
     @StartDBFunction("datetimeFormat")
-    public String datetimeFormat(String dtStr, String format) throws DateTimeException{
+    public String datetimeFormat(String dtStr, String format) throws DateTimeException {
         LocalDateTime localDateTime = toDateTime(dtStr);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(format.trim());
         return dateTimeFormatter.format(localDateTime);
@@ -304,7 +304,7 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("hour")
-    public int hour(String dtString) throws DateTimeException{
+    public int hour(String dtString) throws DateTimeException {
         return toDateTime(dtString).getHour();
     }
 
@@ -325,7 +325,7 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("minute")
-    public int minute(String dtString) throws DateTimeException{
+    public int minute(String dtString) throws DateTimeException {
         return toDateTime(dtString).getMinute();
     }
 
@@ -346,7 +346,7 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("second")
-    public int second(String dtString) throws DateTimeException{
+    public int second(String dtString) throws DateTimeException {
         return toDateTime(dtString).getSecond();
     }
 
@@ -368,7 +368,7 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("week")
-    public int week(String dtString) throws DateTimeException{
+    public int week(String dtString) throws DateTimeException {
         WeekFields weekFields = WeekFields.ISO;
         return toDateTime(dtString).get(weekFields.weekOfYear());
     }
@@ -390,7 +390,7 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("month")
-    public int month(String dtString) throws DateTimeException{
+    public int month(String dtString) throws DateTimeException {
         return toDateTime(dtString).getMonth().getValue();
     }
 
@@ -411,7 +411,7 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("year")
-    public int year(String dtString) throws DateTimeException{
+    public int year(String dtString) throws DateTimeException {
         return toDateTime(dtString).getYear();
     }
 
@@ -432,7 +432,7 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("dayOfMonth")
-    public int dayOfMonth(String dtString) throws DateTimeException{
+    public int dayOfMonth(String dtString) throws DateTimeException {
         return toDateTime(dtString).getDayOfMonth();
     }
 
@@ -454,7 +454,7 @@ public class TimeFunction {
      * @throws DateTimeException parse exception
      */
     @StartDBFunction("dayOfWeek")
-    public int dayOfWeek(String dtString) throws DateTimeException{
+    public int dayOfWeek(String dtString) throws DateTimeException {
         return toDateTime(dtString).getDayOfWeek().getValue();
     }
 
