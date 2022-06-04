@@ -201,7 +201,7 @@ public class SqlTypeAssignmentRule implements SqlTypeMappingRule {
         rules.add(SqlTypeName.POLYGON, EnumSet.of(SqlTypeName.GEOMETRY));
         rules.add(SqlTypeName.MULTIPOLYGON, EnumSet.of(SqlTypeName.GEOMETRY));
         rules.add(SqlTypeName.GEOMETRYCOLLECTION, EnumSet.of(SqlTypeName.GEOMETRY));
-        rules.add(SqlTypeName.DATETIME, EnumSet.of(SqlTypeName.GEOMETRY));
+        rules.add(SqlTypeName.DATETIME, EnumSet.of(SqlTypeName.DATETIME));
         // start-db add end
 
         // ARRAY is assignable from ...
