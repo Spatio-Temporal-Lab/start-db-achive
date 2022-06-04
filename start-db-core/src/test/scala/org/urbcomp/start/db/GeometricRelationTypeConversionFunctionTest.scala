@@ -13,7 +13,7 @@ package org.urbcomp.start.db
 
 import org.junit.Assert.assertEquals
 
-class GeometricRelationTypeConversionFunctionTest extends CalciteGeomesaFunctionTest {
+class GeometricRelationTypeConversionFunctionTest extends AbstractCalciteFunctionTest {
   test("st_castToPoint(geom)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
