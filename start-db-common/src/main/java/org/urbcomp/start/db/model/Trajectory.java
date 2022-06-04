@@ -11,6 +11,9 @@
 
 package org.urbcomp.start.db.model;
 
+import org.geojson.Feature;
+import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,5 +105,26 @@ public class Trajectory {
     public Trajectory addGPSPoint(GPSPoint gpsPoint) {
         this.gpsPointList.add(gpsPoint);
         return this;
+    }
+
+    /**
+     * Convert this trajectory to GeoJSON String
+     * @return GeoJSON String
+     */
+    public String toGeoJSON() {
+        FeatureCollectionWithProperties fcp = new FeatureCollectionWithProperties();
+        fcp.setProperty("oid", oid);
+        fcp.setProperty("tid", tid);
+        for (GPSPoint gp: gpsPointList) {
+            Feature f = new Feature();
+            f.setProperty("time", gp.getTime().toString());
+            f.setGeometry(new org.geojson.Point(gp.getPoint().getX(), gp.getPoint().getY()));
+            fcp.add(f);
+        }
+        return fcp.toString();
+    }
+
+    public static Trajectory fromGeoJSON (String geoJsonStr) {
+        return null;
     }
 }
