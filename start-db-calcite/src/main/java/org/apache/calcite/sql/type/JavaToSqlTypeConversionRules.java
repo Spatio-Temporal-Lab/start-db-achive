@@ -23,7 +23,6 @@
 package org.apache.calcite.sql.type;
 
 import org.apache.calcite.avatica.util.ArrayImpl;
-import org.apache.calcite.runtime.Geometries;
 
 import com.google.common.collect.ImmutableMap;
 import org.locationtech.jts.geom.*;
