@@ -104,19 +104,21 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for toDatetime
-   */
+    * test for toDatetime
+    */
   test("toDatetime(str, format)") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select toDatetime('" + DEFAULT_TIME_STR + "', '"+ DEFAULT_FORMAT +"')")
+      statement.executeQuery(
+        "select toDatetime('" + DEFAULT_TIME_STR + "', '" + DEFAULT_FORMAT + "')"
+      )
     resultSet.next()
     assertEquals(DEFAULT_DT_STR, resultSet.getObject(1).toString)
   }
 
   /**
-   * test for toDatetime
-   */
+    * test for toDatetime
+    */
   test("toDatetime(str)") {
     val statement = connect.createStatement()
     val resultSet =
@@ -126,8 +128,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for datetimeToTimestamp
-   */
+    * test for datetimeToTimestamp
+    */
   test("datetimeToTimestamp") {
     val statement = connect.createStatement()
     val resultSet =
@@ -137,8 +139,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for timestampToDatetime
-   */
+    * test for timestampToDatetime
+    */
   test("timestampToDatetime") {
     val statement = connect.createStatement()
     val resultSet =
@@ -148,8 +150,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for currentDatetime
-   */
+    * test for currentDatetime
+    */
   test("currentDatetime") {
     val statement = connect.createStatement()
     val resultSet =
@@ -158,19 +160,21 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for datetimeFormat
-   */
+    * test for datetimeFormat
+    */
   test("datetimeFormat") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select datetimeFormat('" + DEFAULT_DT_STR + "', '"+ DEFAULT_FORMAT +"')")
+      statement.executeQuery(
+        "select datetimeFormat('" + DEFAULT_DT_STR + "', '" + DEFAULT_FORMAT + "')"
+      )
     resultSet.next()
     assertEquals(DEFAULT_TIME_STR, resultSet.getObject(1))
   }
 
   /**
-   * test for hour
-   */
+    * test for hour
+    */
   test("hour") {
     val statement = connect.createStatement()
     val resultSet =
@@ -180,8 +184,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for minute
-   */
+    * test for minute
+    */
   test("minute") {
     val statement = connect.createStatement()
     val resultSet =
@@ -191,8 +195,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for second
-   */
+    * test for second
+    */
   test("second") {
     val statement = connect.createStatement()
     val resultSet =
@@ -202,8 +206,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for week
-   */
+    * test for week
+    */
   test("week") {
     val statement = connect.createStatement()
     val resultSet =
@@ -213,8 +217,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for month
-   */
+    * test for month
+    */
   test("month") {
     val statement = connect.createStatement()
     val resultSet =
@@ -224,8 +228,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for year
-   */
+    * test for year
+    */
   test("year") {
     val statement = connect.createStatement()
     val resultSet =
@@ -235,8 +239,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for dayOfMonth
-   */
+    * test for dayOfMonth
+    */
   test("dayOfMonth") {
     val statement = connect.createStatement()
     val resultSet =
@@ -246,8 +250,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for dayOfWeek
-   */
+    * test for dayOfWeek
+    */
   test("dayOfWeek") {
     val statement = connect.createStatement()
     val resultSet =
@@ -257,8 +261,8 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for dayOfYear
-   */
+    * test for dayOfYear
+    */
   test("dayOfYear") {
     val statement = connect.createStatement()
     val resultSet =
