@@ -51,9 +51,11 @@ public class Trajectory {
     /**
      * set trajectory id
      * @param tid trajectory id
+     * @return this object
      */
-    public void setTid(String tid) {
+    public Trajectory setTid(String tid) {
         this.tid = tid;
+        return this;
     }
 
     /**
@@ -67,9 +69,11 @@ public class Trajectory {
     /**
      * set object id
      * @param oid object id
+     * @return this object
      */
-    public void setOid(String oid) {
+    public Trajectory setOid(String oid) {
         this.oid = oid;
+        return this;
     }
 
     /**
@@ -83,16 +87,20 @@ public class Trajectory {
     /**
      * set point list
      * @param gpsPointList GPSPoint list of trajectory
+     * @return this object
      */
-    public void setPointList(List<GPSPoint> gpsPointList) {
+    public Trajectory setPointList(List<GPSPoint> gpsPointList) {
         this.gpsPointList = gpsPointList;
+        return this;
     }
 
     /**
      * add a GPSPoint to the trajectory
      * @param gpsPoint the GPSPoint to be added
+     * @return this object
      */
-    public void addGPSPoint(GPSPoint gpsPoint) {
+    public Trajectory addGPSPoint(GPSPoint gpsPoint) {
         this.gpsPointList.add(gpsPoint);
+        return this;
     }
 }
