@@ -23,7 +23,7 @@ import java.util.Properties
   * @author zaiyuan
   * @since 0.1.0
   */
-class CalciteGeomesaFunctionTest extends FunSuite with BeforeAndAfterAll {
+class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterAll {
 
   var connect: Connection = _
 

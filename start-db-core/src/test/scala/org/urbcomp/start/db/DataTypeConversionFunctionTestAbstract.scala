@@ -13,7 +13,7 @@ package org.urbcomp.start.db
 
 import org.junit.Assert.assertEquals
 
-class DataTypeConversionFunctionTest extends CalciteGeomesaFunctionTest {
+class DataTypeConversionFunctionTestAbstract extends AbstractCalciteFunctionTest {
 
   test("castToInteger") {
     val statement = connect.createStatement

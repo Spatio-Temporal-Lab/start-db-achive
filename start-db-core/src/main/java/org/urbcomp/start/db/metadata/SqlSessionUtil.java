@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.urbcomp.start.db.constant.ConfigFileConstant;
 import org.urbcomp.start.db.util.ResourceUtil;
 
 import java.io.InputStream;
@@ -34,6 +33,7 @@ import java.io.InputStream;
  */
 @Slf4j
 public class SqlSessionUtil {
+    private static final String MYBATIS_CONFIG_PATH = "mybatis-config.xml";
 
     /**
      * SqlSession instance
@@ -51,7 +51,7 @@ public class SqlSessionUtil {
      * other ways, such as Mysql, full pathname, Zookeeper, Apollo configuration center, etc.
      */
     private SqlSessionUtil() {
-        InputStream inputStream = ResourceUtil.readResource(ConfigFileConstant.MYBATIS_CONFIG_PATH);
+        InputStream inputStream = ResourceUtil.readResource(MYBATIS_CONFIG_PATH);
         SqlSessionFactory build = new SqlSessionFactoryBuilder().build(inputStream);
         sqlSession = build.openSession(true);
         sqlSessionManualCommit = build.openSession();

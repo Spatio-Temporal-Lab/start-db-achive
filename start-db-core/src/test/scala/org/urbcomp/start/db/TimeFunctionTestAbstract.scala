@@ -20,7 +20,7 @@ import java.sql.Timestamp
   *
   * @author Wang Bohong
   */
-class TimeFunctionTest extends CalciteGeomesaFunctionTest {
+class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   val DEFAULT_TIME_STR = "2021-05-20 11:21:01.234"
   val DEFAULT_TIMESTAMP: Timestamp = Timestamp.valueOf(DEFAULT_TIME_STR)
   val DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
