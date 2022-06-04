@@ -59,6 +59,33 @@ public class GeometricRelationTypeConversionFunction {
         }
     }
 
+    @StartDBFunction("st_castToMPoint")
+    public MultiPoint st_castToMPoint(Geometry geom) {
+        if (geom instanceof MultiPoint) {
+            return (MultiPoint) geom;
+        } else {
+            return null;
+        }
+    }
+
+    @StartDBFunction("st_castToMLineString")
+    public MultiLineString st_castToMLineString(Geometry geom) {
+        if (geom instanceof MultiLineString) {
+            return (MultiLineString) geom;
+        } else {
+            return null;
+        }
+    }
+
+    @StartDBFunction("st_castToMPolygon")
+    public MultiPolygon st_castToMPolygon(Geometry geom) {
+        if (geom instanceof MultiPolygon) {
+            return (MultiPolygon) geom;
+        } else {
+            return null;
+        }
+    }
+
     @StartDBFunction("st_pointFromWKT")
     public Point st_pointFromWKT(String wktString) {
         JtsSpatialContext jtsSpatialContext = JtsSpatialContext.GEO;
