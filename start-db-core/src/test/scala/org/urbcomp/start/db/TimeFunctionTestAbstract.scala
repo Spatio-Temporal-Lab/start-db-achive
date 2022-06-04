@@ -34,6 +34,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
       statement.executeQuery(
         "select toTimestamp('" + DEFAULT_TIME_STR + "', '" + DEFAULT_FORMAT + "')"
       )
+
     resultSet.next()
     assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
   }

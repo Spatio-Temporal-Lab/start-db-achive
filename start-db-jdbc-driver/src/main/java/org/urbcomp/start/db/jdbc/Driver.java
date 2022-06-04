@@ -11,6 +11,8 @@
 
 package org.urbcomp.start.db.jdbc;
 
+import org.apache.calcite.avatica.DriverVersion;
+
 /**
  * custom JDBC driver
  *
@@ -25,5 +27,19 @@ public class Driver extends org.apache.calcite.avatica.remote.Driver {
     @Override
     protected String getConnectStringPrefix() {
         return "jdbc:start-db:";
+    }
+
+    @Override
+    protected DriverVersion createDriverVersion() {
+        return DriverVersion.load(
+            org.apache.calcite.avatica.remote.Driver.class,
+            "org-apache-calcite-jdbc.properties",
+            "Start-DB Remote JDBC Driver",
+            "1.0.0-SNAPSHOT",
+            "MYSQL",
+            "5.1.47"
+            // "START-DB",
+            // "1.0.0-SNAPSHOT"
+        );
     }
 }

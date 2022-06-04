@@ -20,6 +20,7 @@ import org.apache.calcite.schema.{SchemaPlus, TranslatableTable}
 import org.geotools.data.{DataStoreFinder, Query}
 import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan
+import org.urbcomp.start.db.util.MetadataUtil
 
 import java.lang.reflect.Type
 import scala.collection.JavaConverters._
@@ -29,8 +30,6 @@ import scala.collection.JavaConverters._
   *
   * @author zaiyuan
   * @since 0.1.0
-  * @param dataStore Geotools DataStore
-  * @param query     Geotools Query
   */
 case class GeomesaTable(userName: String, dbName: String, tableName: String)
     extends AbstractQueryableTable(classOf[Type])
@@ -64,7 +63,9 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     * @return RelDataType
     */
   override def getRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
-    val dataStore = DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(dbName).asJava)
+    val catalog = MetadataUtil.makeCatalog(userName, dbName)
+    val dataStore =
+      DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
     val query = new Query(tableName)
     val sft = dataStore.getSchema(query.getTypeName)
     // TODO Geometry type should be supported
