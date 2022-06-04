@@ -14,8 +14,7 @@ package org.urbcomp.start.db
 import org.junit.Assert.assertEquals
 
 class GeometricRelationTypeConversionFunctionTest extends CalciteGeomesaFunctionTest {
-
-  test("st_castToPoint(geom: Geometry)") {
+  test("st_castToPoint(geom)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
       "select st_castToPoint(st_makePoint(1, 2)), st_castToPoint(st_makeBBox(1, 2, 3, 4))"
@@ -25,11 +24,11 @@ class GeometricRelationTypeConversionFunctionTest extends CalciteGeomesaFunction
     assertEquals(null, resultSet.getObject(2))
   }
 
-  test("st_castToLineString(geom: Geometry)") {
+  test("st_castToLineString(geom)") {
     //todo
   }
 
-  test("st_pointFromWKT(WKT: String)") {
+  test("st_pointFromWKT(WKT)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
       "select st_pointFromWKT('POINT(2 3)'), st_pointFromWKT('LINESTRING(0 0,1 1,1 2)')"
@@ -39,7 +38,7 @@ class GeometricRelationTypeConversionFunctionTest extends CalciteGeomesaFunction
     assertEquals(null, resultSet.getObject(2))
   }
 
-  test("st_geomFromWKT(WKT: String)") {
+  test("st_geomFromWKT(WKT)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select st_geomFromWKT('POINT(2 3)')")
     resultSet.next()
