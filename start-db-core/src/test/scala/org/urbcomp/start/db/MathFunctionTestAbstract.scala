@@ -13,7 +13,7 @@ package org.urbcomp.start.db
 
 import org.junit.Assert.assertEquals
 
-class MathFunctionTest extends CalciteGeomesaFunctionTest {
+class MathFunctionTestAbstract extends AbstractCalciteFunctionTest {
 
   /**
     * test for log
