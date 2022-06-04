@@ -19,7 +19,7 @@ import org.junit.Assert.{assertEquals, assertNotNull, assertTrue}
   * @author XiangHe
   */
 // TODO test the relation between linestring and polygon
-class GeometryRelationFunctionTest extends CalciteGeomesaFunctionTest {
+class GeometricRelationFunctionTest extends CalciteGeomesaFunctionTest {
   test("st_equals") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
@@ -45,6 +45,21 @@ class GeometryRelationFunctionTest extends CalciteGeomesaFunctionTest {
     assertEquals(true, resultSet.getObject(1))
     assertEquals(true, resultSet.getObject(2))
     assertEquals(false, resultSet.getObject(3))
+    assertEquals(false, resultSet.getObject(4))
+  }
+
+  test("st_covers") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_covers(st_makeBBox(0, 0, 4, 4), st_makePoint(1, 2))," +
+        "st_covers(st_makeBBox(1, 1, 2, 2), st_makeBBox(1, 1, 2, 2))," +
+        "st_covers(st_makeBBox(0, 0, 2, 2), st_makePoint(2, 2))," +
+        "st_covers(st_makeBBox(0, 0, 2, 2), st_makePoint(3, 3))"
+    )
+    resultSet.next()
+    assertEquals(true, resultSet.getObject(1))
+    assertEquals(true, resultSet.getObject(2))
+    assertEquals(true, resultSet.getObject(3))
     assertEquals(false, resultSet.getObject(4))
   }
 
@@ -102,5 +117,48 @@ class GeometryRelationFunctionTest extends CalciteGeomesaFunctionTest {
     assertEquals(true, resultSet.getObject(2))
     assertEquals(false, resultSet.getObject(3))
     assertEquals(true, resultSet.getObject(4))
+  }
+
+  test("st_within") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_within(st_makePoint(1, 2), st_makeBBox(0, 0, 4, 4))," +
+        "st_within(st_makeBBox(1, 1, 2, 2), st_makeBBox(1, 1, 2, 2))," +
+        "st_within(st_makePoint(2, 2), st_makeBBox(0, 0, 2, 2))," +
+        "st_within(st_makePoint(3, 3), st_makeBBox(0, 0, 2, 2))"
+    )
+    resultSet.next()
+    assertEquals(true, resultSet.getObject(1))
+    assertEquals(true, resultSet.getObject(2))
+    assertEquals(false, resultSet.getObject(3))
+    assertEquals(false, resultSet.getObject(4))
+  }
+
+  test("st_overlaps") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_overlaps(st_makePoint(1, 2), st_makeBBox(0, 0, 4, 4))," +
+        "st_overlaps(st_makeBBox(1, 1, 2, 2), st_makeBBox(1, 1, 2, 2))," +
+        "st_overlaps(st_makeBBox(1, 1, 3, 3), st_makeBBox(2, 2, 4, 4))," +
+        "st_overlaps(st_makePoint(2, 2), st_makePoint(2, 2))"
+    )
+    resultSet.next()
+    assertEquals(false, resultSet.getObject(1))
+    assertEquals(false, resultSet.getObject(2))
+    assertEquals(true, resultSet.getObject(3))
+    assertEquals(false, resultSet.getObject(4))
+  }
+
+  test("st_relate") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_relate(st_makePoint(1, 2), st_makeBBox(0, 0, 4, 4))," +
+        "st_relate(st_makeBBox(1, 1, 2, 2), st_makeBBox(1, 1, 2, 2))," +
+        "st_relate(st_makePoint(2, 2), st_makePoint(2, 2))"
+    )
+    resultSet.next()
+    assertEquals("0FFFFF212", resultSet.getObject(1))
+    assertEquals("2FFF1FFF2", resultSet.getObject(2))
+    assertEquals("0FFFFFFF2", resultSet.getObject(3))
   }
 }

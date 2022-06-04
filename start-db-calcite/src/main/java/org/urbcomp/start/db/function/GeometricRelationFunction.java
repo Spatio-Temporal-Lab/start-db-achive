@@ -24,7 +24,7 @@ package org.urbcomp.start.db.function;
 
 import org.locationtech.jts.geom.Geometry;
 
-public class GeometryRelationFunction {
+public class GeometricRelationFunction {
     @StartDBFunction("st_equals")
     public boolean st_equals(Geometry geom1, Geometry geom2) {
         return geom1.equals(geom2);
@@ -35,7 +35,7 @@ public class GeometryRelationFunction {
      * and at least one point of the interior of B lies in the interior of A.
      * The difference between contain and cover, e.g., when a line is
      * on the edge of a polygon, contain return false but cover return true
-     * */
+     */
     @StartDBFunction("st_contains")
     public boolean st_contains(Geometry geom1, Geometry geom2) {
         return geom1.contains(geom2);
@@ -43,7 +43,7 @@ public class GeometryRelationFunction {
 
     /**
      * Returns true if no point in Geometry geom2 is outside Geometry geom1.
-     * */
+     */
     @StartDBFunction("st_covers")
     public boolean st_covers(Geometry geom1, Geometry geom2) {
         return geom1.covers(geom2);
@@ -52,7 +52,7 @@ public class GeometryRelationFunction {
     /**
      * Returns true if the supplied geometries have some, but not all, interior points in common,
      * and the dimension of the intersection is less than that of at least one of them
-     * */
+     */
     @StartDBFunction("st_crosses")
     public boolean st_crosses(Geometry geom1, Geometry geom2) {
         return geom1.crosses(geom2);
@@ -67,26 +67,45 @@ public class GeometryRelationFunction {
         return geom1.disjoint(geom2);
     }
 
+    /**
+     * Equivalent to NOT st_disjoint(geom1, geom2).
+     * */
     @StartDBFunction("st_intersects")
     public boolean st_intersects(Geometry geom1, Geometry geom2) {
         return geom1.intersects(geom2);
     }
 
+    /**
+     * Geometry A contains Geometry B if they have at least one point in common,
+     * but their interiors do not intersect.
+     * */
     @StartDBFunction("st_touches")
     public boolean st_touches(Geometry geom1, Geometry geom2) {
         return geom1.touches(geom2);
     }
 
+    /**
+     * Geometry A within Geometry B if Geometry B contains Geometry A
+     * */
     @StartDBFunction("st_within")
     public boolean st_within(Geometry geom1, Geometry geom2) {
         return geom1.within(geom2);
     }
 
+    /**
+     * Returns true if the geometries have some but not all points in common,
+     * are of the same dimension, and the intersection of the interiors of the
+     * two geometries has the same dimension as the geometries themselves.
+     */
     @StartDBFunction("st_overlaps")
     public boolean st_overlaps(Geometry geom1, Geometry geom2) {
         return geom1.overlaps(geom2);
     }
 
+    /**
+     * Returns the spatial relationship of two geometric objects,
+     * a matrix of the DE-9IM model to String
+     * */
     @StartDBFunction("st_relate")
     public String st_relate(Geometry geom1, Geometry geom2) {
         return geom1.relate(geom2).toString();
