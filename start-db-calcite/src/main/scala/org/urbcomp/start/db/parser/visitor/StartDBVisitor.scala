@@ -502,7 +502,23 @@ class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
   //                    DML(Data Manage Language)                       //
   /////////////////////////////////////////////////////////////////////////
 
-  override def visitInsertStmt(ctx: InsertStmtContext): SqlInsert = null // TODO
+  override def visitInsertStmt(ctx: InsertStmtContext): SqlInsert = {
+    val keyWords = SqlNodeList.EMPTY
+    val targetTale = visitIdent(ctx.tableName().ident())
+    val rows: Array[SqlNode] = ctx
+      .insertStmtRows()
+      .insertStmtRow()
+      .asScala
+      .map { i =>
+        val objs = i.expr().asScala.map(visitExpr).toArray
+        new SqlBasicCall(SqlStdOperatorTable.ROW, objs, pos)
+      }
+      .toArray
+    val source = new SqlBasicCall(SqlStdOperatorTable.VALUES, rows, pos)
+    val columnList =
+      new SqlNodeList(ctx.insertStmtCols().ident().asScala.map(visitIdent).asJava, pos)
+    new SqlInsert(pos, keyWords, targetTale, source, columnList)
+  }
 
   private def mkOriginSql(ctx: ParserRuleContext): String = {
     val start = ctx.start.getStartIndex

@@ -22,9 +22,6 @@
 
 package org.urbcomp.start.db.function;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 public class MathFunction {
     /**
      * The double value that is closer than any other to e,
