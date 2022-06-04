@@ -69,7 +69,7 @@ public class GeometricRelationFunction {
 
     /**
      * Equivalent to NOT st_disjoint(geom1, geom2).
-     * */
+     */
     @StartDBFunction("st_intersects")
     public boolean st_intersects(Geometry geom1, Geometry geom2) {
         return geom1.intersects(geom2);
@@ -78,7 +78,7 @@ public class GeometricRelationFunction {
     /**
      * Geometry A contains Geometry B if they have at least one point in common,
      * but their interiors do not intersect.
-     * */
+     */
     @StartDBFunction("st_touches")
     public boolean st_touches(Geometry geom1, Geometry geom2) {
         return geom1.touches(geom2);
@@ -86,7 +86,7 @@ public class GeometricRelationFunction {
 
     /**
      * Geometry A within Geometry B if Geometry B contains Geometry A
-     * */
+     */
     @StartDBFunction("st_within")
     public boolean st_within(Geometry geom1, Geometry geom2) {
         return geom1.within(geom2);
@@ -105,7 +105,7 @@ public class GeometricRelationFunction {
     /**
      * Returns the spatial relationship of two geometric objects,
      * a matrix of the DE-9IM model to String
-     * */
+     */
     @StartDBFunction("st_relate")
     public String st_relate(Geometry geom1, Geometry geom2) {
         return geom1.relate(geom2).toString();
