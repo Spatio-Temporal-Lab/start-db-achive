@@ -84,7 +84,7 @@ public class JavaToSqlTypeConversionRules {
         .put(MultiPolygon.class, SqlTypeName.MULTIPOLYGON)
         .put(Geometry.class, SqlTypeName.GEOMETRY)
         .put(GeometryCollection.class, SqlTypeName.GEOMETRYCOLLECTION)
-            .put(LocalDateTime.class, SqlTypeName.DATETIME)
+        .put(LocalDateTime.class, SqlTypeName.DATETIME)
         // start-db add end
 
         .put(ResultSet.class, SqlTypeName.CURSOR)
