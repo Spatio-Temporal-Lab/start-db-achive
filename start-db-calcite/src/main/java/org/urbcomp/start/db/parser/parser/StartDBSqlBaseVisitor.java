@@ -281,44 +281,7 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
-    public T visitIndex_storage_clause(StartDBSqlParser.Index_storage_clauseContext ctx) {
-        return visitChildren(ctx);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override
-    public T visitIndex_mssql_storage_clause(
-        StartDBSqlParser.Index_mssql_storage_clauseContext ctx
-    ) {
-        return visitChildren(ctx);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override
     public T visitCreate_table_options_item(StartDBSqlParser.Create_table_options_itemContext ctx) {
-        return visitChildren(ctx);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override
-    public T visitCreate_table_options_mssql_item(
-        StartDBSqlParser.Create_table_options_mssql_itemContext ctx
-    ) {
         return visitChildren(ctx);
     }
 

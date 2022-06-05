@@ -95,7 +95,7 @@ create_table_column_inline_cons :
      ;
 
 create_table_column_cons :
-       T_PRIMARY T_KEY T_CLUSTERED? T_OPEN_P qident (T_ASC | T_DESC)? (T_COMMA qident (T_ASC | T_DESC)?)* T_CLOSE_P T_ENABLE? index_storage_clause?
+       T_PRIMARY T_KEY T_CLUSTERED? T_OPEN_P qident (T_ASC | T_DESC)? (T_COMMA qident (T_ASC | T_DESC)?)* T_CLOSE_P T_ENABLE?
      | T_FOREIGN T_KEY T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P T_REFERENCES table_name T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P create_table_fk_action*
     ;
 
@@ -119,22 +119,9 @@ create_table_options :
        create_table_options_item+
      ;
 
-index_storage_clause :
-      index_mssql_storage_clause
-    ;
-
-index_mssql_storage_clause :
-      T_WITH T_OPEN_P qident T_EQUAL qident (T_COMMA qident T_EQUAL qident)* T_CLOSE_P create_table_options_mssql_item*
-    ;
-
 create_table_options_item :
        T_ON T_COMMIT (T_DELETE | T_PRESERVE) T_ROWS
      | create_table_options_mysql_item
-     ;
-
-create_table_options_mssql_item :
-       T_ON qident
-     | T_TEXTIMAGE_ON qident
      ;
 
 create_table_options_mysql_item :

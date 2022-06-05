@@ -184,34 +184,11 @@ public interface StartDBSqlVisitor<T> extends ParseTreeVisitor<T> {
     T visitCreate_table_options(StartDBSqlParser.Create_table_optionsContext ctx);
 
     /**
-     * Visit a parse tree produced by {@link StartDBSqlParser#index_storage_clause}.
-     * @param ctx the parse tree
-     * @return the visitor result
-     */
-    T visitIndex_storage_clause(StartDBSqlParser.Index_storage_clauseContext ctx);
-
-    /**
-     * Visit a parse tree produced by {@link StartDBSqlParser#index_mssql_storage_clause}.
-     * @param ctx the parse tree
-     * @return the visitor result
-     */
-    T visitIndex_mssql_storage_clause(StartDBSqlParser.Index_mssql_storage_clauseContext ctx);
-
-    /**
      * Visit a parse tree produced by {@link StartDBSqlParser#create_table_options_item}.
      * @param ctx the parse tree
      * @return the visitor result
      */
     T visitCreate_table_options_item(StartDBSqlParser.Create_table_options_itemContext ctx);
-
-    /**
-     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_options_mssql_item}.
-     * @param ctx the parse tree
-     * @return the visitor result
-     */
-    T visitCreate_table_options_mssql_item(
-        StartDBSqlParser.Create_table_options_mssql_itemContext ctx
-    );
 
     /**
      * Visit a parse tree produced by {@link StartDBSqlParser#create_table_options_mysql_item}.
