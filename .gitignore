@@ -30,7 +30,3 @@ target
 
 # generated file
 **/dependency-reduced-pom.xml
-
-# antlr ignore
-gen/
-*.tokens
