@@ -79,10 +79,6 @@ create_table_columns_item :
      | (T_CONSTRAINT qident)? create_table_column_cons
      ;
 
-sql_type :
-    qident '%' (T_TYPE | T_ROWTYPE)
-    ;
-
 column_name :
        qident
      ;
@@ -113,7 +109,6 @@ create_table_preoptions :
 
 create_table_preoptions_item :
         T_COMMA create_table_preoptions_td_item
-      | create_table_options_hive_item
      ;
 
 create_table_preoptions_td_item :
@@ -134,53 +129,7 @@ index_mssql_storage_clause :
 
 create_table_options_item :
        T_ON T_COMMIT (T_DELETE | T_PRESERVE) T_ROWS
-     | create_table_options_ora_item
-     | create_table_options_db2_item
-     | create_table_options_td_item
-     | create_table_options_hive_item
-     | create_table_options_mssql_item
      | create_table_options_mysql_item
-     ;
-
-create_table_options_ora_item :
-       T_SEGMENT T_CREATION (T_IMMEDIATE | T_DEFERRED)
-     | (T_PCTFREE | T_PCTUSED | T_INITRANS | T_MAXTRANS) L_INT
-     | T_NOCOMPRESS
-     | (T_LOGGING | T_NOLOGGING)
-     | T_STORAGE T_OPEN_P (qident | L_INT)+ T_CLOSE_P
-     | T_TABLESPACE qident
-     ;
-
-create_table_options_db2_item :
-       T_INDEX? T_IN qident
-     | T_WITH T_REPLACE
-     | T_DISTRIBUTE T_BY T_HASH T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P
-     | T_NOT? T_LOGGED
-     | T_COMPRESS (T_YES | T_NO)
-     | T_DEFINITION T_ONLY
-     | T_WITH T_RESTRICT T_ON T_DROP
-     ;
-
-create_table_options_td_item :
-       T_UNIQUE? T_PRIMARY T_INDEX T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P
-     | T_WITH T_DATA
-     ;
-
-create_table_options_hive_item :
-       create_table_hive_row_format
-     | T_STORED T_AS qident
-     ;
-
-create_table_hive_row_format :
-       T_ROW T_FORMAT T_DELIMITED create_table_hive_row_format_fields*
-     ;
-
-create_table_hive_row_format_fields :
-       T_FIELDS T_TERMINATED T_BY expr (T_ESCAPED T_BY expr)?
-     | T_COLLECTION T_ITEMS T_TERMINATED T_BY expr
-     | T_MAP T_KEYS T_TERMINATED T_BY expr
-     | T_LINES T_TERMINATED T_BY expr
-     | T_NULL T_DEFINED T_AS expr
      ;
 
 create_table_options_mssql_item :
@@ -1060,6 +1009,7 @@ T_ASC             : A S C ;
 T_ASSOCIATE       : A S S O C I A T E ;
 T_AT              : A T ;
 T_AUTO            : A U T O ;
+T_AUTO_INCREMENT  : A U T O I N C R E M E N T;
 T_AVG             : A V G ;
 T_BATCHSIZE       : B A T C H S I Z E ;
 T_BEGIN           : B E G I N ;
