@@ -49,15 +49,6 @@ public class TimeFunction {
         "yyyy-MM-dd" };
 
     /**
-     * replace 'T' in string (2021-05-11T11:30:02 -> )
-     * @param dtStr old String
-     * @return new String
-     */
-    private String replaceTofDateString(String dtStr) {
-        return dtStr.replace('T', ' ');
-    }
-
-    /**
      * Converts a date string to a timestamp
      *
      * @param dateString date(time) String
@@ -67,7 +58,6 @@ public class TimeFunction {
      */
     @StartDBFunction("toTimestamp")
     public Timestamp toTimestamp(String dateString, String format) throws ParseException {
-        dateString = replaceTofDateString(dateString);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format.trim());
         Date date = simpleDateFormat.parse(dateString);
         long time = date.getTime();
@@ -83,7 +73,6 @@ public class TimeFunction {
      */
     @StartDBFunction("toTimestamp")
     public Timestamp toTimestamp(String dateString) throws ParseException {
-        dateString = replaceTofDateString(dateString);
         long time = 0;
         boolean isCorrect = false;
         ParseException pe = null;
@@ -188,7 +177,6 @@ public class TimeFunction {
         LocalDateTime localDateTime = LocalDateTime.MIN;
         boolean isCorrect = false;
         DateTimeParseException pe = null;
-        dateString = replaceTofDateString(dateString);
         for (String format : DEFAULT_FORMATS) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
@@ -227,7 +215,7 @@ public class TimeFunction {
      */
     @StartDBFunction("datetimeToTimestamp")
     public Timestamp datetimeToTimestamp(LocalDateTime dateTime) throws ParseException {
-        String dtString = replaceTofDateString(dateTime.toString());
+        String dtString = dateTime.toString();
         return datetimeToTimestamp(dtString);
     }
 

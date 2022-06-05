@@ -14,6 +14,7 @@ package org.urbcomp.start.db
 import org.junit.Assert.{assertEquals, assertTrue}
 
 import java.sql.Timestamp
+import java.time.LocalDateTime
 
 /**
   * Time UDF functions test
@@ -22,9 +23,9 @@ import java.sql.Timestamp
   */
 class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   val DEFAULT_TIME_STR = "2021-05-20 11:21:01.234"
+  val DEFAULT_DATETIME: LocalDateTime = LocalDateTime.of(2021, 5, 20, 11, 21, 1, 234000000)
   val DEFAULT_TIMESTAMP: Timestamp = Timestamp.valueOf(DEFAULT_TIME_STR)
   val DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
-  val DEFAULT_DT_STR = "2021-05-20T11:21:01.234"
 
   /**
     * test for toTimestamp(two parameter)
@@ -112,7 +113,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
         "select toDatetime('" + DEFAULT_TIME_STR + "', '" + DEFAULT_FORMAT + "')"
       )
     resultSet.next()
-    assertEquals(DEFAULT_DT_STR, resultSet.getObject(1).toString)
+    assertEquals(DEFAULT_DATETIME, resultSet.getObject(1))
   }
 
   /**
@@ -123,7 +124,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
     val resultSet =
       statement.executeQuery("select toDatetime('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
-    assertEquals(DEFAULT_DT_STR, resultSet.getObject(1).toString)
+    assertEquals(DEFAULT_DATETIME, resultSet.getObject(1))
   }
 
   /**
@@ -132,9 +133,9 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("datetimeToTimestamp") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select datetimeToTimestamp('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select datetimeToTimestamp('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
-    assertEquals(DEFAULT_TIME_STR, resultSet.getObject(1).toString)
+    assertEquals(DEFAULT_TIMESTAMP, resultSet.getObject(1))
   }
 
   /**
@@ -145,7 +146,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
     val resultSet =
       statement.executeQuery("select timestampToDatetime('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
-    assertEquals(DEFAULT_DT_STR, resultSet.getObject(1).toString)
+    assertEquals(DEFAULT_DATETIME, resultSet.getObject(1))
   }
 
   /**
@@ -164,11 +165,9 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("datetimeFormat") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery(
-        "select datetimeFormat('" + DEFAULT_DT_STR + "', '" + DEFAULT_FORMAT + "')"
-      )
+      statement.executeQuery("select datetimeFormat('" + DEFAULT_TIME_STR + "', 'yyyy-MM-dd')")
     resultSet.next()
-    assertEquals(DEFAULT_TIME_STR, resultSet.getObject(1))
+    assertEquals(DEFAULT_TIME_STR.substring(0, "yyyy-MM-dd".length), resultSet.getObject(1))
   }
 
   /**
@@ -177,7 +176,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("hour") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select hour('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select hour('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(11, resultSet.getObject(1))
   }
@@ -188,7 +187,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("minute") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select minute('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select minute('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(21, resultSet.getObject(1))
   }
@@ -199,7 +198,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("second") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select second('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select second('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(1, resultSet.getObject(1))
   }
@@ -210,7 +209,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("week") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select week('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select week('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(20, resultSet.getObject(1))
   }
@@ -221,7 +220,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("month") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select month('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select month('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(5, resultSet.getObject(1))
   }
@@ -232,7 +231,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("year") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select year('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select year('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(2021, resultSet.getObject(1))
   }
@@ -243,7 +242,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("dayOfMonth") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select dayOfMonth('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select dayOfMonth('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(20, resultSet.getObject(1))
   }
@@ -254,7 +253,7 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("dayOfWeek") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select dayOfWeek('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select dayOfWeek('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(4, resultSet.getObject(1))
   }
@@ -265,8 +264,9 @@ class TimeFunctionTestAbstract extends AbstractCalciteFunctionTest {
   test("dayOfYear") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select dayOfYear('" + DEFAULT_DT_STR + "')")
+      statement.executeQuery("select dayOfYear('" + DEFAULT_TIME_STR + "')")
     resultSet.next()
     assertEquals(140, resultSet.getObject(1))
   }
+
 }
