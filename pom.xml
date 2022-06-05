@@ -48,6 +48,7 @@
         <spotless-maven-plugin.version>2.22.5</spotless-maven-plugin.version>
         <spatial4j.version>0.8</spatial4j.version>
         <scalatest.maven.plugin.version>2.0.2</scalatest.maven.plugin.version>
+        <geojson.jackson.version>1.14</geojson.jackson.version>
     </properties>
 
     <dependencyManagement>
@@ -188,6 +189,15 @@
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-maven-plugin</artifactId>
+                    <version>${antlr.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -277,7 +287,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>

@@ -14,6 +14,7 @@ package org.urbcomp.start.db.model;
 import org.locationtech.jts.geom.Point;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * GPS Point class
@@ -54,4 +55,11 @@ public class GPSPoint {
         return point;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return Objects.equals(this.time, ((GPSPoint) o).time)
+            && this.point.equalsExact(((GPSPoint) o).point);
+    }
 }

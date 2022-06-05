@@ -51,10 +51,11 @@ public class BatchUpLoader implements Closeable {
     private FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
     private DataStore dataStore;
     private SimpleFeatureType sft;
-    private final String TABLE_NAME = "citibike_tripdata";
+    private final String TABLE_NAME = "t_test";
 
     public BatchUpLoader() throws IOException {
         mkConnection();
+        dropTable();
         createTable();
     }
 
@@ -72,10 +73,17 @@ public class BatchUpLoader implements Closeable {
      */
     private void mkConnection() throws IOException {
         Map<String, String> params = new HashMap<>();
-        params.put("hbase.catalog", TABLE_NAME);
+        String CATALOG = "start_db.db_test";
+        params.put("hbase.catalog", CATALOG);
         params.put("hbase.zookeepers", "localhost:2181");
 
         this.dataStore = DataStoreFinder.getDataStore(params);
+    }
+
+    private void dropTable() throws IOException {
+        if (this.dataStore.getSchema(TABLE_NAME) != null) {
+            this.dataStore.removeSchema(TABLE_NAME);
+        }
     }
 
     /**
@@ -265,4 +273,8 @@ public class BatchUpLoader implements Closeable {
         }
     }
 
+    public static void main(String[] args) throws IOException, ParseException {
+        final BatchUpLoader loader = new BatchUpLoader();
+        loader.insert();
+    }
 }

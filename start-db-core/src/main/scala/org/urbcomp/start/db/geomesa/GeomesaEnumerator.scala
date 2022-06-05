@@ -16,6 +16,7 @@ import org.geotools.data.{DataStoreFinder, FeatureReader, Query, Transaction}
 import org.geotools.filter.text.ecql.ECQL
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.urbcomp.start.db.common.ConfigProvider
+import org.urbcomp.start.db.util.MetadataUtil
 
 import scala.collection.JavaConverters._
 
@@ -23,7 +24,6 @@ import scala.collection.JavaConverters._
   * Enumerator for Geomesa
   *
   * @param reader FeatureReader
-  *
   * @author zaiyuan
   * @since 0.1.0
   */
@@ -52,8 +52,10 @@ class GeomesaEnumerator(reader: FeatureReader[SimpleFeatureType, SimpleFeature])
 }
 
 object GeomesaEnumerator {
-  def apply(filter: String, tableName: String, dbName: String): GeomesaEnumerator = {
-    val dataStore = DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(dbName).asJava)
+  def apply(filter: String, tableName: String, dbName: String, user: String): GeomesaEnumerator = {
+    val catalog = MetadataUtil.makeCatalog(user, dbName)
+    val dataStore =
+      DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
     val query = new Query(tableName, ECQL.toFilter(filter))
     new GeomesaEnumerator(dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT))
   }
