@@ -23,6 +23,8 @@
 package org.urbcomp.start.db.function;
 
 import org.locationtech.jts.geom.*;
+import org.locationtech.jts.io.WKBReader;
+import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
 import org.locationtech.spatial4j.io.*;
 import org.locationtech.spatial4j.shape.Shape;
@@ -87,31 +89,64 @@ public class GeometricRelationTypeConversionFunction {
     }
 
     @StartDBFunction("st_pointFromWKT")
-    public Point st_pointFromWKT(String wktString) {
-        JtsSpatialContext jtsSpatialContext = JtsSpatialContext.GEO;
-        JtsShapeFactory jtsShapeFactory = jtsSpatialContext.getShapeFactory();
-        WKTReader wktReader = (WKTReader) jtsSpatialContext.getFormats().getWktReader();
-        try {
-            Shape shape = wktReader.read(wktString);
-            Geometry geometry = jtsShapeFactory.getGeometryFrom(shape);
-            return st_castToPoint(geometry);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Point st_pointFromWKT(String wktString) throws IOException, ParseException {
+        Geometry geometry = st_geomFromWKT(wktString);
+        return st_castToPoint(geometry);
+    }
+
+    @StartDBFunction("st_lineStringFromWKT")
+    public LineString st_lineStringFromWKT(String wktString) throws IOException, ParseException {
+        Geometry geometry = st_geomFromWKT(wktString);
+        return st_castToLineString(geometry);
+    }
+
+    @StartDBFunction("st_polygonFromWKT")
+    public Polygon st_polygonFromWKT(String wktString) throws IOException, ParseException {
+        Geometry geometry = st_geomFromWKT(wktString);
+        return st_castToPolygon(geometry);
+    }
+
+    @StartDBFunction("st_mPointFromWKT")
+    public MultiPoint st_mPointFromWKT(String wktString) throws IOException, ParseException {
+        Geometry geometry = st_geomFromWKT(wktString);
+        return st_castToMPoint(geometry);
+    }
+
+    @StartDBFunction("st_mLineStringFromWKT")
+    public MultiLineString st_mLineStringFromWKT(String wktString) throws IOException, ParseException {
+        Geometry geometry = st_geomFromWKT(wktString);
+        return st_castToMLineString(geometry);
+    }
+
+    @StartDBFunction("st_mPolygonFromWKT")
+    public MultiPolygon st_mPolygonFromWKT(String wktString) throws IOException, ParseException {
+        Geometry geometry = st_geomFromWKT(wktString);
+        return st_castToMPolygon(geometry);
     }
 
     @StartDBFunction("st_geomFromWKT")
-    public Geometry st_geomFromWKT(String wktString) {
+    public Geometry st_geomFromWKT(String wktString) throws IOException, ParseException {
         JtsSpatialContext jtsSpatialContext = JtsSpatialContext.GEO;
         JtsShapeFactory jtsShapeFactory = jtsSpatialContext.getShapeFactory();
         WKTReader wktReader = (WKTReader) jtsSpatialContext.getFormats().getWktReader();
-        try {
-            Shape shape = wktReader.read(wktString);
-            return jtsShapeFactory.getGeometryFrom(shape);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Shape shape = wktReader.read(wktString);
+        return jtsShapeFactory.getGeometryFrom(shape);
     }
+
+    @StartDBFunction("st_geomFromWKB")
+    public Geometry st_geomFromWKB(byte[] wkb) throws org.locationtech.jts.io.ParseException {
+        //TODO
+        WKBReader wkbReader = new WKBReader();
+        return wkbReader.read(wkb);
+    }
+
+
+    @StartDBFunction("st_asWKB")
+    public byte[] st_asWKB(Geometry geom)  {
+        //TODO
+        WKBWriter wkbWriter = new WKBWriter();
+        return wkbWriter.write(geom);
+    }
+
+
 }
