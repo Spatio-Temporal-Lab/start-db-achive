@@ -29,7 +29,8 @@ object StartDBParseDriver {
     val parser = new StartDBSqlParser(new CommonTokenStream(lexer))
     parser.removeErrorListeners()
     val tree = parser.program()
-    val visitor = new StartDBVisitor
+    // TODO 这里先写死，要从用户参数里获取
+    val visitor = new StartDBVisitor("start_db", "db_test")
     visitor.visitProgram(tree)
   }
 }

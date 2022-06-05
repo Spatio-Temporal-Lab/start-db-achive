@@ -1,16 +1,11 @@
 {
   "version": "1.0",
-  "defaultSchema": "TEST_CSV",
+  "defaultSchema": "START_DB",
   "schemas": [
     {
-      "name": "TEST_CSV",
+      "name": "START_DB",
       "type": "custom",
-      "factory": "org.urbcomp.start.db.geomesa.GeomesaSchemaFactory",
-      "operand": {
-        "userName": "sikong",
-        "dbName": "test",
-        "tableName": "test_table01"
-      }
+      "factory": "org.urbcomp.start.db.geomesa.GeomesaSchemaFactory"
     }
   ]
 }

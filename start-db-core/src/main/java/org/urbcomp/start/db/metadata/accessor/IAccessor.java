@@ -21,7 +21,7 @@ import org.urbcomp.start.db.metadata.mapper.IMapper;
  * @author zaiyuan
  * @date 2022-05-01 15:17:07
  */
-public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
+public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> extends AutoCloseable {
 
     /**
      * select one entity from table by id
@@ -101,7 +101,6 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
 
     /**
      * Close session
-     *
      */
     @Override
     default void close() {
@@ -114,7 +113,7 @@ public interface IAccessor<T extends AbstractEntity> extends AutoCloseable {
      * @param commit auto-commit
      * @return IMapper<T>
      */
-    IMapper<T> getMapper(boolean commit);
+    M getMapper(boolean commit);
 
     /**
      * Check the entity is valid
