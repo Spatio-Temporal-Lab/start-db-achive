@@ -143,6 +143,12 @@ public class Trajectory {
         return new ObjectMapper().writeValueAsString(fcp);
     }
 
+    /**
+     * create a trajectory object from GeoJSON string
+     * @param geoJsonStr the GeoJSON string
+     * @return a Trajectory instance
+     * @throws JsonProcessingException if parse error
+     */
     public static Trajectory fromGeoJSON(String geoJsonStr) throws JsonProcessingException {
         FeatureCollectionWithProperties fcp = new ObjectMapper().readValue(
             geoJsonStr,
