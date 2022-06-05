@@ -22,8 +22,10 @@ import org.apache.calcite.avatica.remote.Service.ErrorResponse;
 import org.apache.calcite.avatica.remote.Service.Request;
 import org.apache.calcite.avatica.remote.Service.Response;
 import org.apache.calcite.avatica.remote.Service.RpcMetadataResponse;
+import org.urbcomp.start.db.server.AuthenticationHelper;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Abstract base class for {@link Handler}s to extend to inherit functionality common across
@@ -91,6 +93,14 @@ public abstract class AbstractHandler<T> implements Handler<T> {
     public HandlerResponse<T> apply(T serializedRequest) {
         try {
             final Service.Request request = decode(serializedRequest);
+            if (request instanceof Service.OpenConnectionRequest) {
+                Service.OpenConnectionRequest openConnection = (Service.OpenConnectionRequest) request;
+                final Map<String, String> info = openConnection.info;
+                if (info == null || !AuthenticationHelper.auth(info.get("username"), info.get("password"))) {
+                    // TODO custom exception
+                    throw new RuntimeException("Auth Failed");
+                }
+            }
             final Service.Response response = request.accept(service);
             return new HandlerResponse<>(encode(response), HTTP_OK);
         } catch (Exception e) {

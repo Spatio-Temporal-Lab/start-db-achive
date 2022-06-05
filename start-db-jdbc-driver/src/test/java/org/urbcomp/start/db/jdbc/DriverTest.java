@@ -24,7 +24,7 @@ public class DriverTest {
     @Test
     public void testDriver() throws SQLException {
         try (
-            Connection conn = DriverManager.getConnection("jdbc:start-db:url=http://127.0.0.1:8000")
+                Connection conn = DriverManager.getConnection("jdbc:start-db:url=http://127.0.0.1:8000", "jimo", "hehe")
         ) {
             final Statement stmt = conn.createStatement();
 
