@@ -14,19 +14,31 @@ package org.urbcomp.start.db.model.sample;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
-import org.urbcomp.start.db.model.*;
+import org.urbcomp.start.db.model.Trajectory;
+import org.urbcomp.start.db.model.point.GPSPoint;
+import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
+import org.urbcomp.start.db.model.roadsegment.RoadSegment;
+import org.urbcomp.start.db.model.roadsegment.RoadSegmentDirection;
+import org.urbcomp.start.db.model.roadsegment.RoadSegmentLevel;
 
 import java.sql.Timestamp;
 
 public class ModelGenerator {
     public static Trajectory generateTrajectory() {
-        GeometryFactory gf = new GeometryFactory();
-        Point p1 = gf.createPoint(new Coordinate(111.37939453125, 54.00776876193478));
-        Point p2 = gf.createPoint(new Coordinate(116.3671875, 53.05442186546102));
         return new Trajectory("tid", "oid").addGPSPoint(
-            new GPSPoint(Timestamp.valueOf("2022-06-04 18:52:00"), p1)
-        ).addGPSPoint(new GPSPoint(Timestamp.valueOf("2022-06-04 18:52:05"), p2));
+            new GPSPoint(
+                Timestamp.valueOf("2022-06-04 18:52:00"),
+                111.37939453125,
+                54.00776876193478
+            )
+        )
+            .addGPSPoint(
+                new GPSPoint(
+                    Timestamp.valueOf("2022-06-04 18:52:05"),
+                    116.3671875,
+                    53.05442186546102
+                )
+            );
     }
 
     public static RoadSegment generateRoadSegment() {

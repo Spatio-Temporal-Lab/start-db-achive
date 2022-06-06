@@ -15,9 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
+import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
 
 import java.sql.Timestamp;
@@ -32,8 +30,9 @@ public class Trajectory {
 
     /**
      * Constructor of Trajectory class
-     * @param tid the id of Trajectory, should be unique in a trajectory database
-     * @param oid the object id of a trajectory, such as plate number
+     *
+     * @param tid          the id of Trajectory, should be unique in a trajectory database
+     * @param oid          the object id of a trajectory, such as plate number
      * @param gpsPointList the gps point list of the trajectory
      */
     public Trajectory(String tid, String oid, List<GPSPoint> gpsPointList) {
@@ -44,6 +43,7 @@ public class Trajectory {
 
     /**
      * the constructor of Trajectory class. The time list and point list will be initialized empty
+     *
      * @param tid the id of Trajectory, should be unique in a trajectory database
      * @param oid the object id of a trajectory, such as plate number
      */
@@ -53,6 +53,7 @@ public class Trajectory {
 
     /**
      * get trajectory id
+     *
      * @return trajectory id
      */
     public String getTid() {
@@ -61,6 +62,7 @@ public class Trajectory {
 
     /**
      * set trajectory id
+     *
      * @param tid trajectory id
      * @return this object
      */
@@ -71,6 +73,7 @@ public class Trajectory {
 
     /**
      * get object id
+     *
      * @return object id
      */
     public String getOid() {
@@ -79,6 +82,7 @@ public class Trajectory {
 
     /**
      * set object id
+     *
      * @param oid object id
      * @return this object
      */
@@ -89,6 +93,7 @@ public class Trajectory {
 
     /**
      * get point list
+     *
      * @return point list of GPS point
      */
     public List<GPSPoint> getGPSPointList() {
@@ -97,6 +102,7 @@ public class Trajectory {
 
     /**
      * set point list
+     *
      * @param gpsPointList GPSPoint list of trajectory
      * @return this object
      */
@@ -107,6 +113,7 @@ public class Trajectory {
 
     /**
      * add a GPSPoint to the trajectory
+     *
      * @param gpsPoint the GPSPoint to be added
      * @return this object
      */
@@ -128,6 +135,7 @@ public class Trajectory {
 
     /**
      * Convert this trajectory to GeoJSON String
+     *
      * @return GeoJSON String
      */
     public String toGeoJSON() throws JsonProcessingException {
@@ -137,7 +145,7 @@ public class Trajectory {
         for (GPSPoint gp : gpsPointList) {
             Feature f = new Feature();
             f.setProperty("time", gp.getTime().toString());
-            f.setGeometry(new org.geojson.Point(gp.getPoint().getX(), gp.getPoint().getY()));
+            f.setGeometry(new org.geojson.Point(gp.getX(), gp.getY()));
             fcp.add(f);
         }
         return new ObjectMapper().writeValueAsString(fcp);
@@ -145,6 +153,7 @@ public class Trajectory {
 
     /**
      * create a trajectory object from GeoJSON string
+     *
      * @param geoJsonStr the GeoJSON string
      * @return a Trajectory instance
      * @throws JsonProcessingException if parse error
@@ -155,13 +164,15 @@ public class Trajectory {
             FeatureCollectionWithProperties.class
         );
         Trajectory traj = new Trajectory(fcp.getProperty("tid"), fcp.getProperty("oid"));
-        GeometryFactory gf = new GeometryFactory();
         for (Feature f : fcp.getFeatures()) {
             LngLatAlt lngLatAlt = ((org.geojson.Point) f.getGeometry()).getCoordinates();
-            Point p = gf.createPoint(
-                new Coordinate(lngLatAlt.getLongitude(), lngLatAlt.getLatitude())
+            traj.addGPSPoint(
+                new GPSPoint(
+                    Timestamp.valueOf((String) f.getProperty("time")),
+                    lngLatAlt.getLongitude(),
+                    lngLatAlt.getLatitude()
+                )
             );
-            traj.addGPSPoint(new GPSPoint(Timestamp.valueOf((String) f.getProperty("time")), p));
         }
         return traj;
     }
