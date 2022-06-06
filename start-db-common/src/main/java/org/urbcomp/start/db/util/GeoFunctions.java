@@ -11,6 +11,8 @@
 
 package org.urbcomp.start.db.util;
 
+import org.urbcomp.start.db.model.point.SpatialPoint;
+
 public class GeoFunctions {
 
     /**
@@ -50,5 +52,9 @@ public class GeoFunctions {
                     * Math.pow(Math.sin(radLngDistance / 2), 2)
             )
         ) * EARTH_RADIUS_IN_METER;
+    }
+
+    public static double getDistanceInM(SpatialPoint point1, SpatialPoint point2) {
+        return getDistanceInM(point1.getLng(), point1.getLat(), point2.getLng(), point2.getLat());
     }
 }
