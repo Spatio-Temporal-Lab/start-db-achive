@@ -11,21 +11,21 @@
 
 package org.urbcomp.start.db.algorithm.shortestpath;
 
-import org.locationtech.jts.geom.Point;
+import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.model.roadsegment.Path;
 import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
 
 public class ShortestPath implements IShortestPath {
     private RoadNetwork roadNetwork;
-    private Point startPoint;
-    private Point endPoint;
+    private SpatialPoint startPoint;
+    private SpatialPoint endPoint;
     /**
      * note that the start and end points may be mot exactly on the road segments,
      * the searchDistance defines the scope to find the start or end road segments.
      */
     private double searchDistance;
 
-    public ShortestPath(RoadNetwork roadNetwork, Point startPoint, Point endPoint) {
+    public ShortestPath(RoadNetwork roadNetwork, SpatialPoint startPoint, SpatialPoint endPoint) {
         this.roadNetwork = roadNetwork;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
