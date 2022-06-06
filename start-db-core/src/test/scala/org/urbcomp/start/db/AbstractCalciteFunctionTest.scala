@@ -28,7 +28,7 @@ class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterAll {
   var connect: Connection = _
 
   override protected def beforeAll(): Unit = {
-    val path = Paths.get("start-db-server/src/main/resources/model.json")
+    val path = Paths.get("../start-db-server/src/main/resources/model.json")
     val url = path.toAbsolutePath.toString
     val config = new Properties
     config.put("model", url)
