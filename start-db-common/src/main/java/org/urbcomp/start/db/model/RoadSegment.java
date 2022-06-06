@@ -22,7 +22,7 @@ import java.util.Objects;
 
 public class RoadSegment {
     // road segment id
-    private String rsId;
+    private int rsId;
     // the road geometry
     private LineString geom;
     // the road direction
@@ -32,17 +32,17 @@ public class RoadSegment {
     // road level
     private RoadSegmentLevel level;
     // the start node id
-    private String startId;
+    private int startId;
     // the end node id
-    private String endId;
+    private int endId;
     // the length of the road, m
     private double length;
 
-    public String getRsId() {
+    public int getRsId() {
         return rsId;
     }
 
-    public RoadSegment setRsId(String rsId) {
+    public RoadSegment setRsId(int rsId) {
         this.rsId = rsId;
         return this;
     }
@@ -83,20 +83,20 @@ public class RoadSegment {
         return this;
     }
 
-    public String getStartId() {
+    public int getStartId() {
         return startId;
     }
 
-    public RoadSegment setStartId(String startId) {
+    public RoadSegment setStartId(int startId) {
         this.startId = startId;
         return this;
     }
 
-    public String getEndId() {
+    public int getEndId() {
         return endId;
     }
 
-    public RoadSegment setEndId(String endId) {
+    public RoadSegment setEndId(int endId) {
         this.endId = endId;
         return this;
     }
