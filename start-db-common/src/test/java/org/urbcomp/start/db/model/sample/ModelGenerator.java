@@ -14,6 +14,7 @@ package org.urbcomp.start.db.model.sample;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.urbcomp.start.db.model.Trajectory;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
@@ -42,13 +43,13 @@ public class ModelGenerator {
     }
 
     public static RoadSegment generateRoadSegment() {
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
         LineString ls = gf.createLineString(
             new Coordinate[] {
                 new Coordinate(111.37939453125, 54.00776876193478),
                 new Coordinate(116.3671875, 53.05442186546102) }
         );
-        return new RoadSegment().setRsId(1)
+        return new RoadSegment().setRoadSegmentId(1)
             .setGeom(ls)
             .setDirection(RoadSegmentDirection.DUAL)
             .setSpeedLimit(30.0)
@@ -59,13 +60,13 @@ public class ModelGenerator {
     }
 
     public static RoadNetwork generateRoadNetwork() {
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
         LineString ls1 = gf.createLineString(
             new Coordinate[] {
                 new Coordinate(111.37939453125, 54.00776876193478),
                 new Coordinate(116.3671875, 53.05442186546102) }
         );
-        RoadSegment rs1 = new RoadSegment().setRsId(1)
+        RoadSegment rs1 = new RoadSegment().setRoadSegmentId(1)
             .setGeom(ls1)
             .setDirection(RoadSegmentDirection.DUAL)
             .setSpeedLimit(30.0)
@@ -78,7 +79,7 @@ public class ModelGenerator {
                 new Coordinate(116.3671875, 53.05442186546102),
                 new Coordinate(115.37939453125, 52.00776876193478) }
         );
-        RoadSegment rs2 = new RoadSegment().setRsId(2)
+        RoadSegment rs2 = new RoadSegment().setRoadSegmentId(2)
             .setGeom(ls2)
             .setDirection(RoadSegmentDirection.FORWARD)
             .setSpeedLimit(120)

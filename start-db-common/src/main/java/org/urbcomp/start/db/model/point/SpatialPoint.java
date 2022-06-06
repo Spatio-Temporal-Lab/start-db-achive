@@ -22,6 +22,10 @@ public class SpatialPoint extends Point {
         );
     }
 
+    public SpatialPoint(Coordinate coordinate) {
+        this(coordinate.x, coordinate.y);
+    }
+
     public double getLng() {
         return this.getX();
     }

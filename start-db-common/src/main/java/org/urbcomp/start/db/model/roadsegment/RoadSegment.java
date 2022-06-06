@@ -22,7 +22,7 @@ import java.util.Objects;
 
 public class RoadSegment {
     // road segment id
-    private int rsId;
+    private int roadSegmentId;
     // the road geometry
     private LineString geom;
     // the road direction
@@ -38,12 +38,12 @@ public class RoadSegment {
     // the length of the road, m
     private double length;
 
-    public int getRsId() {
-        return rsId;
+    public int getRoadSegmentId() {
+        return roadSegmentId;
     }
 
-    public RoadSegment setRsId(int rsId) {
-        this.rsId = rsId;
+    public RoadSegment setRoadSegmentId(int roadSegmentId) {
+        this.roadSegmentId = roadSegmentId;
         return this;
     }
 
@@ -115,7 +115,7 @@ public class RoadSegment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RoadSegment rs = (RoadSegment) o;
-        return Objects.equals(this.rsId, rs.rsId)
+        return Objects.equals(this.roadSegmentId, rs.roadSegmentId)
             && Objects.equals(this.direction, rs.direction)
             && Objects.equals(this.speedLimit, rs.speedLimit)
             && Objects.equals(this.level, rs.level)
@@ -126,7 +126,7 @@ public class RoadSegment {
 
     public Feature toFeature() {
         Feature f = new Feature();
-        f.setProperty("rsId", rsId);
+        f.setProperty("rsId", roadSegmentId);
         f.setProperty("direction", direction.value());
         f.setProperty("speedLimit", speedLimit);
         f.setProperty("level", level.value());
@@ -141,7 +141,7 @@ public class RoadSegment {
     }
 
     public static RoadSegment fromFeature(Feature f) {
-        return new RoadSegment().setRsId(f.getProperty("rsId"))
+        return new RoadSegment().setRoadSegmentId(f.getProperty("rsId"))
             .setDirection(RoadSegmentDirection.valueOf((Integer) f.getProperty("direction")))
             .setSpeedLimit(f.getProperty("speedLimit"))
             .setLevel(RoadSegmentLevel.valueOf((Integer) f.getProperty("level")))
