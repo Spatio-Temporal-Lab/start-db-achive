@@ -22,13 +22,25 @@
 
 package org.urbcomp.start.db.function;
 
-import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.prep.*;
+
+import java.util.Optional;
 
 public class GeometricRelationFunction {
 
-    private PreparedGeometry prepareGeometry(Geometry geom) {
-        return PreparedGeometryFactory.prepare(geom);
+    private Optional<PreparedGeometry> prepareGeometry(Geometry geom) {
+        switch (geom.getGeometryType()) {
+            case Geometry.TYPENAME_POINT:
+            case Geometry.TYPENAME_MULTIPOINT:
+                return Optional.of(new PreparedPoint((Puntal) geom));
+            case Geometry.TYPENAME_LINESTRING:
+                return Optional.of(new PreparedLineString((Lineal) geom));
+            case Geometry.TYPENAME_POLYGON:
+                return Optional.of(new PreparedPolygon((Polygonal) geom));
+            default:
+                return Optional.empty();
+        }
     }
 
     @StartDBFunction("st_equals")
@@ -44,9 +56,9 @@ public class GeometricRelationFunction {
      */
     @StartDBFunction("st_contains")
     public boolean st_contains(Geometry geom1, Geometry geom2) {
-        PreparedGeometry preparedGeom1 = prepareGeometry(geom1);
-        if (preparedGeom1 != null) return preparedGeom1.contains(geom2);
-        return geom1.contains(geom2);
+        Optional<PreparedGeometry> preparedGeom1 = prepareGeometry(geom1);
+        return preparedGeom1.map(preparedGeometry -> preparedGeometry.contains(geom2))
+            .orElseGet(() -> geom1.contains(geom2));
     }
 
     /**
@@ -54,9 +66,9 @@ public class GeometricRelationFunction {
      */
     @StartDBFunction("st_covers")
     public boolean st_covers(Geometry geom1, Geometry geom2) {
-        PreparedGeometry preparedGeom1 = prepareGeometry(geom1);
-        if (preparedGeom1 != null) return preparedGeom1.covers(geom2);
-        return geom1.covers(geom2);
+        Optional<PreparedGeometry> preparedGeom1 = prepareGeometry(geom1);
+        return preparedGeom1.map(preparedGeometry -> preparedGeometry.covers(geom2))
+            .orElseGet(() -> geom1.covers(geom2));
     }
 
     /**
@@ -65,9 +77,9 @@ public class GeometricRelationFunction {
      */
     @StartDBFunction("st_crosses")
     public boolean st_crosses(Geometry geom1, Geometry geom2) {
-        PreparedGeometry preparedGeom1 = prepareGeometry(geom1);
-        if (preparedGeom1 != null) return preparedGeom1.crosses(geom2);
-        return geom1.crosses(geom2);
+        Optional<PreparedGeometry> preparedGeom1 = prepareGeometry(geom1);
+        return preparedGeom1.map(preparedGeometry -> preparedGeometry.crosses(geom2))
+            .orElseGet(() -> geom1.crosses(geom2));
     }
 
     /**
@@ -76,9 +88,9 @@ public class GeometricRelationFunction {
      */
     @StartDBFunction("st_disjoint")
     public boolean st_disjoint(Geometry geom1, Geometry geom2) {
-        PreparedGeometry preparedGeom1 = prepareGeometry(geom1);
-        if (preparedGeom1 != null) return preparedGeom1.disjoint(geom2);
-        return geom1.disjoint(geom2);
+        Optional<PreparedGeometry> preparedGeom1 = prepareGeometry(geom1);
+        return preparedGeom1.map(preparedGeometry -> preparedGeometry.disjoint(geom2))
+            .orElseGet(() -> geom1.disjoint(geom2));
     }
 
     /**
@@ -86,9 +98,9 @@ public class GeometricRelationFunction {
      */
     @StartDBFunction("st_intersects")
     public boolean st_intersects(Geometry geom1, Geometry geom2) {
-        PreparedGeometry preparedGeom1 = prepareGeometry(geom1);
-        if (preparedGeom1 != null) return preparedGeom1.intersects(geom2);
-        return geom1.intersects(geom2);
+        Optional<PreparedGeometry> preparedGeom1 = prepareGeometry(geom1);
+        return preparedGeom1.map(preparedGeometry -> preparedGeometry.intersects(geom2))
+            .orElseGet(() -> geom1.intersects(geom2));
     }
 
     /**
@@ -97,9 +109,10 @@ public class GeometricRelationFunction {
      */
     @StartDBFunction("st_touches")
     public boolean st_touches(Geometry geom1, Geometry geom2) {
-        PreparedGeometry preparedGeom1 = prepareGeometry(geom1);
-        if (preparedGeom1 != null) return preparedGeom1.touches(geom2);
-        return geom1.touches(geom2);
+        Optional<PreparedGeometry> preparedGeom1 = prepareGeometry(geom1);
+        return preparedGeom1.map(preparedGeometry -> preparedGeometry.touches(geom2))
+            .orElseGet(() -> geom1.touches(geom2));
+
     }
 
     /**
@@ -107,9 +120,9 @@ public class GeometricRelationFunction {
      */
     @StartDBFunction("st_within")
     public boolean st_within(Geometry geom1, Geometry geom2) {
-        PreparedGeometry preparedGeom1 = prepareGeometry(geom1);
-        if (preparedGeom1 != null) return preparedGeom1.within(geom2);
-        return geom1.within(geom2);
+        Optional<PreparedGeometry> preparedGeom1 = prepareGeometry(geom1);
+        return preparedGeom1.map(preparedGeometry -> preparedGeometry.within(geom2))
+            .orElseGet(() -> geom1.within(geom2));
     }
 
     /**
@@ -119,9 +132,9 @@ public class GeometricRelationFunction {
      */
     @StartDBFunction("st_overlaps")
     public boolean st_overlaps(Geometry geom1, Geometry geom2) {
-        PreparedGeometry preparedGeom1 = prepareGeometry(geom1);
-        if (preparedGeom1 != null) return preparedGeom1.overlaps(geom2);
-        return geom1.overlaps(geom2);
+        Optional<PreparedGeometry> preparedGeom1 = prepareGeometry(geom1);
+        return preparedGeom1.map(preparedGeometry -> preparedGeometry.overlaps(geom2))
+            .orElseGet(() -> geom1.overlaps(geom2));
     }
 
     /**
