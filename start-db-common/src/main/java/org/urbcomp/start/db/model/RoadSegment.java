@@ -124,11 +124,7 @@ public class RoadSegment {
             && Objects.equals(this.length, rs.length);
     }
 
-    /**
-     * Convert this RoadSegment to GeoJSON String
-     * @return GeoJSON String
-     */
-    public String toGeoJSON() throws JsonProcessingException {
+    public Feature toFeature() {
         Feature f = new Feature();
         f.setProperty("rsId", rsId);
         f.setProperty("direction", direction.value());
@@ -141,11 +137,10 @@ public class RoadSegment {
             .map(o -> new LngLatAlt(o.x, o.y))
             .toArray(LngLatAlt[]::new);
         f.setGeometry(new org.geojson.LineString(lngLats));
-        return new ObjectMapper().writeValueAsString(f);
+        return f;
     }
 
-    public static RoadSegment fromGeoJSON(String geoJsonStr) throws JsonProcessingException {
-        Feature f = new ObjectMapper().readValue(geoJsonStr, Feature.class);
+    public static RoadSegment fromFeature(Feature f) {
         return new RoadSegment().setRsId(f.getProperty("rsId"))
             .setDirection(RoadSegmentDirection.valueOf((Integer) f.getProperty("direction")))
             .setSpeedLimit(f.getProperty("speedLimit"))
@@ -153,5 +148,18 @@ public class RoadSegment {
             .setStartId(f.getProperty("startId"))
             .setEndId(f.getProperty("endId"))
             .setLength(f.getProperty("length"));
+    }
+
+    /**
+     * Convert this RoadSegment to GeoJSON String
+     * @return GeoJSON String
+     */
+    public String toGeoJSON() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(toFeature());
+    }
+
+    public static RoadSegment fromGeoJSON(String geoJsonStr) throws JsonProcessingException {
+        Feature f = new ObjectMapper().readValue(geoJsonStr, Feature.class);
+        return fromFeature(f);
     }
 }

@@ -15,15 +15,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 import org.urbcomp.start.db.model.sample.ModelGenerator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class TrajectoryTest {
-    private final Trajectory trajectory = ModelGenerator.generateTrajectory();
+public class RoadNetworkTest {
+    private final RoadNetwork rn = ModelGenerator.generateRoadNetwork();
 
     @Test
     public void toGeoJSON() throws JsonProcessingException {
-        String geoJson = trajectory.toGeoJSON();
-        Trajectory traj = Trajectory.fromGeoJSON(geoJson);
-        assertEquals(trajectory, traj);
+        String geoJsonStr = rn.toGeoJSON();
+        RoadNetwork rn1 = RoadNetwork.fromGeoJSON(geoJsonStr);
+        assertEquals(rn, rn1);
     }
 }
