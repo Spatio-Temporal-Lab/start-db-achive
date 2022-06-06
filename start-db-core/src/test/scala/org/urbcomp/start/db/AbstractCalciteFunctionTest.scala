@@ -11,10 +11,9 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.assertEquals
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
-import java.net.URLDecoder
+import java.nio.file.Paths
 import java.sql.{Connection, DriverManager}
 import java.util.Properties
 
@@ -29,19 +28,12 @@ class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterAll {
   var connect: Connection = _
 
   override protected def beforeAll(): Unit = {
-    val url = this.getClass.getResource("/model.json")
-    val str = URLDecoder.decode(url.toString, "UTF-8")
+    val path = Paths.get("start-db-server/src/main/resources/model.json")
+    val url = path.toAbsolutePath.toString
     val config = new Properties
-    config.put("model", str.replace("file:", ""))
+    config.put("model", url)
     config.put("caseSensitive", "false")
     connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config)
-  }
-
-  test("test query") {
-    val stmt = connect.createStatement()
-    val rs = stmt.executeQuery("select count(1) from t_test")
-    rs.next()
-    assertEquals(101, rs.getInt(1))
   }
 
   override protected def afterAll(): Unit = {

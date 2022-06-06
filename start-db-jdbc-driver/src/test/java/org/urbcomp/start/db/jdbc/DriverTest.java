@@ -24,11 +24,15 @@ public class DriverTest {
     @Test
     public void testDriver() throws SQLException {
         try (
-                Connection conn = DriverManager.getConnection("jdbc:start-db:url=http://127.0.0.1:8000", "start_db", "start-db")
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
         ) {
             final Statement stmt = conn.createStatement();
 
-            final ResultSet rs = stmt.executeQuery("select count(1) from citibike_tripdata");
+            final ResultSet rs = stmt.executeQuery("select count(1) from t_test");
             rs.next();
             assertTrue(rs.getInt(1) >= 0);
         }
