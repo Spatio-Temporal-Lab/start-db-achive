@@ -36,13 +36,13 @@ public class ModelGenerator {
                 new Coordinate(111.37939453125, 54.00776876193478),
                 new Coordinate(116.3671875, 53.05442186546102) }
         );
-        return new RoadSegment().setRsId("rsId")
+        return new RoadSegment().setRsId(1)
             .setGeom(ls)
             .setDirection(RoadSegmentDirection.DUAL)
             .setSpeedLimit(30.0)
             .setLevel(RoadSegmentLevel.URBAN_ROAD)
-            .setStartId("startId")
-            .setEndId("endId")
+            .setStartId(1)
+            .setEndId(2)
             .setLength(120);
     }
 
@@ -53,26 +53,26 @@ public class ModelGenerator {
                 new Coordinate(111.37939453125, 54.00776876193478),
                 new Coordinate(116.3671875, 53.05442186546102) }
         );
-        RoadSegment rs1 = new RoadSegment().setRsId("rsId1")
+        RoadSegment rs1 = new RoadSegment().setRsId(1)
             .setGeom(ls1)
             .setDirection(RoadSegmentDirection.DUAL)
             .setSpeedLimit(30.0)
             .setLevel(RoadSegmentLevel.URBAN_ROAD)
-            .setStartId("startId1")
-            .setEndId("endId1")
+            .setStartId(1)
+            .setEndId(2)
             .setLength(120);
         LineString ls2 = gf.createLineString(
             new Coordinate[] {
                 new Coordinate(116.3671875, 53.05442186546102),
                 new Coordinate(115.37939453125, 52.00776876193478) }
         );
-        RoadSegment rs2 = new RoadSegment().setRsId("rsId2")
+        RoadSegment rs2 = new RoadSegment().setRsId(2)
             .setGeom(ls2)
             .setDirection(RoadSegmentDirection.FORWARD)
             .setSpeedLimit(120)
             .setLevel(RoadSegmentLevel.HIGH_WAY_ROAD)
-            .setStartId("endId1")
-            .setEndId("endId2")
+            .setStartId(2)
+            .setEndId(3)
             .setLength(300);
         RoadNetwork rn = new RoadNetwork();
         rn.addRoadSegment(rs1).addRoadSegment(rs2);
