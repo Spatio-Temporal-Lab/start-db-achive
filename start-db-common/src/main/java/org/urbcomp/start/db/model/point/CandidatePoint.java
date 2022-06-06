@@ -9,20 +9,37 @@ public class CandidatePoint extends SpatialPoint {
     /**
      * matched road segment id
      */
-    private int roadSegmentId;
+    private final int roadSegmentId;
     /**
      * the distance from the start point of the matched road segment, meter
      */
-    private double offsetInM;
+    private final double offsetInM;
+
     /**
      * the matched position index in the road segment geo
      */
-    private int matchedIndex;
+    private final int matchedIndex;
 
     /**
      * the distance between the matched point and the gps point
      */
-    private double errorDistanceM;
+    private final double errorDistanceM;
+
+    public int getRoadSegmentId() {
+        return roadSegmentId;
+    }
+
+    public double getOffsetInM() {
+        return offsetInM;
+    }
+
+    public int getMatchedIndex() {
+        return matchedIndex;
+    }
+
+    public double getErrorDistanceM() {
+        return errorDistanceM;
+    }
 
     public CandidatePoint(SpatialPoint matchedPoint, RoadSegment roadSegment, int matchedIndex, double errorDistanceM) {
         super(matchedPoint.getLng(), matchedPoint.getLat());
