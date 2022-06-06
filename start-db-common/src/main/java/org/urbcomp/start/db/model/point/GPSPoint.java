@@ -9,9 +9,7 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.model;
-
-import org.locationtech.jts.geom.Point;
+package org.urbcomp.start.db.model.point;
 
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -19,24 +17,15 @@ import java.util.Objects;
 /**
  * GPS Point class
  */
-public class GPSPoint {
+public class GPSPoint extends SpatialPoint {
     /**
      * the timestamp of the GPS Point
      */
     private final Timestamp time;
-    /**
-     * the location of the GPS Point
-     */
-    private final Point point;
 
-    /**
-     * Constructor of GPS Point
-     * @param time timestamp
-     * @param point location
-     */
-    public GPSPoint(Timestamp time, Point point) {
+    public GPSPoint(Timestamp time, double lng, double lat) {
+        super(lng, lat);
         this.time = time;
-        this.point = point;
     }
 
     /**
@@ -47,19 +36,10 @@ public class GPSPoint {
         return time;
     }
 
-    /**
-     * get tht location of the GPS Point
-     * @return location
-     */
-    public Point getPoint() {
-        return point;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return Objects.equals(this.time, ((GPSPoint) o).time)
-            && this.point.equalsExact(((GPSPoint) o).point);
+        return Objects.equals(this.time, ((GPSPoint) o).time) && super.equalsExact(((GPSPoint) o));
     }
 }
