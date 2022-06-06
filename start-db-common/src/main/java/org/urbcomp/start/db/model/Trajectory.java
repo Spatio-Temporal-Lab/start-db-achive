@@ -14,14 +14,17 @@ package org.urbcomp.start.db.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.Feature;
+import org.geojson.LineString;
 import org.geojson.LngLatAlt;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
 
+import javax.xml.crypto.Data;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -159,4 +162,86 @@ public class Trajectory {
         }
         return traj;
     }
+
+//    public Trajectory st_traj_makeTrajectory(String oid, String tid, List[Datetime]) {
+//
+//
+//
+//    }
+
+    public  String st_traj_asGeoJSON(Trajectory traj) throws JsonProcessingException {
+        return traj.toGeoJSON();
+    }
+
+//    public Trajectory st_traj_fromGeoJSON(String str) {
+//
+//
+//
+//
+//    }
+
+    public String st_traj_oid(Trajectory traj) {
+        return traj.getOid();
+    }
+
+    public String st_traj_tid(Trajectory traj) {
+        return traj.getTid();
+    }
+
+    public Date st_traj_startTime(Trajectory traj) {
+        return traj.getGPSPointList().get(0).getTime();
+    }
+
+    public Date st_traj_endTime(Trajectory traj) {
+        return traj.getGPSPointList().get(gpsPointList.size() - 1).getTime();
+    }
+
+    public Point st_traj_startPoint(Trajectory traj) { return traj.getGPSPointList().get(0).getPoint(); }
+
+   public Point st_traj_endPoint(Trajectory traj) {return traj.getGPSPointList().get(gpsPointList.size() - 1).getPoint();}
+
+    public Integer st_traj_numOfPoints(Trajectory tarj) {
+        return tarj.getGPSPointList().size();
+    }
+
+    public Point st_traj_pointN(Trajectory traj, Integer n) {
+        return traj.getGPSPointList().get(n - 1).getPoint();
+    }
+
+    public Date Dst_traj_timeN(Trajectory traj, Integer n) {
+        return traj.getGPSPointList().get(gpsPointList.size() - 1).getTime();
+    }
+
+    public Double st_traj_lengthInKM(Trajectory traj) {
+        final double EARTH_RADIUS_IN_METER = 6378137.0;
+        double all = 0;
+        for (int i = 0; i < gpsPointList.size() - 1; i++){
+            for (int j = 1; j < gpsPointList.size(); j++){
+                double radLat1 = Math.toRadians(traj.getGPSPointList().get(j).getPoint().getY());
+                double radLat2 = Math.toRadians(traj.getGPSPointList().get(i).getPoint().getY());
+                double radLatDistance = radLat1 - radLat2;
+                double radLngDistance = Math.toRadians(traj.getGPSPointList().get(j).getPoint().getX()) - Math.toRadians(traj.getGPSPointList().get(i).getPoint().getX());
+                all += 2 * Math.asin(
+                        Math.sqrt(
+                                Math.pow(Math.sin(radLatDistance / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2)
+                                        * Math.pow(Math.sin(radLngDistance / 2), 2)
+                        )
+                ) * EARTH_RADIUS_IN_METER;
+
+            }
+        }
+        return all;
+    }
+
+//    public double st_traj_speedInKMPerHour(Trajectory traj) {
+//
+//
+//    }
+
+   public LineString st_traj_geom(Trajectory traj) {
+        LineString lineString = new LineString((LngLatAlt) gpsPointList);
+        return lineString;
+   }
+
+
 }
