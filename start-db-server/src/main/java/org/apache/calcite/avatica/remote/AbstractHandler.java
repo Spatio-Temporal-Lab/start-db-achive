@@ -96,7 +96,7 @@ public abstract class AbstractHandler<T> implements Handler<T> {
             if (request instanceof Service.OpenConnectionRequest) {
                 Service.OpenConnectionRequest openConnection = (Service.OpenConnectionRequest) request;
                 final Map<String, String> info = openConnection.info;
-                if (info == null || !AuthenticationHelper.auth(info.get("username"), info.get("password"))) {
+                if (info == null || !AuthenticationHelper.auth(info.get("user"), info.get("password"))) {
                     // TODO custom exception
                     throw new RuntimeException("Auth Failed");
                 }
