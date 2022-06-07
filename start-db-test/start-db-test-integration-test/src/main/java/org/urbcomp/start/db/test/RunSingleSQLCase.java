@@ -17,10 +17,8 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 import java.util.List;
-import java.util.Objects;
 
 import static org.urbcomp.start.db.test.CompareActualAndExpect.compareData;
-import static org.urbcomp.start.db.test.GetSQLAndExpectData.getExpectData;
 import static org.urbcomp.start.db.test.GetSQLAndExpectData.getSqlWithParam;
 
 public class RunSingleSQLCase {
@@ -35,10 +33,10 @@ public class RunSingleSQLCase {
     public static void runSingleCase(String xmlPath) throws Exception {
         try {
             SAXReader saxReader = new SAXReader();
-//             String xmlResource = Objects.requireNonNull(
-//             RunSingleSQLCase.class.getClassLoader().getResource("cases/dml/dml.xml")
-//             ).getPath();
-//            System.out.println(xmlResource);
+            // String xmlResource = Objects.requireNonNull(
+            // RunSingleSQLCase.class.getClassLoader().getResource("cases/dml/dml.xml")
+            // ).getPath();
+            // System.out.println(xmlResource);
             Document document = saxReader.read(xmlPath);
             Element rootElement = document.getRootElement();
 
@@ -69,7 +67,7 @@ public class RunSingleSQLCase {
                         // 获取预期值或预期异常
                         String expectValue = "";
                         if (expectData != null && !expectData.equals("")) {
-//                            expectValue = getExpectData(expectData, xmlPath, paramId);
+                            // expectValue = getExpectData(expectData, xmlPath, paramId);
                         }
 
                         // 初始化一个空的实际返回值actualValue
