@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.util;
 
-import org.urbcomp.start.db.model.point.SpatialPoint;
+import org.urbcomp.start.db.model.basic.spatial.SpatialPoint;
 
 public class GeoFunctions {
 
