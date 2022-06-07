@@ -529,7 +529,8 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
         .map { i =>
           val fieldName = visitIdent(i.qident().ident().get(0))
           val dataType = new SqlUserDefinedTypeNameSpec(visitIdent(i.dtype().ident()), pos)
-          SqlDdlNodes.column(pos, fieldName, dataType, null, null)
+          val dataTypeSpec = new SqlDataTypeSpec(dataType, pos)
+          SqlDdlNodes.column(pos, fieldName, dataTypeSpec, null, null)
         }
         .toList
         .asJava
