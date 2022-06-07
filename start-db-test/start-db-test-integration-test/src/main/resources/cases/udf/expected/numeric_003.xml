@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<dataset>
+    <metadata>
+        <column name="expr$0" type="float"/>
+    </metadata>
+
+    <row id="01">[["0"]]</row>
+    <row id="02">[["10000.1234567"]]</row>
+    <row id="03">[["-10000.1234567"]]</row>
+    <row id="04">[["12345"]]</row>
+    <row id="05">[["-12345"]]</row>
+    <row id="06">[["10000.1234567"]]</row>
+    <row id="07">[["-10000.1234567"]]</row>
+    <row id="10">[["null"]]</row>
+</dataset>
+
+

@@ -49,6 +49,7 @@ class GeomesaToEnumeratorConverter(cluster: RelOptCluster, traits: RelTraitSet, 
       "query",
       classOf[String],
       classOf[String],
+      classOf[String],
       classOf[String]
     )
 
@@ -64,12 +65,20 @@ class GeomesaToEnumeratorConverter(cluster: RelOptCluster, traits: RelTraitSet, 
     recursiveWrap(getInput, query)
     val tableInstance =
       builder.append("TABLE", query.getRelOptTable.getExpression(classOf[GeomesaQueryable[_]]))
+    val userNameInstance = builder.append("USERNAME", Expressions.constant(query.getUserName))
     val dbNameInstance = builder.append("DBNAME", Expressions.constant(query.getDbName))
     val tableNameInstance = builder.append("TABLENAME", Expressions.constant(query.getTableName))
     val filterInstance = builder.append("FILTER", Expressions.constant(ECQL.toCQL(query.getFilter)))
     val enumeration = builder.append(
       "ENUMERATOR",
-      Expressions.call(tableInstance, method, filterInstance, tableNameInstance, dbNameInstance)
+      Expressions.call(
+        tableInstance,
+        method,
+        filterInstance,
+        tableNameInstance,
+        dbNameInstance,
+        userNameInstance
+      )
     )
     builder.add(Expressions.return_(null, enumeration))
     enumerableRelImplementor.result(physType, builder.toBlock)

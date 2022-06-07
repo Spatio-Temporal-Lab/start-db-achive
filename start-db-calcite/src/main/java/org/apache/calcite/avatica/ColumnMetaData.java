@@ -41,6 +41,7 @@ import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -417,6 +418,7 @@ public class ColumnMetaData {
         MULTIPOLYGON(MultiPolygon.class, 100006),
         GEOMETRY(Geometry.class, 100007),
         GEOMETRYCOLLECTION(GeometryCollection.class, 100008),
+        DATETIME(LocalDateTime.class, 100009),
         // start-db add end
 
         /**

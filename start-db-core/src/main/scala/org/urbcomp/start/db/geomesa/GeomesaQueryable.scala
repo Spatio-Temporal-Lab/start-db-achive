@@ -19,11 +19,10 @@ import org.apache.calcite.schema.impl.AbstractTableQueryable
   * Queryable for Geomesa
   *
   * @param provider  QueryProvider
-  * @param schema  SchemaPlus
-  * @param table geomesa table
+  * @param schema    SchemaPlus
+  * @param table     geomesa table
   * @param tableName table name
-  * @tparam T  type
-  *
+  * @tparam T type
   * @author zaiyuan
   * @since 0.1.0
   */
@@ -34,11 +33,12 @@ class GeomesaQueryable[T](
     tableName: String
 ) extends AbstractTableQueryable[T](provider, schema, table, tableName) {
   override def enumerator(): Enumerator[T] =
-    query(null, null, null).asInstanceOf[Enumerable[T]].enumerator()
+    query(null, null, null, null).asInstanceOf[Enumerable[T]].enumerator()
 
-  def query(filter: String, tableName: String, dbName: String): Enumerable[AnyRef] = {
+  def query(filter: String, tableName: String, dbName: String, user: String): Enumerable[AnyRef] = {
     new AbstractEnumerable[AnyRef] {
-      override def enumerator(): Enumerator[AnyRef] = GeomesaEnumerator(filter, tableName, dbName)
+      override def enumerator(): Enumerator[AnyRef] =
+        GeomesaEnumerator(filter, tableName, dbName, user)
     }
   }
 }

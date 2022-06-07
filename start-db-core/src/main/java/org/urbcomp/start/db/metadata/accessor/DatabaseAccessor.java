@@ -14,7 +14,6 @@ package org.urbcomp.start.db.metadata.accessor;
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
 import org.urbcomp.start.db.metadata.entity.Database;
 import org.urbcomp.start.db.metadata.mapper.DatabaseMapper;
-import org.urbcomp.start.db.metadata.mapper.IMapper;
 
 /**
  * This class is the implementation class of IAccessor.The basic functions of metadata interaction
@@ -23,10 +22,10 @@ import org.urbcomp.start.db.metadata.mapper.IMapper;
  * @author WangBohong
  * @date 2022-05-21
  */
-public class DatabaseAccessor implements IAccessor<Database> {
+public class DatabaseAccessor implements IAccessor<Database, DatabaseMapper> {
 
     @Override
-    public IMapper<Database> getMapper(boolean commit) {
+    public DatabaseMapper getMapper(boolean commit) {
         return SqlSessionUtil.getSession(commit).getMapper(DatabaseMapper.class);
     }
 

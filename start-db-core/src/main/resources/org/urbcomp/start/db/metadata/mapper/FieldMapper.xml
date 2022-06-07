@@ -6,17 +6,17 @@
     <select id="selectAll" resultType="org.urbcomp.start.db.metadata.entity.Field">
         SELECT *
         FROM sys_field
-        WHERE delete_time > 0;
+        WHERE delete_time = 0;
     </select>
     <select id="selectById" resultType="org.urbcomp.start.db.metadata.entity.Field">
         SELECT *
         FROM sys_field
-        WHERE id = #{id} and delete_time > 0;
+        WHERE id = #{id} and delete_time = 0;
     </select>
     <select id="selectByFidAndName" resultType="org.urbcomp.start.db.metadata.entity.Field">
         SELECT *
         FROM sys_field
-        WHERE table_id = #{fid} and name = #{name} and delete_time > 0
+        WHERE table_id = #{fid} and name = #{name} and delete_time = 0
     </select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.urbcomp.start.db.metadata.entity.Field">
@@ -28,7 +28,7 @@
         table_id = #{field.tableId},
         type = #{field.type},
         is_primary = #{field.isPrimary}
-        WHERE id = #{field.id} and delete_time > 0;
+        WHERE id = #{field.id} and delete_time = 0;
     </update>
     <delete id="deleteById">
         UPDATE sys_field

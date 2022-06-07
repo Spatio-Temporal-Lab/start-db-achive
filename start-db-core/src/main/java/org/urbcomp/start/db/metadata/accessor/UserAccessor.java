@@ -13,7 +13,6 @@ package org.urbcomp.start.db.metadata.accessor;
 
 import org.urbcomp.start.db.metadata.SqlSessionUtil;
 import org.urbcomp.start.db.metadata.entity.User;
-import org.urbcomp.start.db.metadata.mapper.IMapper;
 import org.urbcomp.start.db.metadata.mapper.UserMapper;
 
 /**
@@ -23,10 +22,10 @@ import org.urbcomp.start.db.metadata.mapper.UserMapper;
  * @author zaiyuan
  * @date 2022-05-01 15:17:07
  */
-public class UserAccessor implements IAccessor<User> {
+public class UserAccessor implements IAccessor<User, UserMapper> {
 
     @Override
-    public IMapper<User> getMapper(boolean commit) {
+    public UserMapper getMapper(boolean commit) {
         return SqlSessionUtil.getSession(commit).getMapper(UserMapper.class);
     }
 

@@ -13,10 +13,13 @@ package org.urbcomp.start.db.metadata.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.urbcomp.start.db.metadata.entity.Table;
+import org.urbcomp.start.db.util.UserDbTable;
+
+import java.util.List;
 
 /**
  * This interface is used to encapsulate some table mapping information.
- * 
+ *
  * @author Wang Bohong
  * @Date 2022-05-20 17:00:05
  */
@@ -24,7 +27,7 @@ public interface TableMapper extends IMapper<Table> {
 
     /**
      * insert a table instance into sys_table table
-     * 
+     *
      * @param table table instance
      * @return number of affected rows
      */
@@ -33,10 +36,15 @@ public interface TableMapper extends IMapper<Table> {
 
     /**
      * update a table instance into sys_table table
-     * 
+     *
      * @param table table instance
      * @return number of affected rows
      */
     @Override
     long update(@Param("table") Table table);
+
+    /**
+     * get all user db table
+     */
+    List<UserDbTable> getAllUserDbTable();
 }
