@@ -24,52 +24,17 @@ package org.urbcomp.start.db.parser.dql;
 
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlIdentifier;
-import org.apache.calcite.sql.SqlKind;
-import org.apache.calcite.sql.SqlNode;
-import org.apache.calcite.sql.SqlOperator;
-import org.apache.calcite.sql.SqlSpecialOperator;
-import org.apache.calcite.sql.SqlWriter;
 import org.apache.calcite.sql.parser.SqlParserPos;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
-
 /**
- * SHOW CREATE TABLE sql call.
+ * Abstract class for {@link SqlShowCreateTable}
  */
-public class SqlShowTables extends SqlCall {
+public abstract class SqlShowCreate extends SqlCall {
 
-    private final SqlIdentifier databaseName;
+    protected final SqlIdentifier sqlIdentifier;
 
-    public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
-        "SHOW TABLES",
-        SqlKind.OTHER
-    );
-
-    public SqlShowTables(SqlParserPos pos, SqlIdentifier databaseName) {
+    public SqlShowCreate(SqlParserPos pos, SqlIdentifier sqlIdentifier) {
         super(pos);
-        this.databaseName = databaseName;
-    }
-
-    public String fullDatabaseName() {
-        return this.databaseName.names.get(0);
-    }
-
-    @Nonnull
-    @Override
-    public SqlOperator getOperator() {
-        return OPERATOR;
-    }
-
-    @Nonnull
-    @Override
-    public List<SqlNode> getOperandList() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
-        writer.keyword("SHOW TABLES");
+        this.sqlIdentifier = sqlIdentifier;
     }
 }

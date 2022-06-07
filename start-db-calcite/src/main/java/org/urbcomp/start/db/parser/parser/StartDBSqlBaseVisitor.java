@@ -757,6 +757,7 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      */
     @Override
     public T visitWhereClause(StartDBSqlParser.WhereClauseContext ctx) {
+
         return visitChildren(ctx);
     }
 
