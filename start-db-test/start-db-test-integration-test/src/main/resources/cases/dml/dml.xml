@@ -23,7 +23,7 @@ expected的属性为空的话, 表示语句无预期值, 也无预期异常, 可
         <sql>insert into t1 values( ?, ? );</sql>
         <assertion id="1" parameters="[1]['小白']" expected=""/>
         <assertion id="2" parameters="[2]['小黑']"/>
-        <assertion id="3" parameters="[3][]" expected="error:参数缺失"/>
+        <assertion id="3" parameters="[3][ ]" expected="error:参数缺失"/>
     </case>
 
     <!-- 通过xsd约束文件限制 caseId 的值唯一 , 使用data_{caseId} 作为预期文件的文件名, 即可保证case与预期文件一一对应 -->

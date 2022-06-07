@@ -23,7 +23,7 @@ public class MainTest {
     @Test
     public void singleSQLCaseTest() throws Exception {
         String xmlPath =
-            "E:\\Github\\start-db-dev\\start-db-test\\start-db-test-integration-test\\src\\main\\resources\\cases\\test\\test.xml";
+            "E:/GitHub/start-db/start-db-test/start-db-test-integration-test/target/classes/cases/dml/dml.xml";
         runSingleCase(xmlPath);
 
     }
