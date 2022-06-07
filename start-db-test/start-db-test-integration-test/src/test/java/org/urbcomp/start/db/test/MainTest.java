@@ -25,7 +25,7 @@ public class MainTest {
     public void singleSQLCaseTest() throws Exception {
 
         String xmlResource = Objects.requireNonNull(
-                RunSingleSQLCase.class.getClassLoader().getResource("cases/dml/dml.xml")
+            RunSingleSQLCase.class.getClassLoader().getResource("cases/dml/dml.xml")
         ).getPath();
         System.out.println(xmlResource);
         runSingleCase(xmlResource);
