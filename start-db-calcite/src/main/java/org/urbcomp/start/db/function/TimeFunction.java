@@ -25,6 +25,11 @@ package org.urbcomp.start.db.function;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.WeekFields;
 import java.util.Date;
 
 /**
@@ -47,13 +52,13 @@ public class TimeFunction {
      * Converts a date string to a timestamp
      *
      * @param dateString date(time) String
-     * @param format     date format
+     * @param format date format
      * @return timestamp
      * @throws ParseException parse exception
      */
     @StartDBFunction("toTimestamp")
     public Timestamp toTimestamp(String dateString, String format) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format.trim());
         Date date = simpleDateFormat.parse(dateString);
         long time = date.getTime();
         return new Timestamp(time);
@@ -138,7 +143,7 @@ public class TimeFunction {
     /**
      * Formats the timestamp in the specified format
      *
-     * @param ts     timestamp
+     * @param ts timestamp
      * @param string time format
      * @return the specified format instance
      */
@@ -146,5 +151,319 @@ public class TimeFunction {
     public String timestampFormat(Timestamp ts, String string) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(string);
         return simpleDateFormat.format(new Date(ts.getTime()));
+    }
+
+    /**
+     * Converts a String to Datetime as the given format
+     * @param dateString date(time) String
+     * @param format date format
+     * @return datetime datetime instance
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("toDatetime")
+    public LocalDateTime toDatetime(String dateString, String format) throws DateTimeException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format.trim());
+        return LocalDateTime.parse(dateString, formatter);
+    }
+
+    /**
+     * Converts a String to Datetime
+     * @param dateString date(time) String
+     * @return Datetime instance
+     * @throws DateTimeParseException parse exception
+     */
+    @StartDBFunction("toDatetime")
+    public LocalDateTime toDateTime(String dateString) throws DateTimeParseException {
+        LocalDateTime localDateTime = LocalDateTime.MIN;
+        boolean isCorrect = false;
+        DateTimeParseException pe = null;
+        for (String format : DEFAULT_FORMATS) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+                localDateTime = LocalDateTime.parse(dateString, formatter);
+                isCorrect = true;
+                break;
+            } catch (DateTimeParseException exception) {
+                pe = exception;
+            }
+        }
+        if (!isCorrect && pe != null) {
+            throw new DateTimeParseException(
+                "Date format is error. Only receive ",
+                String.join(",", DEFAULT_FORMATS),
+                pe.getErrorIndex()
+            );
+        }
+        return localDateTime;
+    }
+
+    /**
+     * Converts a Datetime string to timestamp(with TimeZone)
+     * @param dtString datetime String
+     * @return timestamp timestamp instance
+     */
+    @StartDBFunction("datetimeToTimestamp")
+    public Timestamp datetimeToTimestamp(String dtString) throws ParseException {
+        return toTimestamp(dtString);
+    }
+
+    /**
+     * Converts a Datetime instance to timestamp(with TimeZone)
+     * @param dateTime datetime instance
+     * @return timestamp timestamp instance
+     * @throws ParseException parse exception
+     */
+    @StartDBFunction("datetimeToTimestamp")
+    public Timestamp datetimeToTimestamp(LocalDateTime dateTime) throws ParseException {
+        String dtString = dateTime.toString();
+        return datetimeToTimestamp(dtString);
+    }
+
+    /**
+     * Convert datetime to timestamp
+     * @param timestamp Timestamp instance
+     * @return datetime instance
+     */
+    @StartDBFunction("timestampToDatetime")
+    public LocalDateTime timestampToDatetime(Timestamp timestamp) {
+        return toDateTime(timestamp.toString());
+    }
+
+    /**
+     * Convert timestamp to datetime
+     * @param tsString Timestamp String
+     * @return datetime datetime instance
+     * @throws ParseException parse exception
+     */
+    @StartDBFunction("timestampToDatetime")
+    public LocalDateTime timestampToDatetime(String tsString) throws ParseException {
+        Timestamp timestamp = toTimestamp(tsString);
+        return timestampToDatetime(timestamp);
+    }
+
+    /**
+     * get current datetime
+     * @return datetime instance
+     */
+    @StartDBFunction("currentDatetime")
+    public LocalDateTime currentDatetime() {
+        return LocalDateTime.now();
+    }
+
+    /**
+     * Formats one datetime instance into the specified format
+     * @param dt datetime instance
+     * @param format format string
+     * @return datetime string
+     */
+    @StartDBFunction("datetimeFormat")
+    public String datetimeFormat(LocalDateTime dt, String format) throws DateTimeException {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(format.trim());
+        return dateTimeFormatter.format(dt);
+    }
+
+    /**
+     * Formats one datetime string into the specified format
+     * @param dtStr datetime String
+     * @param format format string
+     * @return datetime string
+     */
+    @StartDBFunction("datetimeFormat")
+    public String datetimeFormat(String dtStr, String format) throws DateTimeException {
+        LocalDateTime localDateTime = toDateTime(dtStr);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(format.trim());
+        return dateTimeFormatter.format(localDateTime);
+    }
+
+    /**
+     * get hour value of datetime
+     * @param localDateTime datetime
+     * @return hour value
+     */
+    @StartDBFunction("hour")
+    public int hour(LocalDateTime localDateTime) {
+        return localDateTime.getHour();
+    }
+
+    /**
+     * get hour value of datetime
+     * @param dtString datetime string
+     * @return hour value
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("hour")
+    public int hour(String dtString) throws DateTimeException {
+        return toDateTime(dtString).getHour();
+    }
+
+    /**
+     * get minute value of datetime
+     * @param localDateTime datetime
+     * @return minute value
+     */
+    @StartDBFunction("minute")
+    public int minute(LocalDateTime localDateTime) {
+        return localDateTime.getMinute();
+    }
+
+    /**
+     * get minute value of datetime
+     * @param dtString datetime string
+     * @return minute value
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("minute")
+    public int minute(String dtString) throws DateTimeException {
+        return toDateTime(dtString).getMinute();
+    }
+
+    /**
+     * get second value of datetime
+     * @param localDateTime datetime
+     * @return second value
+     */
+    @StartDBFunction("second")
+    public int second(LocalDateTime localDateTime) {
+        return localDateTime.getSecond();
+    }
+
+    /**
+     * get second value of datetime
+     * @param dtString datetime string
+     * @return second value
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("second")
+    public int second(String dtString) throws DateTimeException {
+        return toDateTime(dtString).getSecond();
+    }
+
+    /**
+     * get week value of the year
+     * @param localDateTime datetime
+     * @return week of the year
+     */
+    @StartDBFunction("week")
+    public int week(LocalDateTime localDateTime) {
+        WeekFields weekFields = WeekFields.ISO;
+        return localDateTime.get(weekFields.weekBasedYear());
+    }
+
+    /**
+     * get week value of the year
+     * @param dtString datetime string
+     * @return week of the year
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("week")
+    public int week(String dtString) throws DateTimeException {
+        WeekFields weekFields = WeekFields.ISO;
+        return toDateTime(dtString).get(weekFields.weekOfYear());
+    }
+
+    /**
+     * get month of the year
+     * @param localDateTime datetime
+     * @return month of the year
+     */
+    @StartDBFunction("month")
+    public int month(LocalDateTime localDateTime) {
+        return localDateTime.getMonth().getValue();
+    }
+
+    /**
+     * get month of the year
+     * @param dtString datetime instance
+     * @return month of the year
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("month")
+    public int month(String dtString) throws DateTimeException {
+        return toDateTime(dtString).getMonth().getValue();
+    }
+
+    /**
+     * get year value
+     * @param localDateTime datetime
+     * @return year value
+     */
+    @StartDBFunction("year")
+    public int year(LocalDateTime localDateTime) {
+        return localDateTime.getYear();
+    }
+
+    /**
+     * get year value
+     * @param dtString datetime string
+     * @return year value
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("year")
+    public int year(String dtString) throws DateTimeException {
+        return toDateTime(dtString).getYear();
+    }
+
+    /**
+     * get day of month
+     * @param localDateTime datetime
+     * @return day of month
+     */
+    @StartDBFunction("dayOfMonth")
+    public int dayOfMonth(LocalDateTime localDateTime) {
+        return localDateTime.getDayOfMonth();
+    }
+
+    /**
+     * get day of month
+     * @param dtString datetime string
+     * @return day of month
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("dayOfMonth")
+    public int dayOfMonth(String dtString) throws DateTimeException {
+        return toDateTime(dtString).getDayOfMonth();
+    }
+
+    /**
+     * get day of week
+     * @param localDateTime datetime
+     * @return day of week
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("dayOfWeek")
+    public int dayOfWeek(LocalDateTime localDateTime) {
+        return localDateTime.getDayOfWeek().getValue();
+    }
+
+    /**
+     * get day of week
+     * @param dtString datetime string
+     * @return day of week
+     * @throws DateTimeException parse exception
+     */
+    @StartDBFunction("dayOfWeek")
+    public int dayOfWeek(String dtString) throws DateTimeException {
+        return toDateTime(dtString).getDayOfWeek().getValue();
+    }
+
+    /**
+     * get day of year
+     * @param localDateTime datetime
+     * @return day of year
+     */
+    @StartDBFunction("dayOfYear")
+    public int dayOfYear(LocalDateTime localDateTime) {
+        return localDateTime.getDayOfYear();
+    }
+
+    /**
+     * get day of year
+     * @param dtString datetime string
+     * @return day of year
+     * @throws DateTimeException parse Exception
+     */
+    @StartDBFunction("dayOfYear")
+    public int dayOfYear(String dtString) throws DateTimeException {
+        return toDateTime(dtString).getDayOfYear();
     }
 }

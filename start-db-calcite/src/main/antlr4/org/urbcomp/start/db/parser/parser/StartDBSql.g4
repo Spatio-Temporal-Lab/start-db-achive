@@ -15,7 +15,7 @@ program : stmt T_SEMICOLON? EOF;
 
 stmt :
        createDatabaseStmt
-     | createTableStmt  // TODO
+     | createTableStmt
      | describeStmt
      | dropDatabaseStmt
      | dropTableStmt
@@ -63,33 +63,87 @@ showCreateTableStmt :
      ;
 
 createTableStmt :
-       // TODO: createTableWithColums
-       createTableWithSelect
-     | createTableWithLike
+       T_CREATE T_TABLE (T_IF T_NOT T_EXISTS)? table_name create_table_preoptions? create_table_definition
      ;
 
-createTableWithSelect :
-       T_CREATE (T_OR T_REPLACE)? T_TABLE (T_IF T_NOT T_EXISTS)? tableName T_AS  selectStmt withOption?
+create_table_definition :
+      (T_AS? T_OPEN_P selectStmt T_CLOSE_P | T_AS? selectStmt | T_OPEN_P create_table_columns T_CLOSE_P | T_LIKE table_name) create_table_options?
      ;
 
-createTableWithLike :
-       T_CREATE (T_OR T_REPLACE)? T_TABLE (T_IF T_NOT T_EXISTS)? destination=tableName T_LIKE origination=tableName
+create_table_columns :
+       create_table_columns_item (T_COMMA create_table_columns_item)*
      ;
 
-withOption :
-       T_WITH T_OPEN_P withOptionItems T_CLOSE_P
+create_table_columns_item :
+       column_name dtype dtype_attr* create_table_column_inline_cons*
+     | (T_CONSTRAINT qident)? create_table_column_cons
      ;
 
-withOptionItems:
-    withOptionItem (T_COMMA withOptionItem)*
+column_name :
+       qident
+     ;
+
+create_table_column_inline_cons :
+       dtype_default
+     | T_NOT? T_NULL
+     | T_PRIMARY T_KEY
+     | T_UNIQUE
+     | T_REFERENCES table_name T_OPEN_P qident T_CLOSE_P create_table_fk_action*
+     | T_IDENTITY T_OPEN_P L_INT (T_COMMA L_INT)* T_CLOSE_P
+     | T_AUTO_INCREMENT
+     | T_ENABLE
+     ;
+
+create_table_column_cons :
+       T_PRIMARY T_KEY T_CLUSTERED? T_OPEN_P qident (T_ASC | T_DESC)? (T_COMMA qident (T_ASC | T_DESC)?)* T_CLOSE_P T_ENABLE?
+     | T_FOREIGN T_KEY T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P T_REFERENCES table_name T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P create_table_fk_action*
     ;
 
-withOptionItem :
-       left=(L_ID|L_D_STRING|L_S_STRING) T_EQUAL right=(L_ID|L_D_STRING|L_S_STRING)
+create_table_fk_action :
+       T_ON (T_UPDATE | T_DELETE) (T_NO T_ACTION | T_RESTRICT | T_SET T_NULL | T_SET T_DEFAULT | T_CASCADE)
+     ;
+
+create_table_preoptions :
+      create_table_preoptions_item+
+     ;
+
+create_table_preoptions_item :
+        T_COMMA create_table_preoptions_td_item
+     ;
+
+create_table_preoptions_td_item :
+       T_NO? (T_LOG | T_FALLBACK)
+     ;
+
+create_table_options :
+       create_table_options_item+
+     ;
+
+create_table_options_item :
+       T_ON T_COMMIT (T_DELETE | T_PRESERVE) T_ROWS
+     | create_table_options_mysql_item
+     ;
+
+create_table_options_mysql_item :
+       T_AUTO_INCREMENT T_EQUAL? expr
+     | T_COMMENT T_EQUAL? expr
+     | T_DEFAULT? (T_CHARACTER T_SET | T_CHARSET) T_EQUAL? expr
+     | T_ENGINE T_EQUAL? expr
+     ;
+
+dtype_default :
+       T_COLON? T_EQUAL expr
+     | T_WITH? T_DEFAULT expr?
      ;
 
 showTablesStmt :
         T_SHOW T_TABLES
+     ;
+
+dtype_attr :
+       T_NOT? T_NULL
+     | T_CHARACTER T_SET ident
+     | T_NOT? (T_CASESPECIFIC | T_CS)
      ;
 
 dtype :                  // Data types
@@ -551,6 +605,14 @@ funcParam :
      |  T_MUL
      ;
 
+table_name :
+       qident
+     ;
+
+qident :                                  // qualified identifier e.g: table_name.col_name or db_name._table_name
+       ident ('.'ident)*
+     ;
+
 /*---------------------------- third party parser----------------------------*/
 
 dateLiteral :                             // DATE 'YYYY-MM-DD' literal
@@ -724,8 +786,6 @@ nonReservedWords :                      // Tokens that are not reserved words an
      | T_HANDLER
      | T_HASH
      | T_HAVING
-     | T_HDFS
-     | T_HIVE
      | T_HOST
      | T_IDENTITY
      | T_IF
@@ -936,6 +996,7 @@ T_ASC             : A S C ;
 T_ASSOCIATE       : A S S O C I A T E ;
 T_AT              : A T ;
 T_AUTO            : A U T O ;
+T_AUTO_INCREMENT  : A U T O I N C R E M E N T;
 T_AVG             : A V G ;
 T_BATCHSIZE       : B A T C H S I Z E ;
 T_BEGIN           : B E G I N ;

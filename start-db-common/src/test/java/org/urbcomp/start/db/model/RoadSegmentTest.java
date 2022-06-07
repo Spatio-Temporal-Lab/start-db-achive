@@ -17,13 +17,13 @@ import org.urbcomp.start.db.model.sample.ModelGenerator;
 
 import static org.junit.Assert.assertEquals;
 
-public class TrajectoryTest {
-    private final Trajectory trajectory = ModelGenerator.generateTrajectory();
+public class RoadSegmentTest {
+    private final RoadSegment rs = ModelGenerator.generateRoadSegment();
 
     @Test
     public void toGeoJSON() throws JsonProcessingException {
-        String geoJson = trajectory.toGeoJSON();
-        Trajectory traj = Trajectory.fromGeoJSON(geoJson);
-        assertEquals(trajectory, traj);
+        String jsonStr = rs.toGeoJSON();
+        RoadSegment rs1 = RoadSegment.fromGeoJSON(jsonStr);
+        assertEquals(rs, rs1);
     }
 }

@@ -188,7 +188,8 @@ public enum SqlTypeName {
     GEOMETRYCOLLECTION(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.GEOMETRY),
     // start-db add end
     GEOMETRY(PrecScale.NO_NO, false, ExtraSqlTypes.GEOMETRY, SqlTypeFamily.GEOMETRY),
-    SARG(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ANY);
+    SARG(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ANY),
+    DATETIME(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.DATETIME);
 
     public static final int MAX_DATETIME_PRECISION = 3;
 
