@@ -28,6 +28,13 @@ public class MetadataUtil {
     }
 
     /**
+     * combine to a user-db key
+     */
+    public static String combineUserDbKey(String user, String db) {
+        return user + UDT_SPLITTER + db;
+    }
+
+    /**
      * split the user db table key
      */
     public static UserDbTable splitUserDbTable(String key) {

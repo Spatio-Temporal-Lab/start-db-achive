@@ -11,7 +11,14 @@
 
 package org.urbcomp.start.db.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.geojson.Feature;
+import org.geojson.LngLatAlt;
 import org.locationtech.jts.geom.LineString;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class RoadSegment {
     // road segment id
@@ -103,4 +110,56 @@ public class RoadSegment {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoadSegment rs = (RoadSegment) o;
+        return Objects.equals(this.rsId, rs.rsId)
+            && Objects.equals(this.direction, rs.direction)
+            && Objects.equals(this.speedLimit, rs.speedLimit)
+            && Objects.equals(this.level, rs.level)
+            && Objects.equals(this.startId, rs.startId)
+            && Objects.equals(this.endId, rs.endId)
+            && Objects.equals(this.length, rs.length);
+    }
+
+    public Feature toFeature() {
+        Feature f = new Feature();
+        f.setProperty("rsId", rsId);
+        f.setProperty("direction", direction.value());
+        f.setProperty("speedLimit", speedLimit);
+        f.setProperty("level", level.value());
+        f.setProperty("startId", startId);
+        f.setProperty("endId", endId);
+        f.setProperty("length", length);
+        LngLatAlt[] lngLats = Arrays.stream(geom.getCoordinates())
+            .map(o -> new LngLatAlt(o.x, o.y))
+            .toArray(LngLatAlt[]::new);
+        f.setGeometry(new org.geojson.LineString(lngLats));
+        return f;
+    }
+
+    public static RoadSegment fromFeature(Feature f) {
+        return new RoadSegment().setRsId(f.getProperty("rsId"))
+            .setDirection(RoadSegmentDirection.valueOf((Integer) f.getProperty("direction")))
+            .setSpeedLimit(f.getProperty("speedLimit"))
+            .setLevel(RoadSegmentLevel.valueOf((Integer) f.getProperty("level")))
+            .setStartId(f.getProperty("startId"))
+            .setEndId(f.getProperty("endId"))
+            .setLength(f.getProperty("length"));
+    }
+
+    /**
+     * Convert this RoadSegment to GeoJSON String
+     * @return GeoJSON String
+     */
+    public String toGeoJSON() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(toFeature());
+    }
+
+    public static RoadSegment fromGeoJSON(String geoJsonStr) throws JsonProcessingException {
+        Feature f = new ObjectMapper().readValue(geoJsonStr, Feature.class);
+        return fromFeature(f);
+    }
 }
