@@ -33,10 +33,7 @@ public class RunSingleSQLCase {
     public static void runSingleCase(String xmlPath) throws Exception {
         try {
             SAXReader saxReader = new SAXReader();
-            // String xmlResource = Objects.requireNonNull(
-            // RunSingleSQLCase.class.getClassLoader().getResource("cases/dml/dml.xml")
-            // ).getPath();
-            // System.out.println(xmlResource);
+
             Document document = saxReader.read(xmlPath);
             Element rootElement = document.getRootElement();
 

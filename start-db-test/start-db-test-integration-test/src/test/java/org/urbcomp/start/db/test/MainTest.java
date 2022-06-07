@@ -14,6 +14,7 @@ package org.urbcomp.start.db.test;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static org.urbcomp.start.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
@@ -22,9 +23,12 @@ public class MainTest {
 
     @Test
     public void singleSQLCaseTest() throws Exception {
-        String xmlPath =
-            "E:/GitHub/start-db/start-db-test/start-db-test-integration-test/target/classes/cases/dml/dml.xml";
-        runSingleCase(xmlPath);
+
+        String xmlResource = Objects.requireNonNull(
+                RunSingleSQLCase.class.getClassLoader().getResource("cases/dml/dml.xml")
+        ).getPath();
+        System.out.println(xmlResource);
+        runSingleCase(xmlResource);
 
     }
 
