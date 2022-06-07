@@ -12,7 +12,12 @@
 package org.urbcomp.start.db.test;
 
 public class CompareActualAndExpect {
-
+    /**
+     * 比较实际返回值或者实际抛出的异常是否符合预期, 不一致就抛出异常
+     *
+     * @param actualValue 实际返回内容
+     * @param expectValue 预期返回内容
+     * */
     public static void compareData(String actualValue, String expectValue) throws Exception {
         // todo 比较实际返回值或者实际抛出的异常是否与预期一致, 不一致就抛出异常
         if (true) {
