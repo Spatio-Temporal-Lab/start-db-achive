@@ -841,7 +841,11 @@ object DateTimeUtils {
     * Add timestamp and full interval.
     * Returns a timestamp value, expressed in microseconds since 1.1.1970 00:00:00.
     */
-  def timestampAddInterval(start: StartDbTimestamp, months: Int, microseconds: Long): StartDbTimestamp = {
+  def timestampAddInterval(
+      start: StartDbTimestamp,
+      months: Int,
+      microseconds: Long
+  ): StartDbTimestamp = {
     timestampAddInterval(start, months, microseconds, defaultTimeZone())
   }
 
@@ -850,10 +854,10 @@ object DateTimeUtils {
     * Returns a timestamp value, expressed in microseconds since 1.1.1970 00:00:00.
     */
   def timestampAddInterval(
-                            start: StartDbTimestamp,
-                            months: Int,
-                            microseconds: Long,
-                            timeZone: TimeZone
+      start: StartDbTimestamp,
+      months: Int,
+      microseconds: Long,
+      timeZone: TimeZone
   ): StartDbTimestamp = {
     val days = millisToDays(start / 1000L, timeZone)
     val newDays = dateAddMonths(days, months)
@@ -886,7 +890,11 @@ object DateTimeUtils {
     * Otherwise, the difference is calculated based on 31 days per month, and rounding to
     * 8 digits.
     */
-  def monthsBetween(time1: StartDbTimestamp, time2: StartDbTimestamp, timeZone: TimeZone): Double = {
+  def monthsBetween(
+      time1: StartDbTimestamp,
+      time2: StartDbTimestamp,
+      timeZone: TimeZone
+  ): Double = {
     val millis1 = time1 / 1000L
     val millis2 = time2 / 1000L
     val date1 = millisToDays(millis1, timeZone)
