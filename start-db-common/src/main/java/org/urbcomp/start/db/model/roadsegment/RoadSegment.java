@@ -17,8 +17,10 @@ import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RoadSegment {
@@ -148,6 +150,7 @@ public class RoadSegment {
 
     /**
      * Convert this RoadSegment to GeoJSON String
+     *
      * @return GeoJSON String
      */
     public String toGeoJSON() throws JsonProcessingException {
@@ -157,5 +160,42 @@ public class RoadSegment {
     public static RoadSegment fromGeoJSON(String geoJsonStr) throws JsonProcessingException {
         Feature f = new ObjectMapper().readValue(geoJsonStr, Feature.class);
         return fromFeature(f);
+    }
+
+    /**
+     * if this road segment if dual, create a road segment with its id as an opposite number, otherwise, return empty.
+     */
+    public Optional<RoadSegment> createReverseRoadSegmentIfDual() {
+        if (direction == RoadSegmentDirection.DUAL) {
+            int reverseRoadId = roadSegmentId == 0 ? Integer.MIN_VALUE : -roadSegmentId;
+            return Optional.of(safeReverse(reverseRoadId, RoadSegmentDirection.DUAL));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * if the road segment is backward, return its reversed version with the same id, otherwise, return itself
+     */
+    public RoadSegment flipBackwardRoadSegment() {
+        return direction == RoadSegmentDirection.BACKWARD
+            ? safeReverse(roadSegmentId, RoadSegmentDirection.FORWARD)
+            : this;
+    }
+
+    private RoadSegment safeReverse(int reverseRoadSegmentId, RoadSegmentDirection dir) {
+        List<SpatialPoint> pointsReverse = new ArrayList<>(points.size());
+        for (int i = points.size() - 1; i >= 0; --i) {
+            pointsReverse.add(new SpatialPoint(points.get(i).getCoordinate()));
+        }
+        return new RoadSegment(
+            reverseRoadSegmentId,
+            endNode.getNodeId(),
+            startNode.getNodeId(),
+            pointsReverse
+        ).setDirection(dir)
+            .setSpeedLimit(speedLimit)
+            .setLevel(level)
+            .setLengthInMeter(lengthInMeter);
     }
 }

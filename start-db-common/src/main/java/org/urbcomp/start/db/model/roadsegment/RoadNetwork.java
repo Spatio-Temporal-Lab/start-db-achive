@@ -13,34 +13,93 @@ package org.urbcomp.start.db.model.roadsegment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.davidmoten.rtree.RTree;
+import com.github.davidmoten.rtree.geometry.Geometries;
+import com.github.davidmoten.rtree.geometry.Rectangle;
 import org.geojson.FeatureCollection;
+import org.urbcomp.start.db.model.point.SpatialPoint;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class RoadNetwork {
-    private List<RoadSegment> roadSegments;
+    private final HashMap<Integer, RoadSegment> idToExpandedRoadSegment = new HashMap<>();
+    private final List<RoadSegment> roadSegments;
+
+    private final Object directedRoadGraphLock = new Object();
+    private volatile RoadGraph directedRoadGraph;
+
+    private final Object undirectedRoadGraphLock = new Object();
+    private volatile RoadGraph undirectedRoadGraph;
+
+    private final Object roadRTreeLock = new Object();
+    private volatile RTree<RoadSegment, Rectangle> roadRTree;
 
     public RoadNetwork(List<RoadSegment> roadSegments) {
-        this.roadSegments = roadSegments;
+        this.roadSegments = roadSegments.stream()
+            .map(RoadSegment::flipBackwardRoadSegment)
+            .collect(Collectors.toList());
+        this.roadSegments.forEach(o -> {
+            idToExpandedRoadSegment.put(o.getRoadSegmentId(), o);
+            Optional<RoadSegment> rsOp = o.createReverseRoadSegmentIfDual();
+            if (rsOp.isPresent()) {
+                RoadSegment rs = rsOp.get();
+                idToExpandedRoadSegment.put(rs.getRoadSegmentId(), rs);
+            }
+        });
     }
 
-    public RoadNetwork() {
-        this(new ArrayList<>());
+    public RoadGraph getDirectedRoadGraph() {
+        if (directedRoadGraph == null) {
+            synchronized (directedRoadGraphLock) {
+                if (directedRoadGraph == null) {
+                    directedRoadGraph = new RoadGraph(true);
+                    idToExpandedRoadSegment.values().forEach(o -> directedRoadGraph.addEdge(o));
+                }
+            }
+        }
+        return directedRoadGraph;
     }
 
-    public RoadNetwork addRoadSegment(RoadSegment roadSegment) {
-        this.roadSegments.add(roadSegment);
-        return this;
+    public RoadGraph getUndirectedRoadGraph() {
+        if (undirectedRoadGraph == null) {
+            synchronized (undirectedRoadGraphLock) {
+                if (undirectedRoadGraph == null) {
+                    undirectedRoadGraph = new RoadGraph(false);
+                    idToExpandedRoadSegment.values().forEach(o -> undirectedRoadGraph.addEdge(o));
+                }
+            }
+        }
+        return undirectedRoadGraph;
     }
 
-    public List<RoadSegment> getRoadSegments() {
-        return roadSegments;
-    }
-
-    public RoadNetwork setRoadSegments(List<RoadSegment> roadSegments) {
-        this.roadSegments = roadSegments;
-        return this;
+    public RTree<RoadSegment, Rectangle> getRoadRTree() {
+        if (roadRTree == null) {
+            synchronized (roadRTreeLock) {
+                if (roadRTree == null) {
+                    for (RoadSegment rs : idToExpandedRoadSegment.values()) {
+                        List<SpatialPoint> points = rs.getPoints();
+                        double minLng = Double.MAX_VALUE;
+                        double minLat = Double.MAX_VALUE;
+                        double maxLng = Double.MIN_VALUE;
+                        double maxLat = Double.MIN_VALUE;
+                        for (SpatialPoint point : points) {
+                            minLng = Math.min(minLng, point.getLng());
+                            minLat = Math.min(minLat, point.getLat());
+                            maxLng = Math.max(maxLng, point.getLng());
+                            maxLat = Math.max(maxLat, point.getLat());
+                        }
+                        roadRTree = roadRTree.add(
+                            rs,
+                            Geometries.rectangleGeographic(minLng, minLat, maxLng, maxLat)
+                        );
+                    }
+                }
+            }
+        }
+        return roadRTree;
     }
 
     @Override
@@ -67,8 +126,10 @@ public class RoadNetwork {
 
     public static RoadNetwork fromGeoJSON(String geoJsonStr) throws JsonProcessingException {
         FeatureCollection fc = new ObjectMapper().readValue(geoJsonStr, FeatureCollection.class);
-        RoadNetwork rn = new RoadNetwork();
-        fc.getFeatures().forEach(f -> rn.addRoadSegment(RoadSegment.fromFeature(f)));
-        return rn;
+        List<RoadSegment> roadSegmentList = fc.getFeatures()
+            .stream()
+            .map(RoadSegment::fromFeature)
+            .collect(Collectors.toList());
+        return new RoadNetwork(roadSegmentList);
     }
 }

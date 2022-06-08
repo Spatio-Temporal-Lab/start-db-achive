@@ -55,8 +55,9 @@ public class ModelGenerator {
         RoadSegment rs1 = generateRoadSegment();
         RoadSegment rs2 = generateRoadSegment();
         rs2.setLevel(RoadSegmentLevel.HIGH_WAY_ROAD);
-        RoadNetwork rn = new RoadNetwork();
-        rn.addRoadSegment(rs1).addRoadSegment(rs2);
-        return rn;
+        List<RoadSegment> roadSegmentList = new ArrayList<>(2);
+        roadSegmentList.add(rs1);
+        roadSegmentList.add(rs2);
+        return new RoadNetwork(roadSegmentList);
     }
 }

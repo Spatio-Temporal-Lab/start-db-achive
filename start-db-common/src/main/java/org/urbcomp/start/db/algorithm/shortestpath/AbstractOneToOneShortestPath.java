@@ -11,26 +11,13 @@
 
 package org.urbcomp.start.db.algorithm.shortestpath;
 
-import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
 
 public abstract class AbstractOneToOneShortestPath implements IShortestPath {
     private RoadNetwork roadNetwork;
-    private SpatialPoint startPoint;
-    private SpatialPoint endPoint;
     /**
      * note that the start and end points may be mot exactly on the road segments,
      * the searchDistance defines the scope to find the start or end road segments.
      */
-    private double searchDistance;
-
-    public AbstractOneToOneShortestPath(
-        RoadNetwork roadNetwork,
-        SpatialPoint startPoint,
-        SpatialPoint endPoint
-    ) {
-        this.roadNetwork = roadNetwork;
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
-    }
+    private double searchDistance = 300;
 }
