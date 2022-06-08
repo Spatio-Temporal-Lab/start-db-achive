@@ -26,6 +26,7 @@ import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.locationtech.jts.io.geojson.GeoJsonReader;
+import org.urbcomp.start.db.model.Binary;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -174,5 +175,47 @@ public class GeometricRelationTypeConversionFunction {
     @StartDBFunction("st_castToGeometry")
     public Geometry st_castToGeometry(Geometry geom) {
         return geom;
+    }
+
+    @StartDBFunction("st_pointFromWKB")
+    public Point st_pointFromWKB(Binary wkb) throws ParseException {
+        return st_castToPoint(st_geomFromWKB(wkb));
+    }
+
+    @StartDBFunction("st_lineStringFromWKB")
+    public LineString st_lineStringFromWKB(Binary wkb) throws ParseException {
+        return st_castToLineString(st_geomFromWKB(wkb));
+    }
+
+    @StartDBFunction("st_polygonFromWKB")
+    public Polygon st_polygonFromWKB(Binary wkb) throws ParseException {
+        return st_castToPolygon(st_geomFromWKB(wkb));
+    }
+
+    @StartDBFunction("st_mPointFromWKB")
+    public MultiPoint st_mPointFromWKB(Binary wkb) throws ParseException {
+        return st_castToMPoint(st_geomFromWKB(wkb));
+    }
+
+    @StartDBFunction("st_mLineStringFromWKB")
+    public MultiLineString st_mLineStringFromWKB(Binary wkb) throws ParseException {
+        return st_castToMLineString(st_geomFromWKB(wkb));
+    }
+
+    @StartDBFunction("st_mPolygonFromWKB")
+    public MultiPolygon st_mPolygonFromWKB(Binary wkb) throws ParseException {
+        return st_castToMPolygon(st_geomFromWKB(wkb));
+    }
+
+    @StartDBFunction("st_geomFromWKB")
+    public Geometry st_geomFromWKB(Binary wkb) throws ParseException {
+        WKBReader wkbReader = new WKBReader();
+        return wkbReader.read(wkb.toByteArray());
+    }
+
+    @StartDBFunction("st_asWKB")
+    public Binary st_asWKB(Geometry geom) throws IOException {
+        WKBWriter wkbWriter = new WKBWriter();
+        return new Binary(wkbWriter.write(geom));
     }
 }

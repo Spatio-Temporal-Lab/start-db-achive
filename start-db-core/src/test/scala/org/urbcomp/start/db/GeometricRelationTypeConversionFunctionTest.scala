@@ -271,4 +271,92 @@ class GeometricRelationTypeConversionFunctionTest extends AbstractCalciteFunctio
     resultSet.next()
     assertEquals("LINESTRING (0 0, 1 1, 1 2)", resultSet.getObject(1).toString)
   }
+
+  test("st_pointFromWKB(WKB)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_pointFromWKB(st_asWKB(st_makePoint(1, 2)))")
+    resultSet.next()
+    assertEquals("POINT (1 2)", resultSet.getObject(1).toString)
+  }
+
+  test("st_lineStringFromWKB(WKB)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_lineStringFromWKB(st_asWKB(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))), " +
+        "st_lineStringFromWKB(st_asWKB(st_makePoint(1, 2)))"
+    )
+    resultSet.next()
+    assertEquals("LINESTRING (0 0, 1 1, 1 2)", resultSet.getObject(1).toString)
+    assertEquals(null, resultSet.getObject(2))
+  }
+
+  test("st_polygonFromWKB(WKB)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_polygonFromWKB(st_asWKB(st_polygonFromWKT('POLYGON((10 11,12 12,13 14,15 16,10 11))')))," +
+        " st_polygonFromWKB(st_asWKB(st_makePoint(1, 2)))"
+    )
+    resultSet.next()
+    assertEquals("POLYGON ((10 11, 12 12, 13 14, 15 16, 10 11))", resultSet.getObject(1).toString)
+    assertEquals(null, resultSet.getObject(2))
+  }
+
+  test("st_mPointFromWKB(WKB)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_mPointFromWKB(st_asWKB(st_mPointFromWKT('MULTIPOINT(3.5 5.6, 4.8 10.5)')))," +
+        " st_mPointFromWKB(st_asWKB(st_makePoint(1, 2)))"
+    )
+    resultSet.next()
+    assertEquals("MULTIPOINT ((3.5 5.6), (4.8 10.5))", resultSet.getObject(1).toString)
+    assertEquals(null, resultSet.getObject(2))
+  }
+
+  test("st_mLineStringFromWKB(WKB)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_mLineStringFromWKB(st_asWKB(" +
+        "st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))')))," +
+        "st_mLineStringFromWKB(st_asWKB(st_makePoint(1, 2)))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTILINESTRING ((3 4, 1 5, 2 5), (-5 -8, -10 -8, -15 -4))",
+      resultSet.getObject(1).toString
+    )
+    assertEquals(null, resultSet.getObject(2))
+  }
+
+  test("st_mPolygonFromWKB(WKB)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_mPolygonFromWKB(st_asWKB(" +
+        "st_mPolygonFromWKT('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))'))), " +
+        "st_mPolygonFromWKB(st_asWKB(st_makePoint(1, 2)))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTIPOLYGON (((1 1, 5 1, 5 5, 1 5, 1 1), (2 2, 2 3, 3 3, 3 2, 2 2)), ((6 3, 9 2, 9 4, 6 3)))",
+      resultSet.getObject(1).toString
+    )
+    assertEquals(null, resultSet.getObject(2))
+  }
+
+  test("st_geomFromWKB(WKB)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery("select st_geomFromWKB(st_asWKB(st_makePoint(1, 2)))")
+    resultSet.next()
+    assertEquals("POINT (1 2)", resultSet.getObject(1).toString)
+  }
+
+  test("st_asWKB(geom)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery("select st_asWKB(st_makePoint(1, 2))")
+    resultSet.next()
+    assertEquals(
+      "[0, 0, 0, 0, 1, 63, -16, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0]",
+      resultSet.getObject(1).toString
+    )
+  }
 }
