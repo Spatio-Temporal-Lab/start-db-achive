@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-package org.urbcomp.start.db.parser.dql;
+package org.urbcomp.start.db.parser.ddl;
 
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlIdentifier;
@@ -36,24 +36,23 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * SHOW CREATE TABLE sql call.
+ * Parse tree for {@code Sql truncate table} statement.
  */
-public class SqlShowTables extends SqlCall {
-
-    private final SqlIdentifier databaseName;
-
+public class SqlTruncateTable extends SqlCall {
     public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
-        "SHOW TABLES",
-        SqlKind.OTHER
+        "TRUNCATE TABLE",
+        SqlKind.OTHER_DDL
     );
 
-    public SqlShowTables(SqlParserPos pos, SqlIdentifier databaseName) {
+    private final SqlIdentifier tableName;
+
+    public SqlTruncateTable(SqlParserPos pos, SqlIdentifier tableName) {
         super(pos);
-        this.databaseName = databaseName;
+        this.tableName = tableName;
     }
 
-    public String fullDatabaseName() {
-        return this.databaseName.names.get(0);
+    public SqlIdentifier getTableName() {
+        return tableName;
     }
 
     @Nonnull
@@ -70,6 +69,7 @@ public class SqlShowTables extends SqlCall {
 
     @Override
     public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
-        writer.keyword("SHOW TABLES");
+        writer.keyword("TRUNCATE TABLE");
+        tableName.unparse(writer, leftPrec, rightPrec);
     }
 }

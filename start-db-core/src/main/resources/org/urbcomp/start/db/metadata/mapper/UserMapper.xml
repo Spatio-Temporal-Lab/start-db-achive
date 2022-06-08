@@ -16,7 +16,7 @@
     <select id="selectByFidAndName" resultType="org.urbcomp.start.db.metadata.entity.User">
         SELECT *
         FROM sys_user
-        WHERE name = #{name} and delete_time = 0
+        WHERE `name` = #{name} and delete_time = 0
     </select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.urbcomp.start.db.metadata.entity.User">
