@@ -11,6 +11,8 @@
 
 package org.urbcomp.start.db.util;
 
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Point;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 
 public class GeoFunctions {
@@ -30,6 +32,23 @@ public class GeoFunctions {
         double perimeter = 2 * Math.PI * EARTH_RADIUS_IN_METER;
         double degreePerM = 360 / perimeter;
         return distance * degreePerM;
+    }
+
+    /**
+     * @param point     point
+     * @param threshold MBR扩展的宽度（M）
+     * @return 扩展后的MBR
+     */
+    public static Envelope getExtendedBBox(SpatialPoint point, double threshold) {
+        double perimeter = 2 * Math.PI * EARTH_RADIUS_IN_METER;
+        double latPerMeter = 360 / perimeter;
+        double latBuffLen = threshold * latPerMeter;
+        double minLngPerMeter = 360 / (perimeter * Math.cos(Math.toRadians(point.getY())));
+        double lngBuffLen = threshold * minLngPerMeter;
+        return new Envelope(point.getX() - lngBuffLen,
+            point.getX() + lngBuffLen,
+            point.getY() - latBuffLen,
+            point.getY() + latBuffLen);
     }
 
     /**
