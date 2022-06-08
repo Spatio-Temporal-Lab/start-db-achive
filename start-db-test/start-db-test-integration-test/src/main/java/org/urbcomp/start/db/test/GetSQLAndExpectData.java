@@ -113,8 +113,8 @@ public class GetSQLAndExpectData {
      * */
     private static int appearNumber(String srcText, String findText) {
         int count = 0;
-        for (int i=0; i<srcText.length(); i++) {
-            if (srcText.substring(i, i+1).equals(findText)){
+        for (int i = 0; i < srcText.length(); i++) {
+            if (srcText.substring(i, i + 1).equals(findText)) {
                 count += 1;
             }
         }
