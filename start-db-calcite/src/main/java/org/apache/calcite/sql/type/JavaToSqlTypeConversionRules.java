@@ -23,7 +23,6 @@
 package org.apache.calcite.sql.type;
 
 import org.apache.calcite.avatica.util.ArrayImpl;
-import org.apache.calcite.runtime.Geometries;
 
 import com.google.common.collect.ImmutableMap;
 import org.locationtech.jts.geom.*;
@@ -33,6 +32,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +84,7 @@ public class JavaToSqlTypeConversionRules {
         .put(MultiPolygon.class, SqlTypeName.MULTIPOLYGON)
         .put(Geometry.class, SqlTypeName.GEOMETRY)
         .put(GeometryCollection.class, SqlTypeName.GEOMETRYCOLLECTION)
+        .put(LocalDateTime.class, SqlTypeName.DATETIME)
         // start-db add end
 
         .put(ResultSet.class, SqlTypeName.CURSOR)

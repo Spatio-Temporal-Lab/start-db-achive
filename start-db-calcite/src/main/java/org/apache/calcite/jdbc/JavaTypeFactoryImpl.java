@@ -33,7 +33,6 @@ import org.apache.calcite.rel.type.RelDataTypeField;
 import org.apache.calcite.rel.type.RelDataTypeFieldImpl;
 import org.apache.calcite.rel.type.RelDataTypeSystem;
 import org.apache.calcite.rel.type.RelRecordType;
-import org.apache.calcite.runtime.Geometries;
 import org.apache.calcite.runtime.Unit;
 import org.apache.calcite.sql.type.BasicSqlType;
 import org.apache.calcite.sql.type.IntervalSqlType;
@@ -49,6 +48,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -234,6 +234,8 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
                 case GEOMETRYCOLLECTION:
                 case GEOMETRY:
                     return Geometry.class;
+                case DATETIME:
+                    return LocalDateTime.class;
                 // start-db add end
                 case SYMBOL:
                     return Enum.class;

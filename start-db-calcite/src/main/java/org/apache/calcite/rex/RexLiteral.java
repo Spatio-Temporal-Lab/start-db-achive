@@ -31,7 +31,6 @@ import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeField;
 import org.apache.calcite.runtime.FlatLists;
-import org.apache.calcite.runtime.GeoFunctions;
 import org.apache.calcite.runtime.Geometries;
 import org.apache.calcite.sql.SqlCollation;
 import org.apache.calcite.sql.SqlKind;

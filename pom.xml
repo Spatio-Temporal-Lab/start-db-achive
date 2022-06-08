@@ -48,6 +48,7 @@
         <spotless-maven-plugin.version>2.22.5</spotless-maven-plugin.version>
         <spatial4j.version>0.8</spatial4j.version>
         <scalatest.maven.plugin.version>2.0.2</scalatest.maven.plugin.version>
+        <geojson.jackson.version>1.14</geojson.jackson.version>
     </properties>
 
     <dependencyManagement>
@@ -171,13 +172,20 @@
                 <version>${lombok.version}</version>
                 <scope>compile</scope>
             </dependency>
+
+            <!-- Test  -->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_${scala.binary.version}</artifactId>
+                <version>${scalatest.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-testing-util</artifactId>
@@ -277,13 +285,13 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
                 <version>${spotless-maven-plugin.version}</version>
                 <configuration>
                     <java>
+                        <removeUnusedImports/>
                         <eclipse>
                             <!--suppress UnresolvedMavenProperty -->
                             <file>

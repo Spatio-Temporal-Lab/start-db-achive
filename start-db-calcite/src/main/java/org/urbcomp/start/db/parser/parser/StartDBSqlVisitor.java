@@ -103,39 +103,108 @@ public interface StartDBSqlVisitor<T> extends ParseTreeVisitor<T> {
     T visitCreateTableStmt(StartDBSqlParser.CreateTableStmtContext ctx);
 
     /**
-     * Visit a parse tree produced by {@link StartDBSqlParser#createTableWithSelect}.
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_definition}.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    T visitCreateTableWithSelect(StartDBSqlParser.CreateTableWithSelectContext ctx);
+    T visitCreate_table_definition(StartDBSqlParser.Create_table_definitionContext ctx);
 
     /**
-     * Visit a parse tree produced by {@link StartDBSqlParser#createTableWithLike}.
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_columns}.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    T visitCreateTableWithLike(StartDBSqlParser.CreateTableWithLikeContext ctx);
+    T visitCreate_table_columns(StartDBSqlParser.Create_table_columnsContext ctx);
 
     /**
-     * Visit a parse tree produced by {@link StartDBSqlParser#withOption}.
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_columns_item}.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    T visitWithOption(StartDBSqlParser.WithOptionContext ctx);
+    T visitCreate_table_columns_item(StartDBSqlParser.Create_table_columns_itemContext ctx);
 
     /**
-     * Visit a parse tree produced by {@link StartDBSqlParser#withOptionItems}.
+     * Visit a parse tree produced by {@link StartDBSqlParser#column_name}.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    T visitWithOptionItems(StartDBSqlParser.WithOptionItemsContext ctx);
+    T visitColumn_name(StartDBSqlParser.Column_nameContext ctx);
 
     /**
-     * Visit a parse tree produced by {@link StartDBSqlParser#withOptionItem}.
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_column_inline_cons}.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    T visitWithOptionItem(StartDBSqlParser.WithOptionItemContext ctx);
+    T visitCreate_table_column_inline_cons(
+        StartDBSqlParser.Create_table_column_inline_consContext ctx
+    );
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_column_cons}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreate_table_column_cons(StartDBSqlParser.Create_table_column_consContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_fk_action}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreate_table_fk_action(StartDBSqlParser.Create_table_fk_actionContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_preoptions}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreate_table_preoptions(StartDBSqlParser.Create_table_preoptionsContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_preoptions_item}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreate_table_preoptions_item(StartDBSqlParser.Create_table_preoptions_itemContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_preoptions_td_item}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreate_table_preoptions_td_item(
+        StartDBSqlParser.Create_table_preoptions_td_itemContext ctx
+    );
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_options}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreate_table_options(StartDBSqlParser.Create_table_optionsContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_options_item}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreate_table_options_item(StartDBSqlParser.Create_table_options_itemContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#create_table_options_mysql_item}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreate_table_options_mysql_item(
+        StartDBSqlParser.Create_table_options_mysql_itemContext ctx
+    );
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#dtype_default}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitDtype_default(StartDBSqlParser.Dtype_defaultContext ctx);
 
     /**
      * Visit a parse tree produced by {@link StartDBSqlParser#showTablesStmt}.
@@ -143,6 +212,13 @@ public interface StartDBSqlVisitor<T> extends ParseTreeVisitor<T> {
      * @return the visitor result
      */
     T visitShowTablesStmt(StartDBSqlParser.ShowTablesStmtContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#dtype_attr}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitDtype_attr(StartDBSqlParser.Dtype_attrContext ctx);
 
     /**
      * Visit a parse tree produced by {@link StartDBSqlParser#dtype}.
@@ -710,6 +786,20 @@ public interface StartDBSqlVisitor<T> extends ParseTreeVisitor<T> {
      * @return the visitor result
      */
     T visitFuncParam(StartDBSqlParser.FuncParamContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#table_name}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitTable_name(StartDBSqlParser.Table_nameContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#qident}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitQident(StartDBSqlParser.QidentContext ctx);
 
     /**
      * Visit a parse tree produced by {@link StartDBSqlParser#dateLiteral}.

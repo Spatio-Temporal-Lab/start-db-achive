@@ -14,40 +14,44 @@ package org.urbcomp.start.db.parser.visitor
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.misc.Interval
 import org.apache.calcite.sql._
-import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
-import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
-import org.urbcomp.start.db.parser.visitor.StartDBVisitor._
-
-import java.util
-import scala.collection.mutable
+import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
+import org.urbcomp.start.db.parser.ddl.SqlUseDatabase
+import org.urbcomp.start.db.parser.dql.{SqlShowDatabases, SqlShowTables}
+import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
+import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
+import org.urbcomp.start.db.parser.visitor.StartDBVisitor._
+import org.urbcomp.start.db.util.{MetadataUtil, StringUtil}
 
+import java.util
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 /**
   * Start DB grammar visitor
   *
   * @author : zaiyuan
   */
-class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
+class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[AnyRef] {
 
   private val pos: SqlParserPos = SqlParserPos.ZERO
 
   override def visitProgram(ctx: ProgramContext): SqlNode = visitStmt(ctx.stmt())
 
   override def visitStmt(ctx: StmtContext): SqlNode = ctx.getChild(0) match {
-    case c: SelectStmtContext          => visitSelectStmt(c)
+    case c: SelectStmtContext          => visitSelectStmt(c) // ongoing
     case c: CreateTableStmtContext     => visitCreateTableStmt(c)
-    case c: ShowTablesStmtContext      => visitShowTablesStmt(c)
-    case c: CreateDatabaseStmtContext  => visitCreateDatabaseStmt(c)
-    case c: ShowDatabasesStmtContext   => visitShowDatabasesStmt(c)
+    case c: ShowTablesStmtContext      => visitShowTablesStmt(c) // done
+    case c: CreateDatabaseStmtContext  => visitCreateDatabaseStmt(c) // done
+    case c: DropDatabaseStmtContext    => visitDropDatabaseStmt(c) // done
+    case c: ShowDatabasesStmtContext   => visitShowDatabasesStmt(c) // done
     case c: ShowCreateTableStmtContext => visitShowCreateTableStmt(c)
-    case c: DropTableStmtContext       => visitDropTableStmt(c)
-    case c: UseStmtContext             => visitUseStmt(c)
+    case c: DropTableStmtContext       => visitDropTableStmt(c) // done
+    case c: UseStmtContext             => visitUseStmt(c) // done
     case c: DescribeStmtContext        => visitDescribeStmt(c)
-    case c: InsertStmtContext          => visitInsertStmt(c)
+    case c: InsertStmtContext          => visitInsertStmt(c) // ongoing
     case c: DeleteStmtContext          => visitDeleteStmt(c)
     case c: TruncateStmtContext        => visitTruncateStmt(c)
     case c: UpdateStmtContext          => visitUpdateStmt(c)
@@ -280,13 +284,23 @@ class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
         )
     }
 
-  override def visitTableName(ctx: TableNameContext): SqlNode = {
+  override def visitTableName(ctx: TableNameContext): SqlIdentifier = {
     var names: mutable.Buffer[String] = ctx.ident().identItem().asScala.map(v => v.getText)
     // keep username case sensitive
     if (names.length >= 3)
       names = names.takeRight(2).map(v => v.toLowerCase).+:(names(names.length - 3))
-    // TODO consider database.table
-    new SqlIdentifier(List(names.head).asJava, pos)
+    // consider user.database.table
+    names.length match {
+      case 1 => new SqlIdentifier(MetadataUtil.combineUserDbTableKey(user, db, names.head), pos)
+      case 2 =>
+        new SqlIdentifier(MetadataUtil.combineUserDbTableKey(user, names.head, names.last), pos)
+      case _ =>
+        new SqlIdentifier(
+          MetadataUtil
+            .combineUserDbTableKey(names(names.length - 3), names(names.length - 2), names.last),
+          pos
+        )
+    }
   }
 
   //////////////////////////////////////////////////////
@@ -473,24 +487,45 @@ class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
   //                    DDL(Data Definite Language)                      //
   /////////////////////////////////////////////////////////////////////////
 
-  override def visitShowDatabasesStmt(ctx: ShowDatabasesStmtContext): SqlNode = null // TODO
-
-  override def visitCreateDatabaseStmt(ctx: CreateDatabaseStmtContext): SqlNode = null // TODO
-
-  override def visitUseStmt(ctx: UseStmtContext): SqlNode = null // TODO
-
-  override def visitCreateTableStmt(ctx: CreateTableStmtContext): SqlNode = ctx.getChild(0) match {
-    case c: CreateTableWithSelectContext => null // TODO
-    case c: CreateTableWithLikeContext   => null // TODO
+  override def visitShowDatabasesStmt(ctx: ShowDatabasesStmtContext): SqlNode = {
+    new SqlShowDatabases(pos);
   }
+
+  override def visitCreateDatabaseStmt(ctx: CreateDatabaseStmtContext): SqlNode = {
+    new SqlCreateSchema(
+      pos,
+      false,
+      ctx.T_EXISTS() != null,
+      new SqlIdentifier(ctx.dbName.getText, pos)
+    )
+  }
+
+  override def visitDropDatabaseStmt(ctx: DropDatabaseStmtContext): SqlNode = {
+    new SqlDropSchema(
+      pos,
+      false,
+      ctx.T_EXISTS() != null,
+      new SqlIdentifier(ctx.dbName.getText, pos)
+    )
+  }
+
+  override def visitUseStmt(ctx: UseStmtContext): SqlUseDatabase = {
+    new SqlUseDatabase(pos, new SqlIdentifier(ctx.dbName.getText, pos))
+  }
+
+  override def visitCreateTableStmt(ctx: CreateTableStmtContext): SqlNode = null // TODO
 
   override def visitDescribeStmt(ctx: DescribeStmtContext): SqlNode = null // TODO
 
   override def visitShowCreateTableStmt(ctx: ShowCreateTableStmtContext): SqlNode = null // TODO
 
-  override def visitDropTableStmt(ctx: DropTableStmtContext): SqlNode = null // TODO
+  override def visitDropTableStmt(ctx: DropTableStmtContext): SqlNode = {
+    new SqlDropTable(pos, ctx.T_EXISTS() != null, visitTableName(ctx.tableName()))
+  }
 
-  override def visitShowTablesStmt(ctx: ShowTablesStmtContext): SqlNode = null // TODO
+  override def visitShowTablesStmt(ctx: ShowTablesStmtContext): SqlNode = {
+    new SqlShowTables(pos, new SqlIdentifier(MetadataUtil.combineUserDbKey(user, db), pos))
+  }
 
   /////////////////////////////////////////////////////////////////////////
   //                    DCL(Data Control Language)                       //
@@ -502,7 +537,23 @@ class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
   //                    DML(Data Manage Language)                       //
   /////////////////////////////////////////////////////////////////////////
 
-  override def visitInsertStmt(ctx: InsertStmtContext): SqlInsert = null // TODO
+  override def visitInsertStmt(ctx: InsertStmtContext): SqlInsert = {
+    val keyWords = SqlNodeList.EMPTY
+    val targetTale = visitIdent(ctx.tableName().ident())
+    val rows: Array[SqlNode] = ctx
+      .insertStmtRows()
+      .insertStmtRow()
+      .asScala
+      .map { i =>
+        val objs = i.expr().asScala.map(visitExpr).toArray
+        new SqlBasicCall(SqlStdOperatorTable.ROW, objs, pos)
+      }
+      .toArray
+    val source = new SqlBasicCall(SqlStdOperatorTable.VALUES, rows, pos)
+    val columnList =
+      new SqlNodeList(ctx.insertStmtCols().ident().asScala.map(visitIdent).asJava, pos)
+    new SqlInsert(pos, keyWords, targetTale, source, columnList)
+  }
 
   private def mkOriginSql(ctx: ParserRuleContext): String = {
     val start = ctx.start.getStartIndex
@@ -623,7 +674,7 @@ class StartDBVisitor extends StartDBSqlBaseVisitor[AnyRef] {
     case c: TimestampLiteralContext => // TODO 此处的precision仍需调研
       SqlLiteral.createTimestamp(new TimestampString(c.getText), 10, pos)
     case c: BoolLiteralContext => SqlLiteral.createBoolean(c.getText.toBoolean, pos)
-    case c: StringContext      => SqlLiteral.createCharString(c.getText, pos) // TODO String drop quota
+    case c: StringContext      => SqlLiteral.createCharString(StringUtil.dropQuota(c.getText), pos)
     case c: IdentContext       => visitIdent(c) // 封装标识符
     case c: DecNumberContext   => SqlLiteral.createExactNumeric(c.getText, pos)
     case c: IntNumberContext   => SqlLiteral.createExactNumeric(c.getText, pos) // 封装整型数字

@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.urbcomp.start.db.test.CompareActualAndExpect.compareData;
+import static org.urbcomp.start.db.test.GetSQLAndExpectData.getSqlWithParam;
 import static org.urbcomp.start.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.start.db.test.GetSQLAndExpectData.getExpectData;
-import static org.urbcomp.start.db.test.GetSQLAndExpectData.getSqlWithParam;
 
 public class MainTest {
 
@@ -57,7 +57,7 @@ public class MainTest {
         // todo 执行指定的xml文件
         SAXReader saxReader = new SAXReader();
         String xmlResource = Objects.requireNonNull(
-            MainTest.class.getClassLoader().getResource("cases/dml/dmlcase.xml")
+            MainTest.class.getClassLoader().getResource("cases/dml/dml.xml")
         ).getPath();
         System.out.println(xmlResource);
         try {

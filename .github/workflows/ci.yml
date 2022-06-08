@@ -40,6 +40,10 @@ jobs:
           mvn spotless:check
       - name: init mysql schema
         run: mvn test exec:java -f start-db-test/start-db-test-embedded-mysql/pom.xml
+      - name: set geomesa hbase host
+        run: echo "127.0.0.1 geomesa-hbase-local" | sudo tee -a /etc/hosts
+      - name: init geomesa table and data
+        run: mvn test exec:java -f start-db-test/start-db-test-geomesa-geotools/pom.xml
 
       # Runs a set of commands using the runners shell
       - name: build and test with maven

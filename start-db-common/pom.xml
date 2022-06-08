@@ -15,5 +15,21 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.grundid.opendatalab</groupId>
+            <artifactId>geojson-jackson</artifactId>
+            <version>${geojson.jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

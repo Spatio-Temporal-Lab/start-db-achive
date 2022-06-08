@@ -154,7 +154,7 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
-    public T visitCreateTableWithSelect(StartDBSqlParser.CreateTableWithSelectContext ctx) {
+    public T visitCreate_table_definition(StartDBSqlParser.Create_table_definitionContext ctx) {
         return visitChildren(ctx);
     }
 
@@ -165,7 +165,7 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
-    public T visitCreateTableWithLike(StartDBSqlParser.CreateTableWithLikeContext ctx) {
+    public T visitCreate_table_columns(StartDBSqlParser.Create_table_columnsContext ctx) {
         return visitChildren(ctx);
     }
 
@@ -176,7 +176,7 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
-    public T visitWithOption(StartDBSqlParser.WithOptionContext ctx) {
+    public T visitCreate_table_columns_item(StartDBSqlParser.Create_table_columns_itemContext ctx) {
         return visitChildren(ctx);
     }
 
@@ -187,7 +187,7 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
-    public T visitWithOptionItems(StartDBSqlParser.WithOptionItemsContext ctx) {
+    public T visitColumn_name(StartDBSqlParser.Column_nameContext ctx) {
         return visitChildren(ctx);
     }
 
@@ -198,7 +198,114 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
-    public T visitWithOptionItem(StartDBSqlParser.WithOptionItemContext ctx) {
+    public T visitCreate_table_column_inline_cons(
+        StartDBSqlParser.Create_table_column_inline_consContext ctx
+    ) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitCreate_table_column_cons(StartDBSqlParser.Create_table_column_consContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitCreate_table_fk_action(StartDBSqlParser.Create_table_fk_actionContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitCreate_table_preoptions(StartDBSqlParser.Create_table_preoptionsContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitCreate_table_preoptions_item(
+        StartDBSqlParser.Create_table_preoptions_itemContext ctx
+    ) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitCreate_table_preoptions_td_item(
+        StartDBSqlParser.Create_table_preoptions_td_itemContext ctx
+    ) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitCreate_table_options(StartDBSqlParser.Create_table_optionsContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitCreate_table_options_item(StartDBSqlParser.Create_table_options_itemContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitCreate_table_options_mysql_item(
+        StartDBSqlParser.Create_table_options_mysql_itemContext ctx
+    ) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitDtype_default(StartDBSqlParser.Dtype_defaultContext ctx) {
         return visitChildren(ctx);
     }
 
@@ -210,6 +317,17 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      */
     @Override
     public T visitShowTablesStmt(StartDBSqlParser.ShowTablesStmtContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitDtype_attr(StartDBSqlParser.Dtype_attrContext ctx) {
         return visitChildren(ctx);
     }
 
@@ -1101,6 +1219,28 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      */
     @Override
     public T visitFuncParam(StartDBSqlParser.FuncParamContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitTable_name(StartDBSqlParser.Table_nameContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitQident(StartDBSqlParser.QidentContext ctx) {
         return visitChildren(ctx);
     }
 
