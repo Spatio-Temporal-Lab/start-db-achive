@@ -113,10 +113,10 @@ public class GetSQLAndExpectData {
      * */
     private static int appearNumber(String srcText, String findText) {
         int count = 0;
-        Pattern compile = Pattern.compile(findText);
-        Matcher matcher = compile.matcher(srcText);
-        while (matcher.find()) {
-            count++;
+        for (int i=0; i<srcText.length(); i++) {
+            if (srcText.substring(i, i+1).equals(findText)){
+                count += 1;
+            }
         }
         return count;
     }
