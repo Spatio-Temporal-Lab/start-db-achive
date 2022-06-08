@@ -11,7 +11,10 @@
 
 package org.urbcomp.start.db.model.point;
 
-import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 public class SpatialPoint extends Point {
@@ -32,5 +35,12 @@ public class SpatialPoint extends Point {
 
     public double getLat() {
         return this.getY();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return super.equalsExact(((SpatialPoint) o));
     }
 }

@@ -11,18 +11,17 @@
 
 package org.urbcomp.start.db.model.sample;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.urbcomp.start.db.model.Trajectory;
 import org.urbcomp.start.db.model.point.GPSPoint;
+import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
 import org.urbcomp.start.db.model.roadsegment.RoadSegment;
 import org.urbcomp.start.db.model.roadsegment.RoadSegmentDirection;
 import org.urbcomp.start.db.model.roadsegment.RoadSegmentLevel;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModelGenerator {
     public static Trajectory generateTrajectory() {
@@ -43,50 +42,19 @@ public class ModelGenerator {
     }
 
     public static RoadSegment generateRoadSegment() {
-        GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
-        LineString ls = gf.createLineString(
-            new Coordinate[] {
-                new Coordinate(111.37939453125, 54.00776876193478),
-                new Coordinate(116.3671875, 53.05442186546102) }
-        );
-        return new RoadSegment().setRoadSegmentId(1)
-            .setGeom(ls)
-            .setDirection(RoadSegmentDirection.DUAL)
+        List<SpatialPoint> points = new ArrayList<>();
+        points.add(new SpatialPoint(111.37939453125, 54.00776876193478));
+        points.add(new SpatialPoint(116.3671875, 53.05442186546102));
+        return new RoadSegment(1, 1, 2, points).setDirection(RoadSegmentDirection.DUAL)
             .setSpeedLimit(30.0)
             .setLevel(RoadSegmentLevel.URBAN_ROAD)
-            .setStartId(1)
-            .setEndId(2)
-            .setLength(120);
+            .setLengthInMeter(120);
     }
 
     public static RoadNetwork generateRoadNetwork() {
-        GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
-        LineString ls1 = gf.createLineString(
-            new Coordinate[] {
-                new Coordinate(111.37939453125, 54.00776876193478),
-                new Coordinate(116.3671875, 53.05442186546102) }
-        );
-        RoadSegment rs1 = new RoadSegment().setRoadSegmentId(1)
-            .setGeom(ls1)
-            .setDirection(RoadSegmentDirection.DUAL)
-            .setSpeedLimit(30.0)
-            .setLevel(RoadSegmentLevel.URBAN_ROAD)
-            .setStartId(1)
-            .setEndId(2)
-            .setLength(120);
-        LineString ls2 = gf.createLineString(
-            new Coordinate[] {
-                new Coordinate(116.3671875, 53.05442186546102),
-                new Coordinate(115.37939453125, 52.00776876193478) }
-        );
-        RoadSegment rs2 = new RoadSegment().setRoadSegmentId(2)
-            .setGeom(ls2)
-            .setDirection(RoadSegmentDirection.FORWARD)
-            .setSpeedLimit(120)
-            .setLevel(RoadSegmentLevel.HIGH_WAY_ROAD)
-            .setStartId(2)
-            .setEndId(3)
-            .setLength(300);
+        RoadSegment rs1 = generateRoadSegment();
+        RoadSegment rs2 = generateRoadSegment();
+        rs2.setLevel(RoadSegmentLevel.HIGH_WAY_ROAD);
         RoadNetwork rn = new RoadNetwork();
         rn.addRoadSegment(rs1).addRoadSegment(rs2);
         return rn;
