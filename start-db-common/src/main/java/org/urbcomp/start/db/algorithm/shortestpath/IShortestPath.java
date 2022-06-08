@@ -9,21 +9,10 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.model.basic.temporal
+package org.urbcomp.start.db.algorithm.shortestpath;
 
-import java.sql.Timestamp
+import org.urbcomp.start.db.model.roadsegment.Path;
 
-class TemporalMetaLine(temporalMetas: Array[TemporalMeta]) extends TemporalLine[TemporalMeta] {
-
-  /**
-    * temporal entities
-    **/
-  override protected var temporalEntities: Array[TemporalMeta] = temporalMetas
-
-  /**
-    * get time by index
-    *
-    * @param i index
-    **/
-  def getTime(i: Int): Timestamp = get(i).getTime
+public interface IShortestPath {
+    Path getShortestPath();
 }
