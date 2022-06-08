@@ -14,6 +14,7 @@ package org.urbcomp.start.db.parser.visitor
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.misc.Interval
 import org.apache.calcite.sql._
+import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDdlNodes}
 import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
@@ -513,7 +514,36 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
     new SqlUseDatabase(pos, new SqlIdentifier(ctx.dbName.getText, pos))
   }
 
-  override def visitCreateTableStmt(ctx: CreateTableStmtContext): SqlNode = null // TODO
+  override def visitCreateTableStmt(ctx: CreateTableStmtContext): SqlNode = {
+    val tableName = visitIdent(ctx.table_name().qident().ident().get(0))
+    val ifNotExists = null != ctx.T_EXISTS()
+    val query = if (null != ctx.create_table_definition().selectStmt()) {
+      visitSelectStmt(ctx.create_table_definition().selectStmt())
+    } else null
+    val columnList = if (null != ctx.create_table_definition().create_table_columns()) {
+      ctx
+        .create_table_definition()
+        .create_table_columns()
+        .create_table_columns_item()
+        .asScala
+        .map { i =>
+          val fieldName = visitIdent(i.qident().ident().get(0))
+          val dataType = new SqlUserDefinedTypeNameSpec(visitIdent(i.dtype().ident()), pos)
+          val dataTypeSpec = new SqlDataTypeSpec(dataType, pos)
+          SqlDdlNodes.column(pos, fieldName, dataTypeSpec, null, null)
+        }
+        .toList
+        .asJava
+    } else null
+    SqlDdlNodes.createTable(
+      pos,
+      false,
+      ifNotExists,
+      tableName,
+      new SqlNodeList(columnList, pos),
+      query
+    )
+  }
 
   override def visitDescribeStmt(ctx: DescribeStmtContext): SqlNode = {
     val targetTable = visitUserDotDbDotTable(ctx.userDotDbDotTable())
