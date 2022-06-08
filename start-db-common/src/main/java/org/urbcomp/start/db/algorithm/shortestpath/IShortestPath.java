@@ -11,8 +11,8 @@
 
 package org.urbcomp.start.db.algorithm.shortestpath;
 
-import org.urbcomp.start.db.model.roadsegment.Path;
+import org.urbcomp.start.db.model.point.SpatialPoint;
 
 public interface IShortestPath {
-    Path getShortestPath();
+    ShortestPathResult findShortestPath(SpatialPoint startPoint, SpatialPoint endPoint);
 }

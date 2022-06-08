@@ -50,6 +50,7 @@
         <scalatest.maven.plugin.version>2.0.2</scalatest.maven.plugin.version>
         <geojson.jackson.version>1.14</geojson.jackson.version>
         <org.jgrapht.version>1.4.0</org.jgrapht.version>
+        <rtree.version>0.10</rtree.version>
     </properties>
 
     <dependencyManagement>

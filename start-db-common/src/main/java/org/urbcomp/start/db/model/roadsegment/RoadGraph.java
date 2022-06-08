@@ -27,4 +27,10 @@ public class RoadGraph extends AbstractBaseGraph<RoadNode, RoadSegment> {
         );
     }
 
+    public void addEdge(RoadSegment roadSegment) {
+        addVertex(roadSegment.getStartNode());
+        addVertex(roadSegment.getEndNode());
+        super.addEdge(roadSegment.getStartNode(), roadSegment.getEndNode(), roadSegment);
+        setEdgeWeight(roadSegment, roadSegment.getLengthInMeter());
+    }
 }
