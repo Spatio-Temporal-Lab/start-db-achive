@@ -40,7 +40,6 @@ public class MainTest {
         for (String sqlCaseXML : sqlCaseXMLs) {
             runSingleCase(sqlCaseXML);
         }
-
     }
 
 }

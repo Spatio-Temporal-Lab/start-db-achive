@@ -39,7 +39,7 @@ public class GetSQLAndExpectData {
             params = parameters.split("]\\[");
 
             // 参数的数量正确的情况下再拼接sql
-            int paramCount = appearNumber(sqlText, "\\?");
+            int paramCount = appearNumber(sqlText, "?");
             if (paramCount != 0 && paramCount == params.length) {
                 sql.setLength(0);
                 // 将参数拼接到sql中, 先将sql以 ? 切分, 然后在加上参数拼接为新的sql字符串
