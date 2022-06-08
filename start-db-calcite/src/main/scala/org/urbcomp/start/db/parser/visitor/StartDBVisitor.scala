@@ -18,8 +18,8 @@ import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
-import org.urbcomp.start.db.parser.ddl.SqlUseDatabase
-import org.urbcomp.start.db.parser.dql.{SqlShowDatabases, SqlShowTables}
+import org.urbcomp.start.db.parser.ddl.{SqlTruncateTable, SqlUseDatabase}
+import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
 import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
 import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
 import org.urbcomp.start.db.parser.visitor.StartDBVisitor._
@@ -41,20 +41,20 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   override def visitProgram(ctx: ProgramContext): SqlNode = visitStmt(ctx.stmt())
 
   override def visitStmt(ctx: StmtContext): SqlNode = ctx.getChild(0) match {
-    case c: SelectStmtContext          => visitSelectStmt(c) // ongoing
+    case c: SelectStmtContext          => visitSelectStmt(c) // done
     case c: CreateTableStmtContext     => visitCreateTableStmt(c)
     case c: ShowTablesStmtContext      => visitShowTablesStmt(c) // done
     case c: CreateDatabaseStmtContext  => visitCreateDatabaseStmt(c) // done
     case c: DropDatabaseStmtContext    => visitDropDatabaseStmt(c) // done
     case c: ShowDatabasesStmtContext   => visitShowDatabasesStmt(c) // done
-    case c: ShowCreateTableStmtContext => visitShowCreateTableStmt(c)
+    case c: ShowCreateTableStmtContext => visitShowCreateTableStmt(c) // done
     case c: DropTableStmtContext       => visitDropTableStmt(c) // done
     case c: UseStmtContext             => visitUseStmt(c) // done
-    case c: DescribeStmtContext        => visitDescribeStmt(c)
-    case c: InsertStmtContext          => visitInsertStmt(c) // ongoing
-    case c: DeleteStmtContext          => visitDeleteStmt(c)
-    case c: TruncateStmtContext        => visitTruncateStmt(c)
-    case c: UpdateStmtContext          => visitUpdateStmt(c)
+    case c: DescribeStmtContext        => visitDescribeStmt(c) // done
+    case c: InsertStmtContext          => visitInsertStmt(c) // done
+    case c: DeleteStmtContext          => visitDeleteStmt(c) // done
+    case c: TruncateStmtContext        => visitTruncateStmt(c) // done
+    case c: UpdateStmtContext          => visitUpdateStmt(c) // done
     case _                             => null // TODO 补全其他情况
   }
 
@@ -515,9 +515,28 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
 
   override def visitCreateTableStmt(ctx: CreateTableStmtContext): SqlNode = null // TODO
 
-  override def visitDescribeStmt(ctx: DescribeStmtContext): SqlNode = null // TODO
+  override def visitDescribeStmt(ctx: DescribeStmtContext): SqlNode = {
+    val targetTable = visitUserDotDbDotTable(ctx.userDotDbDotTable())
+    new SqlDescribeTable(pos, targetTable, null)
+  }
 
-  override def visitShowCreateTableStmt(ctx: ShowCreateTableStmtContext): SqlNode = null // TODO
+  override def visitUserDotDbDotTable(ctx: UserDotDbDotTableContext): SqlIdentifier = {
+    val targetUser = if (ctx.user != null) ctx.user.getText else user;
+    val iden = visitDbDotTable(ctx.dbDotTable())
+    val names = List.concat[String](List(targetUser), iden.names.asScala)
+    new SqlIdentifier(names.asJava, pos);
+  }
+
+  override def visitDbDotTable(ctx: DbDotTableContext): SqlIdentifier = {
+    val targetDb = if (ctx.db != null) ctx.db.getText else db;
+    val targetTable = ctx.table.getText;
+    new SqlIdentifier(List(targetDb, targetTable).asJava, pos);
+  }
+
+  override def visitShowCreateTableStmt(ctx: ShowCreateTableStmtContext): SqlNode = {
+    val targetTale = visitIdent(ctx.ident());
+    new SqlShowCreateTable(pos, targetTale);
+  }
 
   override def visitDropTableStmt(ctx: DropTableStmtContext): SqlNode = {
     new SqlDropTable(pos, ctx.T_EXISTS() != null, visitTableName(ctx.tableName()))
@@ -531,7 +550,9 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   //                    DCL(Data Control Language)                       //
   /////////////////////////////////////////////////////////////////////////
 
-  override def visitTruncateStmt(ctx: TruncateStmtContext): SqlNode = null // TODO
+  override def visitTruncateStmt(ctx: TruncateStmtContext): SqlNode = {
+    new SqlTruncateTable(pos, visitIdent(ctx.ident()));
+  }
 
   /////////////////////////////////////////////////////////////////////////
   //                    DML(Data Manage Language)                       //
@@ -561,9 +582,41 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
     ctx.start.getInputStream.getText(new Interval(start, stop)).replaceAll("\\s+", " ")
   }
 
-  override def visitDeleteStmt(ctx: DeleteStmtContext): SqlNode = null // TODO
+  override def visitDeleteStmt(ctx: DeleteStmtContext): SqlNode = {
+    val tableIdentifier = visitTableName(ctx.tableName())
+    val condition = visitWhereClause(ctx.whereClause());
+    // TODO  complete sourceSelect and alias
+    new SqlDelete(pos, tableIdentifier, condition, null, null)
+  }
 
-  override def visitUpdateStmt(ctx: UpdateStmtContext): SqlNode = null // TODO
+  override def visitUpdateStmt(ctx: UpdateStmtContext): SqlNode = {
+    val targetTable = visitUpdateTable(ctx.updateTable());
+    val condition = visitWhereClause(ctx.whereClause());
+    val assignments = ctx.updateAssignment().assignmentStmtItem();
+    val columns = assignments.asScala
+      .map(assign => {
+        // TODO multiple item and select item
+        visitIdent(assign.assignmentStmtSingleItem().ident());
+      })
+      .asJava
+    val targetColumnList = new SqlNodeList(columns, pos);
+    val expressions = assignments.asScala
+      .map(assign => {
+        visitExpr(assign.assignmentStmtSingleItem().expr());
+      })
+      .asJava
+    val sourceExpressionList = new SqlNodeList(expressions, pos);
+    new SqlUpdate(pos, targetTable, targetColumnList, sourceExpressionList, condition, null, null);
+  }
+
+  override def visitUpdateAssignment(ctx: UpdateAssignmentContext): SqlNode = {
+    null
+  }
+
+  override def visitUpdateTable(ctx: UpdateTableContext): SqlNode = {
+    visitTableName(ctx.tableName());
+    // TODO: update from select
+  }
 
   override def visitAssignmentStmtItem(ctx: AssignmentStmtItemContext): SqlNode =
     ctx.getChild(0) match {
@@ -680,6 +733,11 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
     case c: IntNumberContext   => SqlLiteral.createExactNumeric(c.getText, pos) // 封装整型数字
     case _: NullConstContext   => SqlLiteral.createNull(pos)
     case _                     => null // TODO 其他逻辑有待实现
+  }
+
+  override def visitWhereClause(ctx: WhereClauseContext): SqlNode = {
+    visitBoolExpr(ctx.boolExpr());
+
   }
 
   override def visitExprCase(ctx: ExprCaseContext): SqlNode = ctx.getChild(0) match {

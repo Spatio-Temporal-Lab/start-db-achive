@@ -10,14 +10,14 @@
  */
 
 package org.urbcomp.start.db.parser.visitor
+import org.apache.calcite.sql._
 import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.parser.SqlParser
-import org.apache.calcite.sql.{SqlKind, SqlNode}
 import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
 import org.scalatest.FunSuite
 import org.urbcomp.start.db.parser.StartDBSQLSamples
-import org.urbcomp.start.db.parser.ddl.SqlUseDatabase
-import org.urbcomp.start.db.parser.dql.{SqlShowDatabases, SqlShowTables}
+import org.urbcomp.start.db.parser.ddl.{SqlTruncateTable, SqlUseDatabase}
+import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver
 import org.urbcomp.start.db.util.MetadataUtil
 
@@ -31,12 +31,22 @@ class StartDBVisitorTest extends FunSuite {
 
   def calciteParse(sql: String): SqlNode = {
     val parser = SqlParser.create(sql);
-    parser.parseQuery();
+    parser.parseStmt();
   }
 
   test("convert show databases to SqlNode") {
     val parsed = driver.parseSql(StartDBSQLSamples.SHOW_DATABASES)
     assertTrue(parsed.isInstanceOf[SqlShowDatabases])
+  }
+
+  test("convert describe statement to SqlNode") {
+    val parsed = driver.parseSql(StartDBSQLSamples.DESCRIBE_TABLE_SAMPLE)
+    assertTrue(parsed.isInstanceOf[SqlDescribeTable])
+  }
+
+  test("convert truncate table statement to SqlNode") {
+    val parsed = driver.parseSql(StartDBSQLSamples.TRUNCATE_TABLE_SAMPLE)
+    assertTrue(parsed.isInstanceOf[SqlTruncateTable])
   }
 
   test("convert show tables to SqlNode") {
@@ -55,7 +65,7 @@ class StartDBVisitorTest extends FunSuite {
   }
 
   test("convert use dababase statement to SqlNode") {
-    val parsed = driver.parseSql(StartDBSQLSamples.USE_DATABSE_SAMPLE)
+    val parsed = driver.parseSql(StartDBSQLSamples.USE_DATABASE_SAMPLE)
     val node = parsed.asInstanceOf[SqlUseDatabase]
     assertEquals("database_name", node.getFullDatabaseName);
   }
@@ -78,11 +88,37 @@ class StartDBVisitorTest extends FunSuite {
   test("convert drop table statement to SqlNode") {
     val parsed = driver.parseSql(StartDBSQLSamples.DROP_TABLE_IF_EXISTS_SAMPLE)
     val node = parsed.asInstanceOf[SqlDropTable]
-    println(node.toString);
+    println(node.toString)
     assertEquals(SqlKind.DROP_TABLE, node.getKind)
     assertEquals(
       MetadataUtil.combineUserDbTableKey(testUser, testDatabase, tableName),
       node.name.names.get(0)
-    );
+    )
+  }
+
+  test("convert delete statement to SqlNode") {
+    val sql = StartDBSQLSamples.DELETE_SAMPLE
+    val parsed = driver.parseSql(sql)
+    val node = parsed.asInstanceOf[SqlDelete]
+    val cond = node.getCondition.asInstanceOf[SqlBasicCall]
+    assertEquals(SqlKind.EQUALS, cond.getKind)
+    assertEquals(2, cond.getOperands.length)
+  }
+
+  test("convert show create table statement to SqlNode") {
+    val sql = StartDBSQLSamples.SHOW_CREATE_TABLE_SAMPLE
+    val parsed = driver.parseSql(sql)
+    val node = parsed.asInstanceOf[SqlShowCreateTable]
+    assertEquals(tableName, node.getTableName.names.get(0));
+  }
+
+  test("convert update table statement to SqlNode") {
+    val sql = StartDBSQLSamples.UPDATE_SAMPLE;
+    val parser = SqlParser.create(sql);
+    val calciteNode = parser.parseStmt().asInstanceOf[SqlUpdate];
+    val parsed = driver.parseSql(sql);
+    val node = parsed.asInstanceOf[SqlUpdate];
+    assertEquals(calciteNode.getTargetColumnList.size(), node.getTargetColumnList.size());
+    assertEquals(calciteNode.getSourceExpressionList.size(), node.getSourceExpressionList.size());
   }
 }
