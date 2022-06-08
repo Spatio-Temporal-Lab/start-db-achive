@@ -15,45 +15,51 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
-import org.locationtech.jts.geom.LineString;
+import org.urbcomp.start.db.model.point.SpatialPoint;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class RoadSegment {
     // road segment id
-    private int roadSegmentId;
+    private final int roadSegmentId;
     // the road geometry
-    private LineString geom;
+    private final List<SpatialPoint> points;
+    // the start node id
+    private final RoadNode startNode;
+    // the end node id
+    private final RoadNode endNode;
     // the road direction
     private RoadSegmentDirection direction;
     // the speed limitation, km/h
     private double speedLimit;
     // road level
     private RoadSegmentLevel level;
-    // the start node id
-    private int startId;
-    // the end node id
-    private int endId;
     // the length of the road, m
-    private double length;
+    private double lengthInMeter;
+
+    public RoadSegment(int roadSegmentId, int startId, int endId, List<SpatialPoint> points) {
+        this.roadSegmentId = roadSegmentId;
+        this.startNode = new RoadNode(startId, points.get(0).getCoordinate());
+        this.endNode = new RoadNode(endId, points.get(points.size() - 1).getCoordinate());
+        this.points = points;
+    }
 
     public int getRoadSegmentId() {
         return roadSegmentId;
     }
 
-    public RoadSegment setRoadSegmentId(int roadSegmentId) {
-        this.roadSegmentId = roadSegmentId;
-        return this;
+    public RoadNode getStartNode() {
+        return startNode;
     }
 
-    public LineString getGeom() {
-        return geom;
+    public RoadNode getEndNode() {
+        return endNode;
     }
 
-    public RoadSegment setGeom(LineString geom) {
-        this.geom = geom;
-        return this;
+    public List<SpatialPoint> getPoints() {
+        return points;
     }
 
     public RoadSegmentDirection getDirection() {
@@ -83,30 +89,12 @@ public class RoadSegment {
         return this;
     }
 
-    public int getStartId() {
-        return startId;
+    public double getLengthInMeter() {
+        return lengthInMeter;
     }
 
-    public RoadSegment setStartId(int startId) {
-        this.startId = startId;
-        return this;
-    }
-
-    public int getEndId() {
-        return endId;
-    }
-
-    public RoadSegment setEndId(int endId) {
-        this.endId = endId;
-        return this;
-    }
-
-    public double getLength() {
-        return length;
-    }
-
-    public RoadSegment setLength(double length) {
-        this.length = length;
+    public RoadSegment setLengthInMeter(double lengthInMeter) {
+        this.lengthInMeter = lengthInMeter;
         return this;
     }
 
@@ -116,12 +104,13 @@ public class RoadSegment {
         if (o == null || getClass() != o.getClass()) return false;
         RoadSegment rs = (RoadSegment) o;
         return Objects.equals(this.roadSegmentId, rs.roadSegmentId)
+            && Objects.equals(this.startNode, rs.startNode)
+            && Objects.equals(this.endNode, rs.endNode)
+            && Objects.equals(this.points, rs.points)
             && Objects.equals(this.direction, rs.direction)
             && Objects.equals(this.speedLimit, rs.speedLimit)
             && Objects.equals(this.level, rs.level)
-            && Objects.equals(this.startId, rs.startId)
-            && Objects.equals(this.endId, rs.endId)
-            && Objects.equals(this.length, rs.length);
+            && Objects.equals(this.lengthInMeter, rs.lengthInMeter);
     }
 
     public Feature toFeature() {
@@ -130,24 +119,31 @@ public class RoadSegment {
         f.setProperty("direction", direction.value());
         f.setProperty("speedLimit", speedLimit);
         f.setProperty("level", level.value());
-        f.setProperty("startId", startId);
-        f.setProperty("endId", endId);
-        f.setProperty("length", length);
-        LngLatAlt[] lngLats = Arrays.stream(geom.getCoordinates())
-            .map(o -> new LngLatAlt(o.x, o.y))
+        f.setProperty("startId", startNode.getNodeId());
+        f.setProperty("endId", endNode.getNodeId());
+        f.setProperty("lengthInMeter", lengthInMeter);
+        LngLatAlt[] lngLats = points.stream()
+            .map(o -> new LngLatAlt(o.getLng(), o.getLat()))
             .toArray(LngLatAlt[]::new);
         f.setGeometry(new org.geojson.LineString(lngLats));
         return f;
     }
 
     public static RoadSegment fromFeature(Feature f) {
-        return new RoadSegment().setRoadSegmentId(f.getProperty("rsId"))
-            .setDirection(RoadSegmentDirection.valueOf((Integer) f.getProperty("direction")))
+        org.geojson.LineString lineString = (org.geojson.LineString) f.getGeometry();
+        List<SpatialPoint> points = lineString.getCoordinates()
+            .stream()
+            .map(o -> new SpatialPoint(o.getLongitude(), o.getLatitude()))
+            .collect(Collectors.toList());
+        return new RoadSegment(
+            f.getProperty("rsId"),
+            f.getProperty("startId"),
+            f.getProperty("endId"),
+            points
+        ).setDirection(RoadSegmentDirection.valueOf((Integer) f.getProperty("direction")))
             .setSpeedLimit(f.getProperty("speedLimit"))
             .setLevel(RoadSegmentLevel.valueOf((Integer) f.getProperty("level")))
-            .setStartId(f.getProperty("startId"))
-            .setEndId(f.getProperty("endId"))
-            .setLength(f.getProperty("length"));
+            .setLengthInMeter(f.getProperty("lengthInMeter"));
     }
 
     /**

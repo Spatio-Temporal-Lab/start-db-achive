@@ -11,9 +11,10 @@
 
 package org.urbcomp.start.db.model.point;
 
-import org.locationtech.jts.geom.Coordinate;
 import org.urbcomp.start.db.model.roadsegment.RoadSegment;
 import org.urbcomp.start.db.util.GeoFunctions;
+
+import java.util.List;
 
 public class CandidatePoint extends SpatialPoint {
     /**
@@ -61,20 +62,17 @@ public class CandidatePoint extends SpatialPoint {
         this.roadSegmentId = roadSegment.getRoadSegmentId();
         this.matchedIndex = matchedIndex;
         this.errorDistanceInMeter = errorDistanceInMeter;
-        this.offsetInMeter = calOffsetInM(roadSegment, matchedIndex);
+        this.offsetInMeter = calOffsetInMeter(roadSegment, matchedIndex);
     }
 
-    private double calOffsetInM(RoadSegment roadSegment, int matchedIndex) {
+    private double calOffsetInMeter(RoadSegment roadSegment, int matchedIndex) {
         double offset = GeoFunctions.getDistanceInM(
-            new SpatialPoint(roadSegment.getGeom().getCoordinateN(matchedIndex)),
+            new SpatialPoint(roadSegment.getPoints().get(matchedIndex).getCoordinate()),
             this
         );
-        Coordinate[] coordinates = roadSegment.getGeom().getCoordinates();
-        for (int i = 0; i < coordinates.length; i++) {
-            offset += GeoFunctions.getDistanceInM(
-                new SpatialPoint(coordinates[i]),
-                new SpatialPoint(coordinates[i + 1])
-            );
+        List<SpatialPoint> points = roadSegment.getPoints();
+        for (int i = 0; i < points.size(); i++) {
+            offset += GeoFunctions.getDistanceInM(points.get(i), points.get(i + 1));
         }
         return offset;
     }

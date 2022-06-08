@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.model.roadsegment;
 
-import org.locationtech.jts.geom.Point;
+import org.urbcomp.start.db.model.point.SpatialPoint;
 
 import java.util.List;
 
@@ -29,14 +29,14 @@ public class Path {
     /**
      * the points the route crosses. This is very useful for display.
      */
-    private List<Point> points;
+    private List<SpatialPoint> points;
 
     /**
      * the road segment ids that this route crosses
      */
     private List<Integer> roadSegmentIds;
 
-    public Path(double costs, List<Point> points, List<Integer> roadSegmentIds) {
+    public Path(double costs, List<SpatialPoint> points, List<Integer> roadSegmentIds) {
         this.costs = costs;
         this.points = points;
         this.roadSegmentIds = roadSegmentIds;
@@ -51,11 +51,11 @@ public class Path {
         return this;
     }
 
-    public List<Point> getPoints() {
+    public List<SpatialPoint> getPoints() {
         return points;
     }
 
-    public Path setPoints(List<Point> points) {
+    public Path setPoints(List<SpatialPoint> points) {
         this.points = points;
         return this;
     }
