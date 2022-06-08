@@ -706,7 +706,6 @@ nonReservedWords :                      // Tokens that are not reserved words an
      | T_CONTINUE
      | T_COUNT
      | T_COUNT_BIG
-     | T_CREATE
      | T_CREATION
      | T_CREATOR
      | T_CS
