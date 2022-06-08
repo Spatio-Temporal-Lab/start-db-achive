@@ -1754,7 +1754,6 @@ public class StartDBSqlParser extends Parser {
                 case T_COPY:
                 case T_COUNT:
                 case T_COUNT_BIG:
-                case T_CREATE:
                 case T_CREATION:
                 case T_CREATOR:
                 case T_CS:
@@ -2350,7 +2349,6 @@ public class StartDBSqlParser extends Parser {
                     case T_COPY:
                     case T_COUNT:
                     case T_COUNT_BIG:
-                    case T_CREATE:
                     case T_CREATION:
                     case T_CREATOR:
                     case T_CS:
@@ -8972,7 +8970,6 @@ public class StartDBSqlParser extends Parser {
                     case T_COPY:
                     case T_COUNT:
                     case T_COUNT_BIG:
-                    case T_CREATE:
                     case T_CREATION:
                     case T_CREATOR:
                     case T_CS:
@@ -11773,7 +11770,6 @@ public class StartDBSqlParser extends Parser {
                         case T_COPY:
                         case T_COUNT:
                         case T_COUNT_BIG:
-                        case T_CREATE:
                         case T_CREATION:
                         case T_CREATOR:
                         case T_CS:
@@ -12151,7 +12147,6 @@ public class StartDBSqlParser extends Parser {
                         case T_COPY:
                         case T_COUNT:
                         case T_COUNT_BIG:
-                        case T_CREATE:
                         case T_CREATION:
                         case T_CREATOR:
                         case T_CS:
@@ -13298,7 +13293,6 @@ public class StartDBSqlParser extends Parser {
                         case T_COPY:
                         case T_COUNT:
                         case T_COUNT_BIG:
-                        case T_CREATE:
                         case T_CREATION:
                         case T_CREATOR:
                         case T_CS:
@@ -14684,7 +14678,6 @@ public class StartDBSqlParser extends Parser {
                 case T_COPY:
                 case T_COUNT:
                 case T_COUNT_BIG:
-                case T_CREATE:
                 case T_CREATION:
                 case T_CREATOR:
                 case T_CS:
@@ -15489,10 +15482,6 @@ public class StartDBSqlParser extends Parser {
 
         public TerminalNode T_COUNT_BIG() {
             return getToken(StartDBSqlParser.T_COUNT_BIG, 0);
-        }
-
-        public TerminalNode T_CREATE() {
-            return getToken(StartDBSqlParser.T_CREATE, 0);
         }
 
         public TerminalNode T_CREATION() {
@@ -16597,9 +16586,9 @@ public class StartDBSqlParser extends Parser {
                             << T_COMMENT) | (1L << T_CONSTANT) | (1L << T_COMMIT) | (1L
                                 << T_COMPRESS) | (1L << T_CONCAT) | (1L << T_CONDITION) | (1L
                                     << T_CONSTRAINT) | (1L << T_CONTINUE) | (1L << T_COPY) | (1L
-                                        << T_COUNT) | (1L << T_COUNT_BIG) | (1L << T_CREATE) | (1L
-                                            << T_CREATION) | (1L << T_CREATOR) | (1L << T_CS) | (1L
-                                                << T_CURRENT) | (1L << T_CURRENT_SCHEMA))) != 0)
+                                        << T_COUNT) | (1L << T_COUNT_BIG) | (1L << T_CREATION) | (1L
+                                            << T_CREATOR) | (1L << T_CS) | (1L << T_CURRENT) | (1L
+                                                << T_CURRENT_SCHEMA))) != 0)
                     || ((((_la - 64)) & ~0x3f) == 0
                         && ((1L << (_la - 64)) & ((1L << (T_CURSOR - 64)) | (1L << (T_DATABASE
                             - 64)) | (1L << (T_DATA - 64)) | (1L << (T_DATE - 64)) | (1L
@@ -16950,7 +16939,7 @@ public class StartDBSqlParser extends Parser {
             + "\4\2ll\u0143\u0143\3\2UV\4\2\u012e\u012e\u0130\u0130\4\2\t\t\u00d2\u00d2"
             + "\5\2\u00a9\u00a9\u00f2\u00f2\u00fe\u00fe\5\2HI\u00bc\u00bd\u010b\u010c"
             + "\4\2\65\65\u0184\u0184\5\2yy\u009e\u009e\u00c9\u00c9\4\2\u0181\u0181\u0198"
-            + "\u0198\4\2pp\u013e\u013e!\2\4\17\22\30\32\34\36\60\62CE`ddf\u0080\u0082"
+            + "\u0198\4\2pp\u013e\u013e\"\2\4\17\22\30\32\34\36\60\62;=CE`ddf\u0080\u0082"
             + "\u0087\u0089\u008d\u008f\u00a1\u00a3\u00a4\u00a6\u00ab\u00ad\u00c9\u00cb"
             + "\u00da\u00dc\u00dd\u00e0\u00e1\u00e3\u00e6\u00eb\u00f2\u00f4\u00fb\u00fd"
             + "\u0102\u0104\u0108\u010a\u0114\u0116\u0118\u011a\u0120\u0122\u012e\u0133"
