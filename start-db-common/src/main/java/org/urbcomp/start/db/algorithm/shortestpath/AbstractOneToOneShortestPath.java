@@ -18,10 +18,7 @@ import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.model.roadsegment.*;
 import org.urbcomp.start.db.util.GeoFunctions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractOneToOneShortestPath {
     private final RoadNetwork roadNetwork;
@@ -77,7 +74,7 @@ public abstract class AbstractOneToOneShortestPath {
             endCandidatePoint.getRoadSegmentId()
         );
 
-        // 两个点在同一条双向路段上
+        // 两个点在同一条双向路段上，并且方向相反
         if (startRoadSegment.getRoadSegmentId() == -endRoadSegment.getRoadSegmentId()) {
             endCandidatePoint = reverseCandidatePoint(
                 endCandidatePoint,
@@ -111,8 +108,99 @@ public abstract class AbstractOneToOneShortestPath {
         }
 
         // 处理在不同路段的情况
-        List<Path> results = new ArrayList<>();
-        return null;
+        List<Path> paths = new ArrayList<>();
+        paths.add(
+            getPathByEndNodeToStartNode(
+                startPoint,
+                startCandidatePoint,
+                startRoadSegment,
+                endPoint,
+                endCandidatePoint,
+                endRoadSegment
+            )
+        );
+        if (startRoadSegment.getDirection() == RoadSegmentDirection.DUAL) {
+            RoadSegment reverseStartRoadSegment = roadNetwork.getRoadSegmentById(
+                -startRoadSegment.getRoadSegmentId()
+            );
+            CandidatePoint reverseStartCandidatePoint = reverseCandidatePoint(
+                startCandidatePoint,
+                startRoadSegment,
+                reverseStartRoadSegment
+            );
+            paths.add(
+                getPathByEndNodeToStartNode(
+                    startPoint,
+                    reverseStartCandidatePoint,
+                    reverseStartRoadSegment,
+                    endPoint,
+                    endCandidatePoint,
+                    endRoadSegment
+                )
+            );
+            if (endRoadSegment.getDirection() == RoadSegmentDirection.DUAL) {
+                RoadSegment reverseEndRoadSegment = roadNetwork.getRoadSegmentById(
+                    -endRoadSegment.getRoadSegmentId()
+                );
+                CandidatePoint reverseEndCandidatePoint = reverseCandidatePoint(
+                    endCandidatePoint,
+                    endRoadSegment,
+                    reverseEndRoadSegment
+                );
+                paths.add(
+                    getPathByEndNodeToStartNode(
+                        startPoint,
+                        reverseStartCandidatePoint,
+                        reverseStartRoadSegment,
+                        endPoint,
+                        reverseEndCandidatePoint,
+                        reverseEndRoadSegment
+                    )
+                );
+            }
+        }
+        if (endRoadSegment.getDirection() == RoadSegmentDirection.DUAL) {
+            RoadSegment reverseEndRoadSegment = roadNetwork.getRoadSegmentById(
+                -endRoadSegment.getRoadSegmentId()
+            );
+            CandidatePoint reverseEndCandidatePoint = reverseCandidatePoint(
+                endCandidatePoint,
+                endRoadSegment,
+                reverseEndRoadSegment
+            );
+            paths.add(
+                getPathByEndNodeToStartNode(
+                    startPoint,
+                    startCandidatePoint,
+                    startRoadSegment,
+                    endPoint,
+                    reverseEndCandidatePoint,
+                    reverseEndRoadSegment
+                )
+            );
+        }
+        Path path = Collections.min(paths, Comparator.comparingDouble(Path::getLengthInMeter));
+        if (path.getLengthInMeter() != Double.MAX_VALUE) {
+            return path;
+        } else {
+            return new Path(Double.MAX_VALUE, new ArrayList<>(), new ArrayList<>());
+        }
+    }
+
+    private Path getPathByEndNodeToStartNode(
+        SpatialPoint startPoint,
+        CandidatePoint startCandidatePoint,
+        RoadSegment startRoadSegment,
+        SpatialPoint endPoint,
+        CandidatePoint endCandidatePoint,
+        RoadSegment endRoadSegment
+    ) {
+        Path result = getSubPathFromStartPoint(startPoint, startCandidatePoint, startRoadSegment);
+        result.addPath(
+            findShortestPath(startRoadSegment.getEndNode(), endRoadSegment.getStartNode())
+        );
+        result.addPath(getSubPathToEndPoint(endPoint, endCandidatePoint, endRoadSegment));
+        return result;
     }
 
     private Path getPathInSameRoadSegmentInOrder(

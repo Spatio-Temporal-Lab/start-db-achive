@@ -22,9 +22,9 @@ import java.util.List;
  */
 public class Path {
     /**
-     * maybe distance, or time costs
+     * distance
      */
-    private double costs;
+    private double lengthInMeter;
 
     /**
      * the points the route crosses. This is very useful for display.
@@ -36,18 +36,18 @@ public class Path {
      */
     private List<Integer> roadSegmentIds;
 
-    public Path(double costs, List<SpatialPoint> points, List<Integer> roadSegmentIds) {
-        this.costs = costs;
+    public Path(double lengthInMeter, List<SpatialPoint> points, List<Integer> roadSegmentIds) {
+        this.lengthInMeter = lengthInMeter;
         this.points = points;
         this.roadSegmentIds = roadSegmentIds;
     }
 
-    public double getCosts() {
-        return costs;
+    public double getLengthInMeter() {
+        return lengthInMeter;
     }
 
-    public Path setCosts(double costs) {
-        this.costs = costs;
+    public Path setLengthInMeter(double lengthInMeter) {
+        this.lengthInMeter = lengthInMeter;
         return this;
     }
 
@@ -70,7 +70,7 @@ public class Path {
     }
 
     public Path addPath(Path path) {
-        this.costs += path.costs;
+        this.lengthInMeter += path.lengthInMeter;
         this.points.addAll(path.getPoints());
         this.roadSegmentIds.addAll(path.getRoadSegmentIds());
         return this;
