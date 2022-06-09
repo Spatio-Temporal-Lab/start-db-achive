@@ -182,9 +182,9 @@ public class CandidatePoint extends SpatialPoint {
         /**
          * 构造函数
          *
-         * @param point 映射点
+         * @param point         映射点
          * @param errorDistance 匹配误差
-         * @param rate 斜率
+         * @param rate          斜率
          */
         public ProjectionPoint(
             SpatialPoint point,

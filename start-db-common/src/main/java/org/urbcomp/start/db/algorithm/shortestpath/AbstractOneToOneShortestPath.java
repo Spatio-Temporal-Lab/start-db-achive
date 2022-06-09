@@ -170,7 +170,14 @@ public abstract class AbstractOneToOneShortestPath {
         );
     }
 
-    private Path startPointToEndNode(
+    /**
+     * 获得从起始点的子路径
+     * @param startPoint 起始点
+     * @param startCandidatePoint 起始点对应的候选点
+     * @param startRoadSegment 起始点对应的路段
+     * @return 起始点到对应路段终端的子路径
+     */
+    private Path getSubPathFromStartPoint(
         SpatialPoint startPoint,
         CandidatePoint startCandidatePoint,
         RoadSegment startRoadSegment
@@ -187,7 +194,14 @@ public abstract class AbstractOneToOneShortestPath {
         );
     }
 
-    private Path endNodeToEndPoint(
+    /**
+     * 获得到目标点的子路径
+     * @param endPoint 目标点
+     * @param endCandidatePoint 目标点对应的候选点
+     * @param endRoadSegment    目标点对应的路段
+     * @return 对应路段始端到终止点的子路径
+     */
+    private Path getSubPathToEndPoint(
         SpatialPoint endPoint,
         CandidatePoint endCandidatePoint,
         RoadSegment endRoadSegment
