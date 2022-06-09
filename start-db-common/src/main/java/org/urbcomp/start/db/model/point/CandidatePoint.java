@@ -112,17 +112,17 @@ public class CandidatePoint extends SpatialPoint {
      * @return 这个点在搜索范围内，所有可能对应的 candidate points
      */
     public static List<CandidatePoint> getCandidatePoint(SpatialPoint pt, RoadNetwork roadNetwork, double dist) {
-        Envelope mbr = GeoFunctions.getExtendedBBox(pt, dist);
-        Rectangle rec = Geometries.rectangleGeographic(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY());
+        Envelope bbox = GeoFunctions.getExtendedBBox(pt, dist);
+        Rectangle rec = Geometries.rectangleGeographic(bbox.getMinX(), bbox.getMinY(), bbox.getMaxX(), bbox.getMaxY());
         Iterable<RoadSegment> roadSegmentIterable = roadNetwork.getRoadRTree().search(rec).map(Entry::value).toBlocking().toIterable();
         List<CandidatePoint> result = new ArrayList<>();
-        roadSegmentIterable.forEach(roadSegment1 -> {
-            CandidatePoint candiPt = calCandidatePoint(pt, roadSegment1);
+        roadSegmentIterable.forEach(rs -> {
+            CandidatePoint candiPt = calCandidatePoint(pt, rs);
             if (candiPt.errorDistanceInMeter <= dist) {
                 result.add(candiPt);
             }
         });
-        return !result.isEmpty() ? result : new ArrayList<>();
+        return result;
     }
 
     /**
@@ -132,11 +132,11 @@ public class CandidatePoint extends SpatialPoint {
      * @param rs       路段
      * @return 对应在该路段上的candidate point
      */
-    public static CandidatePoint calCandidatePoint(SpatialPoint rawPoint, RoadSegment rs) {
-        List<SpatialPoint> coords = rs.getCoords();
-        Tuple2<ProjectionPoint, Integer> tuple = GeoFunction.calProjection(rawPoint, coords, 0, coords.size() - 1);
+    private static CandidatePoint calCandidatePoint(SpatialPoint rawPoint, RoadSegment rs) {
+        List<SpatialPoint> points = rs.getPoints();
+        Tuple2<ProjectionPoint, Integer> tuple = GeoFunctions.calProjection(rawPoint, points, 0, points.size() - 1);
         ProjectionPoint projectionPoint = tuple._1;
         int matchIndex = tuple._2;
-        return new CandidatePoint(projectionPoint, rs, matchIndex, projectionPoint.getErrorDistance());
+        return new CandidatePoint(projectionPoint, rs, matchIndex, projectionPoint.getErrorDistanceInMeter());
     }
 }
