@@ -39,7 +39,7 @@ public class GetSQLAndExpectData {
             params = parameters.split("]\\[");
 
             // 参数的数量正确的情况下再拼接sql
-            int paramCount = appearNumber(sqlText, "?");
+            int paramCount = appearNumber(sqlText, '?');
             if (paramCount != 0 && paramCount == params.length) {
                 sql.setLength(0);
                 // 将参数拼接到sql中, 先将sql以 ? 切分, 然后在加上参数拼接为新的sql字符串
@@ -109,10 +109,10 @@ public class GetSQLAndExpectData {
      * @param findText 要查找的字符串
      * @return 返回字符串出现的次数
      * */
-    private static int appearNumber(String srcText, String findText) {
+    private static int appearNumber(String srcText, char findText) {
         int count = 0;
         for (int i = 0; i < srcText.length(); i++) {
-            if (srcText.substring(i, i + 1).equals(findText)) {
+            if (srcText.charAt(i) == findText) {
                 count += 1;
             }
         }
