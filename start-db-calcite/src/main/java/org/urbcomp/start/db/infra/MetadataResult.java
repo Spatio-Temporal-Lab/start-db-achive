@@ -2,12 +2,16 @@ package org.urbcomp.start.db.infra;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.apache.calcite.DataContext;
 import org.apache.calcite.avatica.AvaticaParameter;
 import org.apache.calcite.avatica.ColumnMetaData;
 import org.apache.calcite.avatica.Meta;
 import org.apache.calcite.avatica.SqlType;
 import org.apache.calcite.jdbc.CalcitePrepare;
 import org.apache.calcite.jdbc.CalciteSchema;
+import org.apache.calcite.linq4j.AbstractEnumerable;
+import org.apache.calcite.linq4j.Enumerable;
+import org.apache.calcite.linq4j.Enumerator;
 import org.apache.calcite.rel.RelCollation;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.runtime.Bindable;
@@ -31,6 +35,10 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
      * DDL
      */
     public MetadataResult(List<ColumnMetaData> metaData) {
+        this(metaData, null);
+    }
+
+    public MetadataResult(List<ColumnMetaData> metaData, Bindable<T> bindable) {
         this("",
                 ImmutableList.of(),
                 ImmutableMap.of(),
@@ -40,7 +48,7 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
                 null,
                 ImmutableList.of(),
                 -1,
-                null,
+                bindable,
                 Meta.StatementType.OTHER_DDL);
     }
 
@@ -53,11 +61,56 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
     /**
      * with result,eg: show tables
      */
-    public static <T> MetadataResult<T> buildResult(String[] columns, List<String[]> values) {
+    public static MetadataResult<Object[]> buildResult(String[] columns, List<Object[]> values) {
         List<ColumnMetaData> metaData = new ArrayList<>(1);
         for (String column : columns) {
-            // TODO
+            metaData.add(ColumnMetaData.dummy(new ColumnMetaData.ScalarType(SqlType.VARCHAR.id, column, ColumnMetaData.Rep.STRING), true));
         }
-        return new MetadataResult<>(metaData);
+        return new MetadataResult<>(metaData, new MetaBindable(values));
+    }
+
+    private static class MetaBindable implements Bindable<Object[]> {
+
+        private final List<Object[]> values;
+
+        private MetaBindable(List<Object[]> values) {
+            this.values = values;
+        }
+
+        @Override
+        public Enumerable<Object[]> bind(DataContext dataContext) {
+            return new AbstractEnumerable<Object[]>() {
+
+                @Override
+                public Enumerator<Object[]> enumerator() {
+                    return new Enumerator<Object[]>() {
+                        int i = 0;
+
+                        @Override
+                        public Object[] current() {
+                            return values.get(i);
+                        }
+
+                        @Override
+                        public boolean moveNext() {
+                            if (i < values.size()) {
+                                i++;
+                                return true;
+                            }
+                            return false;
+                        }
+
+                        @Override
+                        public void reset() {
+                            i = 0;
+                        }
+
+                        @Override
+                        public void close() {
+                        }
+                    };
+                }
+            };
+        }
     }
 }
