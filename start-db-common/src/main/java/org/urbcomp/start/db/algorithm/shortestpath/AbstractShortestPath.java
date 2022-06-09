@@ -20,21 +20,21 @@ import org.urbcomp.start.db.util.GeoFunctions;
 
 import java.util.*;
 
-public abstract class AbstractOneToOneShortestPath {
-    private final RoadNetwork roadNetwork;
+public abstract class AbstractShortestPath {
+    protected final RoadNetwork roadNetwork;
     /**
      * note that the start and end points may be mot exactly on the road segments,
      * the searchDistance defines the scope to find the start or end road segments.
      * unit: meter
      */
-    private double searchDistance = 300;
+    protected double searchDistance = 300;
 
-    public AbstractOneToOneShortestPath(RoadNetwork roadNetwork, double searchDistance) {
+    public AbstractShortestPath(RoadNetwork roadNetwork, double searchDistance) {
         this.roadNetwork = roadNetwork;
         this.searchDistance = searchDistance;
     }
 
-    public AbstractOneToOneShortestPath(RoadNetwork roadNetwork) {
+    public AbstractShortestPath(RoadNetwork roadNetwork) {
         this.roadNetwork = roadNetwork;
     }
 
