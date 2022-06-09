@@ -17,7 +17,11 @@ import java.util.Objects;
 
 public class GetCasePathByXML {
 
-    // 获取resources中cases目录下, 所有sql用例的xml文件路径
+    /**
+     * 获取resources中cases目录下, 所有sql用例的xml文件路径
+     *
+     * @return 返回cases目录下, 所有sql用例的xml文件路径列表
+     * */
     public static ArrayList<String> getSqlCaseXMLs() {
         String casePath = Objects.requireNonNull(
             GetCasePathByXML.class.getClassLoader().getResource("cases")
@@ -35,7 +39,11 @@ public class GetCasePathByXML {
         return caseFileList;
     }
 
-    // 传入文件夹名称, 返回文件夹下的文件路径列表, 不包括文件夹
+    /**
+     * 传入文件夹名称, 返回文件夹下的文件路径列表, 不包括文件夹
+     *
+     * @return 返回文件列表
+     * */
     private static ArrayList<String> getFilesInFold(String foldPath) {
         String[] fileList = new File(foldPath).list();
         ArrayList<String> fileArrayList = new ArrayList<>();
