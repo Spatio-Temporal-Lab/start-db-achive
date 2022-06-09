@@ -105,6 +105,7 @@ public class RoadNetwork {
     public RoadSegment getRoadSegmentById(int roadSegmentId) {
         return idToExpandedRoadSegment.get(roadSegmentId);
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
