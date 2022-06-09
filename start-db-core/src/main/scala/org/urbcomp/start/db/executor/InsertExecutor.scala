@@ -28,14 +28,15 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
 
   override def execute(): Unit = {
     // extract database name and table name
+    // ToDO   传入参数（userName, envDbName, DataStoreParam）与返回值
     val userName = ""
     val envDbName = ""
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
     val (dbName, tableName) = targetTable.names.size() match {
       case 2 =>
-        (targetTable.names.get(2), targetTable.names.get(2))
+        (targetTable.names.get(0), targetTable.names.get(1))
       case 1 =>
-        (envDbName, targetTable.names.get(2))
+        (envDbName, targetTable.names.get(0))
       case _ =>
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
@@ -51,29 +52,36 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
           val queryItem = i
             .asInstanceOf[SqlBasicCall]
             .operands
-            .map(j => j.toString) // TODO nee test
+            .map(j => j.toString)
             .mkString(" , ")
-          val querySql =
+          val originalQuerySql =
             s"""
              |SELECT $queryItem
              |""".stripMargin
+          val querySql = originalQuerySql.replace("`", "")
           val rs = executeQuery(userName, dbName, querySql)
           val count = rs.getMetaData.getColumnCount
           val result = new util.ArrayList[AnyRef](count)
-          for (x <- 1 until count) {
+          rs.next()
+          for (x <- 1 to count) {
             result.add(rs.getObject(x))
           }
           result
         }
 
     // insert data
-    val dataStore = DataStoreFinder.getDataStore(new util.HashMap[String, String]())
+    val params = new util.HashMap[String, String]()
+    val CATALOG = "start_db.db_test"
+    params.put("hbase.catalog", CATALOG)
+    params.put("hbase.zookeepers", "localhost:2181")
+    val dataStore = DataStoreFinder.getDataStore(params)
     WithClose(dataStore.getFeatureWriterAppend(tableName, Transaction.AUTO_COMMIT)) { writer =>
       resultObjs.foreach { i =>
         val sf = writer.next()
         val count = i.size()
-        for (x <- 1 until count) {
+        for (x <- 0 until count) {
           sf.setAttribute(n.getTargetColumnList.get(x).toString, i.get(x))
+
         }
         writer.write()
       }
@@ -90,12 +98,12 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     properties.setProperty("db", dbName)
     properties.setProperty("printLog", "false")
     properties.setProperty("recordHistory", "false")
+    // ToDO connection没有close (如果在方法内close，rs将无法在execute方法中调用)
+    val connection = DriverManager.getConnection("jdbc:calcite:fun=spatial", properties)
+    val statement = connection.createStatement()
+    // ToDO 自定义函数的注册问题
+    statement.executeQuery(querySql)
 
-    WithClose(DriverManager.getConnection("jdbc:calcite:fun=spatial", properties)) { conn =>
-      WithClose(conn.createStatement()) { stmt =>
-        stmt.executeQuery(querySql)
-      }
-    }
   }
 
 }
