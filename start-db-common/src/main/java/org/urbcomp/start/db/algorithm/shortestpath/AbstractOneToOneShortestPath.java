@@ -112,7 +112,7 @@ public abstract class AbstractOneToOneShortestPath {
 
         // 处理在不同路段的情况
         List<Path> results = new ArrayList<>();
-
+        return null;
     }
 
     private Path getPathInSameRoadSegmentInOrder(
