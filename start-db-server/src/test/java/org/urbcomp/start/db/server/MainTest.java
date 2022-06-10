@@ -29,9 +29,9 @@ public class MainTest {
     public void testJDBC() throws SQLException {
 
         try (
-            Connection conn = DriverManager.getConnection(
-                "jdbc:avatica:remote:url=http://127.0.0.1:8000"
-            )
+                Connection conn = DriverManager.getConnection(
+                        "jdbc:avatica:remote:url=http://127.0.0.1:8000"
+                )
         ) {
             final Statement stmt = conn.createStatement();
 

@@ -16,13 +16,13 @@
  */
 package org.apache.calcite.avatica.remote;
 
+import com.desoss.jackson.datatype.jts.JtsModule;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.calcite.avatica.metrics.MetricsSystem;
 import org.apache.calcite.avatica.metrics.Timer;
 import org.apache.calcite.avatica.metrics.Timer.Context;
 import org.apache.calcite.avatica.remote.Service.Request;
 import org.apache.calcite.avatica.remote.Service.Response;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -37,6 +37,12 @@ import java.io.StringWriter;
 public class JsonHandler extends AbstractHandler<String> {
 
     protected static final ObjectMapper MAPPER = JsonService.MAPPER;
+
+    // start-db add
+    static {
+        MAPPER.registerModule(new JtsModule());
+    }
+    // start-db end
 
     final MetricsSystem metrics;
     final Timer serializationTimer;
