@@ -21,7 +21,12 @@ public class GeoFunctions {
     /**
      * 地球长半径
      */
-    private static final double EARTH_RADIUS_IN_METER = 6378137.0;
+    public static final double EARTH_RADIUS_IN_METER = 6378137.0;
+
+    /**
+     * 扁率
+     */
+    public static final double FLATTENING = 0.00669342162296594323;
 
     /**
      * 将球面距离转化为度（在地理坐标系下做缓冲区时使用）

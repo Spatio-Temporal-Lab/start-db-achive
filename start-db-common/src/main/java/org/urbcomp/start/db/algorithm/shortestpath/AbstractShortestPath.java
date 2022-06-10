@@ -238,7 +238,7 @@ public abstract class AbstractShortestPath {
         RoadSegment roadSegment
     ) {
         List<SpatialPoint> points = Lists.newArrayList(startPoint, startCandidatePoint);
-        for (int i = startCandidatePoint.getMatchedIndex(); i <= endCandidatePoint
+        for (int i = startCandidatePoint.getMatchedIndex() + 1; i <= endCandidatePoint
             .getMatchedIndex(); i++) {
             points.add(roadSegment.getPoints().get(i));
         }
@@ -259,7 +259,7 @@ public abstract class AbstractShortestPath {
         RoadSegment roadSegment
     ) {
         List<SpatialPoint> points = Lists.newArrayList(startPoint, startCandidatePoint);
-        for (int i = startCandidatePoint.getMatchedIndex(); i >= endCandidatePoint
+        for (int i = startCandidatePoint.getMatchedIndex(); i > endCandidatePoint
             .getMatchedIndex(); i--) {
             points.add(roadSegment.getPoints().get(i));
         }
@@ -298,7 +298,7 @@ public abstract class AbstractShortestPath {
         RoadSegment startRoadSegment
     ) {
         List<SpatialPoint> points = Lists.newArrayList(startPoint, startCandidatePoint);
-        for (int i = startCandidatePoint.getMatchedIndex(); i < startRoadSegment.getPoints()
+        for (int i = startCandidatePoint.getMatchedIndex() + 1; i < startRoadSegment.getPoints()
             .size(); i++) {
             points.add(startRoadSegment.getPoints().get(i));
         }

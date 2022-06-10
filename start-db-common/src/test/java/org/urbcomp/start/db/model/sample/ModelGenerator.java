@@ -72,7 +72,7 @@ public class ModelGenerator {
 
     public static RoadNetwork generateRoadNetwork() {
         String fileName = Objects.requireNonNull(
-            ModelGenerator.class.getClassLoader().getResource("data/roadnetwork.csv")
+            ModelGenerator.class.getClassLoader().getResource("data/roadnetwork_gcj02.csv")
         ).getPath();
         try (
             InputStream in = new FileInputStream(fileName);
