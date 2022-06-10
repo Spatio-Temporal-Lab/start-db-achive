@@ -42,14 +42,6 @@ public interface IMapper<T extends AbstractEntity> {
     /**
      * select one entity in table based on name
      *
-     * @param name name
-     * @return entity instance
-     */
-    T selectByName(@Param("name") String name);
-
-    /**
-     * select one entity in table based on name
-     *
      * @param fid foreign id
      * @param name name
      * @return entity instance

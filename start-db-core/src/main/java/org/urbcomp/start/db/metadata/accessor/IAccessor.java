@@ -37,17 +37,6 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
     /**
      * select one entity from table by name
      *
-     * @param name  name
-     * @param commit    auto_commit
-     * @return entity instance
-     */
-    default T selectByName(String name, boolean commit) {
-        return getMapper(commit).selectByName(name);
-    }
-
-    /**
-     * select one entity from table by name
-     *
      * @param fid    foreign id
      * @param name   name
      * @param commit auto_commit

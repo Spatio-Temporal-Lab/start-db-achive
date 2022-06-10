@@ -120,10 +120,14 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     val userAccessor = AccessorFactory.getUserAccessor
     val databaseAccessor = AccessorFactory.getDatabaseAccessor
     val tableAccessor = AccessorFactory.getTableAccessor
-    val user = userAccessor.selectByName(userName, true)
-    val database = databaseAccessor.selectByName(dbName, true)
-    val table = tableAccessor.selectByName(tableName, true)
-    if (user == null || database == null || table == null) return false
+    val user = userAccessor.selectByFidAndName(0L, userName, true)
+    if (user == null) return false
+    val userId = user.getId
+    val database = databaseAccessor.selectByFidAndName(userId, dbName, true)
+    if (database == null) return false
+    val dbId = database.getId
+    val table = tableAccessor.selectByFidAndName(dbId, tableName, true)
+    if (table == null) return false
     true
   }
 

@@ -13,11 +13,6 @@
         FROM sys_user
         WHERE name = #{name} and delete_time = 0
     </select>
-    <select id="selectByName" resultType="org.urbcomp.start.db.metadata.entity.User">
-        SELECT *
-        FROM sys_user
-        WHERE id = #{name} and delete_time = 0
-    </select>
     <select id="selectByFidAndName" resultType="org.urbcomp.start.db.metadata.entity.User">
         SELECT *
         FROM sys_user
