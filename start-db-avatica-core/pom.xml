@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>start-db-jdbc-driver</artifactId>
+    <artifactId>start-db-avatica-core</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -18,14 +18,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.urbcomp</groupId>
-            <artifactId>start-db-avatica-core</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>org.apache.calcite.avatica</groupId>
+            <artifactId>avatica-core</artifactId>
+            <version>${avatica.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
         </dependency>
     </dependencies>
 </project>

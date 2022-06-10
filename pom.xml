@@ -10,6 +10,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>start-db-test</module>
+        <module>start-db-avatica-core</module>
         <module>start-db-calcite</module>
         <module>start-db-jdbc-driver</module>
         <module>start-db-cmd</module>
@@ -59,8 +60,8 @@
             <!-- start-db modules -->
             <dependency>
                 <groupId>org.urbcomp</groupId>
-                <artifactId>calcite</artifactId>
-                <version>${project.version}</version>
+                <artifactId>start-db-calcite</artifactId>
+                <version>${version}</version>
             </dependency>
 
             <!--  Calcite Dependency  -->
@@ -93,12 +94,6 @@
                 <version>${slf4j.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.scalatest</groupId>
-                <artifactId>scalatest_${scala.binary.version}</artifactId>
-                <version>${scalatest.version}</version>
-                <scope>test</scope>
-            </dependency>
 
             <dependency>
                 <groupId>org.apache.hbase</groupId>

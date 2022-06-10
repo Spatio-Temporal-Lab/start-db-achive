@@ -13,11 +13,29 @@ package org.urbcomp.start.db
 
 import org.junit.Assert.{assertEquals, assertTrue}
 
+import java.sql.Timestamp
+import java.util.Date
+
 class QueryTest extends AbstractCalciteFunctionTest {
 
   test("test query") {
     val stmt = connect.createStatement()
     val rs = stmt.executeQuery("select count(1) from t_test")
     assertTrue(rs.next())
+  }
+
+  test("test query col") {
+    val stmt = connect.createStatement()
+    val rs = stmt.executeQuery("select * from t_test")
+    val md = rs.getMetaData
+    val cnt = md.getColumnCount
+    while (rs.next()) {
+      for (i <- 1 until cnt) {
+        if (!md.getColumnClassName(i).equals(classOf[Timestamp].getCanonicalName)) {
+          print(rs.getObject(i) + ", ")
+        }
+      }
+      println()
+    }
   }
 }
