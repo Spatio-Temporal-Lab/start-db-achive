@@ -50,23 +50,6 @@ public abstract class AbstractShortestPath {
         this.algo = algo;
     }
 
-    private Path findShortestPath(RoadNode startNode, RoadNode endNode) {
-        GraphPath<RoadNode, RoadSegment> shortestPath = algo.getPath(startNode, endNode);
-        if (shortestPath == null) {
-            return new Path(Double.MAX_VALUE, new ArrayList<>(), new ArrayList<>());
-        } else {
-            List<SpatialPoint> points = new ArrayList<>();
-            double length = 0;
-            List<Integer> roadSegmentIds = new ArrayList<>();
-            for (RoadSegment rs : shortestPath.getEdgeList()) {
-                length += rs.getLengthInMeter();
-                points.addAll(rs.getPoints());
-                roadSegmentIds.add(rs.getRoadSegmentId());
-            }
-            return new Path(length, points, roadSegmentIds);
-        }
-    }
-
     /**
      * 获得最短路径的Id列表，以及点列表
      * @param startPoint 起始点
@@ -211,6 +194,23 @@ public abstract class AbstractShortestPath {
             return path;
         } else {
             return new Path(Double.MAX_VALUE, new ArrayList<>(), new ArrayList<>());
+        }
+    }
+
+    private Path findShortestPath(RoadNode startNode, RoadNode endNode) {
+        GraphPath<RoadNode, RoadSegment> shortestPath = algo.getPath(startNode, endNode);
+        if (shortestPath == null) {
+            return new Path(Double.MAX_VALUE, new ArrayList<>(), new ArrayList<>());
+        } else {
+            List<SpatialPoint> points = new ArrayList<>();
+            double length = 0;
+            List<Integer> roadSegmentIds = new ArrayList<>();
+            for (RoadSegment rs : shortestPath.getEdgeList()) {
+                length += rs.getLengthInMeter();
+                points.addAll(rs.getPoints());
+                roadSegmentIds.add(rs.getRoadSegmentId());
+            }
+            return new Path(length, points, roadSegmentIds);
         }
     }
 
