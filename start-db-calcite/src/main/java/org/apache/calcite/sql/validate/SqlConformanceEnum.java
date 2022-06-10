@@ -1,4 +1,9 @@
 /*
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
+ *
+ * https://github.com/apache/calcite
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.calcite.sql.validate;
 
 /**
@@ -100,7 +106,6 @@ public enum SqlConformanceEnum implements SqlConformance {
                 return false;
         }
     }
-
 
     public boolean isGroupByAlias() {
         switch (this) {
@@ -223,7 +228,8 @@ public enum SqlConformanceEnum implements SqlConformance {
         }
     }
 
-    @Override public boolean isMinusAllowed() {
+    @Override
+    public boolean isMinusAllowed() {
         switch (this) {
             case BABEL:
             case LENIENT:
@@ -235,7 +241,8 @@ public enum SqlConformanceEnum implements SqlConformance {
         }
     }
 
-    @Override public boolean isPercentRemainderAllowed() {
+    @Override
+    public boolean isPercentRemainderAllowed() {
         switch (this) {
             case BABEL:
             case LENIENT:
@@ -356,7 +363,8 @@ public enum SqlConformanceEnum implements SqlConformance {
         }
     }
 
-    @Override public boolean allowPluralTimeUnits() {
+    @Override
+    public boolean allowPluralTimeUnits() {
         switch (this) {
             case BABEL:
             case LENIENT:
@@ -366,7 +374,8 @@ public enum SqlConformanceEnum implements SqlConformance {
         }
     }
 
-    @Override public boolean allowQualifyingCommonColumn() {
+    @Override
+    public boolean allowQualifyingCommonColumn() {
         switch (this) {
             case ORACLE_10:
             case ORACLE_12:
@@ -380,7 +389,8 @@ public enum SqlConformanceEnum implements SqlConformance {
         }
     }
 
-    @Override public boolean allowAliasUnnestItems() {
+    @Override
+    public boolean allowAliasUnnestItems() {
         switch (this) {
             case PRESTO:
                 return true;

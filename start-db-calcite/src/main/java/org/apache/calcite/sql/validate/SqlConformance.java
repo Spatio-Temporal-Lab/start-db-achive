@@ -1,4 +1,9 @@
 /*
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
+ *
+ * https://github.com/apache/calcite
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,8 +19,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.calcite.sql.validate;
 
+package org.apache.calcite.sql.validate;
 
 /**
  * Enumeration of valid SQL compatibility modes.
@@ -36,31 +41,31 @@ public interface SqlConformance {
     /** Short-cut for {@link SqlConformanceEnum#DEFAULT}. */
     @SuppressWarnings("unused")
     @Deprecated // to be removed before 2.0
-            SqlConformanceEnum DEFAULT = SqlConformanceEnum.DEFAULT;
+    SqlConformanceEnum DEFAULT = SqlConformanceEnum.DEFAULT;
     /** Short-cut for {@link SqlConformanceEnum#STRICT_92}. */
     @SuppressWarnings("unused")
     @Deprecated // to be removed before 2.0
-            SqlConformanceEnum STRICT_92 = SqlConformanceEnum.STRICT_92;
+    SqlConformanceEnum STRICT_92 = SqlConformanceEnum.STRICT_92;
     /** Short-cut for {@link SqlConformanceEnum#STRICT_99}. */
     @SuppressWarnings("unused")
     @Deprecated // to be removed before 2.0
-            SqlConformanceEnum STRICT_99 = SqlConformanceEnum.STRICT_99;
+    SqlConformanceEnum STRICT_99 = SqlConformanceEnum.STRICT_99;
     /** Short-cut for {@link SqlConformanceEnum#PRAGMATIC_99}. */
     @SuppressWarnings("unused")
     @Deprecated // to be removed before 2.0
-            SqlConformanceEnum PRAGMATIC_99 = SqlConformanceEnum.PRAGMATIC_99;
+    SqlConformanceEnum PRAGMATIC_99 = SqlConformanceEnum.PRAGMATIC_99;
     /** Short-cut for {@link SqlConformanceEnum#ORACLE_10}. */
     @SuppressWarnings("unused")
     @Deprecated // to be removed before 2.0
-            SqlConformanceEnum ORACLE_10 = SqlConformanceEnum.ORACLE_10;
+    SqlConformanceEnum ORACLE_10 = SqlConformanceEnum.ORACLE_10;
     /** Short-cut for {@link SqlConformanceEnum#STRICT_2003}. */
     @SuppressWarnings("unused")
     @Deprecated // to be removed before 2.0
-            SqlConformanceEnum STRICT_2003 = SqlConformanceEnum.STRICT_2003;
+    SqlConformanceEnum STRICT_2003 = SqlConformanceEnum.STRICT_2003;
     /** Short-cut for {@link SqlConformanceEnum#PRAGMATIC_2003}. */
     @SuppressWarnings("unused")
     @Deprecated // to be removed before 2.0
-            SqlConformanceEnum PRAGMATIC_2003 = SqlConformanceEnum.PRAGMATIC_2003;
+    SqlConformanceEnum PRAGMATIC_2003 = SqlConformanceEnum.PRAGMATIC_2003;
 
     /**
      * Whether this dialect supports features from a wide variety of

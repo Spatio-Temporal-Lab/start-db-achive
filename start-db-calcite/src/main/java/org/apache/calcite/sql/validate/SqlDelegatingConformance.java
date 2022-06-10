@@ -1,4 +1,9 @@
 /*
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
+ *
+ * https://github.com/apache/calcite
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.calcite.sql.validate;
 
 /**
@@ -29,51 +35,63 @@ public class SqlDelegatingConformance extends SqlAbstractConformance {
         this.delegate = delegate;
     }
 
-    @Override public boolean isGroupByAlias() {
+    @Override
+    public boolean isGroupByAlias() {
         return delegate.isGroupByAlias();
     }
 
-    @Override public boolean isGroupByOrdinal() {
+    @Override
+    public boolean isGroupByOrdinal() {
         return delegate.isGroupByOrdinal();
     }
 
-    @Override public boolean isHavingAlias() {
+    @Override
+    public boolean isHavingAlias() {
         return delegate.isGroupByAlias();
     }
 
-    @Override public boolean isSortByOrdinal() {
+    @Override
+    public boolean isSortByOrdinal() {
         return delegate.isSortByOrdinal();
     }
 
-    @Override public boolean isSortByAlias() {
+    @Override
+    public boolean isSortByAlias() {
         return delegate.isSortByAlias();
     }
 
-    @Override public boolean isSortByAliasObscures() {
+    @Override
+    public boolean isSortByAliasObscures() {
         return delegate.isSortByAliasObscures();
     }
 
-    @Override public boolean isFromRequired() {
+    @Override
+    public boolean isFromRequired() {
         return delegate.isFromRequired();
     }
 
-    @Override public boolean isBangEqualAllowed() {
+    @Override
+    public boolean isBangEqualAllowed() {
         return delegate.isBangEqualAllowed();
     }
 
-    @Override public boolean isMinusAllowed() {
+    @Override
+    public boolean isMinusAllowed() {
         return delegate.isMinusAllowed();
     }
 
-    @Override public boolean isInsertSubsetColumnsAllowed() {
+    @Override
+    public boolean isInsertSubsetColumnsAllowed() {
         return delegate.isInsertSubsetColumnsAllowed();
     }
 
-    @Override public boolean allowNiladicParentheses() {
+    @Override
+    public boolean allowNiladicParentheses() {
         return delegate.allowNiladicParentheses();
     }
 
-    @Override public boolean allowAliasUnnestItems() {
+    @Override
+    public boolean allowAliasUnnestItems() {
         return delegate.allowAliasUnnestItems();
     }
 

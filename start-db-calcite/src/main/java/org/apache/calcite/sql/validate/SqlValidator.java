@@ -1,4 +1,9 @@
 /*
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
+ *
+ * https://github.com/apache/calcite
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.calcite.sql.validate;
 
 import org.apache.calcite.config.NullCollation;
@@ -111,7 +117,7 @@ import javax.annotation.Nullable;
  * names in a particular clause of a SQL statement.</p>
  */
 public interface SqlValidator {
-    //~ Methods ----------------------------------------------------------------
+    // ~ Methods ----------------------------------------------------------------
 
     /**
      * Returns the catalog reader used by this validator.
@@ -146,8 +152,9 @@ public interface SqlValidator {
      * @return validated tree (possibly rewritten)
      */
     SqlNode validateParameterizedExpression(
-            SqlNode topNode,
-            Map<String, RelDataType> nameToTypeMap);
+        SqlNode topNode,
+        Map<String, RelDataType> nameToTypeMap
+    );
 
     /**
      * Checks that a query is valid.
@@ -168,8 +175,7 @@ public interface SqlValidator {
      *                      type 'unknown'.
      * @throws RuntimeException if the query is not valid
      */
-    void validateQuery(SqlNode node, SqlValidatorScope scope,
-                       RelDataType targetRowType);
+    void validateQuery(SqlNode node, SqlValidatorScope scope, RelDataType targetRowType);
 
     /**
      * Returns the type assigned to a node by validation.
@@ -266,10 +272,7 @@ public interface SqlValidator {
      * @param call       the SqlNode if a function call if the window is attached
      *                   to one.
      */
-    void validateWindow(
-            SqlNode windowOrId,
-            SqlValidatorScope scope,
-            SqlCall call);
+    void validateWindow(SqlNode windowOrId, SqlValidatorScope scope, SqlCall call);
 
     /**
      * Validates a MATCH_RECOGNIZE clause.
@@ -284,9 +287,7 @@ public interface SqlValidator {
      * @param call  Operator call
      * @param scope Naming scope
      */
-    void validateCall(
-            SqlCall call,
-            SqlValidatorScope scope);
+    void validateCall(SqlCall call, SqlValidatorScope scope);
 
     /**
      * Validates parameters for aggregate function.
@@ -297,8 +298,12 @@ public interface SqlValidator {
      *                    or null
      * @param scope       Syntactic scope
      */
-    void validateAggregateParams(SqlCall aggCall, SqlNode filter,
-                                 SqlNodeList orderList, SqlValidatorScope scope);
+    void validateAggregateParams(
+        SqlCall aggCall,
+        SqlNode filter,
+        SqlNodeList orderList,
+        SqlValidatorScope scope
+    );
 
     /**
      * Validates a COLUMN_LIST parameter.
@@ -308,16 +313,18 @@ public interface SqlValidator {
      * @param operands operands passed into the function call
      */
     void validateColumnListParams(
-            SqlFunction function,
-            List<RelDataType> argTypes,
-            List<SqlNode> operands);
+        SqlFunction function,
+        List<RelDataType> argTypes,
+        List<SqlNode> operands
+    );
 
     /**
      * If an identifier is a legitimate call to a function that has no
      * arguments and requires no parentheses (for example "CURRENT_USER"),
      * returns a call to that function, otherwise returns null.
      */
-    @Nullable SqlCall makeNullaryCall(SqlIdentifier id);
+    @Nullable
+    SqlCall makeNullaryCall(SqlIdentifier id);
 
     /**
      * Derives the type of a node in a given scope. If the type has already been
@@ -327,9 +334,7 @@ public interface SqlValidator {
      * @param operand Parse tree node
      * @return Type of the SqlNode. Should never return <code>NULL</code>
      */
-    RelDataType deriveType(
-            SqlValidatorScope scope,
-            SqlNode operand);
+    RelDataType deriveType(SqlValidatorScope scope, SqlNode operand);
 
     /**
      * Adds "line x, column y" context to a validator exception.
@@ -344,8 +349,9 @@ public interface SqlValidator {
      * @return Exception containing positional information, never null
      */
     CalciteContextException newValidationError(
-            SqlNode node,
-            Resources.ExInst<SqlValidatorException> e);
+        SqlNode node,
+        Resources.ExInst<SqlValidatorException> e
+    );
 
     /**
      * Returns whether a SELECT statement is an aggregation. Criteria are: (1)
@@ -380,9 +386,7 @@ public interface SqlValidator {
      * @return A window
      * @throws RuntimeException Validation exception if window does not exist
      */
-    SqlWindow resolveWindow(
-            SqlNode windowOrRef,
-            SqlValidatorScope scope);
+    SqlWindow resolveWindow(SqlNode windowOrRef, SqlValidatorScope scope);
 
     /**
      * Converts a window specification or window name into a fully-resolved
@@ -398,9 +402,10 @@ public interface SqlValidator {
      */
     @Deprecated // to be removed before 2.0
     default SqlWindow resolveWindow(
-            SqlNode windowOrRef,
-            SqlValidatorScope scope,
-            boolean populateBounds) {
+        SqlNode windowOrRef,
+        SqlValidatorScope scope,
+        boolean populateBounds
+    ) {
         return resolveWindow(windowOrRef, scope);
     };
 
@@ -426,9 +431,7 @@ public interface SqlValidator {
      * @return derived alias, or null if no alias can be derived and ordinal is
      * less than zero
      */
-    String deriveAlias(
-            SqlNode node,
-            int ordinal);
+    String deriveAlias(SqlNode node, int ordinal);
 
     /**
      * Returns a list of expressions, with every occurrence of "&#42;" or
@@ -439,10 +442,7 @@ public interface SqlValidator {
      * @param includeSystemVars Whether to include system variables
      * @return expanded select clause
      */
-    SqlNodeList expandStar(
-            SqlNodeList selectList,
-            SqlSelect query,
-            boolean includeSystemVars);
+    SqlNodeList expandStar(SqlNodeList selectList, SqlSelect query, boolean includeSystemVars);
 
     /**
      * Returns the scope that expressions in the WHERE and GROUP BY clause of
@@ -471,9 +471,7 @@ public interface SqlValidator {
      * @param type Its type; must not be null
      */
     @API(status = API.Status.INTERNAL, since = "1.24")
-    void setValidatedNodeType(
-            SqlNode node,
-            RelDataType type);
+    void setValidatedNodeType(SqlNode node, RelDataType type);
 
     /**
      * Removes a node from the set of validated nodes.
@@ -629,11 +627,12 @@ public interface SqlValidator {
      * @return Resolved type of constructor
      */
     RelDataType deriveConstructorType(
-            SqlValidatorScope scope,
-            SqlCall call,
-            SqlFunction unresolvedConstructor,
-            SqlFunction resolvedConstructor,
-            List<RelDataType> argTypes);
+        SqlValidatorScope scope,
+        SqlCall call,
+        SqlFunction unresolvedConstructor,
+        SqlFunction resolvedConstructor,
+        List<RelDataType> argTypes
+    );
 
     /**
      * Handles a call to a function which cannot be resolved. Returns a an
@@ -645,9 +644,12 @@ public interface SqlValidator {
      * @param argTypes           Types of arguments
      * @param argNames           Names of arguments, or null if call by position
      */
-    CalciteException handleUnresolvedFunction(SqlCall call,
-                                              SqlFunction unresolvedFunction, List<RelDataType> argTypes,
-                                              List<String> argNames);
+    CalciteException handleUnresolvedFunction(
+        SqlCall call,
+        SqlFunction unresolvedFunction,
+        List<RelDataType> argTypes,
+        List<String> argNames
+    );
 
     /**
      * Expands an expression in the ORDER BY clause into an expression with the
@@ -731,8 +733,7 @@ public interface SqlValidator {
      *             modality
      * @return whether query supports the given modality
      */
-    boolean validateModality(SqlSelect select, SqlModality modality,
-                             boolean fail);
+    boolean validateModality(SqlSelect select, SqlModality modality, boolean fail);
 
     void validateWith(SqlWith with, SqlValidatorScope scope);
 
@@ -758,7 +759,7 @@ public interface SqlValidator {
     @API(status = API.Status.INTERNAL, since = "1.23")
     SqlValidator transform(UnaryOperator<SqlValidator.Config> transform);
 
-    //~ Inner Class ------------------------------------------------------------
+    // ~ Inner Class ------------------------------------------------------------
 
     /**
      * Interface to define the configuration for a SqlValidator.
@@ -767,7 +768,7 @@ public interface SqlValidator {
     public interface Config {
         /** Default configuration. */
         SqlValidator.Config DEFAULT = ImmutableBeans.create(Config.class)
-                .withTypeCoercionFactory(TypeCoercions::createTypeCoercion);
+            .withTypeCoercionFactory(TypeCoercions::createTypeCoercion);
 
         /**
          * Returns whether to enable rewrite of "macro-like" calls such as COALESCE.
