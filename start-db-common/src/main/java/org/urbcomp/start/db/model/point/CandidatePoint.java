@@ -74,14 +74,20 @@ public class CandidatePoint extends SpatialPoint {
     }
 
     private double calOffsetInMeter(RoadSegment roadSegment, int matchedIndex) {
-        double offset = GeoFunctions.getDistanceInM(
+        double offset = 0;
+
+        // 路段开始到matchedIndex点的距离
+        List<SpatialPoint> points = roadSegment.getPoints();
+        for (int i = 0; i < matchedIndex; i++) {
+            offset += GeoFunctions.getDistanceInM(points.get(i), points.get(i + 1));
+        }
+
+        // matched point到matchedIndex的距离
+        offset += GeoFunctions.getDistanceInM(
             new SpatialPoint(roadSegment.getPoints().get(matchedIndex).getCoordinate()),
             this
         );
-        List<SpatialPoint> points = roadSegment.getPoints();
-        for (int i = 0; i < points.size(); i++) {
-            offset += GeoFunctions.getDistanceInM(points.get(i), points.get(i + 1));
-        }
+
         return offset;
     }
 
