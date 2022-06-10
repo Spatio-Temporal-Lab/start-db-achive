@@ -12,6 +12,8 @@
 package org.urbcomp.start.db.algorithm.shortestpath;
 
 import com.github.davidmoten.guavamini.Lists;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.urbcomp.start.db.exception.AlgorithmExecuteException;
 import org.urbcomp.start.db.model.point.CandidatePoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
@@ -21,24 +23,49 @@ import org.urbcomp.start.db.util.GeoFunctions;
 import java.util.*;
 
 public abstract class AbstractShortestPath {
-    protected final RoadNetwork roadNetwork;
+    private final ShortestPathAlgorithm<RoadNode, RoadSegment> algo;
+    private final RoadNetwork roadNetwork;
     /**
      * note that the start and end points may be mot exactly on the road segments,
      * the searchDistance defines the scope to find the start or end road segments.
      * unit: meter
      */
-    protected double searchDistance = 300;
+    private double searchDistance = 300;
 
-    public AbstractShortestPath(RoadNetwork roadNetwork, double searchDistance) {
+    public AbstractShortestPath(
+        RoadNetwork roadNetwork,
+        double searchDistance,
+        ShortestPathAlgorithm<RoadNode, RoadSegment> algo
+    ) {
         this.roadNetwork = roadNetwork;
         this.searchDistance = searchDistance;
+        this.algo = algo;
     }
 
-    public AbstractShortestPath(RoadNetwork roadNetwork) {
+    public AbstractShortestPath(
+        RoadNetwork roadNetwork,
+        ShortestPathAlgorithm<RoadNode, RoadSegment> algo
+    ) {
         this.roadNetwork = roadNetwork;
+        this.algo = algo;
     }
 
-    protected abstract Path findShortestPath(RoadNode startNode, RoadNode endNode);
+    private Path findShortestPath(RoadNode startNode, RoadNode endNode) {
+        GraphPath<RoadNode, RoadSegment> shortestPath = algo.getPath(startNode, endNode);
+        if (shortestPath == null) {
+            return new Path(Double.MAX_VALUE, new ArrayList<>(), new ArrayList<>());
+        } else {
+            List<SpatialPoint> points = new ArrayList<>();
+            double length = 0;
+            List<Integer> roadSegmentIds = new ArrayList<>();
+            for (RoadSegment rs : shortestPath.getEdgeList()) {
+                length += rs.getLengthInMeter();
+                points.addAll(rs.getPoints());
+                roadSegmentIds.add(rs.getRoadSegmentId());
+            }
+            return new Path(length, points, roadSegmentIds);
+        }
+    }
 
     /**
      * 获得最短路径的Id列表，以及点列表
