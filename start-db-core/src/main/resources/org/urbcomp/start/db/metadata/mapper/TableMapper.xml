@@ -14,6 +14,12 @@
         WHERE id = #{id}
           and delete_time = 0;
     </select>
+    <select id="selectByName" resultType="org.urbcomp.start.db.metadata.entity.Table">
+        SELECT *
+        FROM sys_table
+        WHERE name = #{name}
+        and delete_time = 0;
+    </select>
     <select id="selectByFidAndName" resultType="org.urbcomp.start.db.metadata.entity.Table">
         SELECT *
         FROM sys_table

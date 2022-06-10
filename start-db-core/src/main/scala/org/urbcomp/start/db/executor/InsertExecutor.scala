@@ -12,10 +12,13 @@
 package org.urbcomp.start.db.executor
 
 import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
+import org.apache.hbase.thirdparty.io.netty.handler.codec.mqtt.MqttMessageBuilders.connect
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.infra.BaseExecutor
+import org.urbcomp.start.db.metadata.AccessorFactory
 
+import java.nio.file.{Path, Paths}
 import java.sql.{DriverManager, ResultSet}
 import java.util
 import java.util.Properties
@@ -26,9 +29,12 @@ import java.util.Properties
   */
 case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
 
+  val path: Path = Paths.get("../start-db-server/src/main/resources/model.json")
+
+  // ToDO 整合棚哥的metaResult
   override def execute(): Unit = {
     // extract database name and table name
-    // ToDO   传入参数（userName, envDbName, DataStoreParam）与返回值
+    // ToDO 与path一样，需要封装统一的传入参数（先写死）
     val userName = ""
     val envDbName = ""
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
@@ -41,7 +47,8 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
 
-    // TODO validate metadata
+    // ToDO get through metaData
+//    if (!metaDataVerify(userName, envDbName, tableName)) throw new RuntimeException("There is no corresponding table!")
 
     // construct sql
     val resultObjs: Array[util.ArrayList[AnyRef]] =
@@ -59,18 +66,22 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
              |SELECT $queryItem
              |""".stripMargin
           val querySql = originalQuerySql.replace("`", "")
-          val rs = executeQuery(userName, dbName, querySql)
-          val count = rs.getMetaData.getColumnCount
-          val result = new util.ArrayList[AnyRef](count)
-          rs.next()
-          for (x <- 1 to count) {
-            result.add(rs.getObject(x))
+          WithClose(executeQuery(userName, dbName, querySql)) { rs =>
+            {
+              val count = rs.getMetaData.getColumnCount
+              val result = new util.ArrayList[AnyRef](count)
+              rs.next()
+              for (x <- 1 to count) {
+                result.add(rs.getObject(x))
+              }
+              result
+            }
           }
-          result
         }
 
     // insert data
     val params = new util.HashMap[String, String]()
+    // ToDO 传入参数的问题(先写死)
     val CATALOG = "start_db.db_test"
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
@@ -89,21 +100,31 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     dataStore.dispose()
   }
 
+  /**
+    * Execute the SQL parsed from the contents of values
+    */
   def executeQuery[R](user: String, dbName: String, querySql: String): ResultSet = {
-    System.setProperty("jdbc.drivers", "org.apache.calcite.jdbc.Driver")
-    val driver = Class.forName("org.apache.calcite.jdbc.Driver")
-    assert(driver != null)
-    val properties = new Properties()
-    properties.setProperty("user", user)
-    properties.setProperty("db", dbName)
-    properties.setProperty("printLog", "false")
-    properties.setProperty("recordHistory", "false")
-    // ToDO connection没有close (如果在方法内close，rs将无法在execute方法中调用)
-    val connection = DriverManager.getConnection("jdbc:calcite:fun=spatial", properties)
-    val statement = connection.createStatement()
-    // ToDO 自定义函数的注册问题
+    val url = path.toAbsolutePath.toString
+    val config = new Properties
+    config.put("model", url)
+    config.put("caseSensitive", "false")
+    val connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config)
+    val statement = connect.createStatement()
     statement.executeQuery(querySql)
+  }
 
+  /**
+    * Verify if corresponding table exists in the metadata
+    */
+  def metaDataVerify(userName: String, dbName: String, tableName: String): Boolean = {
+    val userAccessor = AccessorFactory.getUserAccessor
+    val databaseAccessor = AccessorFactory.getDatabaseAccessor
+    val tableAccessor = AccessorFactory.getTableAccessor
+    val user = userAccessor.selectByName(userName, true)
+    val database = databaseAccessor.selectByName(dbName, true)
+    val table = tableAccessor.selectByName(tableName, true)
+    if (user == null || database == null || table == null) return false
+    true
   }
 
 }

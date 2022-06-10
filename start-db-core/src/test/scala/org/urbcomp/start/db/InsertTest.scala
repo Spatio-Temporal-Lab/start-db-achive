@@ -25,10 +25,29 @@ import java.util.Properties
   * @date    2022-06-08
   */
 class InsertTest extends AbstractCalciteFunctionTest {
+
+  /**
+    * test for insert
+    */
   test("testInsert") {
     val statement = connect.createStatement()
-    // ToDO   返回值
-//    statement.execute("Insert into t_test (idx, ride_id, start_point) values (156, '05608CC867EBDF63', st_makePoint(1.1, 2))")
+    val set = statement.executeQuery("select count(1) from t_test")
+    set.next()
+    val valueBefore: Long = set.getObject(1).asInstanceOf[Long]
+    try {
+      statement.execute(
+        "Insert into t_test (idx, ride_id, start_point) values (161, '05608CC867EBDF63', st_makePoint(2.1, 2))"
+      )
+    } catch {
+      case e: Exception => {
+        // "ToDO： 参数与返回值"
+      }
+    } finally {
+      val set1 = statement.executeQuery("select count(1) from t_test")
+      set1.next()
+      val valueAfter: Long = set1.getObject(1).asInstanceOf[Long]
+      assertEquals(1, valueAfter - valueBefore)
+    }
   }
 
 }

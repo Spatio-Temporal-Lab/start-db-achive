@@ -710,7 +710,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
                     // ToDO return Value
                     BaseExecutor baseExecutor = startDBExecutorFactory.convertExecutor(sqlNode);
                     baseExecutor.execute();
-                    return null;
+                    // ToDO return MetaResult.buildDDL();
                 case DELETE:
                     // ToDO
                     return null;
