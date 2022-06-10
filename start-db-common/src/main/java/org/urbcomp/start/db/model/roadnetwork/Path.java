@@ -11,6 +11,10 @@
 
 package org.urbcomp.start.db.model.roadnetwork;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.geojson.Feature;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.geojson.LngLatAlt;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 
 import java.util.List;
@@ -74,5 +78,16 @@ public class Path {
         this.points.addAll(path.getPoints());
         this.roadSegmentIds.addAll(path.getRoadSegmentIds());
         return this;
+    }
+
+    public String toGeoJSON() throws JsonProcessingException {
+        Feature f = new Feature();
+        f.setProperty("lengthInMeter", lengthInMeter);
+        f.setProperty("roadSegmentIds", roadSegmentIds);
+        LngLatAlt[] lngLats = points.stream()
+            .map(o -> new LngLatAlt(o.getLng(), o.getLat()))
+            .toArray(LngLatAlt[]::new);
+        f.setGeometry(new org.geojson.LineString(lngLats));
+        return new ObjectMapper().writeValueAsString(f);
     }
 }

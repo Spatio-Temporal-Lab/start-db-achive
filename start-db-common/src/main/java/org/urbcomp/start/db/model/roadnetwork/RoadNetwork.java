@@ -79,6 +79,7 @@ public class RoadNetwork {
         if (roadRTree == null) {
             synchronized (roadRTreeLock) {
                 if (roadRTree == null) {
+                    roadRTree = RTree.create();
                     for (RoadSegment rs : idToExpandedRoadSegment.values()) {
                         List<SpatialPoint> points = rs.getPoints();
                         double minLng = Double.MAX_VALUE;
