@@ -29,25 +29,7 @@ import org.apache.calcite.rel.type.RelDataTypeField;
 import org.apache.calcite.runtime.CalciteContextException;
 import org.apache.calcite.runtime.CalciteException;
 import org.apache.calcite.runtime.Resources;
-import org.apache.calcite.sql.SqlCall;
-import org.apache.calcite.sql.SqlDataTypeSpec;
-import org.apache.calcite.sql.SqlDelete;
-import org.apache.calcite.sql.SqlDynamicParam;
-import org.apache.calcite.sql.SqlFunction;
-import org.apache.calcite.sql.SqlIdentifier;
-import org.apache.calcite.sql.SqlInsert;
-import org.apache.calcite.sql.SqlIntervalQualifier;
-import org.apache.calcite.sql.SqlLiteral;
-import org.apache.calcite.sql.SqlMatchRecognize;
-import org.apache.calcite.sql.SqlMerge;
-import org.apache.calcite.sql.SqlNode;
-import org.apache.calcite.sql.SqlNodeList;
-import org.apache.calcite.sql.SqlOperatorTable;
-import org.apache.calcite.sql.SqlSelect;
-import org.apache.calcite.sql.SqlUpdate;
-import org.apache.calcite.sql.SqlWindow;
-import org.apache.calcite.sql.SqlWith;
-import org.apache.calcite.sql.SqlWithItem;
+import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.type.SqlTypeCoercionRule;
 import org.apache.calcite.sql.validate.implicit.TypeCoercion;
 import org.apache.calcite.sql.validate.implicit.TypeCoercionFactory;
@@ -724,6 +706,14 @@ public interface SqlValidator {
     SqlValidatorScope getOverScope(SqlNode node);
 
     /**
+     * Returns the table function SqlBasicCall in SqlSelect.
+     *
+     * @param select      The select node
+     * @return            The table function node  associate with the select node
+     */
+    SqlBasicCall getTableFunctionInSelect(SqlSelect select);
+
+    /**
      * Validates that a query is capable of producing a return of given modality
      * (relational or streaming).
      *
@@ -896,5 +886,6 @@ public interface SqlValidator {
 
         /** Sets up the sql conformance of the validator. */
         Config withSqlConformance(SqlConformance conformance);
+
     }
 }

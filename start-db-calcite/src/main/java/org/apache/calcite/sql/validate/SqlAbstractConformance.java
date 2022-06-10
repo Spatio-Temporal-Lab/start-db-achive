@@ -117,6 +117,12 @@ public abstract class SqlAbstractConformance implements SqlConformance {
         return SqlConformanceEnum.DEFAULT.shouldConvertRaggedUnionTypesToVarying();
     }
 
+    // add start
+    public boolean allowSelectTableFunction() {
+        return SqlConformanceEnum.DEFAULT.allowSelectTableFunction();
+    }
+    // add end
+
     public boolean allowExtendedTrim() {
         return SqlConformanceEnum.DEFAULT.allowExtendedTrim();
     }
