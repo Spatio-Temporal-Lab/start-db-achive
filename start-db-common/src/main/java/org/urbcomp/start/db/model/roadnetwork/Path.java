@@ -9,7 +9,7 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.model.roadsegment;
+package org.urbcomp.start.db.model.roadnetwork;
 
 import org.urbcomp.start.db.model.point.SpatialPoint;
 

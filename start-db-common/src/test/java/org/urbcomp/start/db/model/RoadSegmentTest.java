@@ -13,7 +13,7 @@ package org.urbcomp.start.db.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
-import org.urbcomp.start.db.model.roadsegment.RoadSegment;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.model.sample.ModelGenerator;
 
 import static org.junit.Assert.assertEquals;

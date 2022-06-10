@@ -17,7 +17,7 @@ import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.urbcomp.start.db.exception.AlgorithmExecuteException;
 import org.urbcomp.start.db.model.point.CandidatePoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
-import org.urbcomp.start.db.model.roadsegment.*;
+import org.urbcomp.start.db.model.roadnetwork.*;
 import org.urbcomp.start.db.util.GeoFunctions;
 
 import java.util.*;

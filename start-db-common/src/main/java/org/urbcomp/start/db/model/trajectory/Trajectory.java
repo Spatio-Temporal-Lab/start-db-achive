@@ -9,7 +9,7 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.model;
+package org.urbcomp.start.db.model.trajectory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

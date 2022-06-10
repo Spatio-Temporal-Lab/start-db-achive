@@ -12,7 +12,7 @@
 package org.urbcomp.start.db.algorithm.shortestpath;
 
 import org.jgrapht.alg.shortestpath.BidirectionalDijkstraShortestPath;
-import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
+import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 
 public class BiDijkstraShortestPath extends AbstractShortestPath {
     public BiDijkstraShortestPath(RoadNetwork roadNetwork, double searchDistance) {
