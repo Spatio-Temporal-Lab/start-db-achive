@@ -16,10 +16,17 @@ import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
 
 public class BiDijkstraShortestPath extends AbstractShortestPath {
     public BiDijkstraShortestPath(RoadNetwork roadNetwork, double searchDistance) {
-        super(roadNetwork, searchDistance, new BidirectionalDijkstraShortestPath<>(roadNetwork.getDirectedRoadGraph()));
+        super(
+            roadNetwork,
+            searchDistance,
+            new BidirectionalDijkstraShortestPath<>(roadNetwork.getDirectedRoadGraph())
+        );
     }
 
     public BiDijkstraShortestPath(RoadNetwork roadNetwork) {
-        super(roadNetwork, new BidirectionalDijkstraShortestPath<>(roadNetwork.getDirectedRoadGraph()));
+        super(
+            roadNetwork,
+            new BidirectionalDijkstraShortestPath<>(roadNetwork.getDirectedRoadGraph())
+        );
     }
 }
