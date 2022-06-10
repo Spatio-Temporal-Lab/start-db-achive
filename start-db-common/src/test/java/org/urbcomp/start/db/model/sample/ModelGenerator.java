@@ -11,13 +11,13 @@
 
 package org.urbcomp.start.db.model.sample;
 
-import org.urbcomp.start.db.model.Trajectory;
+import org.urbcomp.start.db.model.trajectory.Trajectory;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
-import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
-import org.urbcomp.start.db.model.roadsegment.RoadSegment;
-import org.urbcomp.start.db.model.roadsegment.RoadSegmentDirection;
-import org.urbcomp.start.db.model.roadsegment.RoadSegmentLevel;
+import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegmentDirection;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegmentLevel;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

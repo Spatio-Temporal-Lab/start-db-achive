@@ -14,6 +14,7 @@ package org.urbcomp.start.db.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 import org.urbcomp.start.db.model.sample.ModelGenerator;
+import org.urbcomp.start.db.model.trajectory.Trajectory;
 
 import static org.junit.Assert.assertEquals;
 

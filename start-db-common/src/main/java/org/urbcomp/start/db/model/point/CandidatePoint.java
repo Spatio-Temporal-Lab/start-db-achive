@@ -15,8 +15,8 @@ import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
 import org.locationtech.jts.geom.Envelope;
-import org.urbcomp.start.db.model.roadsegment.RoadNetwork;
-import org.urbcomp.start.db.model.roadsegment.RoadSegment;
+import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.util.GeoFunctions;
 
 import java.util.ArrayList;
