@@ -222,6 +222,7 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
                 case REAL:
                     return type.isNullable() ? Float.class : float.class;
                 case BINARY:
+                    return byte[].class;
                 case VARBINARY:
                     return ByteString.class;
                 // start-db add start
