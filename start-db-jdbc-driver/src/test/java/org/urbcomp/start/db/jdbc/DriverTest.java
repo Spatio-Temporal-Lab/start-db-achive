@@ -50,12 +50,36 @@ public class DriverTest {
         ) {
             final Statement stmt = conn.createStatement();
 
-            final ResultSet rs = stmt.executeQuery("select * from start_db.db_test.t_test");
+            final ResultSet rs = stmt.executeQuery("select * from `start_db.db_test.t_test`");
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
                 for (int i = 1; i <= md.getColumnCount(); i++) {
                     assertNotNull(rs.getObject(i));
                 }
+            }
+        }
+    }
+
+    @Test
+    public void testQueryPrint() throws SQLException {
+        try (
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
+        ) {
+            final Statement stmt = conn.createStatement();
+
+            final ResultSet rs = stmt.executeQuery(
+                "select started_at,st_x(start_point) from `start_db.db_test.t_test`"
+            );
+            final ResultSetMetaData md = rs.getMetaData();
+            while (rs.next()) {
+                for (int i = 1; i <= md.getColumnCount(); i++) {
+                    System.out.print(rs.getObject(i) + ",");
+                }
+                System.out.println();
             }
         }
     }
