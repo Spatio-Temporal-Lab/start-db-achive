@@ -25,11 +25,11 @@ public class DriverTest {
     @Test
     public void testDriver() throws SQLException {
         try (
-                Connection conn = DriverManager.getConnection(
-                        "jdbc:start-db:url=http://127.0.0.1:8000",
-                        "start_db",
-                        "start-db"
-                )
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
         ) {
             final Statement stmt = conn.createStatement();
 
@@ -42,15 +42,15 @@ public class DriverTest {
     @Test
     public void testQuery() throws SQLException {
         try (
-                Connection conn = DriverManager.getConnection(
-                        "jdbc:start-db:url=http://127.0.0.1:8000",
-                        "start_db",
-                        "start-db"
-                )
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
         ) {
             final Statement stmt = conn.createStatement();
 
-            final ResultSet rs = stmt.executeQuery("select * from t_test");
+            final ResultSet rs = stmt.executeQuery("select * from start_db.db_test.t_test");
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
                 for (int i = 1; i <= md.getColumnCount(); i++) {

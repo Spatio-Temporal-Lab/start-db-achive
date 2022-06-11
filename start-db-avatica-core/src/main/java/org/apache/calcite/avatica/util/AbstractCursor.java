@@ -1,19 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to you under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2022 ST-Lab
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
+
 package org.apache.calcite.avatica.util;
 
 import org.apache.calcite.avatica.AvaticaSite;
@@ -57,35 +52,44 @@ public abstract class AbstractCursor implements Cursor {
      * Slot into which each accessor should write whether the
      * value returned was null.
      */
-    protected final boolean[] wasNull = {false};
+    protected final boolean[] wasNull = { false };
 
-    protected AbstractCursor() {
-    }
+    protected AbstractCursor() {}
 
     public boolean wasNull() {
         return wasNull[0];
     }
 
-    public List<Accessor> createAccessors(List<ColumnMetaData> types,
-                                          Calendar localCalendar, ArrayImpl.Factory factory) {
+    public List<Accessor> createAccessors(
+        List<ColumnMetaData> types,
+        Calendar localCalendar,
+        ArrayImpl.Factory factory
+    ) {
         List<Accessor> accessors = new ArrayList<>();
         for (ColumnMetaData type : types) {
-            accessors.add(
-                    createAccessor(type, accessors.size(), localCalendar, factory));
+            accessors.add(createAccessor(type, accessors.size(), localCalendar, factory));
         }
         return accessors;
     }
 
-    protected Accessor createAccessor(ColumnMetaData columnMetaData, int ordinal,
-                                      Calendar localCalendar, ArrayImpl.Factory factory) {
+    protected Accessor createAccessor(
+        ColumnMetaData columnMetaData,
+        int ordinal,
+        Calendar localCalendar,
+        ArrayImpl.Factory factory
+    ) {
         // Create an accessor appropriate to the underlying type; the accessor
         // can convert to any type in the same family.
         Getter getter = createGetter(ordinal);
         return createAccessor(columnMetaData, getter, localCalendar, factory);
     }
 
-    protected Accessor createAccessor(ColumnMetaData columnMetaData,
-                                      Getter getter, Calendar localCalendar, ArrayImpl.Factory factory) {
+    protected Accessor createAccessor(
+        ColumnMetaData columnMetaData,
+        Getter getter,
+        Calendar localCalendar,
+        ArrayImpl.Factory factory
+    ) {
         switch (columnMetaData.type.rep) {
             case NUMBER:
                 switch (columnMetaData.type.id) {
@@ -188,22 +192,36 @@ public abstract class AbstractCursor implements Cursor {
                 }
             case Types.ARRAY:
                 final ColumnMetaData.ArrayType arrayType =
-                        (ColumnMetaData.ArrayType) columnMetaData.type;
+                    (ColumnMetaData.ArrayType) columnMetaData.type;
                 final SlotGetter componentGetter = new SlotGetter();
-                final Accessor componentAccessor =
-                        createAccessor(ColumnMetaData.dummy(arrayType.getComponent(), true),
-                                componentGetter, localCalendar, factory);
-                return new ArrayAccessor(getter, arrayType.getComponent(), componentAccessor,
-                        componentGetter, factory);
+                final Accessor componentAccessor = createAccessor(
+                    ColumnMetaData.dummy(arrayType.getComponent(), true),
+                    componentGetter,
+                    localCalendar,
+                    factory
+                );
+                return new ArrayAccessor(
+                    getter,
+                    arrayType.getComponent(),
+                    componentAccessor,
+                    componentGetter,
+                    factory
+                );
             case Types.STRUCT:
                 switch (columnMetaData.type.rep) {
                     case OBJECT:
                         final ColumnMetaData.StructType structType =
-                                (ColumnMetaData.StructType) columnMetaData.type;
+                            (ColumnMetaData.StructType) columnMetaData.type;
                         List<Accessor> accessors = new ArrayList<>();
                         for (ColumnMetaData column : structType.columns) {
                             accessors.add(
-                                    createAccessor(column, new StructGetter(getter, column), localCalendar, factory));
+                                createAccessor(
+                                    column,
+                                    new StructGetter(getter, column),
+                                    localCalendar,
+                                    factory
+                                )
+                            );
                         }
                         return new StructAccessor(getter, accessors);
                     default:
@@ -216,14 +234,13 @@ public abstract class AbstractCursor implements Cursor {
                     if (end < 0) {
                         end = columnMetaData.type.getName().length();
                     }
-                    TimeUnitRange range =
-                            TimeUnitRange.valueOf(
-                                    columnMetaData.type.getName().substring("INTERVAL_".length(), end));
+                    TimeUnitRange range = TimeUnitRange.valueOf(
+                        columnMetaData.type.getName().substring("INTERVAL_".length(), end)
+                    );
                     if (range.monthly()) {
                         return new IntervalYearMonthAccessor(getter, range);
                     } else {
-                        return new IntervalDayTimeAccessor(getter, range,
-                                columnMetaData.scale);
+                        return new IntervalDayTimeAccessor(getter, range, columnMetaData.scale);
                     }
                 }
                 return new ObjectAccessor(getter);
@@ -368,8 +385,7 @@ public abstract class AbstractCursor implements Cursor {
         }
 
         private SQLException cannotConvert(String targetType) throws SQLException {
-            return new SQLDataException("cannot convert to " + targetType + " ("
-                    + this + ")");
+            return new SQLDataException("cannot convert to " + targetType + " (" + this + ")");
         }
 
         public Object getObject(Map<String, Class<?>> map) throws SQLException {
@@ -573,8 +589,7 @@ public abstract class AbstractCursor implements Cursor {
     /**
      * Accessor of values that are {@link Double} or null.
      */
-    private abstract static class ApproximateNumericAccessor
-            extends AccessorImpl {
+    private abstract static class ApproximateNumericAccessor extends AccessorImpl {
         private ApproximateNumericAccessor(Getter getter) {
             super(getter);
         }
@@ -821,7 +836,7 @@ public abstract class AbstractCursor implements Cursor {
             super(getter);
         }
 
-        //FIXME: Protobuf gets byte[]
+        // FIXME: Protobuf gets byte[]
         @Override
         public byte[] getBytes() throws SQLException {
             Object obj = getObject();
@@ -937,8 +952,7 @@ public abstract class AbstractCursor implements Cursor {
             if (v == null) {
                 return null;
             }
-            return longToTimestamp(v.longValue() * DateTimeUtils.MILLIS_PER_DAY,
-                    calendar);
+            return longToTimestamp(v.longValue() * DateTimeUtils.MILLIS_PER_DAY, calendar);
         }
 
         @Override
@@ -1040,8 +1054,8 @@ public abstract class AbstractCursor implements Cursor {
                 return null;
             }
             return new Time(
-                    DateTimeUtils.floorMod(timestamp.getTime(),
-                            DateTimeUtils.MILLIS_PER_DAY));
+                DateTimeUtils.floorMod(timestamp.getTime(), DateTimeUtils.MILLIS_PER_DAY)
+            );
         }
 
         @Override
@@ -1090,9 +1104,7 @@ public abstract class AbstractCursor implements Cursor {
         @Override
         public long getLong() throws SQLException {
             Date date = getDate(null);
-            return date == null
-                    ? 0L
-                    : (date.getTime() / DateTimeUtils.MILLIS_PER_DAY);
+            return date == null ? 0L : (date.getTime() / DateTimeUtils.MILLIS_PER_DAY);
         }
     }
 
@@ -1132,8 +1144,7 @@ public abstract class AbstractCursor implements Cursor {
         @Override
         public long getLong() throws SQLException {
             Time time = getTime(null);
-            return time == null ? 0L
-                    : (time.getTime() % DateTimeUtils.MILLIS_PER_DAY);
+            return time == null ? 0L : (time.getTime() % DateTimeUtils.MILLIS_PER_DAY);
         }
     }
 
@@ -1185,8 +1196,8 @@ public abstract class AbstractCursor implements Cursor {
                 return null;
             }
             return new Time(
-                    DateTimeUtils.floorMod(timestamp.getTime(),
-                            DateTimeUtils.MILLIS_PER_DAY));
+                DateTimeUtils.floorMod(timestamp.getTime(), DateTimeUtils.MILLIS_PER_DAY)
+            );
         }
 
         @Override
@@ -1213,8 +1224,7 @@ public abstract class AbstractCursor implements Cursor {
     private static class TimestampFromUtilDateAccessor extends ObjectAccessor {
         private final Calendar localCalendar;
 
-        private TimestampFromUtilDateAccessor(Getter getter,
-                                              Calendar localCalendar) {
+        private TimestampFromUtilDateAccessor(Getter getter, Calendar localCalendar) {
             super(getter);
             this.localCalendar = localCalendar;
         }
@@ -1248,8 +1258,8 @@ public abstract class AbstractCursor implements Cursor {
                 return null;
             }
             return new Time(
-                    DateTimeUtils.floorMod(timestamp.getTime(),
-                            DateTimeUtils.MILLIS_PER_DAY));
+                DateTimeUtils.floorMod(timestamp.getTime(), DateTimeUtils.MILLIS_PER_DAY)
+            );
         }
 
         @Override
@@ -1298,8 +1308,7 @@ public abstract class AbstractCursor implements Cursor {
         private final TimeUnitRange range;
         private final int scale;
 
-        private IntervalDayTimeAccessor(Getter getter, TimeUnitRange range,
-                                        int scale) {
+        private IntervalDayTimeAccessor(Getter getter, TimeUnitRange range, int scale) {
             super(getter);
             this.range = range;
             this.scale = scale;
@@ -1325,9 +1334,13 @@ public abstract class AbstractCursor implements Cursor {
         final SlotGetter componentSlotGetter;
         final ArrayImpl.Factory factory;
 
-        public ArrayAccessor(Getter getter,
-                             ColumnMetaData.AvaticaType componentType, Accessor componentAccessor,
-                             SlotGetter componentSlotGetter, ArrayImpl.Factory factory) {
+        public ArrayAccessor(
+            Getter getter,
+            ColumnMetaData.AvaticaType componentType,
+            Accessor componentAccessor,
+            SlotGetter componentSlotGetter,
+            ArrayImpl.Factory factory
+        ) {
             super(getter);
             this.componentType = componentType;
             this.componentAccessor = componentAccessor;
@@ -1348,7 +1361,8 @@ public abstract class AbstractCursor implements Cursor {
                     if (null == val) {
                         convertedValues.add(null);
                     } else {
-                        // Set the current value in the SlotGetter so we can use the Accessor to coerce it.
+                        // Set the current value in the SlotGetter so we can use the Accessor to
+                        // coerce it.
                         componentSlotGetter.slot = val;
                         convertedValues.add(convertValue());
                     }
@@ -1397,8 +1411,12 @@ public abstract class AbstractCursor implements Cursor {
                 case Types.JAVA_OBJECT:
                     return componentAccessor.getObject();
                 default:
-                    throw new IllegalStateException("Unhandled ARRAY component type: " + componentType.rep
-                            + ", id: " + componentType.id);
+                    throw new IllegalStateException(
+                        "Unhandled ARRAY component type: "
+                            + componentType.rep
+                            + ", id: "
+                            + componentType.id
+                    );
             }
         }
 
@@ -1443,7 +1461,8 @@ public abstract class AbstractCursor implements Cursor {
         @SuppressWarnings("unchecked")
         @Override
         public <T> T getObject(Class<T> clz) throws SQLException {
-            // getStruct() is not exposed on Accessor, only AccessorImpl. getObject(Class) is exposed,
+            // getStruct() is not exposed on Accessor, only AccessorImpl. getObject(Class) is
+            // exposed,
             // so we can make it do the right thing (call getStruct()).
             if (clz.equals(Struct.class)) {
                 return (T) getStruct();
