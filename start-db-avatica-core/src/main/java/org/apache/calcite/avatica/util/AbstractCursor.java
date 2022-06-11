@@ -1149,7 +1149,15 @@ public abstract class AbstractCursor implements Cursor {
 
         @Override
         public Timestamp getTimestamp(Calendar calendar) throws SQLException {
-            Timestamp timestamp = (Timestamp) getObject();
+            // start-db modify start
+            final Object obj = getObject();
+            Timestamp timestamp = null;
+            if (obj instanceof Long) {
+                timestamp = new Timestamp((Long) obj);
+            } else if (obj instanceof Timestamp) {
+                timestamp = (Timestamp) obj;
+            }
+            // start-db modify end
             if (timestamp == null) {
                 return null;
             }

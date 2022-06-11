@@ -16,7 +16,8 @@ import org.junit.Test;
 
 import java.sql.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @Ignore
 public class DriverTest {
@@ -53,9 +54,8 @@ public class DriverTest {
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
                 for (int i = 1; i <= md.getColumnCount(); i++) {
-                    System.out.print(rs.getObject(i) + ", ");
+                    assertNotNull(rs.getObject(i));
                 }
-                System.out.println();
             }
         }
     }
