@@ -27,7 +27,6 @@ import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.*;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.locationtech.jts.io.geojson.GeoJsonReader;
-import org.urbcomp.start.db.model.Binary;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -178,45 +177,45 @@ public class GeometricRelationTypeConversionFunction {
     }
 
     @StartDBFunction("st_pointFromWKB")
-    public Point st_pointFromWKB(Binary wkb) throws ParseException {
+    public Point st_pointFromWKB(byte[] wkb) throws ParseException {
         return st_castToPoint(st_geomFromWKB(wkb));
     }
 
     @StartDBFunction("st_lineStringFromWKB")
-    public LineString st_lineStringFromWKB(Binary wkb) throws ParseException {
+    public LineString st_lineStringFromWKB(byte[] wkb) throws ParseException {
         return st_castToLineString(st_geomFromWKB(wkb));
     }
 
     @StartDBFunction("st_polygonFromWKB")
-    public Polygon st_polygonFromWKB(Binary wkb) throws ParseException {
+    public Polygon st_polygonFromWKB(byte[] wkb) throws ParseException {
         return st_castToPolygon(st_geomFromWKB(wkb));
     }
 
     @StartDBFunction("st_mPointFromWKB")
-    public MultiPoint st_mPointFromWKB(Binary wkb) throws ParseException {
+    public MultiPoint st_mPointFromWKB(byte[] wkb) throws ParseException {
         return st_castToMPoint(st_geomFromWKB(wkb));
     }
 
     @StartDBFunction("st_mLineStringFromWKB")
-    public MultiLineString st_mLineStringFromWKB(Binary wkb) throws ParseException {
+    public MultiLineString st_mLineStringFromWKB(byte[] wkb) throws ParseException {
         return st_castToMLineString(st_geomFromWKB(wkb));
     }
 
     @StartDBFunction("st_mPolygonFromWKB")
-    public MultiPolygon st_mPolygonFromWKB(Binary wkb) throws ParseException {
+    public MultiPolygon st_mPolygonFromWKB(byte[] wkb) throws ParseException {
         return st_castToMPolygon(st_geomFromWKB(wkb));
     }
 
     @StartDBFunction("st_geomFromWKB")
-    public Geometry st_geomFromWKB(Binary wkb) throws ParseException {
+    public Geometry st_geomFromWKB(byte[] wkb) throws ParseException {
         WKBReader wkbReader = new WKBReader();
-        return wkbReader.read(wkb.toBytes());
+        return wkbReader.read(wkb);
     }
 
     @StartDBFunction("st_asWKB")
-    public Binary st_asWKB(Geometry geom) throws IOException {
+    public byte[] st_asWKB(Geometry geom) throws IOException {
         WKBWriter wkbWriter = new WKBWriter();
-        return new Binary(wkbWriter.write(geom));
+        return wkbWriter.write(geom);
     }
 
     @StartDBFunction("st_pointFromGeoHash")
