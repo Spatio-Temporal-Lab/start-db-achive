@@ -38,4 +38,9 @@ public class RoadNode extends SpatialPoint {
         RoadNode rn = (RoadNode) o;
         return nodeId == rn.nodeId;
     }
+
+    @Override
+    public int hashCode() {
+        return nodeId;
+    }
 }

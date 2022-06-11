@@ -16,9 +16,6 @@ import org.urbcomp.start.db.model.point.GPSPoint;
 
 /**
  * 辅助class，保存状态信息
- *
- * @author : Haowen Zhu
- * @date : 2019/09/027
  */
 public class SequenceState {
     /**

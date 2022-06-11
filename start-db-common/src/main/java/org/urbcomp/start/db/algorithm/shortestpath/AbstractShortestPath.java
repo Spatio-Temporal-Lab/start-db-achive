@@ -197,7 +197,7 @@ public abstract class AbstractShortestPath {
         }
     }
 
-    private Path findShortestPath(RoadNode startNode, RoadNode endNode) {
+    public Path findShortestPath(RoadNode startNode, RoadNode endNode) {
         GraphPath<RoadNode, RoadSegment> shortestPath = algo.getPath(startNode, endNode);
         if (shortestPath == null) {
             return new Path(Double.MAX_VALUE, new ArrayList<>(), new ArrayList<>());

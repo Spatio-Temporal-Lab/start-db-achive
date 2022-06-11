@@ -15,6 +15,7 @@ import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.util.GeoFunctions;
@@ -89,6 +90,44 @@ public class CandidatePoint extends SpatialPoint {
         );
 
         return offset;
+    }
+
+    @Override
+    public String toString() {
+        return this.roadSegmentId
+            + "|"
+            + this.offsetInMeter
+            + "|"
+            + this.matchedIndex
+            + "|"
+            + this.errorDistanceInMeter;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CandidatePoint other = (CandidatePoint) o;
+        return this.roadSegmentId == other.getRoadSegmentId()
+            && offsetInMeter == other.offsetInMeter
+            && matchedIndex == other.matchedIndex
+            && errorDistanceInMeter == other.errorDistanceInMeter
+            && super.equals(other);
+    }
+
+    @Override
+    public boolean equals(Geometry g) {
+        if (this == g) return true;
+        if (g == null || getClass() != g.getClass()) return false;
+        CandidatePoint other = (CandidatePoint) g;
+        return Math.abs(roadSegmentId) == Math.abs(other.getRoadSegmentId())
+            && errorDistanceInMeter == errorDistanceInMeter
+            && super.equals(g);
     }
 
     /**
