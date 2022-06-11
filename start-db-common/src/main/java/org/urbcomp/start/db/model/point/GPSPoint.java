@@ -42,4 +42,9 @@ public class GPSPoint extends SpatialPoint {
         if (o == null || getClass() != o.getClass()) return false;
         return Objects.equals(this.time, ((GPSPoint) o).time) && super.equalsExact(((GPSPoint) o));
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode() + (time == null ? 0 : time.hashCode());
+    }
 }

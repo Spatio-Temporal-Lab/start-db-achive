@@ -11,18 +11,17 @@
 
 package org.urbcomp.start.db.model.trajectory;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.PrecisionModel;
-import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.geojson.Feature;
 import org.urbcomp.start.db.model.point.MapMatchedPoint;
+import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MapMatchedTrajectory implements Serializable {
+    private final String tid;
     /**
      * 对象ID
      */
@@ -38,7 +37,8 @@ public class MapMatchedTrajectory implements Serializable {
      * @param oid 对象id
      * @param mmPtList 匹配点list
      */
-    public MapMatchedTrajectory(String oid, List<MapMatchedPoint> mmPtList) {
+    public MapMatchedTrajectory(String tid, String oid, List<MapMatchedPoint> mmPtList) {
+        this.tid = tid;
         this.oid = oid;
         this.mmPtList = mmPtList;
     }
@@ -51,35 +51,24 @@ public class MapMatchedTrajectory implements Serializable {
         return mmPtList;
     }
 
-    /**
-     * 生成匹配点LineString
-     *
-     * @return LineString
-     */
-    public LineString getCandidateLineString() {
-        if (mmPtList != null) {
-            return new LineString(
-                new CoordinateArraySequence(
-                    this.mmPtList.stream()
-                        .filter(i -> i.getCandidatePoint() != null)
-                        .map(
-                            mmPoint -> new Coordinate(
-                                mmPoint.getCandidatePoint().getLng(),
-                                mmPoint.getCandidatePoint().getLat()
-                            )
-                        )
-                        .collect(Collectors.toList())
-                        .toArray(new Coordinate[] {})
-                ),
-                new GeometryFactory(new PrecisionModel(), 4326)
-            );
-        } else {
-            return null;
-        }
+    public String getTid() {
+        return tid;
     }
 
-    @Override
-    public String toString() {
-        return getCandidateLineString().toString();
+    public String toGeoJSON() throws JsonProcessingException {
+        FeatureCollectionWithProperties fcp = new FeatureCollectionWithProperties();
+        fcp.setProperty("oid", oid);
+        fcp.setProperty("tid", tid);
+        for (MapMatchedPoint p : mmPtList) {
+            Feature f = new Feature();
+            f.setGeometry(new org.geojson.Point(p.getCandidatePoint().getX(), p.getCandidatePoint().getY()));
+            f.setProperty("time", p.getRawPoint().getTime().toString());
+            f.setProperty("roadSegmentId", p.getCandidatePoint().getRoadSegmentId());
+            f.setProperty("errorDistanceInMeter", p.getCandidatePoint().getErrorDistanceInMeter());
+            f.setProperty("matchedIndex", p.getCandidatePoint().getMatchedIndex());
+            f.setProperty("offsetInMeter", p.getCandidatePoint().getOffsetInMeter());
+            fcp.add(f);
+        }
+        return new ObjectMapper().writeValueAsString(fcp);
     }
 }

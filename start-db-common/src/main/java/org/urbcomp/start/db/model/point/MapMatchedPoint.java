@@ -38,9 +38,6 @@ public class MapMatchedPoint {
         return rawPoint;
     }
 
-    /**
-     * @return ZonedDateTime
-     */
     public Timestamp getTime() {
         return this.rawPoint.getTime();
     }

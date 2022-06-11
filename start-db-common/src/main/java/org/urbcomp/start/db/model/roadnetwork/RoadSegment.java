@@ -101,6 +101,11 @@ public class RoadSegment {
     }
 
     @Override
+    public int hashCode() {
+        return roadSegmentId;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

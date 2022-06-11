@@ -16,7 +16,6 @@ import org.urbcomp.start.db.algorithm.mapmatch.tihmm.inner.SequenceState;
 import org.urbcomp.start.db.algorithm.mapmatch.tihmm.inner.TiViterbi;
 import org.urbcomp.start.db.algorithm.mapmatch.tihmm.inner.TimeStep;
 import org.urbcomp.start.db.algorithm.shortestpath.AbstractShortestPath;
-import org.urbcomp.start.db.algorithm.shortestpath.BiDijkstraShortestPath;
 import org.urbcomp.start.db.exception.AlgorithmExecuteException;
 import org.urbcomp.start.db.model.point.CandidatePoint;
 import org.urbcomp.start.db.model.point.GPSPoint;
@@ -47,9 +46,9 @@ public class TiHmmMapMatcher {
 
     protected final AbstractShortestPath pathAlgo;
 
-    public TiHmmMapMatcher(RoadNetwork roadNetwork) {
+    public TiHmmMapMatcher(RoadNetwork roadNetwork, AbstractShortestPath pathAlgo) {
         this.roadNetwork = roadNetwork;
-        this.pathAlgo = new BiDijkstraShortestPath(roadNetwork);
+        this.pathAlgo = pathAlgo;
     }
 
     /**
@@ -58,7 +57,7 @@ public class TiHmmMapMatcher {
      * @param traj 原始轨迹
      * @return map match后的轨迹
      */
-    public MapMatchedTrajectory matchTrajToMapMatchedTraj(Trajectory traj)
+    public MapMatchedTrajectory mapMatch(Trajectory traj)
         throws AlgorithmExecuteException {
         List<SequenceState> seq = this.computeViterbiSequence(traj.getGPSPointList());
         assert traj.getGPSPointList().size() == seq.size();
@@ -70,7 +69,7 @@ public class TiHmmMapMatcher {
             }
             mapMatchedPointList.add(new MapMatchedPoint(ss.getObservation(), candiPt));
         }
-        return new MapMatchedTrajectory(traj.getOid(), mapMatchedPointList);
+        return new MapMatchedTrajectory(traj.getTid(), traj.getOid(), mapMatchedPointList);
     }
 
     /**
