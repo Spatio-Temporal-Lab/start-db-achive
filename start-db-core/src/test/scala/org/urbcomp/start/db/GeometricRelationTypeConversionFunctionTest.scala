@@ -354,10 +354,7 @@ class GeometricRelationTypeConversionFunctionTest extends AbstractCalciteFunctio
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select st_geomFromWKB(st_asWKB(st_makePoint(1, 2)))")
     resultSet.next()
-    assertEquals(
-      "POINT (1 2)",
-      resultSet.getObject(1).toString
-    )
+    assertEquals("POINT (1 2)", resultSet.getObject(1).toString)
   }
 
   test("st_pointFromGeoHash(str, precision)") {
