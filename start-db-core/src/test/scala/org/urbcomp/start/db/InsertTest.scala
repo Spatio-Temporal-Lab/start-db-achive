@@ -27,23 +27,20 @@ import java.util.Properties
 class InsertTest extends AbstractCalciteFunctionTest {
 
   /**
-    * test for insert (需要整合MetaResult，因此先ignore)
+    * test for insert
     */
-  ignore("testInsert") {
+  test("testInsert") {
     val statement = connect.createStatement()
     val set = statement.executeQuery("select count(1) from t_test")
     set.next()
     val valueBefore: Long = set.getObject(1).asInstanceOf[Long]
-
     statement.execute(
-      "Insert into t_test (idx, ride_id, start_point) values (161, '05608CC867EBDF63', st_makePoint(2.1, 2))"
+      "Insert into t_test (idx, ride_id, start_point) values (171, '05608CC867EBDF63', st_makePoint(2.1, 2))"
     )
-
     val set1 = statement.executeQuery("select count(1) from t_test")
     set1.next()
     val valueAfter: Long = set1.getObject(1).asInstanceOf[Long]
     assertEquals(1, valueAfter - valueBefore)
-
   }
 
 }
