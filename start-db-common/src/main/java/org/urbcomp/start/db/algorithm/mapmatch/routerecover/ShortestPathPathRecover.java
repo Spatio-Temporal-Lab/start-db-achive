@@ -11,7 +11,6 @@ import org.urbcomp.start.db.model.trajectory.PathOfTrajectory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ShortestPathPathRecover {
@@ -31,7 +30,10 @@ public class ShortestPathPathRecover {
     public List<PathOfTrajectory> recover(MapMatchedTrajectory mmTraj) {
         List<PathOfTrajectory> results = new ArrayList<>();
 
-        List<MapMatchedPoint> mmPoints = mmTraj.getMmPtList().stream().filter(Objects::nonNull).collect(Collectors.toList());
+        List<MapMatchedPoint> mmPoints = mmTraj.getMmPtList()
+            .stream()
+            .filter(o -> o.getCandidatePoint() != null)
+            .collect(Collectors.toList());
         PathOfTrajectory pt = new PathOfTrajectory(mmTraj.getTid(), mmTraj.getTid());
         for (int i = 0; i < mmPoints.size() - 1; i++) {
             CandidatePoint pre = mmPoints.get(i).getCandidatePoint();
@@ -42,7 +44,7 @@ public class ShortestPathPathRecover {
             if (pre.getRoadSegmentId() == next.getRoadSegmentId()) {
                 pt.addRoadSegmentIdIfNotEqual(pre.getRoadSegmentId());
                 pt.addPointIfNotEqual(pre);
-                for(int j = pre.getMatchedIndex() + 1; j <= next.getMatchedIndex(); j++) {
+                for (int j = pre.getMatchedIndex() + 1; j <= next.getMatchedIndex(); j++) {
                     pt.addPointIfNotEqual(preRS.getPoints().get(j));
                 }
                 pt.addPointIfNotEqual(next);
@@ -71,7 +73,7 @@ public class ShortestPathPathRecover {
             }
         }
         // 处理最后一个点的情况，有两种情况会执行这：1、只有一个匹配点；2、最后一个点与前一个点没有最短路径
-        if(mmPoints.size() > 0) {
+        if (mmPoints.size() > 0) {
             CandidatePoint last = mmPoints.get(mmPoints.size() - 1).getCandidatePoint();
             pt.addPointIfNotEqual(last);
             pt.addRoadSegmentIdIfNotEqual(last.getRoadSegmentId());

@@ -17,9 +17,7 @@ import org.junit.Test;
 import org.urbcomp.start.db.algorithm.mapmatch.routerecover.ShortestPathPathRecover;
 import org.urbcomp.start.db.algorithm.shortestpath.BiDijkstraShortestPath;
 import org.urbcomp.start.db.exception.AlgorithmExecuteException;
-import org.urbcomp.start.db.model.point.CandidatePoint;
 import org.urbcomp.start.db.model.point.GPSPoint;
-import org.urbcomp.start.db.model.point.MapMatchedPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.sample.ModelGenerator;
@@ -31,7 +29,7 @@ import org.urbcomp.start.db.util.CoordTransformUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TiHmmMapMatcherTest {
 
