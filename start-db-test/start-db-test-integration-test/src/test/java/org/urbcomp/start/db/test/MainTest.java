@@ -38,6 +38,7 @@ public class MainTest {
         ArrayList<String> sqlCaseXMLs = getSqlCaseXMLs();
         // 遍历
         for (String sqlCaseXML : sqlCaseXMLs) {
+            System.out.println("执行文件:" + sqlCaseXML);
             runSingleCase(sqlCaseXML);
         }
     }

@@ -1,129 +1,138 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-
+<!--  通用数据类型转换 测试用例  -->
 <testCase>
 
+    <!--  数值字符串 转 Integer  castToInteger(str: String): Integer  -->
     <case type="query">
         <sql>select castToInteger(?);</sql>
-        <assertion id="01" parameters="['0']" expected="numeric_001.xml"/>
-        <assertion id="02" parameters="['1']" expected="numeric_001.xml"/>
-        <assertion id="03" parameters="['-1']" expected="numeric_001.xml"/>
-        <assertion id="04" parameters="['12.34']" expected="numeric_001.xml"/>
-        <assertion id="05" parameters="['-12.34']" expected="numeric_001.xml"/>
-        <assertion id="06" parameters="['2147483647']" expected="numeric_001.xml"/>
-        <assertion id="07" parameters="['-2147483648']" expected="numeric_001.xml"/>
-        <assertion id="08" parameters="['2147483648']" expected="error: 参数有误"/>
-        <assertion id="09" parameters="['-2147483649']" expected="error: 参数有误"/>
-        <assertion id="10" parameters="[true]" expected="error: 参数有误"/>
-        <assertion id="11" parameters="['hello']" expected="error: 参数有误"/>
-        <assertion id="12" parameters="[null]" expected="numeric_001.xml"/>
+        <assertion id="01" expected="numeric_001.xml">['0']</assertion>
+        <assertion id="02" expected="numeric_001.xml">['1']</assertion>
+        <assertion id="03" expected="numeric_001.xml">['-1']</assertion>
+        <assertion id="04" expected="numeric_001.xml">['12.34']</assertion>
+        <assertion id="05" expected="numeric_001.xml">['-12.34']</assertion>
+        <assertion id="06" expected="numeric_001.xml">['2147483647']</assertion>
+        <assertion id="07" expected="numeric_001.xml">['-2147483648']</assertion>
+        <assertion id="08" expected="error: 参数有误">['2147483648']</assertion>
+        <assertion id="09" expected="error: 参数有误">['-2147483649']</assertion>
+        <assertion id="10" expected="error: 参数有误">[true]</assertion>
+        <assertion id="11" expected="error: 参数有误">['hello']</assertion>
+        <assertion id="12" expected="numeric_001.xml">[null]</assertion>
     </case>
 
+    <!--  数值字符串 转 Long  castToLong(str: String): Long  -->
     <case type="query">
         <sql>select castToLong(?);</sql>
-        <assertion id="01" parameters="['0']" expected="numeric_002.xml"/>
-        <assertion id="02" parameters="['1']" expected="numeric_002.xml"/>
-        <assertion id="03" parameters="['-1']" expected="numeric_002.xml"/>
-        <assertion id="04" parameters="['12.34']" expected="numeric_002.xml"/>
-        <assertion id="05" parameters="['-12.34']" expected="numeric_002.xml"/>
-        <assertion id="06" parameters="['9223372036854775807']" expected="numeric_002.xml"/>
-        <assertion id="07" parameters="['-9223372036854775808']" expected="numeric_002.xml"/>
-        <assertion id="08" parameters="['9223372036854775808']" expected="error: 参数有误"/>
-        <assertion id="09" parameters="['-9223372036854775809']" expected="error: 参数有误"/>
-        <assertion id="10" parameters="[true]" expected="error: 参数有误"/>
-        <assertion id="11" parameters="['hello']" expected="error: 参数有误"/>
-        <assertion id="12" parameters="[null]" expected="numeric_002.xml"/>
+        <assertion id="01" expected="numeric_002.xml">['0']</assertion>
+        <assertion id="02" expected="numeric_002.xml">['1']</assertion>
+        <assertion id="03" expected="numeric_002.xml">['-1']</assertion>
+        <assertion id="04" expected="numeric_002.xml">['12.34']</assertion>
+        <assertion id="05" expected="numeric_002.xml">['-12.34']</assertion>
+        <assertion id="06" expected="numeric_002.xml">['9223372036854775807']</assertion>
+        <assertion id="07" expected="numeric_002.xml">['-9223372036854775808']</assertion>
+        <assertion id="08" expected="error: 参数有误">['9223372036854775808']</assertion>
+        <assertion id="09" expected="error: 参数有误">['-9223372036854775809']</assertion>
+        <assertion id="10" expected="error: 参数有误">[true]</assertion>
+        <assertion id="11" expected="error: 参数有误">['hello']</assertion>
+        <assertion id="12" expected="numeric_002.xml">[null]</assertion>
     </case>
 
+    <!--  数值字符串 转 float  castToFloat(str: String): Float  -->
     <case type="query">
         <sql>select castToFloat(?);</sql>
-        <assertion id="01" parameters="['0']" expected="numeric_003.xml"/>
-        <assertion id="02" parameters="['10000.1234567']" expected="numeric_003.xml"/>
-        <assertion id="03" parameters="['-10000.1234567']" expected="numeric_003.xml"/>
-        <assertion id="04" parameters="['12345']" expected="numeric_003.xml"/>
-        <assertion id="05" parameters="['-12345']" expected="numeric_003.xml"/>
-        <assertion id="06" parameters="[10000.1234567]" expected="numeric_003.xml"/>
-        <assertion id="07" parameters="[-10000.1234567]" expected="numeric_003.xml"/>
-        <assertion id="08" parameters="[true]" expected="error: 参数有误"/>
-        <assertion id="09" parameters="['hello']" expected="error: 参数有误"/>
-        <assertion id="10" parameters="[null]" expected="numeric_003.xml"/>
+        <assertion id="01" expected="numeric_003.xml">['0']</assertion>
+        <assertion id="02" expected="numeric_003.xml">['10000.1234567']</assertion>
+        <assertion id="03" expected="numeric_003.xml">['-10000.1234567']</assertion>
+        <assertion id="04" expected="numeric_003.xml">['12345']</assertion>
+        <assertion id="05" expected="numeric_003.xml">['-12345']</assertion>
+        <assertion id="06" expected="numeric_003.xml">[10000.1234567]</assertion>
+        <assertion id="07" expected="numeric_003.xml">[-10000.1234567]</assertion>
+        <assertion id="08" expected="error: 参数有误">[true]</assertion>
+        <assertion id="09" expected="error: 参数有误">['hello']</assertion>
+        <assertion id="10" expected="numeric_003.xml">[null]</assertion>
     </case>
 
+    <!--  数值字符串 转 double  castToDouble(str: String): Double  -->
     <case type="query">
         <sql>select castToDouble(?);</sql>
-        <assertion id="01" parameters="['0']" expected="numeric_004.xml"/>
-        <assertion id="02" parameters="['100.123456789012345']" expected="numeric_004.xml"/>
-        <assertion id="03" parameters="['-100.123456789012345']" expected="numeric_004.xml"/>
-        <assertion id="04" parameters="['12345']" expected="numeric_004.xml"/>
-        <assertion id="05" parameters="['-12345']" expected="numeric_004.xml"/>
-        <assertion id="06" parameters="[100.123456789012345]" expected="numeric_004.xml"/>
-        <assertion id="07" parameters="[100.123456789012345]" expected="numeric_004.xml"/>
-        <assertion id="08" parameters="[true]" expected="error: 参数有误"/>
-        <assertion id="09" parameters="['hello']" expected="error: 参数有误"/>
-        <assertion id="10" parameters="[null]" expected="numeric_004.xml"/>
+        <assertion id="01" expected="numeric_004.xml">['0']</assertion>
+        <assertion id="02" expected="numeric_004.xml">['100.123456789012345']</assertion>
+        <assertion id="03" expected="numeric_004.xml">['-100.123456789012345']</assertion>
+        <assertion id="04" expected="numeric_004.xml">['12345']</assertion>
+        <assertion id="05" expected="numeric_004.xml">['-12345']</assertion>
+        <assertion id="06" expected="numeric_004.xml">[100.123456789012345]</assertion>
+        <assertion id="07" expected="numeric_004.xml">[100.123456789012345]</assertion>
+        <assertion id="08" expected="error: 参数有误">[true]</assertion>
+        <assertion id="09" expected="error: 参数有误">['hello']</assertion>
+        <assertion id="10" expected="numeric_004.xml">[null]</assertion>
     </case>
 
+    <!--  字符串 转 布尔值  castToBoolean(str: String): Boolean  -->
     <case type="query">
         <sql>select castToBoolean(?);</sql>
-        <assertion id="01" parameters="['true']" expected="numeric_005.xml"/>
-        <assertion id="02" parameters="['false']" expected="numeric_005.xml"/>
-        <assertion id="03" parameters="['abcd']" expected="error: 参数有误"/>
-        <assertion id="04" parameters="['123']" expected="error: 参数有误"/>
-        <assertion id="05" parameters="[null]" expected="numeric_005.xml"/>
+        <assertion id="01" expected="numeric_005.xml">['true']</assertion>
+        <assertion id="02" expected="numeric_005.xml">['false']</assertion>
+        <assertion id="03" expected="error: 参数有误">['abcd']</assertion>
+        <assertion id="04" expected="error: 参数有误">['123']</assertion>
+        <assertion id="05" expected="error: 参数有误">[null]</assertion>
     </case>
 
+    <!--  任意数据 转 字符串  castToString(any: Any): String  -->
     <case type="query">
         <sql>select castToString(?);</sql>
-        <assertion id="01" parameters="[123]" expected="numeric_006.xml"/>
-        <assertion id="02" parameters="[-123]" expected="numeric_006.xml"/>
-        <assertion id="03" parameters="['abcd']" expected="numeric_006.xml"/>
-        <assertion id="04" parameters="[123.456]" expected="numeric_006.xml"/>
-        <assertion id="05" parameters="[true]" expected="numeric_006.xml"/>
-        <assertion id="06" parameters="[null]" expected="numeric_006.xml"/>
+        <assertion id="01" expected="numeric_006.xml">[123]</assertion>
+        <assertion id="02" expected="numeric_006.xml">[-123]</assertion>
+        <assertion id="03" expected="numeric_006.xml">['abcd']</assertion>
+        <assertion id="04" expected="numeric_006.xml">[123.456]</assertion>
+        <assertion id="05" expected="numeric_006.xml">[true]</assertion>
+        <assertion id="06" expected="numeric_006.xml">[null]</assertion>
     </case>
 
+    <!--  数值类型 转 Integer  parseInteger(num: Any): Integer   -->
     <case type="query">
         <sql>select parseInteger(?);</sql>
-        <assertion id="01" parameters="[0]" expected="numeric_007.xml"/>
-        <assertion id="02" parameters="[1]" expected="numeric_007.xml"/>
-        <assertion id="03" parameters="[-1]" expected="numeric_007.xml"/>
-        <assertion id="04" parameters="[10.2]" expected="numeric_007.xml"/>
-        <assertion id="05" parameters="[-5.8]" expected="numeric_007.xml"/>
-        <assertion id="06" parameters="[2147483647]" expected="numeric_007.xml"/>
-        <assertion id="07" parameters="[-2147483648]" expected="numeric_007.xml"/>
-        <assertion id="08" parameters="[2147483648.1]" expected="error: 参数有误"/>
-        <assertion id="09" parameters="[-2147483649.5]" expected="error: 参数有误"/>
-        <assertion id="10" parameters="['abcd']" expected="error: 参数有误"/>
-        <assertion id="11" parameters="[true]" expected="error: 参数有误"/>
-        <assertion id="12" parameters="[null]" expected="numeric_007.xml"/>
+        <assertion id="01" expected="numeric_007.xml">[0]</assertion>
+        <assertion id="02" expected="numeric_007.xml">[1]</assertion>
+        <assertion id="03" expected="numeric_007.xml">[-1]</assertion>
+        <assertion id="04" expected="numeric_007.xml">[10.2]</assertion>
+        <assertion id="05" expected="numeric_007.xml">[-5.8]</assertion>
+        <assertion id="06" expected="numeric_007.xml">[2147483647]</assertion>
+        <assertion id="07" expected="numeric_007.xml">[-2147483648]</assertion>
+        <assertion id="08" expected="error: 参数有误">[2147483648.1]</assertion>
+        <assertion id="09" expected="error: 参数有误">[-2147483649.5]</assertion>
+        <assertion id="10" expected="error: 参数有误">['abcd']</assertion>
+        <assertion id="11" expected="error: 参数有误">[true]</assertion>
+        <assertion id="12" expected="numeric_007.xml">[null]</assertion>
     </case>
 
+    <!--  数值类型 转 Long  parseLong(num: Any): Long  -->
     <case type="query">
         <sql>select parseLong(?);</sql>
-        <assertion id="01" parameters="[0]" expected="numeric_008.xml"/>
-        <assertion id="02" parameters="[123456789]" expected="numeric_008.xml"/>
-        <assertion id="03" parameters="[-123456789]" expected="numeric_008.xml"/>
-        <assertion id="04" parameters="[12345.2345]" expected="numeric_008.xml"/>
-        <assertion id="05" parameters="[-56789.89012]" expected="numeric_008.xml"/>
-        <assertion id="06" parameters="[9223372036854775807]" expected="numeric_008.xml"/>
-        <assertion id="07" parameters="[-9223372036854775808]" expected="numeric_008.xml"/>
-        <assertion id="08" parameters="[9223372036854775807.5]" expected="error: 参数有误"/>
-        <assertion id="09" parameters="[-9223372036854775809.5]" expected="error: 参数有误"/>
-        <assertion id="10" parameters="['abcd']" expected="error: 参数有误"/>
-        <assertion id="11" parameters="[true]" expected="error: 参数有误"/>
-        <assertion id="12" parameters="[null]" expected="numeric_008.xml"/>
+        <assertion id="01" expected="numeric_008.xml">[0]</assertion>
+        <assertion id="02" expected="numeric_008.xml">[123456789]</assertion>
+        <assertion id="03" expected="numeric_008.xml">[-123456789]</assertion>
+        <assertion id="04" expected="numeric_008.xml">[12345.2345]</assertion>
+        <assertion id="05" expected="numeric_008.xml">[-56789.89012]</assertion>
+        <assertion id="06" expected="numeric_008.xml">[9223372036854775807]</assertion>
+        <assertion id="07" expected="numeric_008.xml">[-9223372036854775808]</assertion>
+        <assertion id="08" expected="error: 参数有误">[9223372036854775807.5]</assertion>
+        <assertion id="09" expected="error: 参数有误">[-9223372036854775809.5]</assertion>
+        <assertion id="10" expected="error: 参数有误">['abcd']</assertion>
+        <assertion id="11" expected="error: 参数有误">[true]</assertion>
+        <assertion id="12" expected="error: 参数有误">[null]</assertion>
     </case>
 
+    <!--  数值类型 转 Double  parseDouble(num: Any): Double  -->
     <case type="query">
         <sql>select  parseDouble(?);</sql>
-        <assertion id="01" parameters="[0]" expected="numeric_009.xml"/>
-        <assertion id="02" parameters="[12345]" expected="numeric_009.xml"/>
-        <assertion id="03" parameters="[-12345]" expected="numeric_009.xml"/>
-        <assertion id="04" parameters="[10.23456]" expected="numeric_009.xml"/>
-        <assertion id="05" parameters="[-567.89012345]" expected="numeric_009.xml"/>
-        <assertion id="06" parameters="['abcd']" expected="error: 参数有误"/>
-        <assertion id="07" parameters="[true]" expected="error: 参数有误"/>
-        <assertion id="08" parameters="[null]" expected="numeric_009.xml"/>
+        <assertion id="01" expected="numeric_009.xml">[0]</assertion>
+        <assertion id="02" expected="numeric_009.xml">[12345]</assertion>
+        <assertion id="03" expected="numeric_009.xml">[-12345]</assertion>
+        <assertion id="04" expected="numeric_009.xml">[10.23456]</assertion>
+        <assertion id="05" expected="numeric_009.xml">[-567.89012345]</assertion>
+        <assertion id="06" expected="error: 参数有误">['abcd']</assertion>
+        <assertion id="07" expected="error: 参数有误">[true]</assertion>
+        <assertion id="08" expected="numeric_009.xml">[null]</assertion>
     </case>
 
 </testCase>

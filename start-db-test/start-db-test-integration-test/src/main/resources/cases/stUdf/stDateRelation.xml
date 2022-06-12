@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--  通用空间数据关系函数 测试用例  -->
+<testCase>
+
+    <!--  传入两个地理元素，判断geom1,geom2是否相等  st_equals(geom1: Geometry, geom2: Geometry): Boolean  -->
+    <case type="query">
+        <sql>select st_equals(?, ?);</sql>
+        <assertion id="01" expected="stDr_001.xml">
+            [st_geomFromWkt('LINESTRING(0 1,2 3)')]
+            [st_geomFromWkt('LINESTRING(2 3,0 1)')]
+        </assertion>
+    </case>
+
+    <!--  如果Geometry对象A包含Geometry对象B，则返回True  st_contains(geom1: Geometry, geom2: Geometry): Boolean  -->
+    <case type="query">
+        <sql>select st_contains(?, ?);</sql>
+        <assertion id="01" expected="stDr_002.xml">
+            [st_makeBBox(0.0,0.0,4.0,4.0)][st_makePoint(1,2)]
+        </assertion>
+    </case>
+
+    <!--  如果Geometry对象或Geography对象B没有任何坐标点在对象A之外，则返回True
+            st_covers(geom1: Geometry, geom2: Geometry): Boolean  -->
+    <case type="query">
+        <sql>select st_covers(?, ?);</sql>
+        <assertion id="01" expected="stDr_003.xml">
+            [st_makeBBox(0.0,0.0,4.0,4.0)][st_makePoint(1,2)]
+        </assertion>
+    </case>
+
+    <!--  传入两个地理元素，如果geom1和geom2交集生成的几何对象维数小于geom1、geom2的最大维度，则返回true。
+            st_crosses(geom1: Geometry, geom2: Geometry): Boolean  -->
+    <case type="query">
+        <sql>select st_crosses(?, ?);</sql>
+        <assertion id="01" expected="stDr_004.xml">
+            [st_makeBBox(0.0, 0.0, 4.0, 4.0)][st_makeBBox(1, 1, 5, 5)]
+        </assertion>
+    </case>
+
+    <!--  传入两个地理元素，如果两个元素没有交集，则返回true  st_disjoint(geom1: Geometry, geom2: Geometry)  -->
+    <case type="query">
+        <sql>select st_disjoint(?, ?);</sql>
+        <assertion id="01" expected="stDr_005.xml">
+            [st_makePoint(1,2)][st_makePoint(3,4)]
+        </assertion>
+    </case>
+
+    <!--  传入两个地理元素，判断geom1，geom2是否相交  st_intersects(geom1: Geometry, geom2: Geometry): Boolean  -->
+    <case type="query">
+        <sql>select st_intersects(?, ?);</sql>
+        <assertion id="01" expected="stDr_006.xml">
+            [st_makeBBox(0.0,0.0,4.0,4.0)]
+            [st_makeBBox(1.0,1.0,5.0,5.0)]
+        </assertion>
+    </case>
+
+    <!--  传入两个地理元素，如果两个地理元素的公共都不与两个级元素内部相交，则返回true
+            st_touches(geom1: Geometry, geom2: Geometry): Boolean  -->
+    <case type="query">
+        <sql>select st_touches(?, ?);</sql>
+        <assertion id="01" expected="stDr_007.xml">
+            [st_makeBBox(0.0, 0.0, 4.0, 4.0)]
+            [st_makePoint(4.0, 1.0)]
+        </assertion>
+    </case>
+
+    <!--  传入两个地理元素，判断geom1是否完全在geom2中，返回true或false
+            st_within(geom1: Geometry, geom2: Geometry): Boolean  -->
+    <case type="query">
+        <sql>select st_within(?, ?);</sql>
+        <assertion id="01" expected="stDr_008.xml">
+            [st_makePoint(1,2)]
+            [st_makeBBox(0.0,0.0,4.0,4.0)]
+        </assertion>
+    </case>
+
+    <!--  传入两个地理元素，如果两个对象的交集生成的几何对象维度相同但不等于任一源对象，则返回 true
+            st_overlaps(geom1: Geometry, geom2: Geometry): Boolean  -->
+    <case type="query">
+        <sql>select st_overlaps(?, ?);</sql>
+        <assertion id="01" expected="stDr_009.xml">
+            [st_makeBBox(0.0,0.0,4.0,4.0)]
+            [st_makeBBox(1.0,1.0,5.0,5.0)]
+        </assertion>
+    </case>
+
+    <!--  返回DE-9IM的3×3的交互矩阵，其用来描述两个几何a、b内部，边界，外部的交点的维度
+            st_relate(a: Geometry, b: Geometry): String  -->
+    <case type="query">
+        <sql>select st_relate(?, ?);</sql>
+        <assertion id="01" expected="stDr_010.xml">
+            [st_geomFromWKT('LINESTRING(1 2,3 4)')]
+            [st_geomFromWKT('LINESTRING(5 6,7 8)')]
+        </assertion>
+    </case>
+
+
+
+</testCase>

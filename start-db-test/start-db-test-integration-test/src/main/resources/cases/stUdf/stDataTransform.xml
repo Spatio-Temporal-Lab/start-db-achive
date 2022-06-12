@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--  通用空间数据类型转换  测试用例  -->
+<testCase>
+
+    <!--  传入给定点的geoJson，返回点  st_pointFromGeoJSON(geoJson: String): Point  -->
+    <case type="query">
+        <sql>select st_pointFromGeoJson(?);</sql>
+        <assertion id="01" expected="stDt_001.xml">
+            ['{
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"direction": "forward"},
+                        "geometry": {
+                        "type": "Point",
+                        "coordinates": [105.380859375,31.57853542647338]
+                        }
+                    }
+                ]
+            }']
+        </assertion>
+    </case>
+
+    <!--  传入给定线的geoJson，返回线  st_lineStringFromGeoJSON(geoJson: String): LineString  -->
+    <case type="query">
+        <sql>_lineFromGeoJson(?);</sql>
+        <assertion id="01" expected="stDt_002.xml">
+            ['{
+                "type":"Feature",
+                "properties":{},
+                "geometry":{
+                    "type":"LineString",
+                    "coordinates":[
+                        [105.6005859375,30.65681556429287],
+                        [107.95166015624999,31.98944183792288],
+                        [109.3798828125,30.031055426540206],
+                        [107.7978515625,29.935895213372444]]
+                }
+            }']
+        </assertion>
+    </case>
+
+    <!--  传入给定面的geoJson，返回面  st_polygonFromGeoJSON(geoJson: String): Polygon  -->
+    <case type="query">
+        <sql>select st_PolygonFromGeoJson(?);</sql>
+        <assertion id="01" expected="stDt_003.xml">
+            ['{
+                "type":"Feature",
+                "properties":{},
+                "geometry":{
+                    "type":"Polygon",
+                    "coordinates":[[
+                        [106.10595703125,33.33970700424026],
+                        [106.32568359375,32.41706632846282],
+                        [108.03955078125,32.2313896627376],
+                        [108.25927734375,33.15594830078649],
+                        [106.10595703125,33.33970700424026]]]
+                }
+            }']
+        </assertion>
+    </case>
+
+    <!--  st_mPointFromGeoJSON(geoJson: String): MultiPoint  -->
+    <case type="query">
+        <sql>select st_pointFromGeoJson(?);</sql>
+        <assertion id="01" expected="stDt_004.xml">
+            ['{
+                "type": "MultiPoint",
+                "coordinates": [
+                    [100.0, 0.0],
+                    [101.0, 1.0] ]
+            }']
+        </assertion>
+    </case>
+
+    <!--  st_mLineStringFromGeoJSON(geoJson: String): MultiLineString  -->
+    <case type="query">
+        <sql>select st_pointFromGeoJson(?);</sql>
+        <assertion id="01" expected="stDt_005.xml">
+            ['{
+                "type": "MultiLineString",
+                "coordinates": [
+                    [[100.0, 0.0], [101.0, 1.0]],
+                    [[102.0, 2.0], [103.0, 3.0]]]
+            }']
+        </assertion>
+    </case>
+
+    <!--  st_mPolygonFromGeoJSON(geoJson: String): MultiPolygon  -->
+    <case type="query">
+        <sql>select st_pointFromGeoJson(?);</sql>
+        <assertion id="01" expected="stDt_006.xml">
+            ['{
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
+                    [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
+                    [[100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2]]]]
+            }']
+        </assertion>
+    </case>
+
+    <!--  给定Geometry的GeoJSON字符串，生成对应类型的几何对象  st_geomFromGeoJSON(geojsonGeometry: String): Geometry  -->
+    <case type="query">
+        <sql>select st_geomFromGeoJSON(?);</sql>
+        <assertion id="01" expected="stDt_007.xml">
+            ['{
+                "type":"Point",
+                "coordinates": [106.10595703125,33.33970700424026]
+            }']
+        </assertion>
+    </case>
+
+    <!--  生成geom对应的GeoJSON形式  st_asGeoJSON(geom: Geometry): String  -->
+    <case type="query">
+        <sql>select st_asGeoJSON(?);</sql>
+        <assertion id="01" expected="stDt_008.xml">
+            [st_geomFromWKT('LINESTRING(0 0,1 1,2 2)')]
+        </assertion>
+    </case>
+
+    <!--  将POINT的WKT转为POINT对象  st_pointFromWKT(wktString: String): Point  -->
+    <case type="query">
+        <sql>select st_PointFromWkt(?);</sql>
+        <assertion id="01" expected="stDt_009.xml">['POINT(114.134488 22.614742)']</assertion>
+    </case>
+
+    <!--  将lineString的WKT转为POINT对象  st_lineStringFromWKT(wktString: String): LineString  -->
+    <case type="query">
+        <sql>select st_lineStringFromWkt(?);</sql>
+        <assertion id="01" expected="stDt_010.xml">['LINESTRING(0 0,1 1,2 2)']</assertion>
+    </case>
+
+    <!--  将polygon的WKT转为POINT对象  st_polygonFromWKT(wktString: String): Polygon  -->
+    <case type="query">
+        <sql>select st_polygonFromWkt(?);</sql>
+        <assertion id="01" expected="stDt_011.xml">['POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))']</assertion>
+    </case>
+
+    <!--  将mPoint的WKT转为POINT对象  st_mPointFromWKT(wktString: String): MultiPolygon  -->
+    <case type="query">
+        <sql>select st_mPointFromWkt(?);</sql>
+        <assertion id="01" expected="stDt_012.xml">['MULTIPOINT(3.5 5.6, 4.8 10.5)']</assertion>
+    </case>
+
+    <!--  将mLineString的WKT转为POINT对象  st_mLineStringFromWKT(wktString: String): MultiLineString  -->
+    <case type="query">
+        <sql>select st_mLineStringFromWkt(?);</sql>
+        <assertion id="01" expected="stDt_013.xml">
+            ['MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))']
+        </assertion>
+    </case>
+
+    <!--  将mPolygon的WKT转为POINT对象  st_mPolygonFromWKT(wktString: String): MultiPolygon  -->
+    <case type="query">
+        <sql>select st_mPolygonFromWkt(?);</sql>
+        <assertion id="01" expected="stDt_014.xml">
+            ['MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))']
+        </assertion>
+    </case>
+
+    <!--  将空间数据类型的WKT转为Geometry对象  st_geomFromWKT(wktString: String): Geometry  -->
+    <case type="query">
+        <sql>select st_geomFromWkt(?);</sql>
+        <assertion id="01" expected="stDt_015.xml">['POINT(114.134488 22.614742)']</assertion>
+    </case>
+
+    <!--  将geom对象转为WKT字符串  st_asWKT(geom: Geometry): String  -->
+    <case type="query">
+        <sql>select st_asWkt(?);</sql>
+        <assertion id="01" expected="stDt_016.xml">[st_makePoint(1, 2)']</assertion>
+    </case>
+
+    <!--  创建与给定WKB表示相对应的Point  st_pointFromWKB(wkb: Binary): Point  -->
+    <case type="query">
+        <sql>select st_pointFromWkb(?);</sql>
+        <assertion id="01" expected="stDt_017.xml">[st_asWKB(st_makePoint(1,2)]</assertion>
+    </case>
+
+    <!--  创建与给定WKB表示相对应的LINESTRING  st_lineStringFromWKB(wkb: Binary): LineString  -->
+    <case type="query">
+        <sql>select st_linestringFromWkb(?);</sql>
+        <assertion id="01" expected="stDt_018.xml">
+            [st_asWKB(st_geomFromWkt('LINESTRING (1 1, 2 1, 2 2, 1 2, 1 1)'))]
+        </assertion>
+    </case>
+
+    <!--  创建与给定WKB表示相对应的Polygon  st_polygonFromWKB(wkb: Binary): Polygon  -->
+    <case type="query">
+        <sql>select st_polygonFromWKB(?);</sql>
+        <assertion id="01" expected="stDt_019.xml">
+            [st_asWKB(st_geomFromWkt('POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))'))]
+        </assertion>
+    </case>
+
+    <!--  创建与给定WKB表示相对应的mPoint  st_mPointFromWKB(wkb: Binary): MultiPoint  -->
+    <case type="query">
+        <sql>select st_mPointFromWKB(?);</sql>
+        <assertion id="01" expected="stDt_020.xml">
+            [st_asWKB(st_geomFromWkt('MULTIPOINT(3.5 5.6, 4.8 10.5)'))]
+        </assertion>
+    </case>
+
+    <!--  创建与给定WKB表示相对应的mLineString  st_mLineStringFromWKB(wkb: Binary): MultiLineString  -->
+    <case type="query">
+        <sql>select st_mLineStringFromWKB(?);</sql>
+        <assertion id="01" expected="stDt_021.xml">
+            [st_asWKB(st_geomFromWkt('MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))'))]
+        </assertion>
+    </case>
+
+    <!--  创建与给定WKB表示相对应的mPolygon  st_mPolygonFromWKB(wkb: Binary): MultiPolygon  -->
+    <case type="query">
+        <sql>select st_mPolygonFromWKB(?);</sql>
+        <assertion id="01" expected="stDt_022.xml">
+            [st_asWKB(st_geomFromWkt('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))'))]
+        </assertion>
+    </case>
+
+    <!--  根据已知的二进制表示(WKB)创建几何图形  st_geomFromWKB(wkb: Binary): Geometry  -->
+    <case type="query">
+        <sql>select st_geomFromWkb(?);</sql>
+        <assertion id="01" expected="stDt_023.xml">
+            [st_asWKB(st_makeBbox(1, 2, 3, 4))]
+        </assertion>
+    </case>
+
+    <!--  生成geom对应的WKB形式（字节数组）  st_asWKB(geom: Geometry): Binary  -->
+    <case type="query">
+        <sql>select st_asWKB(?);</sql>
+        <assertion id="01" expected="stDt_024.xml">[st_geomFromWKT('Point(0 0)')]</assertion>
+    </case>
+
+    <!--  返回由Geohash字符串（base-32 编码方式）定义的Polygon的几何中心，精度为prec位
+            st_pointFromGeoHash(geohash: String, prec: Integer): Point  -->
+    <case type="query">
+        <sql>select st_pointFromGeoHash(?, ?);</sql>
+        <assertion id="01" expected="stDt_025.xml">['ezs42'][25]</assertion>
+    </case>
+
+    <!--  根据提供值返回Geometry， prec 精度
+        st_geomFromGeoHash(geoHash: String, prec: Integer): Geometry  -->
+    <case type="query">
+        <sql>select st_geomFromGeoHash(?, ?);</sql>
+        <assertion id="01" expected="stDt_026.xml">
+            [st_asGeoHash(st_makePoint(1,2),4)]
+            [4]
+        </assertion>
+    </case>
+
+    <!--  根据Geometry， geoHash位数 精度返回hash值  st_asGeoHash(geom: Geometry, prec: Integer): String  -->
+    <case type="query">
+        <sql>select st_geoHash(?, ?);</sql>
+        <assertion id="01" expected="stDt_027.xml">
+            [st_makePoint(1,2)]
+            [8]
+        </assertion>
+    </case>
+
+    <!--  将geom 转为Point对象  st_castToPoint(geom: Geometry): Point  -->
+    <case type="query">
+        <sql>select st_castToPoint(?);</sql>
+        <assertion id="01" expected="stDt_028.xml">[st_geomFromWKT('POINT(1 1)')]</assertion>
+    </case>
+
+    <!--  将geom 转为LineString对象  st_castToLineString(geom: Geometry): LineString  -->
+    <case type="query">
+        <sql>select st_castToLineString(?);</sql>
+        <assertion id="01" expected="stDt_029.xml">[st_geomFromWKT('LINESTRING(1 1,2 2)')]</assertion>
+    </case>
+
+    <!--  将geom 转为Polygon对象  st_castToPolygon(geom: Geometry): Polygon  -->
+    <case type="query">
+        <sql>select st_castToPolygon(?);</sql>
+        <assertion id="01" expected="stDt_030.xml">[st_geomFromWKT('POLYGON((1 1,1 2,2 2,2 1,1 1))')]</assertion>
+    </case>
+
+    <!--  将geom 转为mPoint对象  st_castToMPoint(geom: Geometry): MultiPoint  -->
+    <case type="query">
+        <sql>select st_castToMPoint(?);</sql>
+        <assertion id="01" expected="stDt_031.xml">[st_geomFromWKT('MULTIPOINT(3.5 5.6, 4.8 10.5)')]</assertion>
+    </case>
+
+    <!--  将geom 转为MLineString对象  st_castToMLineString(geom: Geometry): MultiLineString  -->
+    <case type="query">
+        <sql>select st_castToMLineString(?);</sql>
+        <assertion id="01" expected="stDt_032.xml">
+            [st_geomFromWKT('MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))')]
+        </assertion>
+    </case>
+
+    <!--  将geom 转为mPolygon对象  st_castToMPolygon(geom: Geometry): MultiPolygon  -->
+    <case type="query">
+        <sql>select st_castToPolygon(?);</sql>
+        <assertion id="01" expected="stDt_033.xml">
+            [st_geomFromWKT('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))))')]
+        </assertion>
+    </case>
+
+    <!--  将geom 转为Geometry对象st_castToGeometry(geom: Geometry): Geometry  -->
+    <case type="query">
+        <sql>select st_castToGeometry(?);</sql>
+        <assertion id="01" expected="stDt_034.xml">[st_geomFromWKT('POINT(1 1)')]</assertion>
+    </case>
+
+
+</testCase>

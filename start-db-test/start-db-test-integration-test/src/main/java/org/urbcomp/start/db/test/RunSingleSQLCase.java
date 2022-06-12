@@ -48,9 +48,9 @@ public class RunSingleSQLCase {
                 if (assertionList.size() != 0) {
                     for (Node node : assertionList) {
                         Element assertionElement = (Element) node;
-                        // 获取assertion标签的属性值: id parameters 和 expected
+                        // 获取assertion标签的属性值: id expected, 以及文本中的参数值
+                        String parameters = assertionElement.getTextTrim();
                         String paramId = assertionElement.attributeValue("id");
-                        String parameters = assertionElement.attributeValue("parameters");
                         String expectData = assertionElement.attributeValue("expected");
                         // 获取拼接参数后的sql
                         String sql;

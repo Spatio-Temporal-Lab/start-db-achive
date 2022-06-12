@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-assertion 的属性parameters, 包含所有参数的参数值, 参数值直接拼接到SQL字符串中
+assertion标签的文本为sql语句的参数值, 参数值直接拼接到SQL字符串中
 参数放在[]中括号中, 多个参数对应有多个中括号[]
 如果使用 , 英文逗号来进行分隔, 那么当参数为GeoJson或wkt字符串时, 就可能会解析错误
 
