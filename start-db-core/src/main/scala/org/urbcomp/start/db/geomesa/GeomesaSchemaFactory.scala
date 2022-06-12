@@ -11,7 +11,9 @@
 
 package org.urbcomp.start.db.geomesa
 
+import org.apache.calcite.schema.impl.TableFunctionImpl
 import org.apache.calcite.schema.{Schema, SchemaFactory, SchemaPlus}
+import org.urbcomp.start.db.udtf.Fibonacci
 
 import java.util
 
@@ -26,5 +28,12 @@ class GeomesaSchemaFactory extends SchemaFactory {
       schemaPlus: SchemaPlus,
       schemaName: String,
       operands: util.Map[String, AnyRef]
-  ): Schema = new GeomesaSchema
+  ): Schema = {
+    initTableFunction(schemaPlus)
+    new GeomesaSchema
+  }
+
+  private def initTableFunction(schemaPlus: SchemaPlus): Unit = {
+    schemaPlus.add("fibonacci", TableFunctionImpl.create(Fibonacci.FIBONACCI2_TABLE_METHOD))
+  }
 }
