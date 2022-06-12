@@ -13,7 +13,5 @@ package org.urbcomp.start.db.infra
 
 abstract class BaseExecutor {
 
-  // TODO need meta result
-  def execute(): Unit
-
+  def execute(): MetadataResult[Int]
 }

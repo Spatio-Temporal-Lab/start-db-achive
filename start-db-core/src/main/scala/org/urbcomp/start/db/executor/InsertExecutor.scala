@@ -15,7 +15,7 @@ import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
 import org.apache.hbase.thirdparty.io.netty.handler.codec.mqtt.MqttMessageBuilders.connect
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
-import org.urbcomp.start.db.infra.BaseExecutor
+import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.AccessorFactory
 
 import java.nio.file.{Path, Paths}
@@ -31,8 +31,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
 
   val path: Path = Paths.get("../start-db-server/src/main/resources/model.json")
 
-  // ToDO 整合棚哥的metaResult
-  override def execute(): Unit = {
+  override def execute(): MetadataResult[Int] = {
     // extract database name and table name
     // ToDO 与path一样，需要封装统一的传入参数（先写死）
     val userName = ""
@@ -80,6 +79,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         }
 
     // insert data
+    var affectRows = 0
     val params = new util.HashMap[String, String]()
     // ToDO 传入参数的问题(先写死)
     val CATALOG = "start_db.db_test"
@@ -92,12 +92,13 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         val count = i.size()
         for (x <- 0 until count) {
           sf.setAttribute(n.getTargetColumnList.get(x).toString, i.get(x))
-
         }
+        affectRows += 1
         writer.write()
       }
     }
     dataStore.dispose()
+    MetadataResult.buildDDLResult(affectRows)
   }
 
   /**
