@@ -11,7 +11,15 @@
 
 package org.urbcomp.start.db.test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CompareActualAndExpect {
+
+    private final static Logger log = LoggerFactory.getLogger(
+        CompareActualAndExpect.class.getName()
+    );
+
     /**
      * 比较实际返回值或者实际抛出的异常是否符合预期, 不一致就抛出异常
      *
@@ -22,7 +30,8 @@ public class CompareActualAndExpect {
         // todo 比较实际返回值或者实际抛出的异常是否与预期一致, 不一致就抛出异常
         if (true) {
 
-            System.out.println("正确返回结果");
+            log.info("正确返回结果");
+
         } else {
             throw new Exception("返回结果有误");
         }

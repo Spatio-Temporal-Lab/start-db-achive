@@ -20,8 +20,13 @@ import org.dom4j.io.SAXReader;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GetSQLAndExpectData {
+
+    private final static Logger log = LoggerFactory.getLogger(GetSQLAndExpectData.class);
+
     /**
      * 返回拼接参数后的sql
      *
@@ -32,10 +37,14 @@ public class GetSQLAndExpectData {
     public static String getSqlWithParam(String sqlText, String parameters) throws Exception {
         // 解析参数信息 先判断内容是否是有效的, 不能为null或空字符串
         // 参数使用[]包括, 解析的时候先去掉两遍的[]中括号, 然后使用 ][ 分隔
-        String[] params;
+        String[] params = {};
         StringBuilder sql = new StringBuilder();
         if (!Objects.equals(parameters, "") && parameters != null) {
             parameters = StringUtils.strip(parameters, "[]");
+            // 如果参数出现换行, 就会出现空格, 需要替换下, 保证下面能正常分隔参数
+            if (parameters.contains("] [")) {
+                parameters = parameters.replace("] [", "][");
+            }
             params = parameters.split("]\\[");
 
             // 参数的数量正确的情况下再拼接sql
@@ -49,6 +58,7 @@ public class GetSQLAndExpectData {
                 }
                 sql.append(sqlSplitList[paramCount]);
             } else {
+                log.info("sql中的占位符数量为 " + paramCount + ",\n实际参数数量为 " + params.length);
                 throw new Exception("参数不匹配, 请检查测试用例");
             }
         } else {

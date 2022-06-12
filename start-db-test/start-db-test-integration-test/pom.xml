@@ -45,12 +45,22 @@
             <artifactId>jaxen</artifactId>
             <version>${jaxen.version}</version>
         </dependency>
+
+        <!-- StringUtil -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>${common-lang.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+
+
     </dependencies>
 
 </project>
