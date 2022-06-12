@@ -95,4 +95,9 @@ public class SqlDelegatingConformance extends SqlAbstractConformance {
         return delegate.allowAliasUnnestItems();
     }
 
+    @Override
+    public boolean allowSelectTableFunction() {
+        return delegate.allowSelectTableFunction();
+    }
+
 }

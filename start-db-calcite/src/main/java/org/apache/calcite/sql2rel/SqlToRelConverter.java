@@ -4350,6 +4350,10 @@ public class SqlToRelConverter {
         SqlNodeList selectList = select.getSelectList();
         selectList = validator.expandStar(selectList, select, false);
 
+        // add start
+        convertTableFunctionInSelect(bb, select);
+        // add end
+
         replaceSubQueries(bb, selectList, RelOptUtil.Logic.TRUE_FALSE_UNKNOWN);
 
         List<String> fieldNames = new ArrayList<>();
@@ -4389,6 +4393,35 @@ public class SqlToRelConverter {
         bb.columnMonotonicities.addAll(columnMonotonicityList);
         for (SqlNode selectItem : selectList) {
             bb.columnMonotonicities.add(selectItem.getMonotonicity(bb.scope));
+        }
+    }
+
+    /**
+     * Converts the table function in select to Join or TableFunctionScan.
+     *
+     * @param bb       Blackboard
+     * @param select   SqlSelect
+     * */
+    private void convertTableFunctionInSelect(Blackboard bb, SqlSelect select) {
+        SqlBasicCall tableFunction = validator.getTableFunctionInSelect(select);
+        // rewrite the table function if select list contain one
+        if (tableFunction != null) {
+            SqlValidatorScope tableScope = validator.getJoinScope(tableFunction);
+            final Blackboard rightBb = createBlackboard(tableScope, null, false);
+            convertCollectionTable(rightBb, tableFunction);
+
+            if (select.getFrom() != null) {
+                RelNode join = createJoin(
+                    bb,
+                    bb.root,
+                    rightBb.root,
+                    rexBuilder.makeLiteral(true),
+                    JoinRelType.INNER
+                );
+                bb.setRoot(join, false);
+            } else {
+                bb.setRoot(rightBb.root, false);
+            }
         }
     }
 
