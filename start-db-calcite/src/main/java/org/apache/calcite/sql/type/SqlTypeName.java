@@ -190,9 +190,9 @@ public enum SqlTypeName {
     GEOMETRY(PrecScale.NO_NO, false, ExtraSqlTypes.GEOMETRY, SqlTypeFamily.GEOMETRY),
     SARG(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ANY),
     DATETIME(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.DATETIME),
-    TRAJECTORY(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.TRAJECTORY),
-    ROADNETWORK(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.ROAD_NETWORK),
-    ROADSEGMENT(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.ROAD_SEGMENT);
+    TRAJECTORY(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.TRAJECTORY),
+    ROADNETWORK(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ROAD_NETWORK),
+    ROADSEGMENT(PrecScale.NO_NO, true, Types.OTHER, SqlTypeFamily.ROAD_SEGMENT);
 
     public static final int MAX_DATETIME_PRECISION = 3;
 
