@@ -31,6 +31,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import org.locationtech.jts.geom.*;
+import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
+import org.urbcomp.start.db.model.trajectory.Trajectory;
 
 import java.lang.reflect.Type;
 import java.sql.Array;
@@ -419,6 +422,9 @@ public class ColumnMetaData {
         GEOMETRY(Geometry.class, 100007),
         GEOMETRYCOLLECTION(GeometryCollection.class, 100008),
         DATETIME(LocalDateTime.class, 100009),
+        TRAJECTORY(Trajectory.class, 100010),
+        ROAD_NETWORK(RoadNetwork.class, 100011),
+        ROAD_SEGMENT(RoadSegment.class, 100012),
         // start-db add end
 
         /**

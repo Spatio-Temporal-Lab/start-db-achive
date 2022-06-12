@@ -43,6 +43,9 @@ import org.apache.calcite.sql.type.SqlTypeUtil;
 import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
 import org.locationtech.jts.geom.Geometry;
+import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
+import org.urbcomp.start.db.model.trajectory.Trajectory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -237,6 +240,12 @@ public class JavaTypeFactoryImpl extends SqlTypeFactoryImpl implements JavaTypeF
                     return Geometry.class;
                 case DATETIME:
                     return LocalDateTime.class;
+                case TRAJECTORY:
+                    return Trajectory.class;
+                case ROADNETWORK:
+                    return RoadNetwork.class;
+                case ROADSEGMENT:
+                    return RoadSegment.class;
                 // start-db add end
                 case SYMBOL:
                     return Enum.class;

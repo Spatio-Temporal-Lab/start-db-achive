@@ -26,6 +26,9 @@ import org.apache.calcite.avatica.util.ArrayImpl;
 
 import com.google.common.collect.ImmutableMap;
 import org.locationtech.jts.geom.*;
+import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
+import org.urbcomp.start.db.model.trajectory.Trajectory;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -85,6 +88,10 @@ public class JavaToSqlTypeConversionRules {
         .put(Geometry.class, SqlTypeName.GEOMETRY)
         .put(GeometryCollection.class, SqlTypeName.GEOMETRYCOLLECTION)
         .put(LocalDateTime.class, SqlTypeName.DATETIME)
+        .put(Trajectory.class, SqlTypeName.TRAJECTORY)
+        .put(RoadNetwork.class, SqlTypeName.ROADNETWORK)
+        .put(RoadSegment.class, SqlTypeName.ROADSEGMENT)
+
         // start-db add end
 
         .put(ResultSet.class, SqlTypeName.CURSOR)
