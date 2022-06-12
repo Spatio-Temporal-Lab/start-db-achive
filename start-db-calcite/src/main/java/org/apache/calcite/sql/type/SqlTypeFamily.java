@@ -81,6 +81,9 @@ public enum SqlTypeFamily implements RelDataTypeFamily {
     GEO,
     // start-db add start
     GEOMETRY,
+    TRAJECTORY,
+    ROAD_NETWORK,
+    ROAD_SEGMENT,
     // start-db add end
     /**
      * Like ANY, but do not even validate the operand. It may not be an expression.
@@ -203,6 +206,12 @@ public enum SqlTypeFamily implements RelDataTypeFamily {
                     SqlTypeName.MULTIPOLYGON,
                     SqlTypeName.GEOMETRYCOLLECTION
                 );
+            case TRAJECTORY:
+                return ImmutableList.of(SqlTypeName.TRAJECTORY);
+            case ROAD_NETWORK:
+                return ImmutableList.of(SqlTypeName.ROADNETWORK);
+            case ROAD_SEGMENT:
+                return ImmutableList.of(SqlTypeName.ROADSEGMENT);
             // start-db add end
             default:
                 throw new IllegalArgumentException();
@@ -266,6 +275,12 @@ public enum SqlTypeFamily implements RelDataTypeFamily {
             // start-db add start
             case GEOMETRY:
                 return factory.createSqlType(SqlTypeName.GEOMETRY);
+            case TRAJECTORY:
+                return factory.createSqlType(SqlTypeName.TRAJECTORY);
+            case ROAD_NETWORK:
+                return factory.createSqlType(SqlTypeName.ROADNETWORK);
+            case ROAD_SEGMENT:
+                return factory.createSqlType(SqlTypeName.ROADSEGMENT);
             // start-db add end
             default:
                 return null;
