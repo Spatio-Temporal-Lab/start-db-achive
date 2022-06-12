@@ -193,6 +193,7 @@ public enum SqlTypeName {
     TRAJECTORY(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.TRAJECTORY),
     ROADNETWORK(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.ROAD_NETWORK),
     ROADSEGMENT(PrecScale.NO_NO, false, Types.OTHER, SqlTypeFamily.ROAD_SEGMENT);
+
     public static final int MAX_DATETIME_PRECISION = 3;
 
     // Minimum and default interval precisions are defined by SQL2003
