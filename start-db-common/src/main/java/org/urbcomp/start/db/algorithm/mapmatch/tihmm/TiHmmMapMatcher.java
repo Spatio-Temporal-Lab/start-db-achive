@@ -57,8 +57,7 @@ public class TiHmmMapMatcher {
      * @param traj 原始轨迹
      * @return map match后的轨迹
      */
-    public MapMatchedTrajectory mapMatch(Trajectory traj)
-        throws AlgorithmExecuteException {
+    public MapMatchedTrajectory mapMatch(Trajectory traj) throws AlgorithmExecuteException {
         List<SequenceState> seq = this.computeViterbiSequence(traj.getGPSPointList());
         assert traj.getGPSPointList().size() == seq.size();
         List<MapMatchedPoint> mapMatchedPointList = new ArrayList<>(seq.size());
