@@ -61,7 +61,9 @@ public class MapMatchedTrajectory implements Serializable {
         fcp.setProperty("tid", tid);
         for (MapMatchedPoint p : mmPtList) {
             Feature f = new Feature();
-            f.setGeometry(new org.geojson.Point(p.getCandidatePoint().getX(), p.getCandidatePoint().getY()));
+            f.setGeometry(
+                new org.geojson.Point(p.getCandidatePoint().getX(), p.getCandidatePoint().getY())
+            );
             f.setProperty("time", p.getRawPoint().getTime().toString());
             f.setProperty("roadSegmentId", p.getCandidatePoint().getRoadSegmentId());
             f.setProperty("errorDistanceInMeter", p.getCandidatePoint().getErrorDistanceInMeter());

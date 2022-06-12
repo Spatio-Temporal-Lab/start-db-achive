@@ -46,7 +46,8 @@ public class TiHmmMapMatcherTest {
     }
 
     @Test
-    public void matchTrajToMapMatchedTraj() throws AlgorithmExecuteException, JsonProcessingException {
+    public void matchTrajToMapMatchedTraj() throws AlgorithmExecuteException,
+        JsonProcessingException {
         MapMatchedTrajectory mmTrajectory = mapMatcher.mapMatch(trajectory);
         assertEquals(trajectory.getGPSPointList().size(), mmTrajectory.getMmPtList().size());
         List<PathOfTrajectory> pTrajectories = recover.recover(mmTrajectory);
@@ -54,7 +55,7 @@ public class TiHmmMapMatcherTest {
         System.out.println("原始轨迹\n" + TransformCoordsToWGS84(trajectory).toGeoJSON());
         System.out.println("匹配后的轨迹\n" + mmTrajectory.toGeoJSON());
         System.out.println("连接后的轨迹");
-        for(PathOfTrajectory pt : pTrajectories) {
+        for (PathOfTrajectory pt : pTrajectories) {
             System.out.println(TransformCoordsToWGS84(pt).toGeoJSON());
         }
     }
@@ -72,6 +73,11 @@ public class TiHmmMapMatcherTest {
             double[] coords = CoordTransformUtils.gcj02Towgs84(o.getLng(), o.getLat());
             return new SpatialPoint(coords[0], coords[1]);
         }).collect(Collectors.toList());
-        return new PathOfTrajectory(traj.getTid(), traj.getOid(), wgs84Points, traj.getRoadSegmentIds());
+        return new PathOfTrajectory(
+            traj.getTid(),
+            traj.getOid(),
+            wgs84Points,
+            traj.getRoadSegmentIds()
+        );
     }
 }
