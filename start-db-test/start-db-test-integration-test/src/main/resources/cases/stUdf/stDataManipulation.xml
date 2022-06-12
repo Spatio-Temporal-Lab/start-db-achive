@@ -29,7 +29,7 @@
 
     <!--  返回几何的外边框  st_BBox(geom: Geometry): Geometry  -->
     <case type="query">
-        <sql>select BBox(?);</sql>
+        <sql>select st_BBox(?);</sql>
         <assertion id="01" expected="stDm_005.xml">[st_makeBBOX(1, 1, 2, 2)]</assertion>
     </case>
 

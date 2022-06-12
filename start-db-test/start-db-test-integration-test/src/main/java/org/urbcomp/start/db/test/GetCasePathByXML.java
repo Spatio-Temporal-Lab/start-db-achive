@@ -11,11 +11,16 @@
 
 package org.urbcomp.start.db.test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class GetCasePathByXML {
+
+    private final static Logger log = LoggerFactory.getLogger(GetCasePathByXML.class);
 
     /**
      * 获取resources中cases目录下, 所有sql用例的xml文件路径
@@ -34,7 +39,7 @@ public class GetCasePathByXML {
                 caseFileList.addAll(getFilesInFold(foldPath));
             }
         } else {
-            System.out.println("文件内容为空");
+            log.info("文件内容为空");
         }
         return caseFileList;
     }

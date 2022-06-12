@@ -20,8 +20,13 @@ import org.dom4j.io.SAXReader;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GetSQLAndExpectData {
+
+    private final static Logger log = LoggerFactory.getLogger(GetSQLAndExpectData.class);
+
     /**
      * 返回拼接参数后的sql
      *
@@ -53,7 +58,7 @@ public class GetSQLAndExpectData {
                 }
                 sql.append(sqlSplitList[paramCount]);
             } else {
-                System.out.println("sql中的占位符数量为 " + paramCount + ",\n实际参数数量为 " + params.length);
+                log.info("sql中的占位符数量为 " + paramCount + ",\n实际参数数量为 " + params.length);
                 throw new Exception("参数不匹配, 请检查测试用例");
             }
         } else {

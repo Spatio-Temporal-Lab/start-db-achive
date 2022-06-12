@@ -15,11 +15,14 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.urbcomp.start.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
 
 public class MainTest {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void singleSQLCaseTest() throws Exception {
@@ -27,7 +30,7 @@ public class MainTest {
         String xmlResource = Objects.requireNonNull(
             RunSingleSQLCase.class.getClassLoader().getResource("cases/dml/dml.xml")
         ).getPath();
-        System.out.println(xmlResource);
+        log.info("xmlResource:" + xmlResource);
         runSingleCase(xmlResource);
 
     }
@@ -38,7 +41,7 @@ public class MainTest {
         ArrayList<String> sqlCaseXMLs = getSqlCaseXMLs();
         // 遍历
         for (String sqlCaseXML : sqlCaseXMLs) {
-            System.out.println("执行文件:" + sqlCaseXML);
+            log.info("执行文件:" + sqlCaseXML);
             runSingleCase(sqlCaseXML);
         }
     }

@@ -15,6 +15,8 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ import static org.urbcomp.start.db.test.GetSQLAndExpectData.getSqlWithParam;
 public class RunSingleSQLCase {
     // 用一个静态变量来控制出现报错后是否继续执行, 是否抛出异常
     static boolean ERROR_STOP = true;
+    private final static Logger log = LoggerFactory.getLogger(RunSingleSQLCase.class);
 
     /**
      * 执行指定xml文件中的sql用例并对返回值进行校验
@@ -59,7 +62,7 @@ public class RunSingleSQLCase {
                         } else {
                             sql = getSqlWithParam(sqlText, parameters);
                         }
-                        System.out.println("执行sql:" + sql);
+                        log.info("执行sql:" + sql);
 
                         // 获取预期值或预期异常
                         String expectValue = "";
@@ -78,7 +81,7 @@ public class RunSingleSQLCase {
                         }
                         // 如果预期结果不为空,就对实际结果进行验证
                         if (!expectValue.equals("")) {
-                            System.out.print("比较预期值:");
+                            log.info("比较预期值:");
                             try {
                                 compareData(actualValue, expectValue);
                             } catch (Exception e) {
@@ -88,7 +91,7 @@ public class RunSingleSQLCase {
                                 }
                             }
                         } else {
-                            System.out.println("执行通过");
+                            log.info("执行通过");
                         }
                     }
                 }
