@@ -469,7 +469,8 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
       if (null != ctx.exprFuncParams().funcParam().asScala.head.children)
         ctx.exprFuncParams().funcParam().asScala.map(visitFuncParam).toArray
       else SqlNode.EMPTY_ARRAY
-    new SqlBasicCall(operator, operands, pos)
+    val res = new SqlBasicCall(operator, operands, pos)
+    handleFunction(ctx, res)
   }
 
   override def visitFuncParam(ctx: FuncParamContext): SqlNode = {
@@ -511,6 +512,20 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
       ctx.T_EXISTS() != null,
       new SqlIdentifier(ctx.dbName.getText, pos)
     )
+  }
+
+  /**
+    * handle alias name
+    *
+    * @param ctx ExprFuncContext
+    * @param res SqlBasicCall
+    * @return add alias sqlnode
+    */
+  def handleFunction(ctx: ExprFuncContext, res: SqlBasicCall): SqlNode = {
+    if (ctx.ident().getText.equalsIgnoreCase("fibonacci")) {
+      val nodeList = List(new SqlIdentifier("result", pos)).asJava
+      new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
+    } else res
   }
 
   override def visitUseStmt(ctx: UseStmtContext): SqlUseDatabase = {

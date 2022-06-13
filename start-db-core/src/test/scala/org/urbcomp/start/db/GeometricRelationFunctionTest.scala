@@ -161,4 +161,21 @@ class GeometricRelationFunctionTest extends AbstractCalciteFunctionTest {
     assertEquals("2FFF1FFF2", resultSet.getObject(2))
     assertEquals("0FFFFFFF2", resultSet.getObject(3))
   }
+
+  test("fibonacci") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery("select fibonacci(20)")
+    resultSet.next()
+    assertEquals(1L, resultSet.getObject(1))
+    resultSet.next()
+    assertEquals(1L, resultSet.getObject(1))
+    resultSet.next()
+    assertEquals(2L, resultSet.getObject(1))
+    resultSet.next()
+    assertEquals(3L, resultSet.getObject(1))
+    resultSet.next()
+    assertEquals(5L, resultSet.getObject(1))
+    resultSet.next()
+    assertEquals(8L, resultSet.getObject(1))
+  }
 }

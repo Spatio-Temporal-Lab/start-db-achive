@@ -4451,7 +4451,6 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
                 function = newFunction;
             }
         }
-
         // Check whether functionCall is a table function.
         List<SqlOperator> overloads = new ArrayList<>();
         opTab.lookupOperatorOverloads(
@@ -4501,6 +4500,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         AliasNamespace aliasNs = new AliasNamespace(this, selectItem, parentSelect);
         aliasNs.validateImpl(unknownType);
         registerNamespace(getSelectScope(parentSelect), tableAlias, aliasNs, false);
+
         // Create a table scope for table function.
         TableScope tableScope = new TableScope(fromScope, parentSelect);
         if (fromScope instanceof ListScope) {
