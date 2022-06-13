@@ -14,8 +14,7 @@ package org.urbcomp.start.db.parser.visitor
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.misc.Interval
 import org.apache.calcite.sql._
-import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDdlNodes}
-import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDropSchema, SqlDropTable}
+import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDdlNodes, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
@@ -466,7 +465,8 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
       if (null != ctx.exprFuncParams().funcParam().asScala.head.children)
         ctx.exprFuncParams().funcParam().asScala.map(visitFuncParam).toArray
       else SqlNode.EMPTY_ARRAY
-    new SqlBasicCall(operator, operands, pos)
+    val res = new SqlBasicCall(operator, operands, pos)
+    handleFunction(ctx, res)
   }
 
   override def visitFuncParam(ctx: FuncParamContext): SqlNode = {
@@ -508,6 +508,20 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
       ctx.T_EXISTS() != null,
       new SqlIdentifier(ctx.dbName.getText, pos)
     )
+  }
+
+  /**
+   * handle alias name
+   *
+   * @param ctx ExprFuncContext
+   * @param res SqlBasicCall
+   * @return add alias sqlnode
+   */
+  def handleFunction(ctx: ExprFuncContext, res: SqlBasicCall): SqlNode = {
+    if (ctx.ident().getText.equalsIgnoreCase("fibonacci")) {
+      val nodeList = List(new SqlIdentifier("result", pos)).asJava
+      new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
+    } else res
   }
 
   override def visitUseStmt(ctx: UseStmtContext): SqlUseDatabase = {
