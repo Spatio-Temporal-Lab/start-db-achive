@@ -511,12 +511,12 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   }
 
   /**
-   * handle alias name
-   *
-   * @param ctx ExprFuncContext
-   * @param res SqlBasicCall
-   * @return add alias sqlnode
-   */
+    * handle alias name
+    *
+    * @param ctx ExprFuncContext
+    * @param res SqlBasicCall
+    * @return add alias sqlnode
+    */
   def handleFunction(ctx: ExprFuncContext, res: SqlBasicCall): SqlNode = {
     if (ctx.ident().getText.equalsIgnoreCase("fibonacci")) {
       val nodeList = List(new SqlIdentifier("result", pos)).asJava

@@ -1,3 +1,25 @@
+/*
+ * This file is inherited from Apache Calcite and modifed by ST-Lab under apache license.
+ * You can find the original code from
+ *
+ * https://github.com/apache/calcite
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to you under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.urbcomp.start.db.udtf;
 
 import org.apache.calcite.DataContext;
@@ -25,8 +47,11 @@ import java.lang.reflect.Method;
  * @date 2022-06-12 23:36:40
  */
 public class Fibonacci {
-    public static final Method FIBONACCI2_TABLE_METHOD =
-            Types.lookupMethod(Fibonacci.class, "fibonacci", long.class);
+    public static final Method FIBONACCI2_TABLE_METHOD = Types.lookupMethod(
+        Fibonacci.class,
+        "fibonacci",
+        long.class
+    );
 
     /**
      * A function that generates the Fibonacci sequence.
@@ -36,9 +61,7 @@ public class Fibonacci {
         return new ScannableTable() {
             @Override
             public RelDataType getRowType(RelDataTypeFactory typeFactory) {
-                return typeFactory.builder()
-                        .add("N", SqlTypeName.BIGINT)
-                        .build();
+                return typeFactory.builder().add("N", SqlTypeName.BIGINT).build();
             }
 
             @Override
@@ -52,7 +75,7 @@ public class Fibonacci {
 
                             @Override
                             public Object[] current() {
-                                return new Object[]{current};
+                                return new Object[] { current };
                             }
 
                             @Override
@@ -73,8 +96,7 @@ public class Fibonacci {
                             }
 
                             @Override
-                            public void close() {
-                            }
+                            public void close() {}
                         };
                     }
                 };
@@ -96,8 +118,12 @@ public class Fibonacci {
             }
 
             @Override
-            public boolean rolledUpColumnValidInsideAgg(String column, SqlCall call,
-                                                        SqlNode parent, CalciteConnectionConfig config) {
+            public boolean rolledUpColumnValidInsideAgg(
+                String column,
+                SqlCall call,
+                SqlNode parent,
+                CalciteConnectionConfig config
+            ) {
                 return true;
             }
         };

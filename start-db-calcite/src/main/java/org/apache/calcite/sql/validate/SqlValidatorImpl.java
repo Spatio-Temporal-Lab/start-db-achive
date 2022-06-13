@@ -4417,19 +4417,21 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
      * @param fields              Built up entries for each select list entry
      */
     private void handleTableFunctionInSelect(
-            SqlSelect parentSelect,
-            SqlBasicCall selectItem,
-            List<SqlNode> expandedSelectItems,
-            Set<String> aliases,
-            List<Map.Entry<String, RelDataType>> fields) {
+        SqlSelect parentSelect,
+        SqlBasicCall selectItem,
+        List<SqlNode> expandedSelectItems,
+        Set<String> aliases,
+        List<Map.Entry<String, RelDataType>> fields
+    ) {
         SqlBasicCall functionCall = (SqlBasicCall) selectItem.getOperands()[0];
         SqlFunction function = (SqlFunction) functionCall.getOperator();
         // Check whether there are more than one table function in select list.
         for (SqlNode item : parentSelect.getSelectList()) {
-            if (SqlUtil.isAsOperatorWithListOperand(item)
-                    && item != selectItem) {
-                throw newValidationError(parentSelect.getSelectList(),
-                        RESOURCE.onlyOneTableFunctionAllowedInSelect());
+            if (SqlUtil.isAsOperatorWithListOperand(item) && item != selectItem) {
+                throw newValidationError(
+                    parentSelect.getSelectList(),
+                    RESOURCE.onlyOneTableFunctionAllowedInSelect()
+                );
             }
         }
 
@@ -4437,33 +4439,38 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         // is USER_DEFINED_FUNCTION for a SqlUnresolvedFunction in sql-select list.
         if (function instanceof SqlUnresolvedFunction) {
             if (!function.getFunctionType().isTableFunction()) {
-                SqlFunction newFunction =
-                        new SqlUnresolvedFunction(function.getNameAsId(),
-                                function.getReturnTypeInference(),
-                                function.getOperandTypeInference(),
-                                function.getOperandTypeChecker(),
-                                function.getParamTypes(),
-                                SqlFunctionCategory.USER_DEFINED_TABLE_FUNCTION);
+                SqlFunction newFunction = new SqlUnresolvedFunction(
+                    function.getNameAsId(),
+                    function.getReturnTypeInference(),
+                    function.getOperandTypeInference(),
+                    function.getOperandTypeChecker(),
+                    function.getParamTypes(),
+                    SqlFunctionCategory.USER_DEFINED_TABLE_FUNCTION
+                );
                 functionCall.setOperator(newFunction);
                 function = newFunction;
             }
         }
         // Check whether functionCall is a table function.
-        List<SqlOperator> overloads  = new ArrayList<>();
-        opTab.lookupOperatorOverloads(function.getNameAsId(),
-                function.getFunctionType(),
-                function.getSyntax(), overloads, catalogReader.nameMatcher());
+        List<SqlOperator> overloads = new ArrayList<>();
+        opTab.lookupOperatorOverloads(
+            function.getNameAsId(),
+            function.getFunctionType(),
+            function.getSyntax(),
+            overloads,
+            catalogReader.nameMatcher()
+        );
         if (overloads.size() == 0) {
-            throw newValidationError(functionCall,
-                    RESOURCE.exceptTableFunction(function.getName()));
+            throw newValidationError(
+                functionCall,
+                RESOURCE.exceptTableFunction(function.getName())
+            );
         }
         // Check whether the parent select is a aggregate statement.
         if (isAggregate(parentSelect)) {
-            throw newValidationError(functionCall,
-                    RESOURCE.notAllowTableFunctionInAggregate());
+            throw newValidationError(functionCall, RESOURCE.notAllowTableFunctionInAggregate());
         }
-        SqlNodeList aliasNodes
-                = (SqlNodeList) selectItem.getOperands()[1];
+        SqlNodeList aliasNodes = (SqlNodeList) selectItem.getOperands()[1];
         List<String> aliasList = new ArrayList<>();
         for (SqlNode aliasNode : aliasNodes) {
             aliasList.add(deriveAlias(aliasNode, aliasList.size()));
@@ -4482,15 +4489,17 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
         // Register namespace for table function.
         SqlValidatorScope fromScope = getFromScope(parentSelect);
-        ProcedureNamespace tableNs = new ProcedureNamespace(this,
-                fromScope, functionCall, selectItem);
+        ProcedureNamespace tableNs = new ProcedureNamespace(
+            this,
+            fromScope,
+            functionCall,
+            selectItem
+        );
         tableNs.validateImpl(unknownType);
         registerNamespace(null, null, tableNs, false);
-        AliasNamespace aliasNs = new AliasNamespace(this,
-                selectItem, parentSelect);
+        AliasNamespace aliasNs = new AliasNamespace(this, selectItem, parentSelect);
         aliasNs.validateImpl(unknownType);
-        registerNamespace(getSelectScope(parentSelect),
-                tableAlias, aliasNs, false);
+        registerNamespace(getSelectScope(parentSelect), tableAlias, aliasNs, false);
 
         // Create a table scope for table function.
         TableScope tableScope = new TableScope(fromScope, parentSelect);
@@ -4506,10 +4515,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         RelDataType type = aliasNs.getRowType();
         setValidatedNodeType(selectItem, type);
         for (int i = 0; i < aliasList.size(); i++) {
-            fields.add(
-                    Pair.of(
-                            aliasList.get(i), type.getFieldList()
-                                    .get(i).getType()));
+            fields.add(Pair.of(aliasList.get(i), type.getFieldList().get(i).getType()));
         }
     }
 
