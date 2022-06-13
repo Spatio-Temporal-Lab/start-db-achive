@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  mysql:
+    image: 'mysql:5.7'
+    environment:
+      MYSQL_ROOT_PASSWORD: start_db
+      MYSQL_USER: start_db
+      MYSQL_PASSWORD: start_db
+      MYSQL_DATABASE: meta_data
+    ports:
+      - '3306:3306'
+  geomesa-hbase:
+    image: jimolonely1234/geomesa-hbase:latest
+    ports:
+      - '2181:2181'
+      - '16000:16000'
+      - '16020:16020'
+  start-db:
+    image: jimolonely1234/start-db:1.0.0
+    environment:
+      PORT: 8000
+    ports:
+      - '8000:8000'
+  ss-proxy:
+    image: jimolonely1234/ss-proxy:1.0.0
+    volumes:
+      - ss-conf:/usr/local/ss-proxy/conf
+    environment:
+      PORT: 3307
+    ports:
+      - '3307:3307'
