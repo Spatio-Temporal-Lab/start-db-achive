@@ -32,7 +32,7 @@ public class Fibonacci {
      * A function that generates the Fibonacci sequence.
      * Interesting because it has one column and no arguments.
      */
-    public ScannableTable fibonacciTableWithLimit(final long limit) {
+    public ScannableTable fibonacci(final long limit) {
         return new ScannableTable() {
             @Override
             public RelDataType getRowType(RelDataTypeFactory typeFactory) {
