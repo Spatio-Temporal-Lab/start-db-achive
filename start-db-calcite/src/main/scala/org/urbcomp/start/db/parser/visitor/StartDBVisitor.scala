@@ -14,8 +14,7 @@ package org.urbcomp.start.db.parser.visitor
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.misc.Interval
 import org.apache.calcite.sql._
-import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDdlNodes}
-import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDropSchema, SqlDropTable}
+import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDdlNodes, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
@@ -287,6 +286,10 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
 
   override def visitTableName(ctx: TableNameContext): SqlIdentifier = {
     var names: mutable.Buffer[String] = ctx.ident().identItem().asScala.map(v => v.getText)
+    // TODO 这里应该在antlr里解决反引号的解析问题：select * from `a.b.c` 要解析成 3个字符串，现在是一个
+    if (names.length == 1 && names.head.contains("`")) {
+      names = StringUtil.dropQuota(names.head).split('.').toBuffer
+    }
     // keep username case sensitive
     if (names.length >= 3)
       names = names.takeRight(2).map(v => v.toLowerCase).+:(names(names.length - 3))

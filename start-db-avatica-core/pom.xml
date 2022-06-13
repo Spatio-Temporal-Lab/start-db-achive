@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>start-db-server</artifactId>
+    <artifactId>start-db-avatica-core</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -18,27 +18,24 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.urbcomp</groupId>
-            <artifactId>start-db-core</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.calcite.avatica</groupId>
-            <artifactId>avatica-server</artifactId>
+            <artifactId>avatica-core</artifactId>
+            <version>${avatica.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.desoss</groupId>
-            <artifactId>jackson-datatype-jts</artifactId>
-            <version>${jackson-jts-dt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.urbcomp</groupId>
+            <artifactId>start-db-common</artifactId>
+            <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>scala-library</artifactId>
+                    <groupId>org.scala-lang</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>scala-reflect</artifactId>
+                    <groupId>org.scala-lang</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

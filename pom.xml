@@ -9,13 +9,14 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
+        <module>start-db-common</module>
         <module>start-db-test</module>
+        <module>start-db-avatica-core</module>
         <module>start-db-calcite</module>
         <module>start-db-jdbc-driver</module>
         <module>start-db-cmd</module>
         <module>start-db-core</module>
         <module>start-db-server</module>
-        <module>start-db-common</module>
     </modules>
 
     <properties>
@@ -49,6 +50,7 @@
         <spatial4j.version>0.8</spatial4j.version>
         <scalatest.maven.plugin.version>2.0.2</scalatest.maven.plugin.version>
         <geojson.jackson.version>1.14</geojson.jackson.version>
+        <jackson-jts-dt.version>2.5.1.2</jackson-jts-dt.version>
         <org.jgrapht.version>1.4.0</org.jgrapht.version>
         <rtree.version>0.10</rtree.version>
         <fastjson.version>2.0.6</fastjson.version>
@@ -59,8 +61,8 @@
             <!-- start-db modules -->
             <dependency>
                 <groupId>org.urbcomp</groupId>
-                <artifactId>calcite</artifactId>
-                <version>${project.version}</version>
+                <artifactId>start-db-calcite</artifactId>
+                <version>${version}</version>
             </dependency>
 
             <!--  Calcite Dependency  -->
@@ -93,12 +95,6 @@
                 <version>${slf4j.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.scalatest</groupId>
-                <artifactId>scalatest_${scala.binary.version}</artifactId>
-                <version>${scalatest.version}</version>
-                <scope>test</scope>
-            </dependency>
 
             <dependency>
                 <groupId>org.apache.hbase</groupId>
@@ -337,6 +333,10 @@
         <repository>
             <id>osgeo-alt</id>
             <url>https://repo.osgeo.org/repository/release/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 </project>
