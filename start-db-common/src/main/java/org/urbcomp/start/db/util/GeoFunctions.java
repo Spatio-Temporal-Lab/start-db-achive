@@ -41,7 +41,7 @@ public class GeoFunctions {
     }
 
     /**
-     * @param point     point
+     * @param point            point
      * @param thresholdInMeter MBR扩展的宽度（M）
      * @return 扩展后的MBR
      */
@@ -52,10 +52,10 @@ public class GeoFunctions {
         double minLngPerMeter = 360 / (perimeter * Math.cos(Math.toRadians(point.getY())));
         double lngBuffLen = thresholdInMeter * minLngPerMeter;
         return new Envelope(
-            point.getX() - lngBuffLen,
-            point.getX() + lngBuffLen,
-            point.getY() - latBuffLen,
-            point.getY() + latBuffLen
+                point.getX() - lngBuffLen,
+                point.getX() + lngBuffLen,
+                point.getY() - latBuffLen,
+                point.getY() + latBuffLen
         );
     }
 
@@ -74,10 +74,10 @@ public class GeoFunctions {
         double radLatDistance = radLat1 - radLat2;
         double radLngDistance = Math.toRadians(lng1) - Math.toRadians(lng2);
         return 2 * Math.asin(
-            Math.sqrt(
-                Math.pow(Math.sin(radLatDistance / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2)
-                    * Math.pow(Math.sin(radLngDistance / 2), 2)
-            )
+                Math.sqrt(
+                        Math.pow(Math.sin(radLatDistance / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2)
+                                * Math.pow(Math.sin(radLngDistance / 2), 2)
+                )
         ) * EARTH_RADIUS_IN_METER;
     }
 
@@ -91,5 +91,19 @@ public class GeoFunctions {
             distance += GeoFunctions.getDistanceInM(points.get(i - 1), points.get(i));
         }
         return distance;
+    }
+
+    public static Envelope getBBox(List<SpatialPoint> points) {
+        double minLng = Double.MAX_VALUE;
+        double minLat = Double.MAX_VALUE;
+        double maxLng = Double.MIN_VALUE;
+        double maxLat = Double.MIN_VALUE;
+        for (SpatialPoint point : points) {
+            minLng = Math.min(minLng, point.getLng());
+            minLat = Math.min(minLat, point.getLat());
+            maxLng = Math.max(maxLng, point.getLng());
+            maxLat = Math.max(maxLat, point.getLat());
+        }
+        return new Envelope(minLng, maxLng, minLat, maxLat);
     }
 }
