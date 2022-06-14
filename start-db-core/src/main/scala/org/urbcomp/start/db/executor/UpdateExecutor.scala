@@ -11,8 +11,9 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
+import org.apache.calcite.sql.{SqlIdentifier, SqlUpdate}
 import org.geotools.data.{DataStoreFinder, Transaction}
+import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.AccessorFactory
@@ -21,63 +22,59 @@ import java.nio.file.{Path, Paths}
 import java.sql.{DriverManager, ResultSet}
 import java.util
 import java.util.Properties
+import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
 
 /**
-  * @author zaiyuan
-  * @param n
+  * executor for update operations
+  * @param n  SqlUpdate instance
+  * @author   Wang Bohong
+  * @date     2022-06-13
   */
-case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
+case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
 
   val path: Path = Paths.get("../start-db-server/src/main/resources/model.json")
 
   override def execute(): MetadataResult[Int] = {
     // extract database name and table name
-    // ToDO 与path一样，需要封装统一的传入参数（先写死）
-    val userName = ""
-    val envDbName = ""
+    // ToDO 传入参数
+    val userName = "start_db"
+    val envDbName = "db_test"
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val (dbName, tableName) = targetTable.names.size() match {
+    val str = targetTable.names.get(0)
+    val target = targetTable.names.get(0).split('.')
+    val (dbName, tableName) = target.length match {
+      case 3 =>
+        (target(1), target(2))
       case 2 =>
-        (targetTable.names.get(0), targetTable.names.get(1))
+        (target(0), target(1))
       case 1 =>
-        (envDbName, targetTable.names.get(0))
+        (envDbName, target(0))
       case _ =>
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
-
     if (!metaDataVerify(userName, envDbName, tableName))
       throw new RuntimeException("There is no corresponding table!")
+    val condition = n.getCondition.toString.replace("`", "")
 
     // construct sql
-    val resultObjs: Array[util.ArrayList[AnyRef]] =
-      n.getSource
-        .asInstanceOf[SqlBasicCall] // Values level
-        .operands
-        .map { i => // Row level
-          val queryItem = i
-            .asInstanceOf[SqlBasicCall]
-            .operands
-            .map(j => j.toString)
-            .mkString(" , ")
-          val originalQuerySql =
-            s"""
-               |SELECT $queryItem
-               |""".stripMargin
-          val querySql = originalQuerySql.replace("`", "")
-          WithClose(executeQuery(userName, dbName, querySql)) { rs =>
-            {
-              val count = rs.getMetaData.getColumnCount
-              val result = new util.ArrayList[AnyRef](count)
-              rs.next()
-              for (x <- 1 to count) {
-                result.add(rs.getObject(x))
-              }
-              result
-            }
-          }
+    val list = n.getSourceExpressionList.getList
+    val queryItem = list.map(j => j.toString).mkString(",")
+    val originalQuerySql =
+      s"""
+         |SELECT $queryItem
+         |""".stripMargin
+    val querySql = originalQuerySql.replace("`", "")
+    val result = new util.ArrayList[AnyRef]()
+    WithClose(executeQuery(userName, dbName, querySql)) { rs =>
+      {
+        rs.next()
+        val count = rs.getMetaData.getColumnCount
+        for (x <- 1 to count) {
+          result.add(rs.getObject(x))
         }
-
-    // insert data
+      }
+    }
+    // update data
     var affectRows = 0
     val params = new util.HashMap[String, String]()
     // ToDO 传入参数的问题(先写死)
@@ -85,18 +82,21 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
-    WithClose(dataStore.getFeatureWriterAppend(tableName, Transaction.AUTO_COMMIT)) { writer =>
-      resultObjs.foreach { i =>
-        val sf = writer.next()
-        val count = i.size()
-        for (x <- 0 until count) {
-          sf.setAttribute(n.getTargetColumnList.get(x).toString, i.get(x))
+    val filter = CQL.toFilter(condition)
+    // 行数怎么处理
+    WithClose(dataStore.getFeatureWriter(tableName, filter, Transaction.AUTO_COMMIT)) { writer =>
+      {
+        while (writer.hasNext) {
+          val sf = writer.next()
+          val count = result.size()
+          for (x <- 0 until count) {
+            sf.setAttribute(n.getTargetColumnList.get(x).toString, result.get(x))
+          }
+          affectRows += 1
+          writer.write()
         }
-        affectRows += 1
-        writer.write()
       }
     }
-    dataStore.dispose()
     MetadataResult.buildDDLResult(affectRows)
   }
 
@@ -130,5 +130,4 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     if (table == null) return false
     true
   }
-
 }
