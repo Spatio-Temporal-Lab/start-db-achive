@@ -15,8 +15,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
+import org.locationtech.jts.geom.Envelope;
 import org.urbcomp.start.db.model.point.GPSPoint;
+import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
+import org.urbcomp.start.db.util.GeoFunctions;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -131,6 +134,58 @@ public class Trajectory {
             return false;
         }
         return this.gpsPointList.equals(((Trajectory) o).gpsPointList);
+    }
+
+    /**
+     *  get gps point start time
+     *
+     * @return start timestamp
+     */
+    public Timestamp getStartTime() {
+        Timestamp startTime = gpsPointList.get(0).getTime();
+        for (GPSPoint gp : gpsPointList) {
+            if (startTime.after(gp.getTime())) {
+                startTime = gp.getTime();
+            }
+        }
+        return startTime;
+    }
+
+    /**
+     *  get the end of gpsPoint time
+     *
+     * @return end timestamp
+     */
+    public Timestamp getEndTime() {
+        Timestamp endTime = gpsPointList.get(gpsPointList.size() - 1).getTime();
+        for (GPSPoint gp : gpsPointList) {
+            if (endTime.before(gp.getTime())) {
+                endTime = gp.getTime();
+            }
+        }
+        return endTime;
+    }
+
+    /**
+     *  get the list of spatial point
+     *
+     * @return list of SpatialPoint
+     */
+    public List<SpatialPoint> getSpatialPointList() {
+        List<SpatialPoint> list = new ArrayList<SpatialPoint>(gpsPointList.size());
+        for (GPSPoint gp : gpsPointList) {
+            list.add(new SpatialPoint(gp.getLng(), gp.getLat()));
+        }
+        return list;
+    }
+
+    /**
+     *  get MBR
+     *
+     * @return MBR
+     */
+    public Envelope getBBox() {
+        return GeoFunctions.getBBox(getSpatialPointList());
     }
 
     /**

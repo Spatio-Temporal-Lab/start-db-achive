@@ -11,9 +11,10 @@
 
 package org.urbcomp.start.db.util;
 
-import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GeoFunctions {
@@ -52,10 +53,10 @@ public class GeoFunctions {
         double minLngPerMeter = 360 / (perimeter * Math.cos(Math.toRadians(point.getY())));
         double lngBuffLen = thresholdInMeter * minLngPerMeter;
         return new Envelope(
-                point.getX() - lngBuffLen,
-                point.getX() + lngBuffLen,
-                point.getY() - latBuffLen,
-                point.getY() + latBuffLen
+            point.getX() - lngBuffLen,
+            point.getX() + lngBuffLen,
+            point.getY() - latBuffLen,
+            point.getY() + latBuffLen
         );
     }
 
@@ -74,10 +75,10 @@ public class GeoFunctions {
         double radLatDistance = radLat1 - radLat2;
         double radLngDistance = Math.toRadians(lng1) - Math.toRadians(lng2);
         return 2 * Math.asin(
-                Math.sqrt(
-                        Math.pow(Math.sin(radLatDistance / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2)
-                                * Math.pow(Math.sin(radLngDistance / 2), 2)
-                )
+            Math.sqrt(
+                Math.pow(Math.sin(radLatDistance / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2)
+                    * Math.pow(Math.sin(radLngDistance / 2), 2)
+            )
         ) * EARTH_RADIUS_IN_METER;
     }
 
@@ -105,5 +106,26 @@ public class GeoFunctions {
             maxLat = Math.max(maxLat, point.getLat());
         }
         return new Envelope(minLng, maxLng, minLat, maxLat);
+    }
+
+    public static Polygon bboxFromEnvelopeToPolygon(Envelope e) {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        double minX = e.getMinX();
+        double maxX = e.getMaxX();
+        double minY = e.getMinY();
+        double maxY = e.getMaxY();
+        List<Point> points = new ArrayList<>(5);
+        points.add(geometryFactory.createPoint(new Coordinate(minX, minY)));
+        points.add(geometryFactory.createPoint(new Coordinate(maxX, minY)));
+        points.add(geometryFactory.createPoint(new Coordinate(maxX, maxY)));
+        points.add(geometryFactory.createPoint(new Coordinate(minX, maxY)));
+        points.add(geometryFactory.createPoint(new Coordinate(minX, minY)));
+        return geometryFactory.createPolygon(
+            geometryFactory.createLinearRing(
+                geometryFactory.createLineString(
+                    points.stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
+                ).getCoordinateSequence()
+            )
+        );
     }
 }
