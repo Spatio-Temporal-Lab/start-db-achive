@@ -73,8 +73,12 @@ import org.apache.calcite.tools.Frameworks;
 import org.apache.calcite.util.ImmutableIntList;
 import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
+import org.urbcomp.start.db.executor.ShowDatabaseExecutor;
 import org.urbcomp.start.db.executor.StartDBExecutorFactory;
 import org.urbcomp.start.db.infra.BaseExecutor;
+import org.urbcomp.start.db.infra.MetadataResult;
+import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase;
+import org.urbcomp.start.db.parser.dql.SqlShowDatabases;
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver;
 
 import java.lang.reflect.Type;
@@ -626,6 +630,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
         }
     }
 
+    @SuppressWarnings("unchecked")
     <T> CalciteSignature<T> prepare2_(
         Context context,
         Query<T> query,
@@ -685,9 +690,16 @@ public class CalcitePrepareImpl implements CalcitePrepare {
 
             Hook.PARSE_TREE.run(new Object[] { query.sql, sqlNode });
 
+            StartDBExecutorFactory startDBExecutorFactory = new StartDBExecutorFactory();
             if (sqlNode.getKind().belongsTo(SqlKind.DDL)) {
-                executeDdl(context, sqlNode);
 
+                if (sqlNode instanceof SqlCreateDatabase) {
+                    BaseExecutor executor = startDBExecutorFactory.convertExecutor(sqlNode);
+                    MetadataResult<Object> rs = executor.execute();
+                    return (CalciteSignature<T>) rs;
+                }
+
+                executeDdl(context, sqlNode);
                 return new CalciteSignature<>(
                     query.sql,
                     ImmutableList.of(),
@@ -704,11 +716,18 @@ public class CalcitePrepareImpl implements CalcitePrepare {
             }
 
             // modify start
-            StartDBExecutorFactory startDBExecutorFactory = new StartDBExecutorFactory();
             switch (sqlNode.getKind()) {
                 case INSERT:
                     BaseExecutor insertExecutor = startDBExecutorFactory.convertExecutor(sqlNode);
                     return (CalciteSignature<T>) insertExecutor.execute();
+                case OTHER:
+                    if (sqlNode instanceof SqlShowDatabases) {
+                        ShowDatabaseExecutor executor = new ShowDatabaseExecutor(
+                            (SqlShowDatabases) sqlNode
+                        );
+                        return (CalciteSignature<T>) executor.execute();
+                    }
+                    return null;
                 case DELETE:
                     // ToDO
                     return null;

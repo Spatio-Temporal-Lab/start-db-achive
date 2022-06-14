@@ -15,6 +15,8 @@ import org.urbcomp.start.db.metadata.SqlSessionUtil;
 import org.urbcomp.start.db.metadata.entity.Database;
 import org.urbcomp.start.db.metadata.mapper.DatabaseMapper;
 
+import java.util.List;
+
 /**
  * This class is the implementation class of IAccessor.The basic functions of metadata interaction
  * of databases are realized.
@@ -33,4 +35,9 @@ public class DatabaseAccessor implements IAccessor<Database, DatabaseMapper> {
         // make sure dbName does not exist.
         return getMapper(true).selectByFidAndName(db.getUserId(), db.getName()) != null;
     }
+
+    public List<Database> getAllDatabase() {
+        return getMapper(true).selectAll();
+    }
+
 }

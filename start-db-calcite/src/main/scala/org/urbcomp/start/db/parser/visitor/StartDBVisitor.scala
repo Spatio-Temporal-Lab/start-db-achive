@@ -14,11 +14,11 @@ package org.urbcomp.start.db.parser.visitor
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.misc.Interval
 import org.apache.calcite.sql._
-import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDdlNodes, SqlDropSchema, SqlDropTable}
+import org.apache.calcite.sql.ddl.{SqlDdlNodes, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
-import org.urbcomp.start.db.parser.ddl.{SqlTruncateTable, SqlUseDatabase}
+import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
 import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
 import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
 import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
@@ -497,12 +497,12 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   }
 
   override def visitCreateDatabaseStmt(ctx: CreateDatabaseStmtContext): SqlNode = {
-    new SqlCreateSchema(
+    new SqlCreateDatabase(
       pos,
-      false,
-      ctx.T_EXISTS() != null,
-      new SqlIdentifier(ctx.dbName.getText, pos)
-    )
+      new SqlIdentifier(ctx.dbName.getText, pos),
+      SqlNodeList.EMPTY,
+      ctx.T_EXISTS() != null
+    );
   }
 
   override def visitDropDatabaseStmt(ctx: DropDatabaseStmtContext): SqlNode = {
