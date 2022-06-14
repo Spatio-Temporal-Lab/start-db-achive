@@ -45,8 +45,8 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
 
-    if (!metaDataVerify(userName, envDbName, tableName))
-      throw new RuntimeException("There is no corresponding table!")
+//    if (!metaDataVerify(userName, envDbName, tableName))
+//      throw new RuntimeException("There is no corresponding table!")
 
     // construct sql
     val resultObjs: Array[util.ArrayList[AnyRef]] =

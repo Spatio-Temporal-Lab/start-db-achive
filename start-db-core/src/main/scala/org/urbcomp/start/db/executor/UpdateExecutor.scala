@@ -52,8 +52,8 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
       case _ =>
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
-    if (!metaDataVerify(userName, envDbName, tableName))
-      throw new RuntimeException("There is no corresponding table!")
+//    if (!metaDataVerify(userName, envDbName, tableName))
+//      throw new RuntimeException("There is no corresponding table!")
     val condition = n.getCondition.toString.replace("`", "")
 
     // construct sql
