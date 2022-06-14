@@ -12,4 +12,4 @@ ADD ss-proxy.zip $APP_DIR
 EXPOSE $PORT
 
 # 启动服务
-CMD ["$APP_DIR/ss-proxy/bin/start.sh"]
+ENTRYPOINT ${APP_DIR}/bin/start.sh ${PORT} && tail -f ${APP_DIR}/logs/stdout.log
