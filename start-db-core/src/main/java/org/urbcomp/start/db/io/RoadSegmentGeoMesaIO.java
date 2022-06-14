@@ -18,16 +18,13 @@ import org.geotools.filter.identity.FeatureIdImpl;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.util.factory.Hints;
-import org.junit.jupiter.api.Test;
 import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.util.Assert;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
-import org.urbcomp.start.db.model.sample.ModelGenerator;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -137,18 +134,6 @@ public class RoadSegmentGeoMesaIO implements Closeable {
         if (dataStore != null) {
             dataStore.dispose();
         }
-    }
-
-    @Test
-    public void roadSegmentIOTest() throws IOException, CQLException {
-        final RoadSegment rs = ModelGenerator.generateRoadSegment();
-        RoadSegmentGeoMesaIO io = new RoadSegmentGeoMesaIO();
-        io.RoadSegmentToGeoMesaObject(rs);
-        List<String> result = io.RoadSegmentFromGeoMesaObject();
-        Assert.equals(
-            "LINESTRING (111.37939453125 54.00776876193478, 116.3671875 53.05442186546102)",
-            result.get(0)
-        );
     }
 
 }
