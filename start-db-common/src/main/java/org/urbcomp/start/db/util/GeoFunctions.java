@@ -52,10 +52,10 @@ public class GeoFunctions {
         double minLngPerMeter = 360 / (perimeter * Math.cos(Math.toRadians(point.getY())));
         double lngBuffLen = thresholdInMeter * minLngPerMeter;
         return new Envelope(
-                point.getX() - lngBuffLen,
-                point.getX() + lngBuffLen,
-                point.getY() - latBuffLen,
-                point.getY() + latBuffLen
+            point.getX() - lngBuffLen,
+            point.getX() + lngBuffLen,
+            point.getY() - latBuffLen,
+            point.getY() + latBuffLen
         );
     }
 
@@ -74,10 +74,10 @@ public class GeoFunctions {
         double radLatDistance = radLat1 - radLat2;
         double radLngDistance = Math.toRadians(lng1) - Math.toRadians(lng2);
         return 2 * Math.asin(
-                Math.sqrt(
-                        Math.pow(Math.sin(radLatDistance / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2)
-                                * Math.pow(Math.sin(radLngDistance / 2), 2)
-                )
+            Math.sqrt(
+                Math.pow(Math.sin(radLatDistance / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2)
+                    * Math.pow(Math.sin(radLngDistance / 2), 2)
+            )
         ) * EARTH_RADIUS_IN_METER;
     }
 

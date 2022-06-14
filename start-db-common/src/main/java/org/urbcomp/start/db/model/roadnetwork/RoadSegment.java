@@ -102,7 +102,7 @@ public class RoadSegment {
         return this;
     }
 
-    public Envelope getBBox(){
+    public Envelope getBBox() {
         return GeoFunctions.getBBox(points);
     }
 
