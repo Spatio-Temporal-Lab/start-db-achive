@@ -15,7 +15,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
+import org.locationtech.jts.geom.Envelope;
 import org.urbcomp.start.db.model.point.SpatialPoint;
+import org.urbcomp.start.db.util.GeoFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +100,10 @@ public class RoadSegment {
     public RoadSegment setLengthInMeter(double lengthInMeter) {
         this.lengthInMeter = lengthInMeter;
         return this;
+    }
+
+    public Envelope getBBox(){
+        return GeoFunctions.getBBox(points);
     }
 
     @Override
