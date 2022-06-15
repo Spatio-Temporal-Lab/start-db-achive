@@ -3,10 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.urbcomp.start.db.metadata.mapper.DatabaseMapper">
-    <select id="selectAll" resultType="org.urbcomp.start.db.metadata.entity.Database">
+    <select id="selectAllByFid" resultType="org.urbcomp.start.db.metadata.entity.Database">
         SELECT *
         FROM sys_database
-        WHERE delete_time = 0;
+        WHERE user_id = #{fid} and delete_time = 0;
     </select>
     <select id="selectById" resultType="org.urbcomp.start.db.metadata.entity.Database">
         SELECT *

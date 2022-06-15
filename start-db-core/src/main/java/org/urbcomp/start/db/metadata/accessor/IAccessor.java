@@ -15,6 +15,8 @@ import org.urbcomp.start.db.metadata.SqlSessionUtil;
 import org.urbcomp.start.db.metadata.entity.AbstractEntity;
 import org.urbcomp.start.db.metadata.mapper.IMapper;
 
+import java.util.List;
+
 /**
  * This interface is used to encapsulate some accessor information.
  *
@@ -22,6 +24,10 @@ import org.urbcomp.start.db.metadata.mapper.IMapper;
  * @date 2022-05-01 15:17:07
  */
 public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> extends AutoCloseable {
+
+    default List<T> selectAllByFid(long fid, boolean commit) {
+        return getMapper(commit).selectAllByFid(fid);
+    }
 
     /**
      * select one entity from table by id
