@@ -24,7 +24,7 @@ class RoadSegmentGeoMesaIOTest extends FunSuite {
     val CATALOG: String = "start_db.db_test"
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
-    val tableName = "RoadSegment"
+    val tableName = "RoadSegment1"
     val io = new RoadSegmentGeoMesaIO(tableName, params)
     io.RoadSegmentToGeoMesaObject(rs)
     val bbox = "bbox (geom, -180.0, -90.0, 180.0, 90.0)"

@@ -73,13 +73,13 @@ public class RoadSegmentGeoMesaIO implements Closeable {
      * @return SimpleFeatureType，即建表的schema表结构
      */
     private void createTable() throws IOException {
-        boolean exists = checkTable();
         sft = SimpleFeatureTypes.createType(
             tableName,
             "rsId:int, *geom:LineString:srid=4326, geoJson:String"
         );
         sft.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY, "dtg");
-        if (!exists) {
+        if (checkTable()) {
+            System.out.println();
             dataStore.createSchema(sft);
         }
     }
