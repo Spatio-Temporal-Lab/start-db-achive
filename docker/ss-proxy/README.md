@@ -26,8 +26,9 @@ docker build -t ss-proxy:1.0.0 .
 
 9. test
 
+replace `192.168.0.100` to your start-db ip
 ```shell
-docker run --name ss-proxy -d -p 3307:3307 ss-proxy:1.0.0 
+docker run --add-host=start-db:192.168.0.100 -v ./conf:/usr/local/ss-proxy/conf --name ss-proxy -d -p 3307:3307 ss-proxy:1.0.0 
 ```
 
 
