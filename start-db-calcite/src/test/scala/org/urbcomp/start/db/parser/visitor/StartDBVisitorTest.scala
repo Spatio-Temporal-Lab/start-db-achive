@@ -11,12 +11,12 @@
 
 package org.urbcomp.start.db.parser.visitor
 import org.apache.calcite.sql._
-import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDropSchema, SqlDropTable}
+import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.parser.SqlParser
 import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
 import org.scalatest.FunSuite
 import org.urbcomp.start.db.parser.StartDBSQLSamples
-import org.urbcomp.start.db.parser.ddl.{SqlTruncateTable, SqlUseDatabase}
+import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
 import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver
 import org.urbcomp.start.db.util.MetadataUtil
@@ -58,9 +58,9 @@ class StartDBVisitorTest extends FunSuite {
 
   test("convert create dababase statement to SqlNode") {
     val parsed = driver.parseSql(StartDBSQLSamples.CREATE_DATABASE_SAMPLE)
-    val node = parsed.asInstanceOf[SqlCreateSchema]
-    assertEquals(SqlKind.CREATE_SCHEMA, node.getKind)
-    assertEquals("database_name", node.name.names.get(0))
+    val node = parsed.asInstanceOf[SqlCreateDatabase]
+    println(node.toString)
+    assertEquals("database_name", node.getDatabaseName.names.get(0))
     assertFalse(node.ifNotExists)
   }
 
@@ -72,9 +72,8 @@ class StartDBVisitorTest extends FunSuite {
 
   test("convert create dababase if not exists statement to SqlNode") {
     val parsed = driver.parseSql(StartDBSQLSamples.CREATE_DATABASE_IF_NOT_EXISTS_SAMPLE)
-    val node = parsed.asInstanceOf[SqlCreateSchema]
-    assertEquals(SqlKind.CREATE_SCHEMA, node.getKind)
-    assertEquals("database_name", node.name.names.get(0))
+    val node = parsed.asInstanceOf[SqlCreateDatabase]
+    assertEquals("database_name", node.getDatabaseName.names.get(0))
     assertTrue(node.ifNotExists);
   }
 
@@ -109,7 +108,17 @@ class StartDBVisitorTest extends FunSuite {
     val sql = StartDBSQLSamples.SHOW_CREATE_TABLE_SAMPLE
     val parsed = driver.parseSql(sql)
     val node = parsed.asInstanceOf[SqlShowCreateTable]
+    println(node.toString)
     assertEquals(tableName, node.getTableName.names.get(0));
+  }
+
+  test("convert create table statement to SqlNode") {
+    val sql = StartDBSQLSamples.CREATE_TABLE_SAMPLE
+    val parsed = driver.parseSql(sql)
+    val node = parsed.asInstanceOf[SqlCreateTable]
+    println(node.toString)
+    assertEquals("start_db_test_table", node.name.names.get(0))
+    assertEquals(12, node.columnList.size())
   }
 
   test("convert update table statement to SqlNode") {

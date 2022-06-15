@@ -12,15 +12,16 @@
 package org.urbcomp.start.db.executor
 
 import org.apache.calcite.sql.{SqlInsert, SqlNode, SqlUpdate}
+import org.apache.calcite.sql.ddl.SqlCreateTable
+import org.apache.calcite.sql.{SqlInsert, SqlNode}
 import org.urbcomp.start.db.infra.{BaseExecutor, BaseExecutorFactory}
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase
 
 class StartDBExecutorFactory extends BaseExecutorFactory {
   override def convertExecutor(node: SqlNode): BaseExecutor = node match {
-    case n: SqlInsert => InsertExecutor(n)
-
-    case n: SqlUpdate => UpdateExecutor(n)
+    case n: SqlUpdate         => UpdateExecutor(n)
     case n: SqlInsert         => InsertExecutor(n)
     case n: SqlCreateDatabase => CreateDatabaseExecutor(n)
+    case n: SqlCreateTable    => CreateTableExecutor(n)
   }
 }

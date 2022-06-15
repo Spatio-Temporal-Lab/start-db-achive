@@ -18,11 +18,19 @@ import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase
 
 case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
   override def execute(): MetadataResult[Int] = {
+    // TODO: get username from context
+    val userName = "start_db";
     val databaseAccessor = AccessorFactory.getDatabaseAccessor
+    val userAccessor = AccessorFactory.getUserAccessor
+    val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
     val dbName = n.getDatabaseName.names.get(0)
-    println(dbName)
-    // FIXME: add load user by name in accessor, get username from sqlNode
-    databaseAccessor.insert(new Database(0, 1, dbName), true);
+    if (!n.isIfNotExists) {
+      val found = databaseAccessor.selectByFidAndName(user.getId, dbName, true);
+      if (found != null) {
+        throw new IllegalArgumentException("database already exist " + dbName);
+      }
+    }
+    databaseAccessor.insert(new Database(-1, user.getId, dbName), true);
     MetadataResult.buildDDLResult(1)
   }
 }

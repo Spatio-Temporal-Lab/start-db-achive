@@ -22,17 +22,10 @@
 
 package org.urbcomp.start.db.parser.ddl;
 
-import org.apache.calcite.sql.SqlCreate;
-import org.apache.calcite.sql.SqlIdentifier;
-import org.apache.calcite.sql.SqlKind;
-import org.apache.calcite.sql.SqlNode;
-import org.apache.calcite.sql.SqlNodeList;
-import org.apache.calcite.sql.SqlOperator;
-import org.apache.calcite.sql.SqlSpecialOperator;
-import org.apache.calcite.sql.SqlWriter;
+import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.parser.SqlParserPos;
-import org.apache.calcite.util.ImmutableNullableList;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -49,17 +42,9 @@ public class SqlCreateDatabase extends SqlCreate {
 
     private final SqlIdentifier databaseName;
 
-    private final SqlNodeList propertyList;
-
-    public SqlCreateDatabase(
-        SqlParserPos pos,
-        SqlIdentifier databaseName,
-        SqlNodeList propertyList,
-        boolean ifNotExists
-    ) {
+    public SqlCreateDatabase(SqlParserPos pos, SqlIdentifier databaseName, boolean ifNotExists) {
         super(OPERATOR, pos, false, ifNotExists);
         this.databaseName = requireNonNull(databaseName, "databaseName should not be null");
-        this.propertyList = requireNonNull(propertyList, "propertyList should not be null");
     }
 
     @Override
@@ -69,15 +54,11 @@ public class SqlCreateDatabase extends SqlCreate {
 
     @Override
     public List<SqlNode> getOperandList() {
-        return ImmutableNullableList.of(databaseName, propertyList);
+        return Collections.emptyList();
     }
 
     public SqlIdentifier getDatabaseName() {
         return databaseName;
-    }
-
-    public SqlNodeList getPropertyList() {
-        return propertyList;
     }
 
     public boolean isIfNotExists() {
@@ -91,17 +72,6 @@ public class SqlCreateDatabase extends SqlCreate {
             writer.keyword("IF NOT EXISTS");
         }
         databaseName.unparse(writer, leftPrec, rightPrec);
-
-        if (this.propertyList.size() > 0) {
-            writer.keyword("WITH");
-            SqlWriter.Frame withFrame = writer.startList("(", ")");
-            for (SqlNode property : propertyList) {
-                printIndent(writer);
-                property.unparse(writer, leftPrec, rightPrec);
-            }
-            writer.newlineAndIndent();
-            writer.endList(withFrame);
-        }
     }
 
     protected void printIndent(SqlWriter writer) {

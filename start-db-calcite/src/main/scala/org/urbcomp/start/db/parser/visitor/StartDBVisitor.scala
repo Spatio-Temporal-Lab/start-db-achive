@@ -497,12 +497,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   }
 
   override def visitCreateDatabaseStmt(ctx: CreateDatabaseStmtContext): SqlNode = {
-    new SqlCreateDatabase(
-      pos,
-      new SqlIdentifier(ctx.dbName.getText, pos),
-      SqlNodeList.EMPTY,
-      ctx.T_EXISTS() != null
-    );
+    new SqlCreateDatabase(pos, new SqlIdentifier(ctx.dbName.getText, pos), ctx.T_EXISTS() != null);
   }
 
   override def visitDropDatabaseStmt(ctx: DropDatabaseStmtContext): SqlNode = {
@@ -545,8 +540,14 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
         .create_table_columns_item()
         .asScala
         .map { i =>
-          val fieldName = visitIdent(i.qident().ident().get(0))
-          val dataType = new SqlUserDefinedTypeNameSpec(visitIdent(i.dtype().ident()), pos)
+          val fieldName = visitIdent(i.column_name().qident().ident().get(0))
+          var dataType: SqlUserDefinedTypeNameSpec = null
+          if (i.dtype().ident() != null) {
+            dataType = new SqlUserDefinedTypeNameSpec(visitIdent(i.dtype().ident()), pos)
+          } else {
+            dataType =
+              new SqlUserDefinedTypeNameSpec(new SqlIdentifier(i.dtype().getText, pos), pos)
+          }
           val dataTypeSpec = new SqlDataTypeSpec(dataType, pos)
           SqlDdlNodes.column(pos, fieldName, dataTypeSpec, null, null)
         }
