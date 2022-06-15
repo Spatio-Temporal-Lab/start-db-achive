@@ -6,8 +6,16 @@ build start-db server docker image
 mvn package -pl start-db-server -am -DskipTests -Dcheckstyle.skip
 ```
 
-2. build image
+2. copy `start-db.jar` to current dir
+   
+3. build image
 
 ```shell
 docker build -t start-db-server:1.0.0 .
+```
+
+4. run image and test
+
+```shell
+docker run --name start-db -p 8000:8000 -d start-db-server:1.0.0
 ```

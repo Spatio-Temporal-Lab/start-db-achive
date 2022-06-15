@@ -24,6 +24,11 @@ mvnw install -Prelease -T1C -DskipTests -Djacoco.skip=true -Dcheckstyle.skip=tru
 docker build -t ss-proxy:1.0.0 .
 ```
 
+9. test
+
+```shell
+docker run --name ss-proxy -d -p 3307:3307 ss-proxy:1.0.0 
+```
 
 
 
