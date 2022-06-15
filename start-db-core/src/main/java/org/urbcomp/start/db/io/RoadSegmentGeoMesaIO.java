@@ -78,8 +78,8 @@ public class RoadSegmentGeoMesaIO implements Closeable {
      */
     private void createTable() throws IOException {
         sft = SimpleFeatureTypes.createType(
-                tableName,
-                "rsId:int, *geom:LineString:srid=4326, geoJson:String"
+            tableName,
+            "rsId:int, *geom:LineString:srid=4326, geoJson:String"
         );
         sft.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY, "dtg");
         dataStore.createSchema(sft);
