@@ -17,54 +17,51 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.filter.identity.FeatureIdImpl;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.util.factory.Hints;
-import org.junit.jupiter.api.Test;
 import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.locationtech.jts.geom.*;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.urbcomp.start.db.model.sample.ModelGenerator;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 import org.urbcomp.start.db.util.GeoFunctions;
-
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TrajectoryGeoMesaIO implements Closeable {
     private FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
-    private DataStore dataStore;
+    private final DataStore dataStore;
     private SimpleFeatureType sft;
-    private final String TABLE_NAME = "trajectory";
+    private String TABLE_NAME;
 
-    public TrajectoryGeoMesaIO() throws IOException {
-        mkConnection();
-        dropTable();
-        createTable();
+    public TrajectoryGeoMesaIO(String tableName, Map<String, String> params) throws IOException {
+        this.dataStore = DataStoreFinder.getDataStore(params);
+        this.TABLE_NAME = tableName;
     }
 
-    /**
-     * used to make connection with geomesa-hbase datastore
-     */
-    private void mkConnection() throws IOException {
+    public TrajectoryGeoMesaIO(String tableName) throws IOException {
         Map<String, String> params = new HashMap<>();
         String CATALOG = "start_db.db_test";
         params.put("hbase.catalog", CATALOG);
         params.put("hbase.zookeepers", "localhost:2181");
         this.dataStore = DataStoreFinder.getDataStore(params);
+        this.TABLE_NAME = tableName;
     }
 
-    private void dropTable() throws IOException {
-        if (this.dataStore.getSchema(TABLE_NAME) != null) {
-            this.dataStore.removeSchema(TABLE_NAME);
+    public void dropTable() throws IOException {
+        if (dataStore.getSchema(TABLE_NAME) != null) {
+            dataStore.removeSchema(TABLE_NAME);
         }
     }
 
     /**
      * used to set up a simple feature type
      */
-    private void createTable() throws IOException {
+    public void createTable() throws IOException {
         if (this.dataStore.getSchema(TABLE_NAME) != null) {
+            System.out.println("Table " + TABLE_NAME + " already exists!");
             return;
         }
         this.sft = org.locationtech.geomesa.utils.geotools.SimpleFeatureTypes.createType(
@@ -99,7 +96,7 @@ public class TrajectoryGeoMesaIO implements Closeable {
     /**
      * used to close datastore of geomesa-hbase
      */
-    private void writeClose() throws IOException {
+    public void writeClose() throws IOException {
         this.writer.close();
     }
 
@@ -125,15 +122,17 @@ public class TrajectoryGeoMesaIO implements Closeable {
         writeFeature(dataStore, sft, sf);
     }
 
-    public void trajectoryFromGeoMesaObject() throws IOException, CQLException {
+    public List<Object> trajectoryFromGeoMesaObject(Query query) throws IOException, CQLException {
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(
-            new Query(TABLE_NAME),
+            query,
             Transaction.AUTO_COMMIT
         );
+        List<Object> result = new ArrayList<>();
         while (reader.hasNext()) {
             SimpleFeature f = reader.next();
-            System.out.println(f);
+            result.add(f);
         }
+        return result;
     }
 
     @Override
@@ -143,12 +142,4 @@ public class TrajectoryGeoMesaIO implements Closeable {
         }
     }
 
-    @Test
-    public void trajectoryIOTest() throws IOException, CQLException {
-        Trajectory t = ModelGenerator.generateTrajectory();
-        TrajectoryGeoMesaIO trajectoryGeoMesaIO = new TrajectoryGeoMesaIO();
-        trajectoryGeoMesaIO.trajectoryToGeoMesaObject(t);
-        trajectoryGeoMesaIO.writeClose();
-        trajectoryGeoMesaIO.trajectoryFromGeoMesaObject();
-    }
 }

@@ -25,6 +25,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Trajectory {
     private String tid;
@@ -142,13 +143,7 @@ public class Trajectory {
      * @return start timestamp
      */
     public Timestamp getStartTime() {
-        Timestamp startTime = gpsPointList.get(0).getTime();
-        for (GPSPoint gp : gpsPointList) {
-            if (startTime.after(gp.getTime())) {
-                startTime = gp.getTime();
-            }
-        }
-        return startTime;
+        return gpsPointList.get(0).getTime();
     }
 
     /**
@@ -157,26 +152,7 @@ public class Trajectory {
      * @return end timestamp
      */
     public Timestamp getEndTime() {
-        Timestamp endTime = gpsPointList.get(gpsPointList.size() - 1).getTime();
-        for (GPSPoint gp : gpsPointList) {
-            if (endTime.before(gp.getTime())) {
-                endTime = gp.getTime();
-            }
-        }
-        return endTime;
-    }
-
-    /**
-     *  get the list of spatial point
-     *
-     * @return list of SpatialPoint
-     */
-    public List<SpatialPoint> getSpatialPointList() {
-        List<SpatialPoint> list = new ArrayList<SpatialPoint>(gpsPointList.size());
-        for (GPSPoint gp : gpsPointList) {
-            list.add(new SpatialPoint(gp.getLng(), gp.getLat()));
-        }
-        return list;
+        return gpsPointList.get(gpsPointList.size() - 1).getTime();
     }
 
     /**
@@ -185,7 +161,11 @@ public class Trajectory {
      * @return MBR
      */
     public Envelope getBBox() {
-        return GeoFunctions.getBBox(getSpatialPointList());
+        return GeoFunctions.getBBox(
+            gpsPointList.stream()
+                .map(o -> new SpatialPoint(o.getLng(), o.getLat()))
+                .collect(Collectors.toList())
+        );
     }
 
     /**
