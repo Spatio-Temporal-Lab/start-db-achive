@@ -15,13 +15,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
+import org.locationtech.jts.geom.Envelope;
 import org.urbcomp.start.db.model.point.GPSPoint;
+import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
+import org.urbcomp.start.db.util.GeoFunctions;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Trajectory {
     private String tid;
@@ -131,6 +135,37 @@ public class Trajectory {
             return false;
         }
         return this.gpsPointList.equals(((Trajectory) o).gpsPointList);
+    }
+
+    /**
+     *  get gps point start time
+     *
+     * @return start timestamp
+     */
+    public Timestamp getStartTime() {
+        return gpsPointList.get(0).getTime();
+    }
+
+    /**
+     *  get the end of gpsPoint time
+     *
+     * @return end timestamp
+     */
+    public Timestamp getEndTime() {
+        return gpsPointList.get(gpsPointList.size() - 1).getTime();
+    }
+
+    /**
+     *  get MBR
+     *
+     * @return MBR
+     */
+    public Envelope getBBox() {
+        return GeoFunctions.getBBox(
+            gpsPointList.stream()
+                .map(o -> new SpatialPoint(o.getLng(), o.getLat()))
+                .collect(Collectors.toList())
+        );
     }
 
     /**

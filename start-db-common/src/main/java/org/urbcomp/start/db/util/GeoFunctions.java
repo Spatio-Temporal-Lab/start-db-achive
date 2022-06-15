@@ -11,9 +11,10 @@
 
 package org.urbcomp.start.db.util;
 
-import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GeoFunctions {
@@ -91,5 +92,40 @@ public class GeoFunctions {
             distance += GeoFunctions.getDistanceInM(points.get(i - 1), points.get(i));
         }
         return distance;
+    }
+
+    public static Envelope getBBox(List<SpatialPoint> points) {
+        double minLng = Double.MAX_VALUE;
+        double minLat = Double.MAX_VALUE;
+        double maxLng = Double.MIN_VALUE;
+        double maxLat = Double.MIN_VALUE;
+        for (SpatialPoint point : points) {
+            minLng = Math.min(minLng, point.getLng());
+            minLat = Math.min(minLat, point.getLat());
+            maxLng = Math.max(maxLng, point.getLng());
+            maxLat = Math.max(maxLat, point.getLat());
+        }
+        return new Envelope(minLng, maxLng, minLat, maxLat);
+    }
+
+    public static Polygon bboxFromEnvelopeToPolygon(Envelope e) {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        double minX = e.getMinX();
+        double maxX = e.getMaxX();
+        double minY = e.getMinY();
+        double maxY = e.getMaxY();
+        List<Point> points = new ArrayList<>(5);
+        points.add(geometryFactory.createPoint(new Coordinate(minX, minY)));
+        points.add(geometryFactory.createPoint(new Coordinate(maxX, minY)));
+        points.add(geometryFactory.createPoint(new Coordinate(maxX, maxY)));
+        points.add(geometryFactory.createPoint(new Coordinate(minX, maxY)));
+        points.add(geometryFactory.createPoint(new Coordinate(minX, minY)));
+        return geometryFactory.createPolygon(
+            geometryFactory.createLinearRing(
+                geometryFactory.createLineString(
+                    points.stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
+                ).getCoordinateSequence()
+            )
+        );
     }
 }
