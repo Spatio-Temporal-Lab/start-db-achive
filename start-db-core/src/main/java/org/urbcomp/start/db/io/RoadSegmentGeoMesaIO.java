@@ -40,11 +40,7 @@ public class RoadSegmentGeoMesaIO implements Closeable {
     public RoadSegmentGeoMesaIO(String tableName, Map<String, String> params) throws IOException {
         this.tableName = tableName;
         getDataStore(params);
-        if (checkTable()) {
-            createTable();
-        } else {
-            System.out.println("Table " + tableName + " already exists!");
-        }
+        createTable();
     }
 
     public void RoadSegmentToGeoMesaObject(RoadSegment rs) throws IOException {
@@ -77,12 +73,15 @@ public class RoadSegmentGeoMesaIO implements Closeable {
      * @return SimpleFeatureType，即建表的schema表结构
      */
     private void createTable() throws IOException {
+        boolean exists = checkTable();
         sft = SimpleFeatureTypes.createType(
             tableName,
             "rsId:int, *geom:LineString:srid=4326, geoJson:String"
         );
         sft.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY, "dtg");
-        dataStore.createSchema(sft);
+        if (!exists) {
+            dataStore.createSchema(sft);
+        }
     }
 
     private void writeFeature(DataStore dataStore, SimpleFeatureType sft, SimpleFeature feature)

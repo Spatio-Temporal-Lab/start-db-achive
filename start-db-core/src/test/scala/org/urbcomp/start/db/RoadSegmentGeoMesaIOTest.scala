@@ -11,6 +11,7 @@
 
 package org.urbcomp.start.db
 
+import org.geotools.data.DataStoreFinder
 import org.locationtech.jts.util.Assert
 import org.scalatest.FunSuite
 import org.urbcomp.start.db.io.RoadSegmentGeoMesaIO
@@ -23,9 +24,10 @@ class RoadSegmentGeoMesaIOTest extends FunSuite {
     val CATALOG: String = "start_db.db_test"
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
-    val bbox = "bbox (geom, -180.0, -90.0, 180.0, 90.0)"
-    val io = new RoadSegmentGeoMesaIO("", params)
+    val tableName = "RoadSegment"
+    val io = new RoadSegmentGeoMesaIO(tableName, params)
     io.RoadSegmentToGeoMesaObject(rs)
+    val bbox = "bbox (geom, -180.0, -90.0, 180.0, 90.0)"
     val result = io.RoadSegmentFromGeoMesaObject(bbox)
     Assert.equals(
       "LINESTRING (111.37939453125 54.00776876193478, 116.3671875 53.05442186546102)",
