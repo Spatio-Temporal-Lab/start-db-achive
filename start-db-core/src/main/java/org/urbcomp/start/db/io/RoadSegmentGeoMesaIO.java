@@ -29,39 +29,22 @@ import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RoadSegmentGeoMesaIO implements Closeable {
     private DataStore dataStore;
     private SimpleFeatureType sft;
-    final String TABLE_NAME = "RoadSegment";
+    private final String tableName;
 
-    public RoadSegmentGeoMesaIO() throws IOException {
-        getDataStore();
-        dropTable();
-        createTable();
-    }
-
-    private void dropTable(String tableName) throws IOException {
-        if (dataStore.getSchema(tableName) != null) {
-            dataStore.removeSchema(tableName);
+    public RoadSegmentGeoMesaIO(String tableName, Map<String, String> params) throws IOException {
+        this.tableName = tableName;
+        getDataStore(params);
+        if (checkTable()) {
+            createTable();
+        } else {
+            System.out.println("Table " + tableName + " already exists!");
         }
-    }
-
-    /**
-     * 这个方法主要设定了表名"RoadSegment"和schema结构
-     *
-     * @return SimpleFeatureType，即建表的schema表结构
-     */
-    public void createTable() throws IOException {
-        sft = SimpleFeatureTypes.createType(
-            TABLE_NAME,
-            "rsId:int, *geom:LineString:srid=4326, geoJson:String"
-        );
-        sft.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY, "dtg");
-        dataStore.createSchema(sft);
     }
 
     public void RoadSegmentToGeoMesaObject(RoadSegment rs) throws IOException {
@@ -69,10 +52,12 @@ public class RoadSegmentGeoMesaIO implements Closeable {
         writeFeature(dataStore, sft, sf);
     }
 
-    public List<String> RoadSegmentFromGeoMesaObject() throws IOException, CQLException {
+    /**
+     * @param bbox Query spatial region
+     * */
+    public List<String> RoadSegmentFromGeoMesaObject(String bbox) throws IOException, CQLException {
         // define query statement
-        String bbox = "bbox (geom, -180.0, -90.0, 180.0, 90.0)";
-        Query query = new Query(TABLE_NAME, ECQL.toFilter(bbox));
+        Query query = new Query(tableName, ECQL.toFilter(bbox));
 
         List<String> result = new ArrayList<>();
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(
@@ -84,6 +69,20 @@ public class RoadSegmentGeoMesaIO implements Closeable {
             result.add(feature.getAttribute("geom").toString());
         }
         return result;
+    }
+
+    /**
+     * 这个方法主要设定了表名"RoadSegment"和schema结构
+     *
+     * @return SimpleFeatureType，即建表的schema表结构
+     */
+    private void createTable() throws IOException {
+        sft = SimpleFeatureTypes.createType(
+                tableName,
+                "rsId:int, *geom:LineString:srid=4326, geoJson:String"
+        );
+        sft.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY, "dtg");
+        dataStore.createSchema(sft);
     }
 
     private void writeFeature(DataStore dataStore, SimpleFeatureType sft, SimpleFeature feature)
@@ -101,7 +100,7 @@ public class RoadSegmentGeoMesaIO implements Closeable {
         }
     }
 
-    public SimpleFeature getFeature(RoadSegment rs) throws JsonProcessingException {
+    private SimpleFeature getFeature(RoadSegment rs) throws JsonProcessingException {
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sft);
         builder.set("rsId", rs.getRoadSegmentId());
         builder.set(
@@ -115,22 +114,16 @@ public class RoadSegmentGeoMesaIO implements Closeable {
         return builder.buildFeature(String.valueOf(rs.getRoadSegmentId()));
     }
 
-    private void getDataStore() throws IOException {
-        Map<String, String> params = new HashMap<>();
-        String CATALOG = "start_db.db_test";
-        params.put("hbase.catalog", CATALOG);
-        params.put("hbase.zookeepers", "localhost:2181");
+    private void getDataStore(Map<String, String> params) throws IOException {
         dataStore = DataStoreFinder.getDataStore(params);
     }
 
-    private void dropTable() throws IOException {
-        if (dataStore.getSchema(TABLE_NAME) != null) {
-            dataStore.removeSchema(TABLE_NAME);
-        }
+    private boolean checkTable() throws IOException {
+        return dataStore.getSchema(tableName) == null;
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (dataStore != null) {
             dataStore.dispose();
         }

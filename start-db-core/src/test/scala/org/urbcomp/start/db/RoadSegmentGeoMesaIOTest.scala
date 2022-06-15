@@ -14,17 +14,22 @@ package org.urbcomp.start.db
 import org.locationtech.jts.util.Assert
 import org.scalatest.FunSuite
 import org.urbcomp.start.db.io.RoadSegmentGeoMesaIO
-import org.urbcomp.start.db.model.sample.ModelGenerator;
+import org.urbcomp.start.db.model.sample.ModelGenerator
 
 class RoadSegmentGeoMesaIOTest extends FunSuite {
   test("test io") {
-    val rs = ModelGenerator.generateRoadSegment();
-    val io = new RoadSegmentGeoMesaIO();
-    io.RoadSegmentToGeoMesaObject(rs);
-    val result = io.RoadSegmentFromGeoMesaObject();
+    val rs = ModelGenerator.generateRoadSegment()
+    val params: java.util.Map[String, String] = new java.util.HashMap[String, String]
+    val CATALOG: String = "start_db.db_test"
+    params.put("hbase.catalog", CATALOG)
+    params.put("hbase.zookeepers", "localhost:2181")
+    val bbox = "bbox (geom, -180.0, -90.0, 180.0, 90.0)"
+    val io = new RoadSegmentGeoMesaIO("", params)
+    io.RoadSegmentToGeoMesaObject(rs)
+    val result = io.RoadSegmentFromGeoMesaObject(bbox)
     Assert.equals(
       "LINESTRING (111.37939453125 54.00776876193478, 116.3671875 53.05442186546102)",
       result.get(0)
-    );
+    )
   }
 }
