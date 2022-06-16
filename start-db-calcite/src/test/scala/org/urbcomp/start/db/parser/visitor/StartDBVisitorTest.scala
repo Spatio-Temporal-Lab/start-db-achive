@@ -59,7 +59,6 @@ class StartDBVisitorTest extends FunSuite {
   test("convert create dababase statement to SqlNode") {
     val parsed = driver.parseSql(StartDBSQLSamples.CREATE_DATABASE_SAMPLE)
     val node = parsed.asInstanceOf[SqlCreateDatabase]
-    println(node.toString)
     assertEquals("database_name", node.getDatabaseName.names.get(0))
     assertFalse(node.ifNotExists)
   }
@@ -87,7 +86,6 @@ class StartDBVisitorTest extends FunSuite {
   test("convert drop table statement to SqlNode") {
     val parsed = driver.parseSql(StartDBSQLSamples.DROP_TABLE_IF_EXISTS_SAMPLE)
     val node = parsed.asInstanceOf[SqlDropTable]
-    println(node.toString)
     assertEquals(SqlKind.DROP_TABLE, node.getKind)
     assertEquals(
       MetadataUtil.combineUserDbTableKey(testUser, testDatabase, tableName),
@@ -108,7 +106,6 @@ class StartDBVisitorTest extends FunSuite {
     val sql = StartDBSQLSamples.SHOW_CREATE_TABLE_SAMPLE
     val parsed = driver.parseSql(sql)
     val node = parsed.asInstanceOf[SqlShowCreateTable]
-    println(node.toString)
     assertEquals(tableName, node.getTableName.names.get(0));
   }
 
@@ -116,7 +113,6 @@ class StartDBVisitorTest extends FunSuite {
     val sql = StartDBSQLSamples.CREATE_TABLE_SAMPLE
     val parsed = driver.parseSql(sql)
     val node = parsed.asInstanceOf[SqlCreateTable]
-    println(node.toString)
     assertEquals("start_db_test_table", node.name.names.get(0))
     assertEquals(12, node.columnList.size())
   }

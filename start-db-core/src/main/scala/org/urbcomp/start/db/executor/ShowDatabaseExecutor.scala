@@ -22,8 +22,13 @@ import java.util.stream.Collectors
 
 class ShowDatabaseExecutor(n: SqlShowDatabases) {
   def execute: MetadataResult[Array[AnyRef]] = {
+    // TODO userName context
+    val userName = "start_db";
+    val userAccessor = AccessorFactory.getUserAccessor
+    val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
+
     val databaseAccessor: DatabaseAccessor = AccessorFactory.getDatabaseAccessor
-    val all: util.List[Database] = databaseAccessor.getAllDatabase
+    val all: util.List[Database] = databaseAccessor.selectAllByFid(user.getId, true);
     val rss: util.List[Array[AnyRef]] = all.stream
       .map[String](db => db.getName)
       .map[Array[AnyRef]]((name: String) => Array[AnyRef](name))

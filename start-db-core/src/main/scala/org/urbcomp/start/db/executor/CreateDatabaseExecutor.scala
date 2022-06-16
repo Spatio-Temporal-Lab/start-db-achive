@@ -24,13 +24,16 @@ case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
     val userAccessor = AccessorFactory.getUserAccessor
     val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
     val dbName = n.getDatabaseName.names.get(0)
-    if (!n.isIfNotExists) {
-      val found = databaseAccessor.selectByFidAndName(user.getId, dbName, true);
-      if (found != null) {
+    val existed = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
+    if (existed != null) {
+      if (n.isIfNotExists) {
+        return MetadataResult.buildDDLResult(0)
+      } else {
         throw new IllegalArgumentException("database already exist " + dbName);
       }
     }
-    databaseAccessor.insert(new Database(-1, user.getId, dbName), true);
-    MetadataResult.buildDDLResult(1)
+    MetadataResult.buildDDLResult(
+      databaseAccessor.insert(new Database(-1, user.getId, dbName), true).toInt
+    )
   }
 }
