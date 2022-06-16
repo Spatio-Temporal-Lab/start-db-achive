@@ -20,6 +20,7 @@ import org.apache.calcite.schema.{SchemaPlus, TranslatableTable}
 import org.geotools.data.{DataStoreFinder, Query}
 import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.util.MetadataUtil
 
 import java.lang.reflect.Type
@@ -63,9 +64,12 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     * @return RelDataType
     */
   override def getRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
+    // ToDO： Temporary operation
+    if ("xxx".equals(tableName)) return tempGetRowType(relDataTypeFactory)
     val catalog = MetadataUtil.makeCatalog(userName, dbName)
     val dataStore =
       DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
+
     val query = new Query(tableName)
     val sft = dataStore.getSchema(query.getTypeName)
     // TODO Geometry type should be supported
@@ -74,6 +78,20 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
       builder.add(i.getName.toString, relDataTypeFactory.createJavaType(i.getType.getBinding))
     }
     dataStore.dispose()
+    builder.build()
+  }
+
+  /**
+    * Temporary method for He Xiang's RoadSegment test table
+    * @author Wang Bohong
+    * @param relDataTypeFactory  RelDataTypeFactory intance
+    * @return RelDataType instance
+    */
+  private def tempGetRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
+    val builder = relDataTypeFactory.builder()
+    builder.add("a", relDataTypeFactory.createJavaType(Integer.TYPE))
+    builder.add("b", relDataTypeFactory.createJavaType(classOf[RoadSegment]))
+    builder.add("c", relDataTypeFactory.createJavaType(classOf[RoadSegment]))
     builder.build()
   }
 }
