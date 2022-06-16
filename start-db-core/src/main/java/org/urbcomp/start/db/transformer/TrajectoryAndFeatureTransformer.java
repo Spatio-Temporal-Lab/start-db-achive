@@ -55,7 +55,7 @@ public class TrajectoryAndFeatureTransformer {
                 sftBuilder.add(i.getName() + ".oid", String.class);
                 sftBuilder.add(i.getName() + ".start_time", Timestamp.class);
                 sftBuilder.add(i.getName() + ".end_time", Timestamp.class);
-                sftBuilder.add(i.getName() + ".geom", Polygon.class);
+                sftBuilder.add(i.getName() + ".geom", Polygon.class, 4326);
                 sftBuilder.add(i.getName() + ".geoJson", String.class);
             } else {
                 sftBuilder.add(i.getName().toString(), i.getType().getBinding());
