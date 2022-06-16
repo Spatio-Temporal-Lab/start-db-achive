@@ -15,7 +15,7 @@ import org.apache.calcite.sql.ddl.SqlCreateTable
 import org.apache.calcite.sql.{SqlInsert, SqlNode, SqlUpdate}
 import org.urbcomp.start.db.infra.{BaseExecutor, BaseExecutorFactory}
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase
-import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases}
+import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowStatus}
 
 class StartDBExecutorFactory extends BaseExecutorFactory {
   override def convertExecutor(node: SqlNode): BaseExecutor = node match {
@@ -25,5 +25,6 @@ class StartDBExecutorFactory extends BaseExecutorFactory {
     case n: SqlCreateDatabase => CreateDatabaseExecutor(n)
     case n: SqlCreateTable => CreateTableExecutor(n)
     case _: SqlShowDatabases => ShowDatabaseExecutor()
+    case _: SqlShowStatus => ShowStatusExecutor()
   }
 }

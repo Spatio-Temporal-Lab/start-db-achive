@@ -715,6 +715,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
                 case DELETE:
                     // ToDO
                     return null;
+                case OTHER:
                 case DESCRIBE_TABLE:
                 case INSERT:
                 case UPDATE:

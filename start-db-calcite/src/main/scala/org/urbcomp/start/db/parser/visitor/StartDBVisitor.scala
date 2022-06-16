@@ -19,7 +19,7 @@ import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
 import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
-import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
+import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowStatus, SqlShowTables}
 import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
 import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
 import org.urbcomp.start.db.parser.visitor.StartDBVisitor._
@@ -48,6 +48,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
     case c: DropDatabaseStmtContext    => visitDropDatabaseStmt(c) // done
     case c: ShowDatabasesStmtContext   => visitShowDatabasesStmt(c) // done
     case c: ShowCreateTableStmtContext => visitShowCreateTableStmt(c) // done
+    case c: ShowStatusStmtContext      => visitShowStatusStmt(c) // done
     case c: DropTableStmtContext       => visitDropTableStmt(c) // done
     case c: UseStmtContext             => visitUseStmt(c) // done
     case c: DescribeStmtContext        => visitDescribeStmt(c) // done
@@ -585,6 +586,10 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   override def visitShowCreateTableStmt(ctx: ShowCreateTableStmtContext): SqlNode = {
     val targetTale = visitIdent(ctx.ident());
     new SqlShowCreateTable(pos, targetTale);
+  }
+
+  override def visitShowStatusStmt(ctx: ShowStatusStmtContext): SqlNode = {
+    new SqlShowStatus(pos)
   }
 
   override def visitDropTableStmt(ctx: DropTableStmtContext): SqlNode = {
