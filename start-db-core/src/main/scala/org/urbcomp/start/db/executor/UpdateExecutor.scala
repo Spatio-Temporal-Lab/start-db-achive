@@ -34,7 +34,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
 
   val path: Path = Paths.get("../start-db-server/src/main/resources/model.json")
 
-  override def execute(): MetadataResult[Int] = {
+  override def execute[Int](): MetadataResult[Int] = {
     // extract database name and table name
     // ToDO 传入参数
     val userName = "start_db"

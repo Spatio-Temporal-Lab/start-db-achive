@@ -38,7 +38,7 @@ public class SqlShowCreateTable extends SqlShowCreate {
 
     public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
         "SHOW CREATE TABLE",
-        SqlKind.OTHER_DDL
+        SqlKind.DESCRIBE_TABLE
     );
 
     public SqlShowCreateTable(SqlParserPos pos, SqlIdentifier tableName) {

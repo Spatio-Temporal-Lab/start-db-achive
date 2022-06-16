@@ -718,23 +718,13 @@ public class CalcitePrepareImpl implements CalcitePrepare {
 
             // modify start
             switch (sqlNode.getKind()) {
-                case INSERT:
-                    BaseExecutor insertExecutor = startDBExecutorFactory.convertExecutor(sqlNode);
-                    return (CalciteSignature<T>) insertExecutor.execute();
-                case OTHER:
-                    if (sqlNode instanceof SqlShowDatabases) {
-                        ShowDatabaseExecutor executor = new ShowDatabaseExecutor(
-                            (SqlShowDatabases) sqlNode
-                        );
-                        return (CalciteSignature<T>) executor.execute();
-                    }
-                    return null;
                 case DELETE:
                     // ToDO
                     return null;
+                case DESCRIBE_TABLE:
+                case INSERT:
                 case UPDATE:
-                    BaseExecutor updateExecutor = startDBExecutorFactory.convertExecutor(sqlNode);
-                    return (CalciteSignature<T>) updateExecutor.execute();
+                    return startDBExecutorFactory.convertExecutor(sqlNode).execute();
                 case EXPLAIN:
                     // FIXME: getValidatedNodeType is wrong for DML
                     final SqlValidator explainValidator = createSqlValidator(

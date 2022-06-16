@@ -13,5 +13,5 @@ package org.urbcomp.start.db.infra
 
 abstract class BaseExecutor {
 
-  def execute(): MetadataResult[Int]
+  def execute[T](): MetadataResult[T]
 }
