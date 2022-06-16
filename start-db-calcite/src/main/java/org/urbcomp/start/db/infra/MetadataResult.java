@@ -51,30 +51,30 @@ import java.util.Map;
 public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
 
     private MetadataResult(
-            String sql,
-            List<AvaticaParameter> parameterList,
-            Map<String, Object> internalParameters,
-            RelDataType rowType,
-            List<ColumnMetaData> columns,
-            Meta.CursorFactory cursorFactory,
-            CalciteSchema rootSchema,
-            List<RelCollation> collationList,
-            long maxRowCount,
-            Bindable<T> bindable,
-            Meta.StatementType statementType
+        String sql,
+        List<AvaticaParameter> parameterList,
+        Map<String, Object> internalParameters,
+        RelDataType rowType,
+        List<ColumnMetaData> columns,
+        Meta.CursorFactory cursorFactory,
+        CalciteSchema rootSchema,
+        List<RelCollation> collationList,
+        long maxRowCount,
+        Bindable<T> bindable,
+        Meta.StatementType statementType
     ) {
         super(
-                sql,
-                parameterList,
-                internalParameters,
-                rowType,
-                columns,
-                cursorFactory,
-                rootSchema,
-                collationList,
-                maxRowCount,
-                bindable,
-                statementType
+            sql,
+            parameterList,
+            internalParameters,
+            rowType,
+            columns,
+            cursorFactory,
+            rootSchema,
+            collationList,
+            maxRowCount,
+            bindable,
+            statementType
         );
     }
 
@@ -93,34 +93,37 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
     }
 
     public MetadataResult(
-            List<ColumnMetaData> metaData,
-            Bindable<T> bindable,
-            Meta.CursorFactory cursorFactory,
-            Meta.StatementType type
+        List<ColumnMetaData> metaData,
+        Bindable<T> bindable,
+        Meta.CursorFactory cursorFactory,
+        Meta.StatementType type
     ) {
         this(
-                "",
-                ImmutableList.of(),
-                ImmutableMap.of(),
-                null,
-                metaData,
-                cursorFactory,
-                null,
-                ImmutableList.of(),
-                -1,
-                bindable,
-                type
+            "",
+            ImmutableList.of(),
+            ImmutableMap.of(),
+            null,
+            metaData,
+            cursorFactory,
+            null,
+            ImmutableList.of(),
+            -1,
+            bindable,
+            type
         );
     }
 
     public static <T> MetadataResult<T> buildDDLResult(int affectRows) {
         List<ColumnMetaData> metaData = new ArrayList<>(1);
-        metaData.add(simpleColumn(
+        metaData.add(
+            simpleColumn(
                 new ColumnMetaData.ScalarType(
-                        SqlType.INTEGER.id,
-                        "affectRows",
-                        ColumnMetaData.Rep.INTEGER
-                )));
+                    SqlType.INTEGER.id,
+                    "affectRows",
+                    ColumnMetaData.Rep.INTEGER
+                )
+            )
+        );
         return new MetadataResult<>(metaData);
     }
 
@@ -131,9 +134,9 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
         List<ColumnMetaData> metaData = new ArrayList<>(1);
         for (String column : columns) {
             final ColumnMetaData.ScalarType type = new ColumnMetaData.ScalarType(
-                    SqlType.VARCHAR.id,
-                    column,
-                    ColumnMetaData.Rep.STRING
+                SqlType.VARCHAR.id,
+                column,
+                ColumnMetaData.Rep.STRING
             );
             metaData.add(simpleColumn(type));
         }
@@ -142,26 +145,26 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
 
     private static ColumnMetaData simpleColumn(ColumnMetaData.ScalarType type) {
         return new ColumnMetaData(
-                0,
-                false,
-                true,
-                false,
-                false,
-                DatabaseMetaData.columnNullable,
-                true,
-                -1,
-                type.getName(),
-                type.getName(),
-                null,
-                -1,
-                -1,
-                null,
-                null,
-                type,
-                true,
-                false,
-                false,
-                type.columnClassName()
+            0,
+            false,
+            true,
+            false,
+            false,
+            DatabaseMetaData.columnNullable,
+            true,
+            -1,
+            type.getName(),
+            type.getName(),
+            null,
+            -1,
+            -1,
+            null,
+            null,
+            type,
+            true,
+            false,
+            false,
+            type.columnClassName()
         );
     }
 
@@ -199,8 +202,7 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
                         }
 
                         @Override
-                        public void close() {
-                        }
+                        public void close() {}
                     };
                 }
             };

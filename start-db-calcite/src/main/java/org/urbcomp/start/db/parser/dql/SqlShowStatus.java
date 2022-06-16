@@ -37,8 +37,8 @@ import java.util.List;
 public class SqlShowStatus extends SqlCall {
 
     public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
-            "SHOW STATUS",
-            SqlKind.OTHER
+        "SHOW STATUS",
+        SqlKind.OTHER
     );
 
     public SqlShowStatus(SqlParserPos pos) {
