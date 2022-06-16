@@ -1,0 +1,40 @@
+version: '3.3'
+services:
+  mysql-local:
+    image: 'mysql:5.7'
+    volumes:
+      - ./mysql/ddl.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: start_db
+      MYSQL_USER: start_db
+      MYSQL_PASSWORD: start_db
+      MYSQL_DATABASE: meta_data
+    ports:
+      - '3306:3306'
+  geomesa-hbase-local:
+    image: jimolonely1234/geomesa-hbase:latest
+    ports:
+      - '2181:2181'
+      - '16000:16000'
+      - '16020:16020'
+  start-db:
+#    image: jimolonely1234/start-db:1.0.0
+    image: start-db-server:1.0.0
+    environment:
+      PORT: 8000
+    ports:
+      - '8000:8000'
+    depends_on:
+      - mysql-local
+      - geomesa-hbase-local
+  ss-proxy:
+#    image: jimolonely1234/ss-proxy:1.0.0
+    image: ss-proxy:1.0.0
+    volumes:
+      - ./conf:/usr/local/ss-proxy/conf
+    environment:
+      PORT: 3307
+    ports:
+      - '3307:3307'
+    depends_on:
+      - start-db

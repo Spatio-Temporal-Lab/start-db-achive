@@ -17,13 +17,14 @@ import org.apache.calcite.config.CalciteConnectionProperty;
 import org.apache.calcite.schema.SchemaPlus;
 import org.apache.calcite.schema.Table;
 
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * For access {@link CalciteMetaImpl}
@@ -37,11 +38,14 @@ public class DbMetaFactory implements Meta.Factory {
     @SneakyThrows
     @Override
     public Meta create(List<String> list) {
-        final URL resource = this.getClass().getResource("/model.json");
-        final String url = URLDecoder.decode(resource.toString(), StandardCharsets.UTF_8.name());
+        String modelJsonContent;
+        try (final InputStream stream = this.getClass().getResourceAsStream("/model.json")) {
+            modelJsonContent = new BufferedReader(new InputStreamReader(stream)).lines()
+                .collect(Collectors.joining("\n"));
+        }
         final Properties p = new Properties();
         p.put(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), "false");
-        p.put(CalciteConnectionProperty.MODEL.camelName(), url.replace("file:", ""));
+        p.put(CalciteConnectionProperty.MODEL.camelName(), "inline:" + modelJsonContent);
         final Connection connection = DriverManager.getConnection("jdbc:calcite:fun=spatial", p);
         final CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
         ROOT_SCHEMA = calciteConnection.getRootSchema();

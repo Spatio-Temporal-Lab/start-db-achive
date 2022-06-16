@@ -4,7 +4,7 @@
 
 Running environment need to be setup before build or test START-DB.
 
-1. Please follow [Docker Setup](docker/docker-compose.md) and confirm
+1. Please follow [Docker Setup](docker/local/README.md) and confirm
 2. init mysql schema
 
 ```shell
