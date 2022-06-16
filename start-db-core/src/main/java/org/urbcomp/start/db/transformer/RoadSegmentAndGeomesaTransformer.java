@@ -14,7 +14,6 @@ package org.urbcomp.start.db.transformer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -23,7 +22,6 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.referencing.FactoryException;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 
 public class RoadSegmentAndGeomesaTransformer {
