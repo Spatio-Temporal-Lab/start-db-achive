@@ -81,22 +81,34 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
      * DDL
      */
     public MetadataResult(List<ColumnMetaData> metaData) {
-        this(metaData, null);
+        this(metaData, null, Meta.CursorFactory.OBJECT, Meta.StatementType.OTHER_DDL);
     }
 
+    /**
+     * with result
+     */
     public MetadataResult(List<ColumnMetaData> metaData, Bindable<T> bindable) {
+        this(metaData, bindable, Meta.CursorFactory.ARRAY, Meta.StatementType.SELECT);
+    }
+
+    public MetadataResult(
+        List<ColumnMetaData> metaData,
+        Bindable<T> bindable,
+        Meta.CursorFactory cursorFactory,
+        Meta.StatementType type
+    ) {
         this(
             "",
             ImmutableList.of(),
             ImmutableMap.of(),
             null,
             metaData,
-            Meta.CursorFactory.OBJECT,
+            cursorFactory,
             null,
             ImmutableList.of(),
             -1,
             bindable,
-            Meta.StatementType.OTHER_DDL
+            type
         );
     }
 
@@ -150,7 +162,7 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
                 @Override
                 public Enumerator<Object[]> enumerator() {
                     return new Enumerator<Object[]>() {
-                        int i = 0;
+                        int i = -1;
 
                         @Override
                         public Object[] current() {
@@ -159,16 +171,13 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
 
                         @Override
                         public boolean moveNext() {
-                            if (i < values.size()) {
-                                i++;
-                                return true;
-                            }
-                            return false;
+                            i++;
+                            return i < values.size();
                         }
 
                         @Override
                         public void reset() {
-                            i = 0;
+                            i = -1;
                         }
 
                         @Override
