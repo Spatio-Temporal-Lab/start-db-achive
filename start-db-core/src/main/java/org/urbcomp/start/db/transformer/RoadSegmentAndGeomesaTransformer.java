@@ -32,13 +32,13 @@ public class RoadSegmentAndGeomesaTransformer {
      * @param sft SimpleFeatureType without roadSegment field
      * @return SimpleFeatureType with roadSegment field
      */
-    public SimpleFeatureType getGeoMesaSFT(SimpleFeatureType sft) throws FactoryException {
+    public SimpleFeatureType getGeoMesaSFT(SimpleFeatureType sft) {
         SimpleFeatureTypeBuilder sftBuilder = new SimpleFeatureTypeBuilder();
         sftBuilder.setName(sft.getName());
         for (PropertyDescriptor i : sft.getDescriptors()) {
             if (i.getType().getBinding().equals(RoadSegment.class)) {
                 sftBuilder.add(i.getName() + ".rsId", Integer.class);
-                sftBuilder.add(i.getName() + ".geom", LineString.class, DefaultGeographicCRS.WGS84);
+                sftBuilder.add(i.getName() + ".geom", LineString.class, 4326);
                 sftBuilder.add(i.getName() + ".rsGeoJson", String.class);
             } else {
                 sftBuilder.add(i.getName().toString(), i.getType().getBinding());
