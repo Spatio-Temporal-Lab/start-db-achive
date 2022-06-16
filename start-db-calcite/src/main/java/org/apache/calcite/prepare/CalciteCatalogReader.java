@@ -320,6 +320,11 @@ public class CalciteCatalogReader implements Prepare.CatalogReader {
             );
         }
 
+        // add start
+        ModelHandler.addFunctions(schema.plus(), "collectList", ImmutableList.of(),
+                "org.urbcomp.start.db.function.udaf.CollectList", null, true);
+        // add end
+
         final ListSqlOperatorTable table = new ListSqlOperatorTable();
         for (String name : schema.getFunctionNames()) {
             schema.getFunctions(name, true).forEach(function -> {
