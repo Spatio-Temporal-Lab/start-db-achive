@@ -74,12 +74,8 @@ import org.apache.calcite.tools.Frameworks;
 import org.apache.calcite.util.ImmutableIntList;
 import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
-import org.urbcomp.start.db.executor.ShowDatabaseExecutor;
 import org.urbcomp.start.db.executor.StartDBExecutorFactory;
-import org.urbcomp.start.db.infra.BaseExecutor;
-import org.urbcomp.start.db.infra.MetadataResult;
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase;
-import org.urbcomp.start.db.parser.dql.SqlShowDatabases;
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver;
 
 import java.lang.reflect.Type;
@@ -695,9 +691,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
             if (sqlNode.getKind().belongsTo(SqlKind.DDL)) {
 
                 if (sqlNode instanceof SqlCreateDatabase || sqlNode instanceof SqlCreateTable) {
-                    BaseExecutor executor = startDBExecutorFactory.convertExecutor(sqlNode);
-                    MetadataResult<Object> rs = executor.execute();
-                    return (CalciteSignature<T>) rs;
+                    return startDBExecutorFactory.convertExecutor(sqlNode).execute();
                 }
 
                 executeDdl(context, sqlNode);

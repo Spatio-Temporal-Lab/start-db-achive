@@ -33,7 +33,7 @@ import org.urbcomp.start.db.transformer.TrajectoryAndFeatureTransformer
 import java.util
 
 case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
-  override def execute(): MetadataResult[Int] = {
+  override def execute[Int](): MetadataResult[Int] = {
     // TODO userName dbName context
     val userName = "start_db";
     val envDbName = "db_test";

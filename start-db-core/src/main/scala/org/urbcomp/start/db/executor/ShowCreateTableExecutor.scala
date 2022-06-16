@@ -13,6 +13,6 @@ case class ShowCreateTableExecutor(n: SqlShowCreateTable) extends BaseExecutor {
   override def execute[Array](): MetadataResult[Array] = {
     // TODO temporary return
     MetadataResult.buildResult(Array("Table", "Create Table"),
-      java.util.Arrays.asList(Array(n.getTableName, "create table " + n.getTableName))).asInstanceOf[MetadataResult[Array]]
+      java.util.Arrays.asList(Array(n.getTableName.toString, "create table " + n.getTableName))).asInstanceOf[MetadataResult[Array]]
   }
 }
