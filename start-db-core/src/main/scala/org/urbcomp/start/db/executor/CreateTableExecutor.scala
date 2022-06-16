@@ -15,7 +15,6 @@ import org.apache.calcite.sql.ddl.{SqlColumnDeclaration, SqlCreateTable}
 import org.geojson.{GeometryCollection, MultiPoint}
 import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
-import org.locationtech.geomesa.utils.geotools.SimpleFeatureTypes
 import org.locationtech.jts.geom.{
   Geometry,
   LineString,
@@ -29,6 +28,7 @@ import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
+import org.urbcomp.start.db.transformer.TrajectoryAndFeatureTransformer
 
 import java.util
 
@@ -85,8 +85,8 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
         case Geometry.TYPENAME_GEOMETRYCOLLECTION =>
           sfb.add(name, classOf[GeometryCollection], 4326)
         // start db types
-        case "RoadSegment"        => sfb.add(name, classOf[RoadSegment], 4326)
-        case "GeometryCollection" => sfb.add(name, classOf[Trajectory], 4326)
+        case "RoadSegment" => sfb.add(name, classOf[RoadSegment], 4326)
+        case "Trajectory"  => sfb.add(name, classOf[Trajectory], 4326)
         // base types
         case "Integer"   => sfb.add(name, classOf[java.lang.Integer])
         case "Double"    => sfb.add(name, classOf[java.lang.Double])
@@ -107,7 +107,10 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     }
 
     // TODO transform start db type
-    dataStore.createSchema(sfb.buildFeatureType());
+
+    var sft = sfb.buildFeatureType();
+    sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft);
+    dataStore.createSchema(sft);
     tableAccessor.commit()
     fieldAccessor.commit()
     MetadataResult.buildDDLResult(affectedRows.toInt)
