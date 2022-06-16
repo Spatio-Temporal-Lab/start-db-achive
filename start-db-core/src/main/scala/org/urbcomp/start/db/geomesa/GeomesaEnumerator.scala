@@ -16,8 +16,10 @@ import org.geotools.data.{DataStoreFinder, FeatureReader, Query, Transaction}
 import org.geotools.filter.text.ecql.ECQL
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.urbcomp.start.db.common.ConfigProvider
+import org.urbcomp.start.db.transformer.RoadSegmentAndGeomesaTransformer
 import org.urbcomp.start.db.util.MetadataUtil
 
+import java.util
 import scala.collection.JavaConverters._
 
 /**
@@ -39,7 +41,13 @@ class GeomesaEnumerator(reader: FeatureReader[SimpleFeatureType, SimpleFeature])
       if (!reader.hasNext) {
         return false
       }
-      curr = reader.next().getAttributes.asScala.toArray
+      val transformer = new RoadSegmentAndGeomesaTransformer
+      val name = reader.getFeatureType.getName
+      if ("xxx".equals(name.toString)) {
+        tempRoadSegmentMoveNext(transformer)
+      } else {
+        curr = reader.next().getAttributes.asScala.toArray
+      }
     } catch {
       case _: Exception => return false
     }
@@ -49,6 +57,22 @@ class GeomesaEnumerator(reader: FeatureReader[SimpleFeatureType, SimpleFeature])
   override def reset(): Unit = Unit
 
   override def close(): Unit = reader.close()
+
+  /**
+    * Temporary iteration method for He Xiang's RoadSegment test table
+    * @author Wang Bohong
+    * @param transformer RoadSegmentAndGeomesaTransformer instance
+    */
+  private def tempRoadSegmentMoveNext(transformer: RoadSegmentAndGeomesaTransformer): Unit = {
+    val feature = reader.next()
+    val array = feature.getAttributes.asScala.toArray
+    val list = new util.ArrayList[AnyRef]
+    // a 行数据
+    list.add(array(0))
+    list.add(transformer.toRoadSegment(feature, "b"))
+    list.add(transformer.toRoadSegment(feature, "c"))
+    curr = list.toArray
+  }
 }
 
 object GeomesaEnumerator {
