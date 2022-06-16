@@ -27,9 +27,10 @@ public interface IMapper<T extends AbstractEntity> {
     /**
      * select all entities in table
      * 
+     * @param fid fid
      * @return list of entity instance
      */
-    List<T> selectAll();
+    List<T> selectAllByFid(@Param("fid") long fid);
 
     /**
      * select one entity in table based on id

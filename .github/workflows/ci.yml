@@ -25,7 +25,7 @@ jobs:
       # run docker for meta data and user data
       - name: run docker
         run: |
-          docker-compose -f docker/docker-compose.yml up -d
+          docker-compose -f docker/local/docker-compose.yml up -d
 
       # Runs a single command using the runners shell
       - name: set up maven and java
@@ -38,6 +38,8 @@ jobs:
       - name: check format convention
         run: |
           mvn spotless:check
+      - name: set mysql host
+        run: echo "127.0.0.1 mysql-local" | sudo tee -a /etc/hosts
       - name: init mysql schema
         run: mvn test exec:java -f start-db-test/start-db-test-embedded-mysql/pom.xml
       - name: set geomesa hbase host
