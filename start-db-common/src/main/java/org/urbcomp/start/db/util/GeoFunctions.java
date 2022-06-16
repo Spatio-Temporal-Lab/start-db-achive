@@ -41,7 +41,7 @@ public class GeoFunctions {
     }
 
     /**
-     * @param point     point
+     * @param point            point
      * @param thresholdInMeter MBR扩展的宽度（M）
      * @return 扩展后的MBR
      */
@@ -91,5 +91,19 @@ public class GeoFunctions {
             distance += GeoFunctions.getDistanceInM(points.get(i - 1), points.get(i));
         }
         return distance;
+    }
+
+    public static Envelope getBBox(List<SpatialPoint> points) {
+        double minLng = Double.MAX_VALUE;
+        double minLat = Double.MAX_VALUE;
+        double maxLng = Double.MIN_VALUE;
+        double maxLat = Double.MIN_VALUE;
+        for (SpatialPoint point : points) {
+            minLng = Math.min(minLng, point.getLng());
+            minLat = Math.min(minLat, point.getLat());
+            maxLng = Math.max(maxLng, point.getLng());
+            maxLat = Math.max(maxLat, point.getLat());
+        }
+        return new Envelope(minLng, maxLng, minLat, maxLat);
     }
 }
