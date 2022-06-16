@@ -16,7 +16,10 @@ import org.geotools.data.{DataStoreFinder, FeatureReader, Query, Transaction}
 import org.geotools.filter.text.ecql.ECQL
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.urbcomp.start.db.common.ConfigProvider
-import org.urbcomp.start.db.transformer.RoadSegmentAndGeomesaTransformer
+import org.urbcomp.start.db.transformer.{
+  RoadSegmentAndGeomesaTransformer,
+  TrajectoryAndFeatureTransformer
+}
 import org.urbcomp.start.db.util.MetadataUtil
 
 import java.util
@@ -41,10 +44,13 @@ class GeomesaEnumerator(reader: FeatureReader[SimpleFeatureType, SimpleFeature])
       if (!reader.hasNext) {
         return false
       }
-      val transformer = new RoadSegmentAndGeomesaTransformer
+      val roadTransformer = new RoadSegmentAndGeomesaTransformer
+      val trajTransformer = new TrajectoryAndFeatureTransformer
       val name = reader.getFeatureType.getName
-      if ("xxx".equals(name.toString)) {
-        tempRoadSegmentMoveNext(transformer)
+      if ("t_road_segment_test".equals(name.toString)) {
+        tempRoadSegmentMoveNext(roadTransformer)
+      } else if ("t_trajectory_test".equals(name.toString)) {
+        tempTrajectoryMoveNext(trajTransformer)
       } else {
         curr = reader.next().getAttributes.asScala.toArray
       }
@@ -71,6 +77,21 @@ class GeomesaEnumerator(reader: FeatureReader[SimpleFeatureType, SimpleFeature])
     list.add(array(0))
     list.add(transformer.toRoadSegment(feature, "b"))
     list.add(transformer.toRoadSegment(feature, "c"))
+    curr = list.toArray
+  }
+
+  /**
+    * Temporary iteration method for Li Zheng's Trajectory test table
+    * @author Wang Bohong
+    * @param transformer TrajectoryAndFeatureTransformer instance
+    */
+  private def tempTrajectoryMoveNext(transformer: TrajectoryAndFeatureTransformer): Unit = {
+    val feature = reader.next()
+    val array = feature.getAttributes.asScala.toArray
+    val list = new util.ArrayList[AnyRef]
+    // a 行数据
+    list.add(array(0))
+    list.add(transformer.toTrajectory(feature, "t1"))
     curr = list.toArray
   }
 }

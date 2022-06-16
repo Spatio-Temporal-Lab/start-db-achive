@@ -66,5 +66,6 @@ CREATE TABLE IF NOT EXISTS `sys_field`
 INSERT INTO sys_user(id, name, password) VALUE (1, 'start_db', '6ee5f4a8b6a2697f5add5ab1333968d0');
 INSERT INTO sys_database(id, user_id, name) VALUE (1, 1, 'db_test');
 INSERT INTO sys_table(id, db_id, name, storage_engine) VALUE (1, 1, 't_test', 'hbase');
-INSERT INTO sys_table(id, db_id, name, storage_engine) VALUE (2, 1, 'xxx', 'hbase');
+INSERT INTO sys_table(id, db_id, name, storage_engine) VALUE (2, 1, 't_road_segment_test', 'hbase');
+INSERT INTO sys_table(id, db_id, name, storage_engine) VALUE (3, 1, 't_trajectory_test', 'hbase');
 -- field暂时是从geomesa里查的
