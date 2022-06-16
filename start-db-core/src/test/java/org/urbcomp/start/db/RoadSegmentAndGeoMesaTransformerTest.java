@@ -21,6 +21,7 @@ import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.locationtech.jts.util.Assert;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.model.sample.ModelGenerator;
 import org.urbcomp.start.db.transformer.RoadSegmentAndGeomesaTransformer;
@@ -46,7 +47,7 @@ public class RoadSegmentAndGeoMesaTransformerTest {
     }
 
     @Test
-    public void test() throws IOException {
+    public void test() throws IOException, FactoryException {
 
         String tableName = "xxx";
 
