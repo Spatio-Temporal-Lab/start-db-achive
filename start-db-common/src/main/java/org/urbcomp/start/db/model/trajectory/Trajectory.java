@@ -186,10 +186,14 @@ public class Trajectory {
                 .collect(Collectors.toList())
         );
     }
-//
-//    public double getLengthInKm(){
-//
-//    }
+
+    public double getLengthInKm() {
+        return GeoFunctions.getDistanceInM(
+            gpsPointList.stream()
+                .map(o -> new SpatialPoint(o.getLng(), o.getLat()))
+                .collect(Collectors.toList())
+        ) / 1000;
+    }
 
     /**
      * Convert this trajectory to GeoJSON String
