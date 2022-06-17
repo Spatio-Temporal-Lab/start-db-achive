@@ -30,9 +30,9 @@ case class ShowDatabaseExecutor() extends BaseExecutor {
 
     val databaseAccessor: DatabaseAccessor = AccessorFactory.getDatabaseAccessor
     val all: util.List[Database] = databaseAccessor.selectAllByFid(user.getId, true)
-    val dbs = all.asScala.map(d => Array(d.getName)).toArray[AnyRef]
+    val dbs = all.asScala.map(d => Array(d.getName.asInstanceOf[AnyRef])).toArray
     MetadataResult
-      .buildResult(Array("Database"), java.util.Arrays.asList(dbs))
+      .buildResult(Array("Database"), java.util.Arrays.asList(dbs: _*))
       .asInstanceOf[MetadataResult[Array]]
   }
 }
