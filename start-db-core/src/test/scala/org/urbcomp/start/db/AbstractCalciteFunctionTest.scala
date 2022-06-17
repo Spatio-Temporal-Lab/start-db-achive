@@ -12,10 +12,9 @@
 package org.urbcomp.start.db
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.urbcomp.start.db.metadata.CalciteHelper
 
-import java.nio.file.Paths
-import java.sql.{Connection, DriverManager}
-import java.util.Properties
+import java.sql.Connection
 
 /**
   * Test for Calcite and Geomesa
@@ -28,12 +27,7 @@ abstract class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterA
   var connect: Connection = _
 
   override protected def beforeAll(): Unit = {
-    val path = Paths.get("../start-db-server/src/main/resources/model.json")
-    val url = path.toAbsolutePath.toString
-    val config = new Properties
-    config.put("model", url)
-    config.put("caseSensitive", "false")
-    connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config)
+    connect = CalciteHelper.createConnection()
   }
 
   override protected def afterAll(): Unit = {

@@ -15,20 +15,15 @@ import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.AccessorFactory
+import org.urbcomp.start.db.metadata.{AccessorFactory, CalciteHelper}
 
-import java.nio.file.{Path, Paths}
-import java.sql.{DriverManager, ResultSet}
+import java.sql.ResultSet
 import java.util
-import java.util.Properties
 
 /**
   * @author zaiyuan
-  * @param n
   */
 case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
-
-  val path: Path = Paths.get("../start-db-server/src/main/resources/model.json")
 
   override def execute[Int](): MetadataResult[Int] = {
     // extract database name and table name
@@ -45,8 +40,8 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
 
-//    if (!metaDataVerify(userName, envDbName, tableName))
-//      throw new RuntimeException("There is no corresponding table!")
+    //    if (!metaDataVerify(userName, envDbName, tableName))
+    //      throw new RuntimeException("There is no corresponding table!")
 
     // construct sql
     val resultObjs: Array[util.ArrayList[AnyRef]] =
@@ -104,12 +99,8 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     * Execute the SQL parsed from the contents of values
     */
   def executeQuery[R](user: String, dbName: String, querySql: String): ResultSet = {
-    val url = path.toAbsolutePath.toString
-    val config = new Properties
-    config.put("model", url)
-    config.put("caseSensitive", "false")
-    val connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config)
-    val statement = connect.createStatement()
+    val connection = CalciteHelper.createConnection()
+    val statement = connection.createStatement()
     statement.executeQuery(querySql)
   }
 

@@ -13,18 +13,12 @@ package org.apache.calcite.jdbc;
 
 import lombok.SneakyThrows;
 import org.apache.calcite.avatica.Meta;
-import org.apache.calcite.config.CalciteConnectionProperty;
 import org.apache.calcite.schema.SchemaPlus;
 import org.apache.calcite.schema.Table;
+import org.urbcomp.start.db.metadata.CalciteHelper;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 /**
  * For access {@link CalciteMetaImpl}
@@ -38,15 +32,7 @@ public class DbMetaFactory implements Meta.Factory {
     @SneakyThrows
     @Override
     public Meta create(List<String> list) {
-        String modelJsonContent;
-        try (final InputStream stream = this.getClass().getResourceAsStream("/model.json")) {
-            modelJsonContent = new BufferedReader(new InputStreamReader(stream)).lines()
-                .collect(Collectors.joining("\n"));
-        }
-        final Properties p = new Properties();
-        p.put(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), "false");
-        p.put(CalciteConnectionProperty.MODEL.camelName(), "inline:" + modelJsonContent);
-        final Connection connection = DriverManager.getConnection("jdbc:calcite:fun=spatial", p);
+        final Connection connection = CalciteHelper.createConnection();
         final CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
         ROOT_SCHEMA = calciteConnection.getRootSchema();
         // init UDF here
