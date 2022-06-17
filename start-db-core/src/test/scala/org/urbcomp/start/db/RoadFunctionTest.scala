@@ -14,6 +14,7 @@ package org.urbcomp.start.db
 import org.junit.Assert.{assertEquals, assertNotNull}
 import org.urbcomp.start.db.model.roadnetwork.{RoadNetwork, RoadSegment}
 import org.urbcomp.start.db.model.sample.ModelGenerator
+import org.urbcomp.start.db.model.trajectory.Trajectory
 
 /**
   * Road Segment/Network Function test
@@ -25,8 +26,8 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   val rs: RoadSegment = ModelGenerator.generateRoadSegment()
   val rn: RoadNetwork = ModelGenerator.generateRoadNetwork()
   val rsGeoJson: String = rs.toGeoJSON
-  val rsList = new java.util.ArrayList[RoadSegment]()
-  rsList.add(rs)
+  val trajectory: Trajectory = ModelGenerator.generateTrajectory()
+  val tGeo: String = trajectory.toGeoJSON
 
   test("st_rn_shortestPath") {
     val statement = connect.createStatement
@@ -128,5 +129,21 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
       statement.executeQuery("select st_rs_lengthInKM(st_makeRoadSegment(\'" + rsGeoJson + "\'))")
     resultSet.next()
     assertEquals(rs.getLengthInMeter / 1000, resultSet.getObject(1))
+  }
+
+  test("st_traj_mapMatch(Trajectory)") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_mapMatch(st_makeRoadNetwork(collect_list(b)), " +
+          "st_traj_fromGeoJSON(\'" + tGeo + "\')) from t_road_segment_test"
+      )
+    resultSet.next()
+    assertEquals(
+      "{\"type\":\"FeatureCollection\",\"features\":[],\"properties\":" +
+        "{\"oid\":\"afab91fa68cb417c2f663924a0ba1ff9\"," +
+        "\"tid\":\"afab91fa68cb417c2f663924a0ba1ff92018-10-09 07:28:21.0\"}}",
+      resultSet.getObject(1)
+    )
   }
 }
