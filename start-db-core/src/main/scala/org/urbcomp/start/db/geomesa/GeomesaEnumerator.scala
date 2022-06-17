@@ -51,6 +51,10 @@ class GeomesaEnumerator(reader: FeatureReader[SimpleFeatureType, SimpleFeature])
         tempRoadSegmentMoveNext(roadTransformer)
       } else if ("t_trajectory_test".equals(name.toString)) {
         tempTrajectoryMoveNext(trajTransformer)
+      } else if ("taxitraj".equals(name.toString)) {
+        tempTaxitrajMoveNext(trajTransformer)
+      } else if ("road".equals(name.toString)) {
+        tempRoadMoveNext(roadTransformer)
       } else {
         curr = reader.next().getAttributes.asScala.toArray
       }
@@ -92,6 +96,36 @@ class GeomesaEnumerator(reader: FeatureReader[SimpleFeatureType, SimpleFeature])
     // a 行数据
     list.add(array(0))
     list.add(transformer.toTrajectory(feature, "t1"))
+    curr = list.toArray
+  }
+
+  /**
+    * Temporary iteration method for Li Zheng's Trajectory test table
+    * @author Wang Bohong
+    * @param transformer TrajectoryAndFeatureTransformer instance
+    */
+  private def tempRoadMoveNext(transformer: RoadSegmentAndGeomesaTransformer): Unit = {
+    val feature = reader.next()
+    val array = feature.getAttributes.asScala.toArray
+    val list = new util.ArrayList[AnyRef]
+    // a 行数据
+    list.add(array(0))
+    list.add(transformer.toRoadSegment(feature, "rs"))
+    curr = list.toArray
+  }
+
+  /**
+    * Temporary iteration method for taxitraj table
+    * @author Wang Bohong
+    * @param transformer TrajectoryAndFeatureTransformer instance
+    */
+  private def tempTaxitrajMoveNext(transformer: TrajectoryAndFeatureTransformer): Unit = {
+    val feature = reader.next()
+    val array = feature.getAttributes.asScala.toArray
+    val list = new util.ArrayList[AnyRef]
+    // a 行数据
+    list.add(array(0))
+    list.add(transformer.toTrajectory(feature, "traj"))
     curr = list.toArray
   }
 }

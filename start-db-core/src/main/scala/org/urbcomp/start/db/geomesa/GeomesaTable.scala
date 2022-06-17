@@ -69,6 +69,8 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     if ("t_road_segment_test".equals(tableName))
       return tempRoadSegmentGetRowType(relDataTypeFactory)
     if ("t_trajectory_test".equals(tableName)) return tempTrajectoryGetRowType(relDataTypeFactory)
+    if ("taxitraj".equals(tableName)) return tempTaxitrajGetRowType(relDataTypeFactory)
+    if ("road".equals(tableName)) return tempRoadGetRowType(relDataTypeFactory)
     val catalog = MetadataUtil.makeCatalog(userName, dbName)
     val dataStore =
       DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
@@ -109,4 +111,25 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     builder.add("t1", relDataTypeFactory.createJavaType(classOf[Trajectory]))
     builder.build()
   }
+
+  /**
+    * temporary method for table taxitraj
+    */
+  private def tempTaxitrajGetRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
+    val builder = relDataTypeFactory.builder()
+    builder.add("tid", relDataTypeFactory.createJavaType(Integer.TYPE))
+    builder.add("traj", relDataTypeFactory.createJavaType(classOf[Trajectory]))
+    builder.build()
+  }
+
+  /**
+    * temporary method for table raod
+    */
+  private def tempRoadGetRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
+    val builder = relDataTypeFactory.builder()
+    builder.add("rsid", relDataTypeFactory.createJavaType(Integer.TYPE))
+    builder.add("rs", relDataTypeFactory.createJavaType(classOf[RoadSegment]))
+    builder.build()
+  }
+
 }

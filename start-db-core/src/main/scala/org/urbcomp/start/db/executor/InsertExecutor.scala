@@ -11,11 +11,16 @@
 
 package org.urbcomp.start.db.executor
 
+import scala.collection.JavaConverters._
 import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
-import org.geotools.data.{DataStoreFinder, Transaction}
+import org.geotools.data.{DataStore, DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
+import org.locationtech.jts.geom.{Coordinate, GeometryFactory, LineString}
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.AccessorFactory
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment
+import org.urbcomp.start.db.model.trajectory.Trajectory
+import org.urbcomp.start.db.util.{GeoFunctions, WKTUtils}
 
 import java.nio.file.{Path, Paths}
 import java.sql.{DriverManager, ResultSet}
@@ -28,7 +33,10 @@ import java.util.Properties
   */
 case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
 
+  //  val path: Path = Paths.get("../start-db-server/src/main/resources/model.json")
   val path: Path = Paths.get("../start-db-server/src/main/resources/model.json")
+
+  private val set = Set("t_trajectory_test", "taxitraj", "t_road_segment_test", "road")
 
   override def execute(): MetadataResult[Int] = {
     // extract database name and table name
@@ -45,8 +53,8 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
 
-//    if (!metaDataVerify(userName, envDbName, tableName))
-//      throw new RuntimeException("There is no corresponding table!")
+    //    if (!metaDataVerify(userName, envDbName, tableName))
+    //      throw new RuntimeException("There is no corresponding table!")
 
     // construct sql
     val resultObjs: Array[util.ArrayList[AnyRef]] =
@@ -85,6 +93,8 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
+    // 针对特殊类型的临时处理
+    if (set.contains(tableName)) return tempExecute(resultObjs, tableName, dataStore)
     WithClose(dataStore.getFeatureWriterAppend(tableName, Transaction.AUTO_COMMIT)) { writer =>
       resultObjs.foreach { i =>
         val sf = writer.next()
@@ -129,6 +139,93 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     val table = tableAccessor.selectByFidAndName(dbId, tableName, true)
     if (table == null) return false
     true
+  }
+
+  /**
+    * insert for roadSegment
+    * @param resultObjs  data to insert
+    * @param tableName   table name
+    * @param dataStore   dataStore
+    * @return
+    */
+  private def tempExecute(
+      resultObjs: Array[util.ArrayList[AnyRef]],
+      tableName: String,
+      dataStore: DataStore
+  ): MetadataResult[Int] = {
+    var affectRows = 0
+
+    if ("t_trajectory_test".equals(tableName) || "taxitraj".equals(tableName)) {
+      WithClose(dataStore.getFeatureWriterAppend(tableName, Transaction.AUTO_COMMIT)) { writer =>
+        resultObjs.foreach { i =>
+          var sf = writer.next()
+          val tra = i.get(1).asInstanceOf[Trajectory]
+          sf.setAttribute(0, i.get(0))
+          sf.setAttribute(1, tra.getTid)
+          sf.setAttribute(2, tra.getOid)
+          sf.setAttribute(3, tra.getStartTime)
+          sf.setAttribute(4, tra.getEndTime)
+          sf.setAttribute(5, GeoFunctions.bboxFromEnvelopeToPolygon(tra.getBBox))
+          sf.setAttribute(6, tra.toGeoJSON)
+          affectRows += 1
+          writer.write()
+        }
+      }
+    } else if ("t_road_segment_test".equals(tableName)) {
+      WithClose(dataStore.getFeatureWriterAppend(tableName, Transaction.AUTO_COMMIT)) { writer =>
+        resultObjs.foreach { i =>
+          var sf = writer.next()
+          val rds1 = i.get(1).asInstanceOf[RoadSegment]
+          val rds2 = i.get(2).asInstanceOf[RoadSegment]
+          sf.setAttribute(0, i.get(0))
+          sf.setAttribute(1, rds1.getRoadSegmentId)
+          val item1 = rds1.getPoints.asScala
+            .map { i =>
+              s"${i.getLng} ${i.getLat}"
+            }
+            .mkString(", ")
+          val wkt1 = s"LINESTRING($item1)"
+          val geom1 = WKTUtils.read(wkt1).asInstanceOf[LineString]
+          sf.setAttribute(2, geom1)
+          sf.setAttribute(3, rds1.toGeoJSON)
+          val item2 = rds2.getPoints.asScala
+            .map { i =>
+              s"${i.getLng} ${i.getLat}"
+            }
+            .mkString(", ")
+          val wkt2 = s"LINESTRING($item2)"
+          val geom2 = WKTUtils.read(wkt2).asInstanceOf[LineString]
+          sf.setAttribute(4, rds2.getRoadSegmentId)
+          sf.setAttribute(5, geom2)
+          sf.setAttribute(6, rds2.toGeoJSON)
+          affectRows += 1
+          writer.write()
+        }
+      }
+    } else {
+      WithClose(dataStore.getFeatureWriterAppend(tableName, Transaction.AUTO_COMMIT)) { writer =>
+        resultObjs.foreach { i =>
+          var sf = writer.next()
+          val rds1 = i.get(1).asInstanceOf[RoadSegment]
+          val item1 = rds1.getPoints.asScala
+            .map { i =>
+              s"${i.getLng} ${i.getLat}"
+            }
+            .mkString(", ")
+          val wkt1 = s"LINESTRING($item1)"
+          val geom1 = WKTUtils.read(wkt1).asInstanceOf[LineString]
+          sf.setAttribute(0, i.get(0))
+          sf.setAttribute(1, rds1.getRoadSegmentId)
+          sf.setAttribute(2, geom1)
+          sf.setAttribute(3, rds1.toGeoJSON)
+          affectRows += 1
+          writer.write()
+        }
+      }
+    }
+
+    dataStore.dispose()
+    MetadataResult.buildDDLResult(affectRows)
   }
 
 }
