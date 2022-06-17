@@ -60,16 +60,24 @@ public class MapMatchedTrajectory implements Serializable {
         fcp.setProperty("oid", oid);
         fcp.setProperty("tid", tid);
         for (MapMatchedPoint p : mmPtList) {
-            Feature f = new Feature();
-            f.setGeometry(
-                new org.geojson.Point(p.getCandidatePoint().getX(), p.getCandidatePoint().getY())
-            );
-            f.setProperty("time", p.getRawPoint().getTime().toString());
-            f.setProperty("roadSegmentId", p.getCandidatePoint().getRoadSegmentId());
-            f.setProperty("errorDistanceInMeter", p.getCandidatePoint().getErrorDistanceInMeter());
-            f.setProperty("matchedIndex", p.getCandidatePoint().getMatchedIndex());
-            f.setProperty("offsetInMeter", p.getCandidatePoint().getOffsetInMeter());
-            fcp.add(f);
+            if (p.getCandidatePoint() != null) {
+                Feature f = new Feature();
+                f.setGeometry(
+                    new org.geojson.Point(
+                        p.getCandidatePoint().getX(),
+                        p.getCandidatePoint().getY()
+                    )
+                );
+                f.setProperty("time", p.getRawPoint().getTime().toString());
+                f.setProperty("roadSegmentId", p.getCandidatePoint().getRoadSegmentId());
+                f.setProperty(
+                    "errorDistanceInMeter",
+                    p.getCandidatePoint().getErrorDistanceInMeter()
+                );
+                f.setProperty("matchedIndex", p.getCandidatePoint().getMatchedIndex());
+                f.setProperty("offsetInMeter", p.getCandidatePoint().getOffsetInMeter());
+                fcp.add(f);
+            }
         }
         return new ObjectMapper().writeValueAsString(fcp);
     }

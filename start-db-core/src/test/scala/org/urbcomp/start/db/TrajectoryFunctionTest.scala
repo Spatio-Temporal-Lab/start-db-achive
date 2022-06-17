@@ -12,12 +12,17 @@
 package org.urbcomp.start.db
 
 import org.junit.Assert.assertEquals
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory
 
 class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
   val tGeo: String = trajectory.toGeoJSON
+  val rs: RoadSegment = ModelGenerator.generateRoadSegment()
+  val rss = new Array[RoadSegment](2)
+  rss(1) = rs
+  rss(0) = rs
 
   test("st_traj_asGeoJSON(Trajectory)") {
     val statement = connect.createStatement()
@@ -133,6 +138,22 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     assertEquals(
       "class org.locationtech.jts.geom.LineString",
       resultSet.getObject(1).getClass.toString
+    )
+  }
+
+  test("st_traj_mapMatch(Trajectory)") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_mapMatch(st_makeRoadNetwork(collect_list(b)), " +
+          "st_traj_fromGeoJSON(\'" + tGeo + "\')) from t_road_segment_test"
+      )
+    resultSet.next()
+    assertEquals(
+      "{\"type\":\"FeatureCollection\",\"features\":[],\"properties\":" +
+        "{\"oid\":\"afab91fa68cb417c2f663924a0ba1ff9\"," +
+        "\"tid\":\"afab91fa68cb417c2f663924a0ba1ff92018-10-09 07:28:21.0\"}}",
+      resultSet.getObject(1)
     )
   }
 
