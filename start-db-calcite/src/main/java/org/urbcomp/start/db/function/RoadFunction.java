@@ -45,11 +45,11 @@ public class RoadFunction {
 
     @StartDBFunction("st_rn_shortestPath")
     public Path st_rn_shortestPath(RoadNetwork roadNetwork, Point startPoint, Point endPoint)
-            throws AlgorithmExecuteException {
+        throws AlgorithmExecuteException {
         BiDijkstraShortestPath biDijkstraShortestPath = new BiDijkstraShortestPath(roadNetwork);
         return biDijkstraShortestPath.findShortestPath(
-                new SpatialPoint(startPoint.getCoordinate()),
-                new SpatialPoint(endPoint.getCoordinate())
+            new SpatialPoint(startPoint.getCoordinate()),
+            new SpatialPoint(endPoint.getCoordinate())
         );
     }
 
@@ -72,7 +72,7 @@ public class RoadFunction {
     public LineString st_rs_geom(RoadSegment rs) {
         GeometryFactory geometryFactory = new GeometryFactory();
         return geometryFactory.createLineString(
-                rs.getPoints().stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
+            rs.getPoints().stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
         );
     }
 

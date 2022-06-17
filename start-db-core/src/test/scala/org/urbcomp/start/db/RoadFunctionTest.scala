@@ -16,10 +16,10 @@ import org.urbcomp.start.db.model.roadnetwork.{RoadNetwork, RoadSegment}
 import org.urbcomp.start.db.model.sample.ModelGenerator
 
 /**
- * Road Segment/Network Function test
- *
- * @author XiangHe
- */
+  * Road Segment/Network Function test
+  *
+  * @author XiangHe
+  */
 class RoadFunctionTest extends AbstractCalciteFunctionTest {
 
   val rs: RoadSegment = ModelGenerator.generateRoadSegment()
