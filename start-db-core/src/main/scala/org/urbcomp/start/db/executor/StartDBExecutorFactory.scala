@@ -20,11 +20,11 @@ import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, Sq
 class StartDBExecutorFactory extends BaseExecutorFactory {
   override def convertExecutor(node: SqlNode): BaseExecutor = node match {
     case n: SqlShowCreateTable => ShowCreateTableExecutor(n)
-    case n: SqlUpdate => UpdateExecutor(n)
-    case n: SqlInsert => InsertExecutor(n)
-    case n: SqlCreateDatabase => CreateDatabaseExecutor(n)
-    case n: SqlCreateTable => CreateTableExecutor(n)
-    case _: SqlShowDatabases => ShowDatabaseExecutor()
-    case _: SqlShowStatus => ShowStatusExecutor()
+    case n: SqlUpdate          => UpdateExecutor(n)
+    case n: SqlInsert          => InsertExecutor(n)
+    case n: SqlCreateDatabase  => CreateDatabaseExecutor(n)
+    case n: SqlCreateTable     => CreateTableExecutor(n)
+    case _: SqlShowDatabases   => ShowDatabaseExecutor()
+    case _: SqlShowStatus      => ShowStatusExecutor()
   }
 }
