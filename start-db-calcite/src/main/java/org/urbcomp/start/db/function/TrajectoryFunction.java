@@ -90,4 +90,9 @@ public class TrajectoryFunction {
         return trajectory.getLengthInKm();
     }
 
+    @StartDBFunction("st_traj_speedInKMPerHour")
+    public double st_traj_speedInKMPerHour(Trajectory trajectory) {
+        return trajectory.getSpeedInKMPerHour();
+    }
+
 }

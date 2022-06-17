@@ -195,6 +195,10 @@ public class Trajectory {
         ) / 1000;
     }
 
+    public double getSpeedInKMPerHour() {
+        return getLengthInKm() / ((getEndTime().getTime() - getStartTime().getTime()) / 3600000.0);
+    }
+
     /**
      * Convert this trajectory to GeoJSON String
      *
