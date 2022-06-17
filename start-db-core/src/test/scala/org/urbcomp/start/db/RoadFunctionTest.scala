@@ -37,7 +37,13 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
           " st_makePoint(116.3671875,53.05442186546102)) from t_road_segment_test"
       )
     resultSet.next()
-    println(resultSet.getObject(1).toString)
+    assertEquals(
+      "Path{lengthInMeter=346582.30322217953, " +
+        "points=[POINT (111.37939453125 54.00776876193478)," +
+        " -1|346582.30322217953|0|0.0, -1|0.0|0|0.0, " +
+        "POINT (116.3671875 53.05442186546102)], roadSegmentIds=[-1]}",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_makeRoadNetwork") {
@@ -45,7 +51,10 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
     val resultSet =
       statement.executeQuery("select st_makeRoadNetwork(collect_list(b)) from t_road_segment_test")
     resultSet.next()
-    println(resultSet.getObject(1))
+    assertEquals(
+      "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",
+      resultSet.getObject(1).getClass.toString
+    )
   }
 
   test("st_makeRoadSegment") {
