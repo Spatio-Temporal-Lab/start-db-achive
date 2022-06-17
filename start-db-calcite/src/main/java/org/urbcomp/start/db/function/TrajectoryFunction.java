@@ -23,7 +23,13 @@
 package org.urbcomp.start.db.function;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
+import org.urbcomp.start.db.algorithm.mapmatch.tihmm.TiHmmMapMatcher;
+import org.urbcomp.start.db.algorithm.shortestpath.BiDijkstraShortestPath;
+import org.urbcomp.start.db.exception.AlgorithmExecuteException;
+import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
+import org.urbcomp.start.db.model.trajectory.MapMatchedTrajectory;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 
 import java.sql.Timestamp;
@@ -95,4 +101,19 @@ public class TrajectoryFunction {
         return trajectory.getSpeedInKMPerHour();
     }
 
+    @StartDBFunction("st_traj_geom")
+    public LineString st_traj_geom(Trajectory trajectory) {
+        return trajectory.getLineString();
+    }
+
+    @StartDBFunction("st_traj_mapMatch")
+    public String st_traj_mapMatchToProjection(RoadNetwork roadNetwork, Trajectory trajectory)
+        throws AlgorithmExecuteException, JsonProcessingException {
+        TiHmmMapMatcher mapMatcher = new TiHmmMapMatcher(
+            roadNetwork,
+            new BiDijkstraShortestPath(roadNetwork)
+        );
+        MapMatchedTrajectory mmTrajectory = mapMatcher.mapMatch(trajectory);
+        return mmTrajectory.toGeoJSON();
+    }
 }
