@@ -1,7 +1,14 @@
-CREATE TABLE Persons (
-    PersonID int,
-    LastName varchar(255),
-    FirstName varchar(255),
-    Address varchar(255),
-    City varchar(255)
+CREATE TABLE start_db_test_table (
+    idx Integer,
+    ride_id String,
+    started_at Timestamp,
+    ended_at Timestamp,
+    start_station_name String,
+    start_station_id Double,
+    start_point Point,
+    end_station_name String,
+    end_station_id Double,
+    end_point Point,
+    track LineString,
+    member_casual String
 );

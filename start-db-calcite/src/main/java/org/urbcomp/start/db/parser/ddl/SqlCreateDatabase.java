@@ -20,55 +20,67 @@
  * limitations under the License.
  */
 
-package org.apache.calcite.sql.ddl;
+package org.urbcomp.start.db.parser.ddl;
 
 import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.parser.SqlParserPos;
-import org.apache.calcite.util.ImmutableNullableList;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 /**
- * Parse tree for {@code CREATE SCHEMA} statement.
+ * CREATE Database DDL sql call.
  */
-public class SqlCreateSchema extends SqlCreate {
-    public final SqlIdentifier name;
+public class SqlCreateDatabase extends SqlCreate {
 
-    private static final SqlOperator OPERATOR = new SqlSpecialOperator(
-        "CREATE SCHEMA",
-        SqlKind.CREATE_SCHEMA
+    public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
+        "CREATE DATABASE",
+        SqlKind.OTHER_DDL
     );
 
-    /**
-     * Creates a SqlCreateSchema.
-     */
-    public SqlCreateSchema(
-        SqlParserPos pos,
-        boolean replace,
-        boolean ifNotExists,
-        SqlIdentifier name
-    ) {
-        super(OPERATOR, pos, replace, ifNotExists);
-        this.name = Objects.requireNonNull(name);
+    private final SqlIdentifier databaseName;
+
+    public SqlCreateDatabase(SqlParserPos pos, SqlIdentifier databaseName, boolean ifNotExists) {
+        super(OPERATOR, pos, false, ifNotExists);
+        this.databaseName = requireNonNull(databaseName, "databaseName should not be null");
+    }
+
+    @Override
+    public SqlOperator getOperator() {
+        return OPERATOR;
     }
 
     @Override
     public List<SqlNode> getOperandList() {
-        return ImmutableNullableList.of(name);
+        return Collections.emptyList();
+    }
+
+    public SqlIdentifier getDatabaseName() {
+        return databaseName;
+    }
+
+    public boolean isIfNotExists() {
+        return ifNotExists;
     }
 
     @Override
     public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
-        if (getReplace()) {
-            writer.keyword("CREATE OR REPLACE");
-        } else {
-            writer.keyword("CREATE");
-        }
-        writer.keyword("SCHEMA");
-        if (ifNotExists) {
+        writer.keyword("CREATE DATABASE");
+        if (isIfNotExists()) {
             writer.keyword("IF NOT EXISTS");
         }
-        name.unparse(writer, leftPrec, rightPrec);
+        databaseName.unparse(writer, leftPrec, rightPrec);
+    }
+
+    protected void printIndent(SqlWriter writer) {
+        writer.sep(",", false);
+        writer.newlineAndIndent();
+        writer.print("  ");
+    }
+
+    public String[] fullDatabaseName() {
+        return databaseName.names.toArray(new String[0]);
     }
 }

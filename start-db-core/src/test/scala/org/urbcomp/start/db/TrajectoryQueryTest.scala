@@ -11,33 +11,26 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.{assertEquals, assertTrue}
+import org.junit.Assert.assertEquals
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
+import org.urbcomp.start.db.model.trajectory.Trajectory
 
 /**
-  * test for RoadSegmentQuery
+  * TrajectoryQuery Test
   *
-  * @author WangBohong
+  * @author Wang Bohong
   * @date 2022-06-16
   */
-class RoadSegmentQueryTest extends AbstractCalciteFunctionTest {
-
-  test("basic roadSegment query") {
-    val stmt = connect.createStatement()
-    val rs = stmt.executeQuery("select count(1) from t_road_segment_test")
-    assertTrue(rs.next())
-  }
+class TrajectoryQueryTest extends AbstractCalciteFunctionTest {
 
   /**
-    * test for roadSegment type
+    * test for trajectory
     */
-  test("roadSegment query") {
+  test("trajectory test") {
     val stmt = connect.createStatement()
-    val rs = stmt.executeQuery("select * from t_road_segment_test")
+    val rs = stmt.executeQuery("select * from t_trajectory_test")
     while (rs.next()) {
-      assertEquals(classOf[RoadSegment], rs.getObject(2).getClass)
-      assertEquals(classOf[RoadSegment], rs.getObject(3).getClass)
+      assertEquals(classOf[Trajectory], rs.getObject(2).getClass)
     }
   }
-
 }

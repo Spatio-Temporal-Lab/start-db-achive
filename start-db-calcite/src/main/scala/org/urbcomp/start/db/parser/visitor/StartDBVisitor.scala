@@ -14,11 +14,11 @@ package org.urbcomp.start.db.parser.visitor
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.misc.Interval
 import org.apache.calcite.sql._
-import org.apache.calcite.sql.ddl.{SqlCreateSchema, SqlDdlNodes, SqlDropSchema, SqlDropTable}
+import org.apache.calcite.sql.ddl.{SqlDdlNodes, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
-import org.urbcomp.start.db.parser.ddl.{SqlTruncateTable, SqlUseDatabase}
+import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
 import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
 import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
 import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
@@ -497,12 +497,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   }
 
   override def visitCreateDatabaseStmt(ctx: CreateDatabaseStmtContext): SqlNode = {
-    new SqlCreateSchema(
-      pos,
-      false,
-      ctx.T_EXISTS() != null,
-      new SqlIdentifier(ctx.dbName.getText, pos)
-    )
+    new SqlCreateDatabase(pos, new SqlIdentifier(ctx.dbName.getText, pos), ctx.T_EXISTS() != null);
   }
 
   override def visitDropDatabaseStmt(ctx: DropDatabaseStmtContext): SqlNode = {
@@ -545,8 +540,14 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
         .create_table_columns_item()
         .asScala
         .map { i =>
-          val fieldName = visitIdent(i.qident().ident().get(0))
-          val dataType = new SqlUserDefinedTypeNameSpec(visitIdent(i.dtype().ident()), pos)
+          val fieldName = visitIdent(i.column_name().qident().ident().get(0))
+          var dataType: SqlUserDefinedTypeNameSpec = null
+          if (i.dtype().ident() != null) {
+            dataType = new SqlUserDefinedTypeNameSpec(visitIdent(i.dtype().ident()), pos)
+          } else {
+            dataType =
+              new SqlUserDefinedTypeNameSpec(new SqlIdentifier(i.dtype().getText, pos), pos)
+          }
           val dataTypeSpec = new SqlDataTypeSpec(dataType, pos)
           SqlDdlNodes.column(pos, fieldName, dataTypeSpec, null, null)
         }

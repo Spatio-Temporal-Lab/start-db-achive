@@ -21,6 +21,7 @@ import org.geotools.data.{DataStoreFinder, Query}
 import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
+import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.util.MetadataUtil
 
 import java.lang.reflect.Type
@@ -65,11 +66,12 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     */
   override def getRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
     // ToDO： Temporary operation
-    if ("xxx".equals(tableName)) return tempGetRowType(relDataTypeFactory)
+    if ("t_road_segment_test".equals(tableName))
+      return tempRoadSegmentGetRowType(relDataTypeFactory)
+    if ("t_trajectory_test".equals(tableName)) return tempTrajectoryGetRowType(relDataTypeFactory)
     val catalog = MetadataUtil.makeCatalog(userName, dbName)
     val dataStore =
       DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
-
     val query = new Query(tableName)
     val sft = dataStore.getSchema(query.getTypeName)
     // TODO Geometry type should be supported
@@ -87,11 +89,24 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     * @param relDataTypeFactory  RelDataTypeFactory intance
     * @return RelDataType instance
     */
-  private def tempGetRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
+  private def tempRoadSegmentGetRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
     val builder = relDataTypeFactory.builder()
     builder.add("a", relDataTypeFactory.createJavaType(Integer.TYPE))
     builder.add("b", relDataTypeFactory.createJavaType(classOf[RoadSegment]))
     builder.add("c", relDataTypeFactory.createJavaType(classOf[RoadSegment]))
+    builder.build()
+  }
+
+  /**
+    * Temporary method for He Xiang's RoadSegment test table
+    * @author Wang Bohong
+    * @param relDataTypeFactory  RelDataTypeFactory intance
+    * @return RelDataType instance
+    */
+  private def tempTrajectoryGetRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
+    val builder = relDataTypeFactory.builder()
+    builder.add("id1", relDataTypeFactory.createJavaType(Integer.TYPE))
+    builder.add("t1", relDataTypeFactory.createJavaType(classOf[Trajectory]))
     builder.build()
   }
 }
