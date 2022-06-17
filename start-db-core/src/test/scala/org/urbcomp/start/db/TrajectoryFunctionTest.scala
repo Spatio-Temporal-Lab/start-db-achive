@@ -125,4 +125,15 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     assertEquals("30.24120489901651", resultSet.getObject(1).toString)
   }
 
+  test("st_traj_geom(Trajectory)") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select st_traj_geom(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(
+      "class org.locationtech.jts.geom.LineString",
+      resultSet.getObject(1).getClass.toString
+    )
+  }
+
 }

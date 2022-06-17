@@ -15,8 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
@@ -187,6 +186,11 @@ public class Trajectory {
         );
     }
 
+    /**
+     * get the length of the trajectory(km)
+     * 
+     * @return length of the trajectory
+     */
     public double getLengthInKm() {
         return GeoFunctions.getDistanceInM(
             gpsPointList.stream()
@@ -195,8 +199,25 @@ public class Trajectory {
         ) / 1000;
     }
 
+    /**
+     * Get the average speed of the trajectory (km/h)
+     *
+     * @return speed (km/h)
+     */
     public double getSpeedInKMPerHour() {
         return getLengthInKm() / ((getEndTime().getTime() - getStartTime().getTime()) / 3600000.0);
+    }
+
+    /**
+     * Get the Linestring corresponding to this trajectory
+     *
+     * @return Linestring
+     */
+    public LineString getLineString() {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        return geometryFactory.createLineString(
+            gpsPointList.stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
+        );
     }
 
     /**
