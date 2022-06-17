@@ -36,7 +36,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
   override def execute(): MetadataResult[Int] = {
     // TODO userName dbName context
     val userName = "start_db";
-    val envDbName = "db_test";
+    val envDbName = "sigsptialdemo";
 
     val targetTable = n.name
     val (dbName, tableName) = targetTable.names.size() match {
@@ -97,7 +97,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     })
 
     val params: util.Map[String, String] = new util.HashMap[String, String]
-    val CATALOG: String = "start_db.db_test"
+    val CATALOG: String = "start_db.sigsptialdemo"
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)

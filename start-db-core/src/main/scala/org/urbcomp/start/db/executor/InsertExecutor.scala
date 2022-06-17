@@ -81,7 +81,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     var affectRows = 0
     val params = new util.HashMap[String, String]()
     // ToDO 传入参数的问题(先写死)
-    val CATALOG = "start_db.db_test"
+    val CATALOG = "start_db.sigsptialdemo"
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)

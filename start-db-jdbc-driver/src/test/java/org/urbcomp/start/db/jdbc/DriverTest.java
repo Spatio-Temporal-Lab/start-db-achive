@@ -50,7 +50,7 @@ public class DriverTest {
         ) {
             final Statement stmt = conn.createStatement();
 
-            final ResultSet rs = stmt.executeQuery("select * from `start_db.db_test.t_test`");
+            final ResultSet rs = stmt.executeQuery("select * from `start_db.sigsptialdemo.t_test`");
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
                 for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -72,7 +72,7 @@ public class DriverTest {
             final Statement stmt = conn.createStatement();
 
             final ResultSet rs = stmt.executeQuery(
-                "select started_at,st_x(start_point) from `start_db.db_test.t_test`"
+                "select started_at,st_x(start_point) from `start_db.sigsptialdemo.t_test`"
             );
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {

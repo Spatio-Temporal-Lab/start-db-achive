@@ -26,7 +26,7 @@ class StartDBVisitorTest extends FunSuite {
   def driver = StartDBParseDriver
 
   def testUser = "start_db";
-  def testDatabase = "db_test";
+  def testDatabase = "sigsptialdemo";
   def tableName = "table_name";
 
   def calciteParse(sql: String): SqlNode = {
@@ -113,7 +113,7 @@ class StartDBVisitorTest extends FunSuite {
     val sql = StartDBSQLSamples.CREATE_TABLE_SAMPLE
     val parsed = driver.parseSql(sql)
     val node = parsed.asInstanceOf[SqlCreateTable]
-    assertEquals("start_db_test_table", node.name.names.get(0))
+    assertEquals("start_sigsptialdemo_table", node.name.names.get(0))
     assertEquals(12, node.columnList.size())
   }
 

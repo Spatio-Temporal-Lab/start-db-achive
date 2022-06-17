@@ -30,7 +30,7 @@ object StartDBParseDriver {
     parser.removeErrorListeners()
     val tree = parser.program()
     // TODO 这里先写死，要从用户参数里获取
-    val visitor = new StartDBVisitor("start_db", "db_test")
+    val visitor = new StartDBVisitor("start_db", "sigsptialdemo")
     visitor.visitProgram(tree)
   }
 }

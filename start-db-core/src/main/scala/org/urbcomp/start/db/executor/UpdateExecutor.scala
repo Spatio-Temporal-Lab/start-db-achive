@@ -38,7 +38,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     // extract database name and table name
     // ToDO 传入参数
     val userName = "start_db"
-    val envDbName = "db_test"
+    val envDbName = "sigsptialdemo"
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
     val str = targetTable.names.get(0)
     val target = targetTable.names.get(0).split('.')
@@ -78,7 +78,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     var affectRows = 0
     val params = new util.HashMap[String, String]()
     // ToDO 传入参数的问题(先写死)
-    val CATALOG = "start_db.db_test"
+    val CATALOG = "start_db.sigsptialdemo"
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)

@@ -73,7 +73,7 @@ public class BatchUpLoader implements Closeable {
      */
     private void mkConnection() throws IOException {
         Map<String, String> params = new HashMap<>();
-        String CATALOG = "start_db.db_test";
+        String CATALOG = "start_db.sigsptialdemo";
         params.put("hbase.catalog", CATALOG);
         params.put("hbase.zookeepers", "localhost:2181");
 
