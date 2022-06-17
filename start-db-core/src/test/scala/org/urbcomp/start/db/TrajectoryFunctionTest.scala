@@ -107,4 +107,22 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     assertEquals("2018-10-09 07:28:27.0", resultSet.getObject(1).toString)
   }
 
+  test("st_traj_lengthInKM(Trajectory)") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select st_traj_lengthInKM(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals("2.9989194858191373", resultSet.getObject(1).toString)
+  }
+
+  test("st_traj_speedInKMPerHour(Trajectory)") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_speedInKMPerHour(st_traj_fromGeoJSON(\'" + tGeo + "\'))"
+      )
+    resultSet.next()
+    assertEquals("30.24120489901651", resultSet.getObject(1).toString)
+  }
+
 }
