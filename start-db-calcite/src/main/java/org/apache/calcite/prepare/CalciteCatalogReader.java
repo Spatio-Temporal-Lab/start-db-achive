@@ -323,7 +323,7 @@ public class CalciteCatalogReader implements Prepare.CatalogReader {
         // add start
         ModelHandler.addFunctions(
             schema.plus(),
-            "collectList",
+            "collect_list",
             ImmutableList.of(),
             "org.urbcomp.start.db.function.udaf.CollectList",
             null,

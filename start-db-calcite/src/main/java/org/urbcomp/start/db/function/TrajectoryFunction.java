@@ -107,7 +107,7 @@ public class TrajectoryFunction {
     }
 
     @StartDBFunction("st_traj_mapMatch")
-    public String st_traj_mapMatchToProjection(RoadNetwork roadNetwork, Trajectory trajectory)
+    public String st_traj_mapMatch(RoadNetwork roadNetwork, Trajectory trajectory)
         throws AlgorithmExecuteException, JsonProcessingException {
         TiHmmMapMatcher mapMatcher = new TiHmmMapMatcher(
             roadNetwork,

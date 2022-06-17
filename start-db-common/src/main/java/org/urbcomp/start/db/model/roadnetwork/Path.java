@@ -73,6 +73,18 @@ public class Path {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "Path{"
+            + "lengthInMeter="
+            + lengthInMeter
+            + ", points="
+            + points
+            + ", roadSegmentIds="
+            + roadSegmentIds
+            + '}';
+    }
+
     public Path addPath(Path path) {
         this.lengthInMeter += path.lengthInMeter;
         this.points.addAll(path.getPoints());
