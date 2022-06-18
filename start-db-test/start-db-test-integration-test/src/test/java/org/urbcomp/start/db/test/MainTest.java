@@ -13,6 +13,8 @@ package org.urbcomp.start.db.test;
 
 import org.junit.Test;
 
+import java.nio.file.Path;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Objects;
 import org.slf4j.Logger;
@@ -21,8 +23,33 @@ import org.slf4j.LoggerFactory;
 import static org.urbcomp.start.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
 
+
+import java.nio.file.Paths;
+import java.util.Properties;
+
 public class MainTest {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Test
+    public void test() throws SQLException {
+        Connection connect;
+        Path path = Paths.get("E:\\GitHub\\start-db\\start-db-server\\src\\main\\resources\\model.json");
+        System.out.println(path);
+        String url = path.toAbsolutePath().toString();
+        System.out.println(url);
+        Properties config = new Properties();
+        config.put("model", url);
+        config.put("caseSensitive", "false");
+        connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config);
+
+        Statement statement = connect.createStatement();
+        ResultSet resultSet = statement.executeQuery("select 1+1");
+
+        Object object = resultSet.getObject(1);
+        System.out.println(object);
+
+        connect.close();
+    }
 
     @Test
     public void singleSQLCaseTest() throws Exception {
@@ -45,5 +72,6 @@ public class MainTest {
             runSingleCase(sqlCaseXML);
         }
     }
+
 
 }

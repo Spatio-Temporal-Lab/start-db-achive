@@ -13,14 +13,14 @@ package org.urbcomp.start.db.test;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static org.urbcomp.start.db.test.CompareActualAndExpect.compareData;
+import static org.urbcomp.start.db.test.CompareResult.compareData;
+import static org.urbcomp.start.db.test.GetSQLAndExpectData.getExpectData;
 import static org.urbcomp.start.db.test.GetSQLAndExpectData.getSqlWithParam;
 
 public class RunSingleSQLCase {
@@ -36,68 +36,100 @@ public class RunSingleSQLCase {
     public static void runSingleCase(String xmlPath) throws Exception {
         try {
             SAXReader saxReader = new SAXReader();
-
             Document document = saxReader.read(xmlPath);
             Element rootElement = document.getRootElement();
 
-            // 获取根标签下的所有子元素列表
+            // 获取根标签下的所有case标签列表
             List<Element> caseElements = rootElement.elements();
             for (Element caseElement : caseElements) {
-                // 获取case标签的type类型 sql子标签的文本
-                String type = caseElement.attributeValue("type");
-                String sqlText = caseElement.elementText("sql");
-                List<Node> assertionList = caseElement.selectNodes("assertion");
-                // 当assertion标签数量不为空的时候, 再执行下面的代码
-                if (assertionList.size() != 0) {
-                    for (Node node : assertionList) {
-                        Element assertionElement = (Element) node;
-                        // 获取assertion标签的属性值: id expected, 以及文本中的参数值
-                        String parameters = assertionElement.getTextTrim();
-                        String paramId = assertionElement.attributeValue("id");
-                        String expectData = assertionElement.attributeValue("expected");
-                        // 获取拼接参数后的sql
-                        String sql;
-                        if (parameters == null || parameters.equals("")) {
-                            sql = sqlText;
-                        } else {
-                            sql = getSqlWithParam(sqlText, parameters);
-                        }
-                        log.info("执行sql:" + sql);
+                // 获取case标签下的所有子标签列表
+                List<Element> elements = caseElement.elements();
+                // 第一个标签一定是sql, 如果不是, 抛异常
+                if (elements.get(0).getName().equals("sql")) {
+                    throw new Exception("case标签的内容有误");
+//                        log.info  然后continue
+                }
+                // 遍历单个case标签内的子标签列表
+                for (int i = 0; i < elements.size(); i++){
+                    Element element = elements.get(i);
+                    String elementName = element.getName();
+                    String initSql = "";
+                    String sqlType = "";
+                    String actualValue = "";
 
-                        // 获取预期值或预期异常
+                    // 如果标签为sql标签
+                    if (elementName.equals("sql")){
+                        sqlType = element.attributeValue("type");
+                        initSql = element.getText();
+                        // 检查是否需要拼接参数
+                        if (!initSql.contains("?")){
+                            // 执行sql
+                            actualValue = executeSql(initSql, sqlType);
+                        }
+                        // 如果标签为assertion标签
+
+                    }else if (elementName.equals("assertion")) {
+                        String params = element.getText();
+                        String paramId = element.attributeValue("paramId");
+                        String expected = element.attributeValue("expected");
+
+                        // 1. 有参数的话就重新拼接sql, 执行, 获取返回值
+                        if (params != null) {
+                            // 解析参数 将参数和sql进行拼接, 得到拼接后的sql
+                            String sqlWithParam = getSqlWithParam(initSql, params);
+
+                            // 2. 根据type来执行sql, 预期值重新赋值
+                            actualValue = executeSql(sqlType, sqlWithParam);
+                        }
+
+                        // 2. 获取预期结果或者预期异常
                         String expectValue = "";
-                        if (expectData != null && !expectData.equals("")) {
-                            // expectValue = getExpectData(expectData, xmlPath, paramId);
+                        if (paramId != null && expected != null) {
+                            // 获取预期结果
+                            getExpectData(expected, xmlPath, paramId);
+                            expectValue = "";
+                        } else if (paramId == null && expected != null){
+                            // 获取预期异常
+                            expectValue = expected.replace("error:", "").trim();
                         }
 
-                        // 初始化一个空的实际返回值actualValue
-                        String actualValue;
-                        try {
-                            // todo 执行拼接后的sql, 拿到实际返回值actualValue 或者 捕获预期异常
-
-                            actualValue = "returnData";
-                        } catch (Exception e) {
-                            actualValue = "errorMessage";
-                        }
-                        // 如果预期结果不为空,就对实际结果进行验证
-                        if (!expectValue.equals("")) {
-                            log.info("比较预期值:");
-                            try {
-                                compareData(actualValue, expectValue);
-                            } catch (Exception e) {
-                                // 通过静态变量来控制异常是否抛出
-                                if (ERROR_STOP) {
-                                    throw new Exception("出现异常信息");
-                                }
-                            }
-                        } else {
-                            log.info("执行通过");
+                        // 3. 有预期结果或者预期异常时, 与实际返回值进行比较
+                        if (!expectValue.equals("")){
+                            compareData(actualValue, expectValue);
                         }
                     }
+
                 }
+
             }
         } catch (Exception e) {
-            throw new Exception(e);
+            if (ERROR_STOP) {
+                throw new Exception(e.getMessage());
+            }
         }
+    }
+
+    private static String executeSql(String sqlType, String sql) {
+        String actualValue = "";
+        try{
+            switch (sqlType){
+                case "update":
+                    // 执行sql
+                    break;
+                case "query":
+                    // 执行sql 并拿到实际返回结果
+                    actualValue = "returnData";
+                    break;
+                case "ignore":
+                    // log.info 跳过执行
+                default:
+                    throw new Exception("sql标签的type类型有误");
+            }
+        }catch (Exception e) {
+            // 捕获异常信息
+            actualValue = e.getMessage();
+
+        }
+        return actualValue;
     }
 }

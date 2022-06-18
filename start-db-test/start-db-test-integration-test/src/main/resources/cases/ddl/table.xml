@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<testCase>
+    <case>
+        <sql type="update">create database db;</sql>
+        <sql type="update">create table db.t1 (a1 int);</sql>
+        <sql type="update">insert into t1 values(?);</sql>
+        <assertion>[1]</assertion>
+        <assertion>[2]</assertion>
+        <sql type="query">select * from t1 where a = ?;</sql>
+        <assertion id="01" expected="data_01.xml">[1]</assertion>
+        <assertion id="02" expected="data_01.xml">[2]</assertion>
+        <sql type="update">drop table t1;</sql>
+    </case>
+</testCase>

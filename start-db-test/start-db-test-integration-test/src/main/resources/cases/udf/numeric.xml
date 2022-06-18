@@ -4,8 +4,8 @@
 <testCase>
 
     <!--  数值字符串 转 Integer  castToInteger(str: String): Integer  -->
-    <case type="query">
-        <sql>select castToInteger(?);</sql>
+    <case>
+        <sql type="query">select castToInteger(?);</sql>
         <assertion id="01" expected="numeric_001.xml">['0']</assertion>
         <assertion id="02" expected="numeric_001.xml">['1']</assertion>
         <assertion id="03" expected="numeric_001.xml">['-1']</assertion>
@@ -21,8 +21,8 @@
     </case>
 
     <!--  数值字符串 转 Long  castToLong(str: String): Long  -->
-    <case type="query">
-        <sql>select castToLong(?);</sql>
+    <case>
+        <sql type="query">select castToLong(?);</sql>
         <assertion id="01" expected="numeric_002.xml">['0']</assertion>
         <assertion id="02" expected="numeric_002.xml">['1']</assertion>
         <assertion id="03" expected="numeric_002.xml">['-1']</assertion>
@@ -38,8 +38,8 @@
     </case>
 
     <!--  数值字符串 转 float  castToFloat(str: String): Float  -->
-    <case type="query">
-        <sql>select castToFloat(?);</sql>
+    <case>
+        <sql type="query">select castToFloat(?);</sql>
         <assertion id="01" expected="numeric_003.xml">['0']</assertion>
         <assertion id="02" expected="numeric_003.xml">['10000.1234567']</assertion>
         <assertion id="03" expected="numeric_003.xml">['-10000.1234567']</assertion>
@@ -53,8 +53,8 @@
     </case>
 
     <!--  数值字符串 转 double  castToDouble(str: String): Double  -->
-    <case type="query">
-        <sql>select castToDouble(?);</sql>
+    <case>
+        <sql type="query">select castToDouble(?);</sql>
         <assertion id="01" expected="numeric_004.xml">['0']</assertion>
         <assertion id="02" expected="numeric_004.xml">['100.123456789012345']</assertion>
         <assertion id="03" expected="numeric_004.xml">['-100.123456789012345']</assertion>
@@ -68,8 +68,8 @@
     </case>
 
     <!--  字符串 转 布尔值  castToBoolean(str: String): Boolean  -->
-    <case type="query">
-        <sql>select castToBoolean(?);</sql>
+    <case>
+        <sql type="query">select castToBoolean(?);</sql>
         <assertion id="01" expected="numeric_005.xml">['true']</assertion>
         <assertion id="02" expected="numeric_005.xml">['false']</assertion>
         <assertion id="03" expected="error: 参数有误">['abcd']</assertion>
@@ -78,8 +78,8 @@
     </case>
 
     <!--  任意数据 转 字符串  castToString(any: Any): String  -->
-    <case type="query">
-        <sql>select castToString(?);</sql>
+    <case>
+        <sql type="query">select castToString(?);</sql>
         <assertion id="01" expected="numeric_006.xml">[123]</assertion>
         <assertion id="02" expected="numeric_006.xml">[-123]</assertion>
         <assertion id="03" expected="numeric_006.xml">['abcd']</assertion>
@@ -89,8 +89,8 @@
     </case>
 
     <!--  数值类型 转 Integer  parseInteger(num: Any): Integer   -->
-    <case type="query">
-        <sql>select parseInteger(?);</sql>
+    <case>
+        <sql type="query">select parseInteger(?);</sql>
         <assertion id="01" expected="numeric_007.xml">[0]</assertion>
         <assertion id="02" expected="numeric_007.xml">[1]</assertion>
         <assertion id="03" expected="numeric_007.xml">[-1]</assertion>
@@ -102,12 +102,12 @@
         <assertion id="09" expected="error: 参数有误">[-2147483649.5]</assertion>
         <assertion id="10" expected="error: 参数有误">['abcd']</assertion>
         <assertion id="11" expected="error: 参数有误">[true]</assertion>
-        <assertion id="12" expected="numeric_007.xml">[null]</assertion>
+        <assertion id="12" expected="error: 参数有误">[null]</assertion>
     </case>
 
     <!--  数值类型 转 Long  parseLong(num: Any): Long  -->
-    <case type="query">
-        <sql>select parseLong(?);</sql>
+    <case>
+        <sql type="query">select parseLong(?);</sql>
         <assertion id="01" expected="numeric_008.xml">[0]</assertion>
         <assertion id="02" expected="numeric_008.xml">[123456789]</assertion>
         <assertion id="03" expected="numeric_008.xml">[-123456789]</assertion>
@@ -123,8 +123,8 @@
     </case>
 
     <!--  数值类型 转 Double  parseDouble(num: Any): Double  -->
-    <case type="query">
-        <sql>select  parseDouble(?);</sql>
+    <case>
+        <sql type="query">select  parseDouble(?);</sql>
         <assertion id="01" expected="numeric_009.xml">[0]</assertion>
         <assertion id="02" expected="numeric_009.xml">[12345]</assertion>
         <assertion id="03" expected="numeric_009.xml">[-12345]</assertion>

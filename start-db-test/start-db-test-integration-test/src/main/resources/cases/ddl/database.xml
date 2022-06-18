@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<testCase>
+    <case>
+        <sql type="update">create database ?;</sql>
+        <assertion id="01" expected="db_001.xml">[test]</assertion>
+        <assertion id="01" expected="db_001.xml">[ABC]</assertion>
+        <assertion id="01" expected="db_001.xml">[a123]</assertion>
+        <assertion id="01" expected="db_001.xml">[a_b]</assertion>
+        <assertion id="01" expected="db_001.xml">
+            [a123456789b123456789c123456789d123456789e123456789]
+        </assertion>
+        <assertion id="01" expected="error:参数有误">[TEST]</assertion>
+        <assertion id="01" expected="error:参数有误">[a-b]</assertion>
+        <assertion id="01" expected="error:参数有误">[null]</assertion>
+        <assertion id="01" expected="error:参数有误">[123]</assertion>
+        <assertion id="01" expected="error:参数有误">[ ]</assertion>
+        <assertion id="01" expected="error:参数有误">[int]</assertion>
+    </case>
+
+    <case>
+        <sql type="update">create database if not exists test_db;</sql>
+    </case>
+    <case>
+        <sql type="update">create database if not exists test_db;</sql>
+    </case>
+
+    <case>
+        <sql type="update">drop database ?;</sql>
+        <assertion>[test_db]</assertion>
+        <assertion expected="error:异常">[ ]</assertion>
+    </case>
+    <case>
+        <sql type="update">drop database test_db;</sql>
+        <assertion expected="error:异常"/>
+    </case>
+
+    <case>
+        <sql type="update">drop database if exists test_db;</sql>
+    </case>
+
+    <case>
+        <sql type="update">create database test_db;</sql>
+    </case>
+
+
+</testCase>

@@ -4,22 +4,22 @@
 <testCase>
 
     <!--  输入经纬度生成点  st_makePoint(x: Double, y: Double): Point  -->
-    <case type="query">
-        <sql>select st_makePoint( ?, ?);</sql>
+    <case>
+        <sql type="query">select st_makePoint( ?, ?);</sql>
         <assertion id="01" expected="stMake_001.xml">[110][40]</assertion>
         <assertion id="02" expected="error:参数有误">[181][40]</assertion>
         <assertion id="03" expected="error:参数有误">[110][91]</assertion>
     </case>
 
     <!--  传入一列点生成轨迹  st_makeLineString(points: List[Point]): LineString  -->
-    <case type="ignore">
-        <sql>select st_makeLineString(?);</sql>
+    <case>
+        <sql type="query">select st_makeLineString(?);</sql>
         <assertion id="01" expected="stMake_002.xml"> </assertion>
     </case>
 
     <!--  传入linestring返回polygon  st_makePolygon(shell: LineString): Polygon  -->
-    <case type="query">
-        <sql>select st_makePolygon(?);</sql>
+    <case>
+        <sql type="query">select st_makePolygon(?);</sql>
         <assertion id="01" expected="stMake_003.xml">
             [st_lineStringFromGeoJSON('{ "type": "LineString", "coordinates": [ [30, 10], [10, 30], [40, 40] ] }')]
         </assertion>
@@ -42,8 +42,8 @@
 
     <!--  指定对角点的经纬度，生成矩形
         st_makeBBOX(lowerX: Double, lowerY: Double, upperX: Double, upperY: Double): Polygon  -->
-    <case type="query">
-        <sql>select st_makeBBOX(?, ?, ?, ?);</sql>
+    <case>
+        <sql type="query">select st_makeBBOX(?, ?, ?, ?);</sql>
         <assertion id="01" expected="stMake_004.xml">[1][1][2][2]</assertion>
         <assertion id="02" expected="error:参数有误">[1][1][2][1]</assertion>
         <assertion id="03" expected="error:参数有误">[1][1][1][2]</assertion>
@@ -53,8 +53,8 @@
     </case>
 
     <!--  指定对角点，生成矩形  st_makeBBOX(lowerLeft: Point, upperRight: Point): Polygon	  -->
-    <case type="query">
-        <sql>select st_makeBBOX(?, ?);</sql>
+    <case>
+        <sql type="query">select st_makeBBOX(?, ?);</sql>
         <assertion id="01" expected="stMake_005.xml">[st_makePoint(1, 1)][st_makePoint(1, 1)]</assertion>
         <assertion id="02" expected="stMake_005.xml">[st_geomFromWKT(1, 1)][st_geomFromWKT(1, 1)]</assertion>
         <assertion id="03" expected="error:参数有误">[st_makePoint(1, 1)][st_makePoint(2, 1)]</assertion>

@@ -14,10 +14,10 @@ package org.urbcomp.start.db.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CompareActualAndExpect {
+public class CompareResult {
 
     private final static Logger log = LoggerFactory.getLogger(
-        CompareActualAndExpect.class.getName()
+        CompareResult.class.getName()
     );
 
     /**
@@ -28,13 +28,20 @@ public class CompareActualAndExpect {
      * */
     public static void compareData(String actualValue, String expectValue) throws Exception {
         // todo 比较实际返回值或者实际抛出的异常是否与预期一致, 不一致就抛出异常
-        if (true) {
+        // 比较预期异常信息
+        if (expectValue.startsWith("error:")) {
 
-            log.info("正确返回结果");
+        // 比较预期结果
+        }else {
+            if (true) {
 
-        } else {
-            throw new Exception("返回结果有误");
+                log.info("正确返回结果");
+
+            } else {
+                throw new Exception("返回结果有误");
+            }
         }
+
     }
 
 }

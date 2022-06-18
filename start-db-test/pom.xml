@@ -22,4 +22,11 @@
         <module>start-db-test-geomesa-geotools</module>
         <module>start-db-test-integration-test</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.urbcomp</groupId>
+            <artifactId>start-db-core</artifactId>
+        </dependency>
+    </dependencies>
 </project>
