@@ -28,7 +28,10 @@ import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.transformer.TrajectoryAndFeatureTransformer
+import org.urbcomp.start.db.transformer.{
+  RoadSegmentAndGeomesaTransformer,
+  TrajectoryAndFeatureTransformer
+}
 
 import java.util
 
@@ -63,7 +66,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     }
 
     val affectedRows =
-      tableAccessor.insert(new Table(0L /* table Id */, db.getId, tableName, "hbase"), false);
+      tableAccessor.insert(new Table(0L /* unused */, db.getId, tableName, "hbase"), false);
     val createdTable = tableAccessor.selectByFidAndName(db.getId, tableName, false);
     val tableId = createdTable.getId
     val fieldAccessor = AccessorFactory.getFieldAccessor
@@ -84,14 +87,20 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
         case Geometry.TYPENAME_MULTIPOLYGON    => sfb.add(name, classOf[MultiPolygon], 4326)
         case Geometry.TYPENAME_GEOMETRYCOLLECTION =>
           sfb.add(name, classOf[GeometryCollection], 4326)
+        case "Geometry" => sfb.add(name, classOf[Geometry], 4326)
         // start db types
-        case "RoadSegment" => sfb.add(name, classOf[RoadSegment], 4326)
-        case "Trajectory"  => sfb.add(name, classOf[Trajectory], 4326)
+        case "RoadSegment" => sfb.add(name, classOf[RoadSegment])
+        case "Trajectory"  => sfb.add(name, classOf[Trajectory])
         // base types
         case "Integer"   => sfb.add(name, classOf[java.lang.Integer])
+        case "Long"      => sfb.add(name, classOf[java.lang.Long])
+        case "Float"     => sfb.add(name, classOf[java.lang.Float])
         case "Double"    => sfb.add(name, classOf[java.lang.Double])
         case "String"    => sfb.add(name, classOf[java.lang.String])
-        case "Timestamp" => sfb.add(name, classOf[java.lang.String])
+        case "Boolean"   => sfb.add(name, classOf[java.lang.Boolean])
+        case "Binary"    => sfb.add(name, classOf[java.sql.Blob])
+        case "Timestamp" => sfb.add(name, classOf[java.sql.Timestamp])
+        case "Datetime"  => sfb.add(name, classOf[java.sql.Date])
       }
       fieldAccessor.insert(new Field(0, tableId, name, dataType, 1), false)
     })
@@ -107,9 +116,13 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     }
 
     // TODO transform start db type
-
     var sft = sfb.buildFeatureType();
-    sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft);
+    sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft)
+    sft = new RoadSegmentAndGeomesaTransformer().getGeoMesaSFT(sft)
+
+    // allow mixed geometry types for support start-db type `Geometry`
+    sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
+
     dataStore.createSchema(sft);
     tableAccessor.commit()
     fieldAccessor.commit()
