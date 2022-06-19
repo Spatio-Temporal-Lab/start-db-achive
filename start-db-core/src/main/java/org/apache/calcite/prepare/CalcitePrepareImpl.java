@@ -74,12 +74,8 @@ import org.apache.calcite.tools.Frameworks;
 import org.apache.calcite.util.ImmutableIntList;
 import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
-import org.urbcomp.start.db.executor.ShowDatabaseExecutor;
 import org.urbcomp.start.db.executor.StartDBExecutorFactory;
-import org.urbcomp.start.db.infra.BaseExecutor;
-import org.urbcomp.start.db.infra.MetadataResult;
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase;
-import org.urbcomp.start.db.parser.dql.SqlShowDatabases;
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver;
 
 import java.lang.reflect.Type;
@@ -695,9 +691,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
             if (sqlNode.getKind().belongsTo(SqlKind.DDL)) {
 
                 if (sqlNode instanceof SqlCreateDatabase || sqlNode instanceof SqlCreateTable) {
-                    BaseExecutor executor = startDBExecutorFactory.convertExecutor(sqlNode);
-                    MetadataResult<Object> rs = executor.execute();
-                    return (CalciteSignature<T>) rs;
+                    return startDBExecutorFactory.convertExecutor(sqlNode).execute();
                 }
 
                 executeDdl(context, sqlNode);
@@ -718,23 +712,14 @@ public class CalcitePrepareImpl implements CalcitePrepare {
 
             // modify start
             switch (sqlNode.getKind()) {
-                case INSERT:
-                    BaseExecutor insertExecutor = startDBExecutorFactory.convertExecutor(sqlNode);
-                    return (CalciteSignature<T>) insertExecutor.execute();
-                case OTHER:
-                    if (sqlNode instanceof SqlShowDatabases) {
-                        ShowDatabaseExecutor executor = new ShowDatabaseExecutor(
-                            (SqlShowDatabases) sqlNode
-                        );
-                        return (CalciteSignature<T>) executor.execute();
-                    }
-                    return null;
                 case DELETE:
                     // ToDO
                     return null;
+                case OTHER:
+                case DESCRIBE_TABLE:
+                case INSERT:
                 case UPDATE:
-                    BaseExecutor updateExecutor = startDBExecutorFactory.convertExecutor(sqlNode);
-                    return (CalciteSignature<T>) updateExecutor.execute();
+                    return startDBExecutorFactory.convertExecutor(sqlNode).execute();
                 case EXPLAIN:
                     // FIXME: getValidatedNodeType is wrong for DML
                     final SqlValidator explainValidator = createSqlValidator(

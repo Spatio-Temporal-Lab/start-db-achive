@@ -9,9 +9,20 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.infra
+package org.urbcomp.start.db.executor
 
-abstract class BaseExecutor {
+import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 
-  def execute[T](): MetadataResult[T]
+import scala.language.higherKinds
+
+/**
+  * @author jimo
+  * */
+case class ShowStatusExecutor() extends BaseExecutor {
+
+  override def execute[Array](): MetadataResult[Array] = {
+    MetadataResult
+      .buildResult(Array("Variable_name", "Value"), java.util.Arrays.asList(Array("status", "ok")))
+      .asInstanceOf[MetadataResult[Array]]
+  }
 }

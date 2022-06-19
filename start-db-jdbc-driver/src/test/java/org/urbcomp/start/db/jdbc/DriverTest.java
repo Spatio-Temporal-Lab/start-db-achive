@@ -16,8 +16,7 @@ import org.junit.Test;
 
 import java.sql.*;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Ignore
 public class DriverTest {
@@ -81,6 +80,49 @@ public class DriverTest {
                 }
                 System.out.println();
             }
+        }
+    }
+
+    @Test
+    public void testShowCreateTable() throws SQLException {
+        try (
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
+        ) {
+            final Statement stmt = conn.createStatement();
+
+            final ResultSet rs = stmt.executeQuery("show create table `start_db.db_test.t_test`");
+            final ResultSetMetaData md = rs.getMetaData();
+            while (rs.next()) {
+                for (int i = 1; i <= md.getColumnCount(); i++) {
+                    System.out.print(rs.getObject(i) + ",");
+                }
+                System.out.println();
+            }
+        }
+    }
+
+    @Test
+    public void testBatchInsert() throws SQLException {
+        try (
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
+        ) {
+            final Statement stmt = conn.createStatement();
+
+            for (int i = 0; i < 10; i++) {
+                stmt.addBatch(
+                    "Insert into t_test (idx, ride_id, start_point) values (171, '05608CC867EBDF63', st_makePoint(2.1, 2))"
+                );
+            }
+            final int[] res = stmt.executeBatch();
+            assertEquals(10, res.length);
         }
     }
 }

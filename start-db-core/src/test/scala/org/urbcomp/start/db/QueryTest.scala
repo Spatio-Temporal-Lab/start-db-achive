@@ -11,10 +11,9 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.{assertEquals, assertTrue}
+import org.junit.Assert.assertTrue
 
 import java.sql.Timestamp
-import java.util.Date
 
 class QueryTest extends AbstractCalciteFunctionTest {
 
@@ -32,10 +31,9 @@ class QueryTest extends AbstractCalciteFunctionTest {
     while (rs.next()) {
       for (i <- 1 until cnt) {
         if (!md.getColumnClassName(i).equals(classOf[Timestamp].getCanonicalName)) {
-          print(rs.getObject(i) + ", ")
+          rs.getObject(i)
         }
       }
-      println()
     }
   }
 }
