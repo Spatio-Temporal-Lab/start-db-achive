@@ -23,6 +23,7 @@ import org.locationtech.jts.geom.{
   Point,
   Polygon
 }
+import org.urbcomp.start.db.`type`.TypeHelper
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
@@ -76,7 +77,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
       val node = column.asInstanceOf[SqlColumnDeclaration]
       val name = node.name.names.get(0);
       // TODO: unify typename when parse sql
-      val dataType = node.dataType.getTypeName.names.get(0);
+      val dataType = TypeHelper.normalizeType(node.dataType.getTypeName.names.get(0));
       dataType match {
         // geometry types
         case Geometry.TYPENAME_POINT           => sfb.add(name, classOf[Point], 4326)
