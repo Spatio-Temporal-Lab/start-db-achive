@@ -53,13 +53,13 @@ public class RoadFunction {
         );
     }
 
-    @StartDBFunction("st_makeRoadNetwork")
-    public RoadNetwork st_makeRoadNetwork(List<RoadSegment> rsList) throws JsonProcessingException {
+    @StartDBFunction("st_rn_makeRoadNetwork")
+    public RoadNetwork st_rn_makeRoadNetwork(List<RoadSegment> rsList) throws JsonProcessingException {
         return new RoadNetwork(rsList);
     }
 
-    @StartDBFunction("st_makeRoadSegment")
-    public RoadSegment st_makeRoadSegment(String geoJson) throws JsonProcessingException {
+    @StartDBFunction("st_rs_fromGeoJSON")
+    public RoadSegment st_rs_fromGeoJSON(String geoJson) throws JsonProcessingException {
         return RoadSegment.fromGeoJSON(geoJson);
     }
 
