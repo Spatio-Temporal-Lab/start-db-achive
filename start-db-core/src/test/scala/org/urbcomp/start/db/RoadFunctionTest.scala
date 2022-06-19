@@ -70,7 +70,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   test("st_rs_rsid") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_rs_rsid(st_makeRoadSegment(\'" + rsGeoJson + "\'))")
+      statement.executeQuery("select st_rs_rsid(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
     resultSet.next()
     assertEquals(rs.getRoadSegmentId.toString, resultSet.getObject(1))
   }
@@ -78,7 +78,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   test("st_rs_geom") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_rs_geom(st_makeRoadSegment(\'" + rsGeoJson + "\'))")
+      statement.executeQuery("select st_rs_geom(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
     resultSet.next()
     assertNotNull(resultSet.getObject(1))
   }
@@ -86,7 +86,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   test("st_rs_direction") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_rs_direction(st_makeRoadSegment(\'" + rsGeoJson + "\'))")
+      statement.executeQuery("select st_rs_direction(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
     resultSet.next()
     assertEquals(rs.getDirection.toString, resultSet.getObject(1))
   }
@@ -95,7 +95,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
     val statement = connect.createStatement
     val resultSet =
       statement.executeQuery(
-        "select st_rs_speedLimitInKMPerHour(st_makeRoadSegment(\'" + rsGeoJson + "\'))"
+        "select st_rs_speedLimitInKMPerHour(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
       )
     resultSet.next()
     assertEquals(rs.getSpeedLimit, resultSet.getObject(1))
@@ -104,7 +104,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   test("st_rs_level") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_rs_level(st_makeRoadSegment(\'" + rsGeoJson + "\'))")
+      statement.executeQuery("select st_rs_level(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
     resultSet.next()
     assertEquals(rs.getLevel.value(), resultSet.getObject(1))
   }
@@ -112,7 +112,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   test("st_rs_startId") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_rs_startId(st_makeRoadSegment(\'" + rsGeoJson + "\'))")
+      statement.executeQuery("select st_rs_startId(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
     resultSet.next()
     assertEquals(rs.getStartNode.getNodeId.toString, resultSet.getObject(1))
   }
@@ -120,7 +120,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   test("st_rs_endId") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_rs_endId(st_makeRoadSegment(\'" + rsGeoJson + "\'))")
+      statement.executeQuery("select st_rs_endId(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
     resultSet.next()
     assertEquals(rs.getEndNode.getNodeId.toString, resultSet.getObject(1))
   }
@@ -128,7 +128,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   test("st_rs_lengthInKM") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_rs_lengthInKM(st_makeRoadSegment(\'" + rsGeoJson + "\'))")
+      statement.executeQuery("select st_rs_lengthInKM(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
     resultSet.next()
     assertEquals(rs.getLengthInMeter / 1000, resultSet.getObject(1))
   }
