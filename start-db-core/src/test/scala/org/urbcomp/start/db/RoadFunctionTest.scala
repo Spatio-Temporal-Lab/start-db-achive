@@ -50,7 +50,9 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   test("st_rn_makeRoadNetwork") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_rn_makeRoadNetwork(collect_list(b)) from t_road_segment_test")
+      statement.executeQuery(
+        "select st_rn_makeRoadNetwork(collect_list(b)) from t_road_segment_test"
+      )
     resultSet.next()
     assertEquals(
       "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",

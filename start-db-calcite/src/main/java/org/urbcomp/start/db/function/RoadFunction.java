@@ -54,7 +54,8 @@ public class RoadFunction {
     }
 
     @StartDBFunction("st_rn_makeRoadNetwork")
-    public RoadNetwork st_rn_makeRoadNetwork(List<RoadSegment> rsList) throws JsonProcessingException {
+    public RoadNetwork st_rn_makeRoadNetwork(List<RoadSegment> rsList)
+        throws JsonProcessingException {
         return new RoadNetwork(rsList);
     }
 
