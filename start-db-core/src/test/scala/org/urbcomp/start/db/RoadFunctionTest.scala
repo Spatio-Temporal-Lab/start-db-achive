@@ -47,10 +47,10 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
-  test("st_makeRoadNetwork") {
+  test("st_rn_makeRoadNetwork") {
     val statement = connect.createStatement
     val resultSet =
-      statement.executeQuery("select st_makeRoadNetwork(collect_list(b)) from t_road_segment_test")
+      statement.executeQuery("select st_rn_makeRoadNetwork(collect_list(b)) from t_road_segment_test")
     resultSet.next()
     assertEquals(
       "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",
@@ -58,9 +58,9 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
-  test("st_makeRoadSegment") {
+  test("st_rs_fromGeoJSON") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery("select st_makeRoadSegment(\'" + rsGeoJson + "\')")
+    val resultSet = statement.executeQuery("select st_rs_fromGeoJSON(\'" + rsGeoJson + "\')")
     resultSet.next()
     assertEquals(rs, resultSet.getObject(1))
   }
