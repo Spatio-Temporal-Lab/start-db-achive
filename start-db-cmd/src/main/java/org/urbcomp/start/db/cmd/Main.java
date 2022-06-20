@@ -11,11 +11,14 @@
 
 package org.urbcomp.start.db.cmd;
 
+import org.locationtech.jts.util.Assert;
 import sqlline.BuiltInProperty;
 import sqlline.SqlLine;
 import sqlline.SqlLineOpts;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Entry of CMD
@@ -24,11 +27,37 @@ import java.io.IOException;
  **/
 public class Main {
 
+    private static class CmdArg {
+        String username;
+        String password;
+        String url = "jdbc:start-db:url=http://127.0.0.1:8000";
+
+        boolean check() {
+            return username != null && password != null && url != null;
+        }
+
+        @Override
+        public String toString() {
+            return "username='" + username + '\'' +
+                    ", password='" + password + '\'' +
+                    ", url='" + url + '\'';
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        int i = args.length;
-        String[] startArgs = new String[i + 2];
-        startArgs[i++] = "-ac";
-        startArgs[i] = StartApplication.class.getCanonicalName();
+        CmdArg cmdArg = parseArgs(args);
+        Assert.isTrue(cmdArg.check(), "missing params: " + cmdArg);
+        Map<String, String> paramKv = new HashMap<>(8);
+        paramKv.put("-ac", StartApplication.class.getCanonicalName());
+        paramKv.put("-n", cmdArg.username);
+        paramKv.put("-p", cmdArg.password);
+        paramKv.put("-u", cmdArg.url);
+        String[] startArgs = new String[paramKv.size() * 2];
+        int i = -1;
+        for (Map.Entry<String, String> e : paramKv.entrySet()) {
+            startArgs[++i] = e.getKey();
+            startArgs[++i] = e.getValue();
+        }
         SqlLine sqlline = new SqlLine();
         final SqlLineOpts sqlLineOpts = new SqlLineOpts(sqlline);
         sqlLineOpts.set(BuiltInProperty.PROMPT, "start-db> ");
@@ -38,5 +67,24 @@ public class Main {
         if (!Boolean.getBoolean(SqlLineOpts.PROPERTY_NAME_EXIT)) {
             System.exit(status.ordinal());
         }
+    }
+
+    private static CmdArg parseArgs(String[] args) {
+        final CmdArg cmdArg = new CmdArg();
+        for (int i = 0; i < args.length - 1; i++) {
+            switch (args[i]) {
+                case "-u":
+                    cmdArg.username = args[++i];
+                    break;
+                case "-p":
+                    cmdArg.password = args[++i];
+                    break;
+                case "-r":
+                    cmdArg.url = args[++i];
+                    break;
+                default:
+            }
+        }
+        return cmdArg;
     }
 }
