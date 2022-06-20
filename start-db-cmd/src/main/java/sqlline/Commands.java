@@ -2018,15 +2018,15 @@ public class Commands {
                 cnt++;
                 if (cnt % bufSize == 0) {
                     statement.executeBatch();
-                    sqlLine.info("Have inserted " + cnt + " lines.");
+                    sqlLine.info("Have executed " + cnt + " lines.");
                     cnt = 0;
                 }
             }
             if (cnt % bufSize != 0) {
                 statement.executeBatch();
-                sqlLine.info("Have inserted " + cnt + " lines.");
+                sqlLine.info("Have executed " + cnt + " lines.");
             }
-            sqlLine.info("insert finished.");
+            sqlLine.info("executed finished.");
             callback.setToSuccess();
         } catch (IOException | SQLException e) {
             sqlLine.error(e);
