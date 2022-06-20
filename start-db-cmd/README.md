@@ -31,3 +31,12 @@ start-db> select count(1) from citibike_tripdata;
 start-db> !exit
 ```
 
+# source
+
+execute multi insert from a file.
+
+```shell
+0: jdbc:start-db:url=http://127.0.0.1:8000> !source D:\workspace\git\start-db\start-db-cmd\src\test\resources\t_test_update.sql
+Have inserted 64 lines.
+insert finished.
+```
