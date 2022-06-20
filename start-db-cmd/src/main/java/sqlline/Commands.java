@@ -11,10 +11,7 @@
 */
 package sqlline;
 
-import org.jline.reader.History;
-import org.jline.reader.MaskingCallback;
-import org.jline.reader.Parser;
-import org.jline.reader.UserInterruptException;
+import org.jline.reader.*;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedString;
@@ -1995,9 +1992,39 @@ public class Commands {
 
     // start-db add start
     public void source(String line, DispatchCallback callback) {
-        sqlLine.info("usage: !source 'path/data-file.csv'");
-
-        callback.setToSuccess();
+        final String[] tokens = line.split("\\s+");
+        if (tokens.length < 2) {
+            sqlLine.info("usage: !source path/data-file.csv");
+            callback.setToCancel();
+            return;
+        }
+        String filePath = tokens[1];
+        final File file = new File(filePath);
+        if (!file.exists()) {
+            sqlLine.error(String.format("file: %s not exists.", filePath));
+            callback.setToFailure();
+            return;
+        }
+        int bufSize = 64;
+        try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            final Statement statement = sqlLine.getConnection().createStatement();
+            String insertSql;
+            int cnt = 0;
+            while ((insertSql = reader.readLine()) != null) {
+                statement.addBatch(insertSql);
+                cnt++;
+                if (cnt % bufSize == 0) {
+                    final int[] res = statement.executeBatch();
+                    sqlLine.info("Have inserted " + cnt + " lines.");
+                    cnt = 0;
+                }
+            }
+            sqlLine.info("insert finished.");
+            callback.setToSuccess();
+        } catch (IOException | SQLException e) {
+            sqlLine.error(e);
+            callback.setToFailure();
+        }
     }
     // start-db add end
 
