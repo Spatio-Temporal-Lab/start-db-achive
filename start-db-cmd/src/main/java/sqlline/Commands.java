@@ -11,7 +11,10 @@
 */
 package sqlline;
 
-import org.jline.reader.*;
+import org.jline.reader.History;
+import org.jline.reader.MaskingCallback;
+import org.jline.reader.Parser;
+import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedString;
@@ -2014,10 +2017,14 @@ public class Commands {
                 statement.addBatch(insertSql);
                 cnt++;
                 if (cnt % bufSize == 0) {
-                    final int[] res = statement.executeBatch();
+                    statement.executeBatch();
                     sqlLine.info("Have inserted " + cnt + " lines.");
                     cnt = 0;
                 }
+            }
+            if (cnt % bufSize != 0) {
+                statement.executeBatch();
+                sqlLine.info("Have inserted " + cnt + " lines.");
             }
             sqlLine.info("insert finished.");
             callback.setToSuccess();
