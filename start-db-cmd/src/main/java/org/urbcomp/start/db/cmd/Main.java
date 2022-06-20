@@ -25,11 +25,15 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+        int i = args.length;
+        String[] startArgs = new String[i + 2];
+        startArgs[i++] = "-ac";
+        startArgs[i] = StartApplication.class.getCanonicalName();
         SqlLine sqlline = new SqlLine();
         final SqlLineOpts sqlLineOpts = new SqlLineOpts(sqlline);
         sqlLineOpts.set(BuiltInProperty.PROMPT, "start-db> ");
         sqlline.setOpts(sqlLineOpts);
-        SqlLine.Status status = sqlline.begin(args, null, true);
+        SqlLine.Status status = sqlline.begin(startArgs, null, true);
 
         if (!Boolean.getBoolean(SqlLineOpts.PROPERTY_NAME_EXIT)) {
             System.exit(status.ordinal());
