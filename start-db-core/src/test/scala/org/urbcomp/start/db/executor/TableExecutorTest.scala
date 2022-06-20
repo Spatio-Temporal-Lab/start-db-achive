@@ -30,11 +30,12 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                                         |    track LineString,
                                         |    member_casual String,
                                         |    tr Trajectory
+                                        |    rs RoadSegment
+                                        |    gm Geometry
                                         |);""".format(randomNum).stripMargin
 
   test("test create table") {
     val stmt = connect.createStatement()
     stmt.executeUpdate(CREATE_TABLE_EXAMPLE)
   }
-
 }
