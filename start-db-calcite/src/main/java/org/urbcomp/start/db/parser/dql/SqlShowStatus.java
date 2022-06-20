@@ -22,35 +22,27 @@
 
 package org.urbcomp.start.db.parser.dql;
 
-import org.apache.calcite.sql.SqlIdentifier;
-import org.apache.calcite.sql.SqlKind;
-import org.apache.calcite.sql.SqlNode;
-import org.apache.calcite.sql.SqlOperator;
-import org.apache.calcite.sql.SqlSpecialOperator;
-import org.apache.calcite.sql.SqlWriter;
+import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.parser.SqlParserPos;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class SqlShowCreateTable extends SqlShowCreate {
+/**
+ * for mysql
+ *
+ * @author jimo
+ **/
+public class SqlShowStatus extends SqlCall {
 
     public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
-        "SHOW CREATE TABLE",
-        SqlKind.DESCRIBE_TABLE
+        "SHOW STATUS",
+        SqlKind.OTHER
     );
 
-    public SqlShowCreateTable(SqlParserPos pos, SqlIdentifier tableName) {
-        super(pos, tableName);
-    }
-
-    public SqlIdentifier getTableName() {
-        return sqlIdentifier;
-    }
-
-    public String[] getFullTableName() {
-        return sqlIdentifier.names.toArray(new String[0]);
+    public SqlShowStatus(SqlParserPos pos) {
+        super(pos);
     }
 
     @Nonnull
@@ -62,12 +54,11 @@ public class SqlShowCreateTable extends SqlShowCreate {
     @Nonnull
     @Override
     public List<SqlNode> getOperandList() {
-        return Collections.singletonList(sqlIdentifier);
+        return Collections.emptyList();
     }
 
     @Override
     public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
-        writer.keyword("SHOW CREATE TABLE");
-        sqlIdentifier.unparse(writer, leftPrec, rightPrec);
+        writer.keyword("SHOW STATUS");
     }
 }

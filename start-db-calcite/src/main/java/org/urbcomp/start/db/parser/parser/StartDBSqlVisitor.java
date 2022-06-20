@@ -96,6 +96,13 @@ public interface StartDBSqlVisitor<T> extends ParseTreeVisitor<T> {
     T visitShowCreateTableStmt(StartDBSqlParser.ShowCreateTableStmtContext ctx);
 
     /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#showStatusStmt}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitShowStatusStmt(StartDBSqlParser.ShowStatusStmtContext ctx);
+
+    /**
      * Visit a parse tree produced by {@link StartDBSqlParser#createTableStmt}.
      * @param ctx the parse tree
      * @return the visitor result

@@ -17,7 +17,7 @@ import org.urbcomp.start.db.metadata.entity.Database
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase
 
 case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
-  override def execute(): MetadataResult[Int] = {
+  override def execute[Int](): MetadataResult[Int] = {
     // TODO: get username from context
     val userName = "start_db";
     val databaseAccessor = AccessorFactory.getDatabaseAccessor

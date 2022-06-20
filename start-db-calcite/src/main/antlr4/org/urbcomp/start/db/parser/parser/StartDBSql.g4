@@ -24,6 +24,7 @@ stmt :
      | showDatabasesStmt
      | showTablesStmt
      | showCreateTableStmt
+     | showStatusStmt
      | insertStmt
      | updateStmt
      | deleteStmt
@@ -60,6 +61,10 @@ assignmentStmtSelectItem :
 
 showCreateTableStmt :
        T_SHOW T_CREATE T_TABLE relation=ident
+     ;
+
+showStatusStmt :
+       T_SHOW T_STATUS
      ;
 
 createTableStmt :
@@ -1270,6 +1275,7 @@ T_SQLWARNING      : S Q L W A R N I N G ;
 T_SRID            : S R I D ;
 T_STATS           : S T A T S ;
 T_STATISTICS      : S T A T I S T I C S ;
+T_STATUS          : S T A T U S ;
 T_STEP            : S T E P ;
 T_STORAGE         : S T O R A G E ;
 T_STORE           : S T O R E;

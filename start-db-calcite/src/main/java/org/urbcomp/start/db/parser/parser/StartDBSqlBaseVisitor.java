@@ -143,6 +143,17 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
+    public T visitShowStatusStmt(StartDBSqlParser.ShowStatusStmtContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
     public T visitCreateTableStmt(StartDBSqlParser.CreateTableStmtContext ctx) {
         return visitChildren(ctx);
     }
@@ -757,7 +768,6 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      */
     @Override
     public T visitWhereClause(StartDBSqlParser.WhereClauseContext ctx) {
-
         return visitChildren(ctx);
     }
 
