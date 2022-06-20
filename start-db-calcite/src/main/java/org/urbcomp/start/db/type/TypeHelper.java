@@ -40,6 +40,7 @@ public class TypeHelper {
         "Geometry",
         "RoadSegment",
         "Trajectory",
+        "RoadNetwork",
         "Integer",
         "Long",
         "Float",

@@ -29,9 +29,10 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                                         |    end_point Point,
                                         |    track LineString,
                                         |    member_casual String,
-                                        |    tr Trajectory
-                                        |    rs RoadSegment
-                                        |    gm Geometry
+                                        |    tr Trajectory,
+                                        |    rs RoadSegment,
+                                        |    gm Geometry,
+                                        |    rn RoadNetwork
                                         |);""".format(randomNum).stripMargin
 
   test("test create table") {

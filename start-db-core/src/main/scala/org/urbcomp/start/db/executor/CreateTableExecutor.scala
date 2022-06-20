@@ -92,6 +92,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
         // start db types
         case "RoadSegment" => sfb.add(name, classOf[RoadSegment])
         case "Trajectory"  => sfb.add(name, classOf[Trajectory])
+        case "RoadNetwork" => sfb.add(name, classOf[java.lang.String]) // temporary
         // base types
         case "Integer"   => sfb.add(name, classOf[java.lang.Integer])
         case "Long"      => sfb.add(name, classOf[java.lang.Long])
