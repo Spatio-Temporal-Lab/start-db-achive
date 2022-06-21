@@ -11,37 +11,44 @@
 
 package org.urbcomp.start.db.test;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+
+import static org.urbcomp.start.db.test.GetData.dataTransform;
 
 public class CompareResult {
 
-    private final static Logger log = LoggerFactory.getLogger(
-        CompareResult.class.getName()
-    );
-
     /**
-     * 比较实际返回值或者实际抛出的异常是否符合预期, 不一致就抛出异常
+     * 比较字符串数组格式的实际实际结果与预期结果
      *
-     * @param actualValue 实际返回内容
-     * @param expectValue 预期返回内容
+     * @param actualArray 实际返回内容
+     * @param expectArray 预期返回内容
      * */
-    public static void compareData(String actualValue, String expectValue) throws Exception {
-        // todo 比较实际返回值或者实际抛出的异常是否与预期一致, 不一致就抛出异常
+    public static void compareArrayData(
+        ArrayList<String> actualArray,
+        ArrayList<String> expectArray
+    ) throws Exception {
         // 比较预期异常信息
-        if (expectValue.startsWith("error:")) {
-
-        // 比较预期结果
-        }else {
-            if (true) {
-
-                log.info("正确返回结果");
-
-            } else {
-                throw new Exception("返回结果有误");
+        if (expectArray.get(0).startsWith("error:")) {
+            String expect = expectArray.get(0);
+            String actual = actualArray.get(0);
+            expect = expect.replace("error:", "").trim();
+            if (actual.contains(expect)) {
+                throw new Exception("异常不符合预期");
+            }
+            // 比较预期结果
+        } else {
+            if (actualArray.size() == expectArray.size()) {
+                throw new Exception("预期结果数与实际返回结果数不一致");
+            }
+            for (int i = 1; i < actualArray.size(); i++) {
+                // 预期数据的替换
+                String expectStr = dataTransform(expectArray.toString());
+                // 判断实际返回的每一行数据是否都在预期值中
+                if (expectStr.contains(actualArray.get(i))) {
+                    throw new Exception("返回数据有误");
+                }
             }
         }
-
     }
 
 }

@@ -12,8 +12,10 @@
 package org.urbcomp.start.db.test;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
-import java.nio.file.Path;
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -23,48 +25,43 @@ import org.slf4j.LoggerFactory;
 import static org.urbcomp.start.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
 
-
-import java.nio.file.Paths;
-import java.util.Properties;
-
 public class MainTest {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Test
-    public void test() throws SQLException {
-        Connection connect;
-        Path path = Paths.get("E:\\GitHub\\start-db\\start-db-server\\src\\main\\resources\\model.json");
-        System.out.println(path);
-        String url = path.toAbsolutePath().toString();
-        System.out.println(url);
-        Properties config = new Properties();
-        config.put("model", url);
-        config.put("caseSensitive", "false");
-        connect = DriverManager.getConnection("jdbc:calcite:fun=spatial", config);
+    public void testPath() throws IOException {
+        String xmlPath = Objects.requireNonNull(
+                RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
+        ).getPath();
+        String parentPath = new File(xmlPath).getParentFile().getAbsolutePath();
+        String path = parentPath + File.separator + "autoExpect";
+        File folder = new File(path);
+        if (!folder.exists() && !folder.isDirectory()){
+            boolean mkdir = folder.mkdirs();
+            System.out.println("创建文件夹autoExpect:" + mkdir);
+        }
+        File file = new File(path + File.separator + "abc.xml");
+        if (!file.exists() && !file.isFile()) {
+            boolean newFile = file.createNewFile();
+            System.out.println("创建文件:" + newFile);
+        }
 
-        Statement statement = connect.createStatement();
-        ResultSet resultSet = statement.executeQuery("select 1+1");
 
-        Object object = resultSet.getObject(1);
-        System.out.println(object);
-
-        connect.close();
     }
 
     @Test
+    @Ignore
     public void singleSQLCaseTest() throws Exception {
-
         String xmlResource = Objects.requireNonNull(
-            RunSingleSQLCase.class.getClassLoader().getResource("cases/dml/dml.xml")
+            RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
         ).getPath();
         log.info("xmlResource:" + xmlResource);
         runSingleCase(xmlResource);
-
     }
 
     @Test
+    @Ignore
     public void allSQLCaseTest() throws Exception {
-        // 获取所有sqlCase的xml文件路径
         ArrayList<String> sqlCaseXMLs = getSqlCaseXMLs();
         // 遍历
         for (String sqlCaseXML : sqlCaseXMLs) {
@@ -73,5 +70,103 @@ public class MainTest {
         }
     }
 
+    @Test
+    @Ignore
+    public void singleUpdateSql() throws SQLException {
+        try (
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
+        ) {
+            Statement stmt = conn.createStatement();
+            String sql = "create table all_Type ("
+                + "int1 int, "
+                + "int2 integer, "
+                + "long_ long,"
+                + "float_ float,"
+                + "double_ double,"
+                + "string_ string,"
+                + "boolean1 bool,"
+                + "boolean2 boolean,"
+                + "binary_ binary,"
+                + "datetime_ datetime,"
+                + "timestamp_ timestamp,"
+                + "geometry_ geometry,"
+                + "point_ point,"
+                + "linestring_ linestring,"
+                + "polygon_ polygon,"
+                + "MultiPoint_ multipoint,"
+                + "MultiLineString_ MultiLineString,"
+                + "MultiPolygon_ MultiPolygon,"
+                + "GeometryCollection_ GeometryCollection,"
+                + "traj trajectory,"
+                + "road1 roadSegment,"
+                + "road2 roadNetwork"
+                + ")";
+            int rowCount = stmt.executeUpdate(sql);
+            System.out.println(rowCount);
+            stmt.close();
+        }
+    }
+
+    @Test
+    @Ignore
+    public void singleQuerySql() throws SQLException {
+        Connection connect;
+        try (
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
+        ) {
+            Statement stmt = conn.createStatement();
+            // final ResultSet rs = stmt.executeQuery("select st_aswkt(st_makepoint(10,20))");
+            ResultSet rs = stmt.executeQuery("select * from t_test order by idx;");
+
+            int columnCount = rs.getMetaData().getColumnCount();
+            System.out.println("col:" + columnCount);
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.print(rs.getMetaData().getColumnName(i) + "\t");
+            }
+            System.out.println();
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.print(rs.getMetaData().getColumnTypeName(i) + "\t");
+            }
+            System.out.println();
+            while (rs.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    System.out.print(rs.getObject(i) + "\t");
+                }
+                System.out.println();
+            }
+            rs.close();
+            stmt.close();
+        }
+    }
+
+    @Test
+    @Ignore
+    public void singleQuerySql2() throws SQLException {
+        Connection connect;
+        try (
+            Connection conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            )
+        ) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("show databases");
+            ArrayList<String> result = GetData.getResultArray(rs);
+            for (String row : result) {
+                System.out.println(row);
+            }
+            rs.close();
+            stmt.close();
+        }
+    }
 
 }

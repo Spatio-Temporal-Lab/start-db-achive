@@ -17,16 +17,35 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import static org.urbcomp.start.db.test.CompareResult.compareData;
-import static org.urbcomp.start.db.test.GetSQLAndExpectData.getExpectData;
-import static org.urbcomp.start.db.test.GetSQLAndExpectData.getSqlWithParam;
+import static org.urbcomp.start.db.test.GetData.*;
 
 public class RunSingleSQLCase {
     // 用一个静态变量来控制出现报错后是否继续执行, 是否抛出异常
     static boolean ERROR_STOP = true;
+    static Statement STMT;
+    static String DBNAME;
+    static Date START_TIME;
     private final static Logger log = LoggerFactory.getLogger(RunSingleSQLCase.class);
+
+    public static Connection getConnect() throws Exception {
+        Connection conn;
+        try {
+            conn = DriverManager.getConnection(
+                "jdbc:start-db:url=http://127.0.0.1:8000",
+                "start_db",
+                "start-db"
+            );
+        } catch (Exception e) {
+            throw new Exception("start-db 创建connect失败");
+        }
+        return conn;
+    }
 
     /**
      * 执行指定xml文件中的sql用例并对返回值进行校验
@@ -34,7 +53,18 @@ public class RunSingleSQLCase {
      * @param xmlPath xml文件路径
      * */
     public static void runSingleCase(String xmlPath) throws Exception {
+        START_TIME = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("MMdd_HHmmss");
         try {
+            Connection connect = getConnect();
+
+            // todo 创建测试数据库并use
+            // DBNAME = String.format("td_%s", ft.format(START_TIME));
+            // Statement statement = connect.createStatement();
+            // statement.executeUpdate("create database is not exists " + DBNAME);
+            // statement.executeUpdate("use " + DBNAME);
+            // statement.close();
+
             SAXReader saxReader = new SAXReader();
             Document document = saxReader.read(xmlPath);
             Element rootElement = document.getRootElement();
@@ -44,91 +74,123 @@ public class RunSingleSQLCase {
             for (Element caseElement : caseElements) {
                 // 获取case标签下的所有子标签列表
                 List<Element> elements = caseElement.elements();
-                // 第一个标签一定是sql, 如果不是, 抛异常
+                // 第一个标签一定是sql
                 if (elements.get(0).getName().equals("sql")) {
-                    throw new Exception("case标签的内容有误");
-//                        log.info  然后continue
+                    log.info("case的子标签内容有误, 跳过执行");
+                    continue;
                 }
                 // 遍历单个case标签内的子标签列表
-                for (int i = 0; i < elements.size(); i++){
+                String initSql = "";
+                String sqlType = "";
+                ArrayList<String> actualArray = new ArrayList<>();
+                for (int i = 0; i < elements.size(); i++) {
+                    // 每次执行sql都需要重新创建 Statement
+                    STMT = connect.createStatement();
+
                     Element element = elements.get(i);
                     String elementName = element.getName();
-                    String initSql = "";
-                    String sqlType = "";
-                    String actualValue = "";
 
-                    // 如果标签为sql标签
-                    if (elementName.equals("sql")){
+                    if (elementName.equals("sql")) {
                         sqlType = element.attributeValue("type");
                         initSql = element.getText();
                         // 检查是否需要拼接参数
-                        if (!initSql.contains("?")){
-                            // 执行sql
-                            actualValue = executeSql(initSql, sqlType);
+                        if (!initSql.contains("?")) {
+                            log.info("执行sql:" + initSql);
+                            // 执行sql, 获取返回值
+                            // 执行sql的替换
+                            initSql = dataTransform(initSql);
+                            actualArray = executeSql(initSql, sqlType);
+                            // 比较预期结果和预期异常信息都在assertion标签中执行
+                            // 如果下一个标签不是assertion标签, 需要直接判断返回结果
+                            // 条件: 当前sql标签的类型必须为update, 且正确执行无异常
+                            boolean isAssertion = false;
+                            // 如果有下一个标签, 且标签为assertion, 则值为true
+                            if (i + 1 < elements.size()) {
+                                isAssertion = elements.get(i + 1).getName().equals("assertion");
+                            }
+                            if (sqlType.equals("update")
+                                && !isAssertion
+                                && actualArray.size() == 0) {
+                                throw new Exception("sql执行有误" + initSql);
+                            } else if (sqlType.equals("query") && !isAssertion) {
+                                throw new Exception("query标签无预期数据");
+                            } else {
+                                log.info("执行完成");
+                            }
                         }
-                        // 如果标签为assertion标签
-
-                    }else if (elementName.equals("assertion")) {
+                    } else if (elementName.equals("assertion")) {
                         String params = element.getText();
                         String paramId = element.attributeValue("paramId");
                         String expected = element.attributeValue("expected");
 
                         // 1. 有参数的话就重新拼接sql, 执行, 获取返回值
                         if (params != null) {
-                            // 解析参数 将参数和sql进行拼接, 得到拼接后的sql
+                            // 将参数和sql进行拼接
                             String sqlWithParam = getSqlWithParam(initSql, params);
-
-                            // 2. 根据type来执行sql, 预期值重新赋值
-                            actualValue = executeSql(sqlType, sqlWithParam);
+                            log.info("执行sql:" + sqlWithParam);
+                            // 2. 根据type来执行sql, 拿到实际结果
+                            sqlWithParam = dataTransform(sqlWithParam);
+                            actualArray = executeSql(sqlType, sqlWithParam);
                         }
 
                         // 2. 获取预期结果或者预期异常
-                        String expectValue = "";
+                        ArrayList<String> expectArray = new ArrayList<>();
+                        // id不为null, 说明有返回值
                         if (paramId != null && expected != null) {
                             // 获取预期结果
-                            getExpectData(expected, xmlPath, paramId);
-                            expectValue = "";
-                        } else if (paramId == null && expected != null){
-                            // 获取预期异常
-                            expectValue = expected.replace("error:", "").trim();
+                            expectArray = getExpectDataArray(expected, xmlPath, paramId);
+                            // id为null, 说明为预期异常
+                        } else if (paramId == null && expected != null) {
+                            expectArray.add(expected);
                         }
 
                         // 3. 有预期结果或者预期异常时, 与实际返回值进行比较
-                        if (!expectValue.equals("")){
-                            compareData(actualValue, expectValue);
+                        if (expectArray.size() != 0) {
+                            // todo 待完善
+                            // compareArrayData(actualArray, expectArray);
                         }
                     }
-
+                    STMT.close();
                 }
 
             }
+            connect.close();
         } catch (Exception e) {
             if (ERROR_STOP) {
                 throw new Exception(e.getMessage());
             }
         }
+        log.info("用例执行结束");
     }
 
-    private static String executeSql(String sqlType, String sql) {
-        String actualValue = "";
-        try{
-            switch (sqlType){
+    /**
+     * 根据sql的type类型执行sql, 并返回结果
+     *
+     * @param sql 可执行的sql
+     * @param sqlType sql的类型
+     * @return sql执行后得到的返回值
+     * */
+    public static ArrayList<String> executeSql(String sqlType, String sql) {
+        ArrayList<String> actualValue = new ArrayList<>();
+        try {
+            switch (sqlType) {
                 case "update":
-                    // 执行sql
+                    STMT.executeUpdate(sql);
                     break;
                 case "query":
-                    // 执行sql 并拿到实际返回结果
-                    actualValue = "returnData";
+                    ResultSet result = STMT.executeQuery(sql);
+                    actualValue = GetData.getResultArray(result);
+                    result.close();
                     break;
                 case "ignore":
-                    // log.info 跳过执行
+                    log.info("忽略执行:" + sql);
+                    break;
                 default:
-                    throw new Exception("sql标签的type类型有误");
+                    log.info("sql标签的type类型有误");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             // 捕获异常信息
-            actualValue = e.getMessage();
-
+            actualValue.add(e.getMessage());
         }
         return actualValue;
     }
