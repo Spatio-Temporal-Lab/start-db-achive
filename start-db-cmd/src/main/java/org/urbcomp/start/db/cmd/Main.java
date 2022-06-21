@@ -38,9 +38,15 @@ public class Main {
 
         @Override
         public String toString() {
-            return "username='" + username + '\'' +
-                    ", password='" + password + '\'' +
-                    ", url='" + url + '\'';
+            return "username='"
+                + username
+                + '\''
+                + ", password='"
+                + password
+                + '\''
+                + ", url='"
+                + url
+                + '\'';
         }
     }
 
