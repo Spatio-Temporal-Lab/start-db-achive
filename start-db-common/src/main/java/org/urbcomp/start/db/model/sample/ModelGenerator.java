@@ -31,13 +31,12 @@ import java.util.stream.Collectors;
 
 public class ModelGenerator {
     public static Trajectory generateTrajectory() {
-        String fileName = Objects.requireNonNull(
-            ModelGenerator.class.getClassLoader().getResource("data/traj.txt")
-        ).getPath();
-
         try (
-            InputStream in = new FileInputStream(fileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in))
+            InputStream in = ModelGenerator.class.getClassLoader()
+                .getResourceAsStream("data/traj.txt");
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(Objects.requireNonNull(in))
+            )
         ) {
             String trajStr = br.readLine();
             String correctStr = trajStr.replaceFirst("\\[", "[\"").replaceFirst(",", "\",");
@@ -71,12 +70,12 @@ public class ModelGenerator {
     }
 
     public static RoadNetwork generateRoadNetwork() {
-        String fileName = Objects.requireNonNull(
-            ModelGenerator.class.getClassLoader().getResource("data/roadnetwork_gcj02.csv")
-        ).getPath();
         try (
-            InputStream in = new FileInputStream(fileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in))
+            InputStream in = ModelGenerator.class.getClassLoader()
+                .getResourceAsStream("data/roadnetwork_gcj02.csv");
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(Objects.requireNonNull(in))
+            )
         ) {
             br.readLine(); // read head
             String roadSegmentStr;
