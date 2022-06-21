@@ -28,6 +28,71 @@ import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
 public class MainTest {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private static Connection getConn() throws Exception{
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                    "jdbc:start-db:url=http://127.0.0.1:8000",
+                    "start_db",
+                    "start-db"
+            );
+        }catch (Exception e) {
+            System.out.println("出现异常:" + e.getMessage());
+        }
+        return conn;
+    }
+
+    @Test
+    public void testShowTables () throws Exception {
+        try {
+            Connection conn = getConn();
+            Statement stmt = conn.createStatement();
+            String sql = "show tables;";
+            int rowCount = stmt.executeUpdate(sql);
+            System.out.println(rowCount);
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Test
+    public void testCreateTable() throws Exception {
+        try {
+            Connection conn = getConn();
+            Statement stmt = conn.createStatement();
+            String sql = "create table all_Type ("
+                    + "int1 int, "
+                    + "int2 integer, "
+                    + "long_ long,"
+                    + "float_ float,"
+                    + "double_ double,"
+                    + "string_ string,"
+                    + "boolean1 bool,"
+                    + "boolean2 boolean,"
+                    + "binary_ binary,"
+                    + "datetime_ datetime,"
+                    + "timestamp_ timestamp,"
+                    + "geometry_ geometry,"
+                    + "point_ point,"
+                    + "linestring_ linestring,"
+                    + "polygon_ polygon,"
+                    + "MultiPoint_ multipoint,"
+                    + "MultiLineString_ MultiLineString,"
+                    + "MultiPolygon_ MultiPolygon,"
+                    + "GeometryCollection_ GeometryCollection"
+                    + ")";
+            int rowCount = stmt.executeUpdate(sql);
+            System.out.println(rowCount);
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     public void testPath() throws IOException {
         String xmlPath = Objects.requireNonNull(
