@@ -44,13 +44,13 @@
     <!--  获取当前日期时间  currentDatetime(): Datetime  -->
     <case>
         <sql type="query">select currentDatetime();</sql>
-        <assertion id="01" expected="time_005.xml"></assertion>
+        <assertion id="01" expected="time_005.xml"/>
     </case>
 
     <!--  获取当前系统时间戳  currentTimestamp():Timestamp  -->
     <case>
         <sql type="query">select currentTimestamp();</sql>
-        <assertion id="01" expected="time_006.xml"></assertion>
+        <assertion id="01" expected="time_006.xml"/>
     </case>
 
     <!--  timestamp转long类型  timestampToLong(ts: Timestamp): Long  -->

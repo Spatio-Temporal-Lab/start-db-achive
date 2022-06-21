@@ -4,9 +4,9 @@
 <testCase>
 
     <!--  点聚类  st_dbscan(points: List[Point], dInM: Double, minPointNum: Int): Table  -->
-    <case type="ignore">
+    <case>
         <sql type="query">select st_dbscan(?, ?, ?);</sql>
-        <assertion id="01" expected="stDm_001.xml"></assertion>
+        <assertion id="01" expected="stDm_001.xml"/>
     </case>
 
     <!--  将一个Geometry对象偏移给定的数值  st_translate(geom: Geometry, deltaX: Double, deltaY: Double): Geometry  -->
@@ -148,7 +148,7 @@
     </case>
 
     <!--  返回包裹geom对象的最小凸包  st_convexHull(geom: Geometry): Polygon  -->
-    <case type="ignore">
+    <case>
         <sql type="query">select st_convexHull(?);</sql>
         <assertion id="01" expected="stDm_021.xml"> </assertion>
     </case>

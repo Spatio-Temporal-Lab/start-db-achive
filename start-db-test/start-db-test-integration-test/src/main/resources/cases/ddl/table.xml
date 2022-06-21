@@ -3,6 +3,7 @@
 <testCase>
     <case>
         <sql type="update">create database db;</sql>
+        <sql type="update">use db;</sql>
         <sql type="update">create table db.t1 (a1 int);</sql>
         <sql type="update">insert into t1 values(?);</sql>
         <assertion>[1]</assertion>
