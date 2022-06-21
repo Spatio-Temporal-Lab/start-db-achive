@@ -34,7 +34,6 @@ public class ModelGenerator {
         try (
             InputStream in = ModelGenerator.class.getClassLoader()
                 .getResourceAsStream("data/traj.txt");
-            // InputStream in = new FileInputStream(fileName);
             BufferedReader br = new BufferedReader(
                 new InputStreamReader(Objects.requireNonNull(in))
             )
