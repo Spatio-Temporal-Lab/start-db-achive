@@ -39,5 +39,5 @@ jobs:
       - if: steps.cache.outputs.cache-hit != 'true'
         name: Install dependencies
         run: |
-          mvn clean install
-          mvn dependency:resolve
+          docker-compose -f docker/local/docker-compose.yml up -d
+          mvn compile
