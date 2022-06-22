@@ -22,17 +22,12 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # run docker for meta data and user data
-      - name: run docker
-        run: |
-          docker-compose -f docker/local/docker-compose.yml up -d
-
       # Runs a single command using the runners shell
       - name: set up maven and java
         uses: actions/setup-java@v3
         with:
           java-version: "8"
-          distribution: "adopt"
+          distribution: "temurin"
 
       # Step that does that actual cache save and restore
       - uses: actions/cache@v3
@@ -42,15 +37,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      # run docker for meta data and user data
+      - name: run docker
+        run: |
+          docker-compose -f docker/local/docker-compose.yml up -d
+
       - name: check format convention
         run: |
           mvn spotless:check
+
       - name: set mysql host
         run: echo "127.0.0.1 mysql-local" | sudo tee -a /etc/hosts
+
       - name: init mysql schema
         run: mvn test exec:java -f start-db-test/start-db-test-embedded-mysql/pom.xml -Dcheckstyle.skip
+
       - name: set geomesa hbase host
         run: echo "127.0.0.1 geomesa-hbase-local" | sudo tee -a /etc/hosts
+
       - name: init geomesa table and data
         run: mvn test exec:java -f start-db-test/start-db-test-geomesa-geotools/pom.xml -Dcheckstyle.skip
 
