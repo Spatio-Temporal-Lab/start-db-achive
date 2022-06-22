@@ -25,7 +25,6 @@ package org.apache.calcite.sql;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.fun.SqlLibraryOperators;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
-import org.apache.calcite.sql.fun.SqlTrimFunction;
 import org.apache.calcite.sql.parser.SqlParserPos;
 import org.apache.calcite.sql.type.OperandTypes;
 import org.apache.calcite.sql.validate.SqlValidator;
@@ -763,12 +762,10 @@ public class SqlJdbcFunctionCall extends SqlFunction {
             map.put("LENGTH", simple(SqlStdOperatorTable.CHARACTER_LENGTH));
             map.put("LOCATE", simple(SqlStdOperatorTable.POSITION));
             map.put("LEFT", simple(SqlLibraryOperators.LEFT));
-            map.put("LTRIM", trim(SqlTrimFunction.Flag.LEADING));
             map.put("REPEAT", simple(SqlLibraryOperators.REPEAT));
             map.put("REPLACE", simple(SqlStdOperatorTable.REPLACE));
             map.put("REVERSE", simple(SqlLibraryOperators.REVERSE));
             map.put("RIGHT", simple(SqlLibraryOperators.RIGHT));
-            map.put("RTRIM", trim(SqlTrimFunction.Flag.TRAILING));
             map.put("SOUNDEX", simple(SqlLibraryOperators.SOUNDEX));
             map.put("SPACE", simple(SqlLibraryOperators.SPACE));
             map.put("SUBSTRING", simple(SqlStdOperatorTable.SUBSTRING));
@@ -824,21 +821,6 @@ public class SqlJdbcFunctionCall extends SqlFunction {
                 }
             });
             this.map = map.build();
-        }
-
-        private MakeCall trim(SqlTrimFunction.Flag flag) {
-            return new SimpleMakeCall(SqlStdOperatorTable.TRIM) {
-                @Override
-                public SqlCall createCall(SqlParserPos pos, SqlNode... operands) {
-                    assert 1 == operands.length;
-                    return super.createCall(
-                        pos,
-                        flag.symbol(pos),
-                        SqlLiteral.createCharString(" ", SqlParserPos.ZERO),
-                        operands[0]
-                    );
-                }
-            };
         }
 
         private MakeCall simple(SqlOperator operator) {

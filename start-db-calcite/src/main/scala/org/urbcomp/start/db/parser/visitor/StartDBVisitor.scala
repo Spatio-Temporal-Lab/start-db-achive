@@ -775,9 +775,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   override def visitExprSpecFunc(ctx: ExprSpecFuncContext): SqlNode = {
     ctx.start.getText.toLowerCase match {
       case CAST => null // TODO
-      case TRIM =>
-        new SqlBasicCall(SqlStdOperatorTable.TRIM, Array(visitExpr(ctx.expr(0))), pos)
-      case _ => throw new RuntimeException("not supported operator")
+      case _    => throw new RuntimeException("not supported operator")
     }
   }
 
@@ -837,7 +835,6 @@ object StartDBVisitor {
   val UNION_ALL = "unionall"
   val EXCEPT = "except"
   val CAST = "cast"
-  val TRIM = "trim"
   val ROW_NUMBER = "row_number"
   val RANK = "rank"
   val DENSE_RANK = "dense_rank"

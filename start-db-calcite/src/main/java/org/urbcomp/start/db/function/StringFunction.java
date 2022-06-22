@@ -40,6 +40,11 @@ public class StringFunction {
         return new StringBuffer(str).reverse().toString();
     }
 
+    @StartDBFunction("trim")
+    public String trim(String str) {
+        return str.trim();
+    }
+
     @StartDBFunction("ltrim")
     public String ltrim(String str) {
         int i = 0;
