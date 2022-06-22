@@ -126,7 +126,6 @@ public class SqlDialect {
         .add(SqlStdOperatorTable.NOT_IN)
         .add(SqlStdOperatorTable.NOT_LIKE)
         .add(SqlStdOperatorTable.OR)
-        .add(SqlStdOperatorTable.PI)
         .add(SqlStdOperatorTable.PLUS)
         .add(SqlStdOperatorTable.POWER)
         .add(SqlStdOperatorTable.RAND)

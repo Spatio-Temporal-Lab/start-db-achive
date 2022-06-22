@@ -32,8 +32,14 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: "8"
-          cache: 'maven'
-          distribution: "temurin"
+
+      # Step that does that actual cache save and restore
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       - name: check format convention
         run: |

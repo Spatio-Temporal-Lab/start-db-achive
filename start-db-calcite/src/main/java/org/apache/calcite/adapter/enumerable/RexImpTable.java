@@ -269,7 +269,6 @@ import static org.apache.calcite.sql.fun.SqlStdOperatorTable.NTH_VALUE;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.NTILE;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.OR;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.OVERLAY;
-import static org.apache.calcite.sql.fun.SqlStdOperatorTable.PI;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.PLUS;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.POSITION;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.POWER;
@@ -423,8 +422,6 @@ public class RexImpTable {
         defineMethod(TAN, "tan", NullPolicy.STRICT);
         defineMethod(TANH, "tanh", NullPolicy.STRICT);
         defineMethod(TRUNCATE, "struncate", NullPolicy.STRICT);
-
-        map.put(PI, new PiImplementor());
 
         // datetime
         map.put(DATETIME_PLUS, new DatetimeArithmeticImplementor());
