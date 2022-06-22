@@ -39,14 +39,14 @@ public class Driver extends org.apache.calcite.avatica.remote.Driver {
     @Override
     protected DriverVersion createDriverVersion() {
         return DriverVersion.load(
-                org.apache.calcite.avatica.remote.Driver.class,
-                "org-apache-calcite-jdbc.properties",
-                "Start-DB Remote JDBC Driver",
-                "1.0.0-SNAPSHOT",
-                "MYSQL",
-                "5.1.47"
-                // "START-DB",
-                // "1.0.0-SNAPSHOT"
+            org.apache.calcite.avatica.remote.Driver.class,
+            "org-apache-calcite-jdbc.properties",
+            "Start-DB Remote JDBC Driver",
+            "1.0.0-SNAPSHOT",
+            "MYSQL",
+            "5.1.47"
+            // "START-DB",
+            // "1.0.0-SNAPSHOT"
         );
     }
 
@@ -59,8 +59,7 @@ public class Driver extends org.apache.calcite.avatica.remote.Driver {
         assert url.startsWith(prefix);
         final String urlSuffix = url.substring(prefix.length());
         final Properties info2 = ConnectStringParser.parse(urlSuffix, info);
-        final AvaticaConnection conn =
-                factory.newConnection(this, factory, url, info2);
+        final AvaticaConnection conn = factory.newConnection(this, factory, url, info2);
         handler.onConnectionInit(conn);
         if (conn == null) {
             // It's not an url for our driver
@@ -73,8 +72,11 @@ public class Driver extends org.apache.calcite.avatica.remote.Driver {
         assert null != service;
 
         service.apply(
-                new Service.OpenConnectionRequest(conn.id,
-                        Service.OpenConnectionRequest.serializeProperties(info2)));
+            new Service.OpenConnectionRequest(
+                conn.id,
+                Service.OpenConnectionRequest.serializeProperties(info2)
+            )
+        );
         return conn;
     }
 }

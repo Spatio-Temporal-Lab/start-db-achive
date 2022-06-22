@@ -91,14 +91,17 @@ public abstract class AbstractHandler<T> implements Handler<T> {
             final Service.Request request = decode(serializedRequest);
             if (request instanceof Service.OpenConnectionRequest) {
                 Service.OpenConnectionRequest openConnection =
-                        (Service.OpenConnectionRequest) request;
+                    (Service.OpenConnectionRequest) request;
                 final Map<String, String> info = openConnection.info;
                 if (info == null
-                        || !AuthenticationHelper.auth(info.get("user"), info.get("password"))) {
+                    || !AuthenticationHelper.auth(info.get("user"), info.get("password"))) {
                     // TODO custom exception
                     throw new RuntimeException("Auth Failed");
                 }
-                final SqlParam param = new SqlParam(info.get("user"), info.getOrDefault("db", "default"));
+                final SqlParam param = new SqlParam(
+                    info.get("user"),
+                    info.getOrDefault("db", "default")
+                );
                 SqlParam.CACHE.set(param);
                 SqlParam.setParam(openConnection.connectionId, param);
             } else {
@@ -120,7 +123,8 @@ public abstract class AbstractHandler<T> implements Handler<T> {
                     Service.ConnectionSyncRequest e = (Service.ConnectionSyncRequest) request;
                     connectionId = e.connectionId;
                 } else if (request instanceof Service.PrepareAndExecuteBatchRequest) {
-                    Service.PrepareAndExecuteBatchRequest e = (Service.PrepareAndExecuteBatchRequest) request;
+                    Service.PrepareAndExecuteBatchRequest e =
+                        (Service.PrepareAndExecuteBatchRequest) request;
                     connectionId = e.connectionId;
                 } else if (request instanceof Service.PrepareRequest) {
                     Service.PrepareRequest e = (Service.PrepareRequest) request;

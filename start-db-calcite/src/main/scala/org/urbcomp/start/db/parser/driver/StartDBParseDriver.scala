@@ -18,10 +18,10 @@ import org.urbcomp.start.db.parser.visitor.StartDBVisitor
 import org.urbcomp.start.db.util.SqlParam
 
 /**
- * Start DB parse driver
- *
- * @author : zaiyuan
- */
+  * Start DB parse driver
+  *
+  * @author : zaiyuan
+  */
 object StartDBParseDriver {
   def parseSql(sql: String): SqlNode = {
     val charStream: CharStream = CharStreams.fromString(sql)
