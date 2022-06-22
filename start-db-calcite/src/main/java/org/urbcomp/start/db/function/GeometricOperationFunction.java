@@ -34,6 +34,7 @@ import org.locationtech.spatial4j.shape.Circle;
 import org.locationtech.spatial4j.shape.Shape;
 import org.locationtech.spatial4j.shape.jts.JtsPoint;
 import org.urbcomp.start.db.util.GeoFunctions;
+import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
 public class GeometricOperationFunction {
     @StartDBFunction("st_translate")
@@ -99,7 +100,7 @@ public class GeometricOperationFunction {
     @StartDBFunction("st_closestPoint")
     public Point st_closestPoint(Geometry geom1, Geometry geom2) {
         DistanceOp op = new DistanceOp(geom1, geom2);
-        GeometryFactory geomFactory = new GeometryFactory();
+        GeometryFactory geomFactory = GeometryFactoryUtils.defaultGeometryFactory();
         return geomFactory.createPoint(op.nearestPoints()[0]);
     }
 
@@ -183,13 +184,13 @@ public class GeometricOperationFunction {
         JtsPoint jstPoint = new JtsPoint(point, JtsSpatialContext.GEO);
         Circle circle = jstPoint.getBuffered(degrees, JtsSpatialContext.GEO);
         GeometricShapeFactory gsf = ThreadLocal.withInitial(
-            () -> new GeometricShapeFactory(new GeometryFactory())
+            () -> new GeometricShapeFactory(GeometryFactoryUtils.defaultGeometryFactory())
         ).get();
         gsf.setSize(circle.getBoundingBox().getWidth());
         gsf.setNumPoints(4 * 25);
         gsf.setCentre(new Coordinate(circle.getCenter().getX(), circle.getCenter().getY()));
         Geometry geomTemp = gsf.createCircle();
-        Geometry geomCopy = new GeometryFactory().createGeometry(geomTemp);
+        Geometry geomCopy = GeometryFactoryUtils.defaultGeometryFactory().createGeometry(geomTemp);
         if (geomCopy.getEnvelopeInternal().getMinX() < -180
             || geomCopy.getEnvelopeInternal().getMaxX() > 180) {
             geomCopy.apply(new CoordinateSequenceFilter() {

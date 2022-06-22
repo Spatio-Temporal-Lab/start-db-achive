@@ -109,7 +109,7 @@ public class GeoFunctions {
     }
 
     public static Polygon bboxFromEnvelopeToPolygon(Envelope e) {
-        GeometryFactory geometryFactory = new GeometryFactory();
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         double minX = e.getMinX();
         double maxX = e.getMaxX();
         double minY = e.getMinY();

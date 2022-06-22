@@ -20,6 +20,7 @@ import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
 import org.urbcomp.start.db.util.GeoFunctions;
+import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -214,7 +215,7 @@ public class Trajectory {
      * @return Linestring
      */
     public LineString getLineString() {
-        GeometryFactory geometryFactory = new GeometryFactory();
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         return geometryFactory.createLineString(
             gpsPointList.stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
         );

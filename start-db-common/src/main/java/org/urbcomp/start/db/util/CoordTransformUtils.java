@@ -178,7 +178,7 @@ public class CoordTransformUtils {
      * @param lat 纬度
      * @return true:不在中国国内，false:在中国国内
      */
-    public static boolean isOutOfChina(double lng, double lat) {
+    private static boolean isOutOfChina(double lng, double lat) {
         return lng < 72.004 || lng > 137.8347 || lat < 0.8293 || lat > 55.8271;
     }
 }
