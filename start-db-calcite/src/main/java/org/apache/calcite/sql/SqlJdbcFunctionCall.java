@@ -120,10 +120,6 @@ import static org.apache.calcite.util.Static.RESOURCE;
  * <td>Remainder for integer1 / integer2</td>
  * </tr>
  * <tr>
- * <td>PI()</td>
- * <td>The constant pi</td>
- * </tr>
- * <tr>
  * <td>POWER(number, power)</td>
  * <td>number raised to (integer) power</td>
  * </tr>
@@ -391,7 +387,6 @@ public class SqlJdbcFunctionCall extends SqlFunction {
         "LOG",
         "LOG10",
         "MOD",
-        "PI",
         "POWER",
         "RADIANS",
         "RAND",
@@ -747,7 +742,6 @@ public class SqlJdbcFunctionCall extends SqlFunction {
             map.put("LOG", simple(SqlStdOperatorTable.LN));
             map.put("LOG10", simple(SqlStdOperatorTable.LOG10));
             map.put("MOD", simple(SqlStdOperatorTable.MOD));
-            map.put("PI", simple(SqlStdOperatorTable.PI));
             map.put("POWER", simple(SqlStdOperatorTable.POWER));
             map.put("RADIANS", simple(SqlStdOperatorTable.RADIANS));
             map.put("RAND", simple(SqlStdOperatorTable.RAND));

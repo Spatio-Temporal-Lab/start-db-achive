@@ -28,12 +28,11 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
   /**
     * test for pi
     */
-  // FIXME
-  ignore("pi") {
+  test("pi") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select pi")
+    val resultSet = statement.executeQuery("select pi()")
     resultSet.next()
-    assertEquals(3.14159265358979323846, resultSet.getObject(1))
+    assertEquals(Math.PI, resultSet.getObject(1))
   }
 
   /**

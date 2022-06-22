@@ -54,7 +54,6 @@ import org.apache.calcite.sql.SqlSampleSpec;
 import org.apache.calcite.sql.SqlSessionTableFunction;
 import org.apache.calcite.sql.SqlSetOperator;
 import org.apache.calcite.sql.SqlSpecialOperator;
-import org.apache.calcite.sql.SqlSyntax;
 import org.apache.calcite.sql.SqlTumbleTableFunction;
 import org.apache.calcite.sql.SqlUnnestOperator;
 import org.apache.calcite.sql.SqlUtil;
@@ -1847,19 +1846,6 @@ public class SqlStdOperatorTable extends ReflectiveSqlOperatorTable {
         OperandTypes.NUMERIC_OPTIONAL_INTEGER,
         SqlFunctionCategory.NUMERIC
     );
-
-    public static final SqlFunction PI = new SqlFunction(
-        "PI",
-        SqlKind.OTHER_FUNCTION,
-        ReturnTypes.DOUBLE,
-        null,
-        OperandTypes.NILADIC,
-        SqlFunctionCategory.NUMERIC
-    ) {
-        public SqlSyntax getSyntax() {
-            return SqlSyntax.FUNCTION_ID;
-        }
-    };
 
     /** {@code FIRST} function to be used within {@code MATCH_RECOGNIZE}. */
     public static final SqlFunction FIRST = new SqlFunction(
