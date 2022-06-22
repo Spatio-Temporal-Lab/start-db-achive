@@ -15,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.*;
+import java.util.Properties;
 
 import static org.junit.Assert.*;
 
@@ -24,11 +25,11 @@ public class DriverTest {
     @Test
     public void testDriver() throws SQLException {
         try (
-            Connection conn = DriverManager.getConnection(
-                "jdbc:start-db:url=http://127.0.0.1:8000",
-                "start_db",
-                "start-db"
-            )
+                Connection conn = DriverManager.getConnection(
+                        "jdbc:start-db:url=http://127.0.0.1:8000;db=db_test",
+                        "start_db",
+                        "start-db"
+                )
         ) {
             final Statement stmt = conn.createStatement();
 
@@ -41,11 +42,11 @@ public class DriverTest {
     @Test
     public void testQuery() throws SQLException {
         try (
-            Connection conn = DriverManager.getConnection(
-                "jdbc:start-db:url=http://127.0.0.1:8000",
-                "start_db",
-                "start-db"
-            )
+                Connection conn = DriverManager.getConnection(
+                        "jdbc:start-db:url=http://127.0.0.1:8000",
+                        "start_db",
+                        "start-db"
+                )
         ) {
             final Statement stmt = conn.createStatement();
 
@@ -62,16 +63,16 @@ public class DriverTest {
     @Test
     public void testQueryPrint() throws SQLException {
         try (
-            Connection conn = DriverManager.getConnection(
-                "jdbc:start-db:url=http://127.0.0.1:8000",
-                "start_db",
-                "start-db"
-            )
+                Connection conn = DriverManager.getConnection(
+                        "jdbc:start-db:url=http://127.0.0.1:8000",
+                        "start_db",
+                        "start-db"
+                )
         ) {
             final Statement stmt = conn.createStatement();
 
             final ResultSet rs = stmt.executeQuery(
-                "select started_at,st_x(start_point) from `start_db.db_test.t_test`"
+                    "select started_at,st_x(start_point) from `start_db.db_test.t_test`"
             );
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
@@ -86,11 +87,11 @@ public class DriverTest {
     @Test
     public void testShowCreateTable() throws SQLException {
         try (
-            Connection conn = DriverManager.getConnection(
-                "jdbc:start-db:url=http://127.0.0.1:8000",
-                "start_db",
-                "start-db"
-            )
+                Connection conn = DriverManager.getConnection(
+                        "jdbc:start-db:url=http://127.0.0.1:8000",
+                        "start_db",
+                        "start-db"
+                )
         ) {
             final Statement stmt = conn.createStatement();
 
@@ -107,18 +108,20 @@ public class DriverTest {
 
     @Test
     public void testBatchInsert() throws SQLException {
+        final Properties info = new Properties();
+        info.put("user", "start_db");
+        info.put("password", "start-db");
+        info.put("db", "db_test");
         try (
-            Connection conn = DriverManager.getConnection(
-                "jdbc:start-db:url=http://127.0.0.1:8000",
-                "start_db",
-                "start-db"
-            )
+                Connection conn = DriverManager.getConnection(
+                        "jdbc:start-db:url=http://127.0.0.1:8000", info
+                )
         ) {
             final Statement stmt = conn.createStatement();
 
             for (int i = 0; i < 10; i++) {
                 stmt.addBatch(
-                    "Insert into t_test (idx, ride_id, start_point) values (171, '05608CC867EBDF63', st_makePoint(2.1, 2))"
+                        "Insert into t_test (idx, ride_id, start_point) values (171, '05608CC867EBDF63', st_makePoint(2.1, 2))"
                 );
             }
             final int[] res = stmt.executeBatch();

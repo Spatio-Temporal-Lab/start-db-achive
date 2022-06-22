@@ -9,14 +9,21 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.metadata.entity;
+package org.urbcomp.start.db.util;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * SqlParams: username, DBName
+ *
  * @author Wang Bohong
- * @date    2022-06-14
+ * @date 2022-06-14
  */
 public class SqlParam {
+
+    public static final ThreadLocal<SqlParam> CACHE = new ThreadLocal<>();
+    private static final Map<String, SqlParam> connectionParams = new HashMap<>();
 
     /**
      * user name
@@ -28,7 +35,8 @@ public class SqlParam {
      */
     private String dbName;
 
-    public SqlParam() {}
+    public SqlParam() {
+    }
 
     public SqlParam(String userName, String dbName) {
         this.userName = userName;
@@ -49,5 +57,17 @@ public class SqlParam {
 
     public void setDbName(String dbName) {
         this.dbName = dbName;
+    }
+
+    public static void setParam(String connectionId, SqlParam param) {
+        connectionParams.put(connectionId, param);
+    }
+
+    public static SqlParam getParam(String connectionId) {
+        return connectionParams.get(connectionId);
+    }
+
+    public static void removeParam(String connectionId) {
+        connectionParams.remove(connectionId);
     }
 }
