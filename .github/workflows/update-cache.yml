@@ -38,7 +38,9 @@ jobs:
 
       - if: steps.cache.outputs.cache-hit != 'true'
         name: Install dependencies
-        run: |
+        run: |          
+          echo "127.0.0.1 geomesa-hbase-local" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 mysql-local" | sudo tee -a /etc/hosts
           docker-compose -f docker/local/docker-compose.yml up -d
           mvn compile
 
