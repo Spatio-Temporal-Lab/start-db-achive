@@ -98,7 +98,7 @@ class GeometricRelationTypeConversionFunctionTest extends AbstractCalciteFunctio
     val resultSet = statement.executeQuery("select st_asGeoJSON(st_makePoint(1, 2))")
     resultSet.next()
     assertEquals(
-      "{\"type\":\"Point\",\"coordinates\":[1,2],\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"EPSG:0\"}}}",
+      "{\"type\":\"Point\",\"coordinates\":[1,2],\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"EPSG:4326\"}}}",
       resultSet.getObject(1)
     )
   }

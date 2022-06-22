@@ -24,6 +24,7 @@ package org.urbcomp.start.db.function;
 
 import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.util.GeoFunctions;
+import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,13 +37,13 @@ import java.util.List;
 public class GeometricConstructorFunction {
     @StartDBFunction("st_makePoint")
     public Point st_makePoint(BigDecimal x, BigDecimal y) {
-        GeometryFactory geometryFactory = new GeometryFactory();
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         return geometryFactory.createPoint(new Coordinate(x.doubleValue(), y.doubleValue()));
     }
 
     @StartDBFunction("st_makeLineString")
     public LineString st_makeLineString(List<Point> points) {
-        GeometryFactory geometryFactory = new GeometryFactory();
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         return geometryFactory.createLineString(
             points.stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
         );
@@ -50,7 +51,7 @@ public class GeometricConstructorFunction {
 
     @StartDBFunction("st_makePolygon")
     public Polygon st_makePolygon(LineString shell) {
-        GeometryFactory geometryFactory = new GeometryFactory();
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         return geometryFactory.createPolygon(
             geometryFactory.createLinearRing(shell.getCoordinateSequence())
         );
@@ -58,7 +59,7 @@ public class GeometricConstructorFunction {
 
     @StartDBFunction("st_makePolygon")
     public Polygon st_makePolygon(LineString shell, List<LineString> holes) {
-        GeometryFactory geometryFactory = new GeometryFactory();
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         return geometryFactory.createPolygon(
             geometryFactory.createLinearRing(shell.getCoordinateSequence()),
             holes.stream()

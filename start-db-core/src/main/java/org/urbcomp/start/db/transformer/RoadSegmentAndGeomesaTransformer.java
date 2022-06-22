@@ -16,13 +16,13 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
+import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
 public class RoadSegmentAndGeomesaTransformer {
 
@@ -59,9 +59,10 @@ public class RoadSegmentAndGeomesaTransformer {
         builder.set(name + ".rsId", rs.getRoadSegmentId());
         builder.set(
             name + ".geom",
-            new GeometryFactory().createLineString(
-                rs.getPoints().stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
-            )
+            GeometryFactoryUtils.defaultGeometryFactory()
+                .createLineString(
+                    rs.getPoints().stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
+                )
         );
         builder.set(name + ".rsGeoJson", rs.toGeoJSON());
         builder.featureUserData(Hints.USE_PROVIDED_FID, Boolean.TRUE);

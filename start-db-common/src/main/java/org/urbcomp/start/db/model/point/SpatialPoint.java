@@ -12,16 +12,15 @@
 package org.urbcomp.start.db.model.point;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
 public class SpatialPoint extends Point {
     public SpatialPoint(double lng, double lat) {
         super(
             new CoordinateArraySequence(new Coordinate[] { new Coordinate(lng, lat) }),
-            new GeometryFactory(new PrecisionModel(), 4326)
+            GeometryFactoryUtils.defaultGeometryFactory()
         );
     }
 

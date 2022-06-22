@@ -33,6 +33,7 @@ import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.model.roadnetwork.Path;
 import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
+import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class RoadFunction {
 
     @StartDBFunction("st_rs_geom")
     public LineString st_rs_geom(RoadSegment rs) {
-        GeometryFactory geometryFactory = new GeometryFactory();
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         return geometryFactory.createLineString(
             rs.getPoints().stream().map(Point::getCoordinate).toArray(Coordinate[]::new)
         );
