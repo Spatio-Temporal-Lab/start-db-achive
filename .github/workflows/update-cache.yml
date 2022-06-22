@@ -41,3 +41,4 @@ jobs:
         run: |
           docker-compose -f docker/local/docker-compose.yml up -d
           mvn compile
+
