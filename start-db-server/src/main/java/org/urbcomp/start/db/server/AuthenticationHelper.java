@@ -23,9 +23,8 @@ public class AuthenticationHelper {
 
     public static boolean auth(String username, String password) {
         // TODO cache
-        try (final UserAccessor userAccessor = AccessorFactory.getUserAccessor()) {
-            final User user = userAccessor.selectByFidAndName(0, username, true);
-            return user != null && user.getPassword().equals(DigestUtil.md5(password));
-        }
+        final UserAccessor userAccessor = AccessorFactory.getUserAccessor();
+        final User user = userAccessor.selectByFidAndName(0, username, true);
+        return user != null && user.getPassword().equals(DigestUtil.md5(password));
     }
 }
