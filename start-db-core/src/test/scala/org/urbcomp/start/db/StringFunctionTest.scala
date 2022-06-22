@@ -18,7 +18,7 @@ import org.junit.Assert.assertEquals
   *
   * @author zaiyuan, XiangHe
   */
-class StringFunctionTestAbstract extends AbstractCalciteFunctionTest {
+class StringFunctionTest extends AbstractCalciteFunctionTest {
 
   /**
     * Calcite's function
@@ -66,12 +66,7 @@ class StringFunctionTestAbstract extends AbstractCalciteFunctionTest {
     assertEquals("bcde", resultSet.getObject(1))
   }
 
-  /**
-    * Calcite's function
-    * returns a string without leading and trailing spaces
-    */
-  // FIXME
-  ignore("trim") {
+  test("trim") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select trim('  abcde ')")
     resultSet.next()

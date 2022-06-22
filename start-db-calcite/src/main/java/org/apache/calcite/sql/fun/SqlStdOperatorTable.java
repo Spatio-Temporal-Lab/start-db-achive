@@ -1585,9 +1585,6 @@ public class SqlStdOperatorTable extends ReflectiveSqlOperatorTable {
 
     public static final SqlFunction OVERLAY = new SqlOverlayFunction();
 
-    /** The "TRIM" function. */
-    public static final SqlFunction TRIM = SqlTrimFunction.INSTANCE;
-
     public static final SqlFunction POSITION = new SqlPositionFunction();
 
     public static final SqlFunction CHAR_LENGTH = new SqlFunction(

@@ -297,7 +297,6 @@ import static org.apache.calcite.sql.fun.SqlStdOperatorTable.SUM;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.SUM0;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.SYSTEM_USER;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.TAN;
-import static org.apache.calcite.sql.fun.SqlStdOperatorTable.TRIM;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.TRUNCATE;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.TUMBLE;
 import static org.apache.calcite.sql.fun.SqlStdOperatorTable.UNARY_MINUS;
@@ -365,8 +364,6 @@ public class RexImpTable {
         defineMethod(SOUNDEX, BuiltInMethod.SOUNDEX.method, NullPolicy.STRICT);
         defineMethod(DIFFERENCE, BuiltInMethod.DIFFERENCE.method, NullPolicy.STRICT);
         defineMethod(REVERSE, BuiltInMethod.REVERSE.method, NullPolicy.STRICT);
-
-        map.put(TRIM, new TrimImplementor());
 
         // logical
         map.put(AND, new LogicalAndImplementor());
