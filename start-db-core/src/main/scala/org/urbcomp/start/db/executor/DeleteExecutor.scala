@@ -16,7 +16,7 @@ import org.geotools.data.{DataStoreFinder, Transaction}
 import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.AccessorFactory
+import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataVerifyUtil}
 
 import java.util
 
@@ -32,7 +32,6 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     val userName = "start_db"
     val envDbName = "db_test"
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val str = targetTable.names.get(0)
     val target = targetTable.names.get(0).split('.')
     val (dbName, tableName) = target.length match {
       case 3 =>
@@ -45,9 +44,9 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
 
-    // Metadata validation ToDO: 和其他executor一起迭代
-//    if (!metaDataVerify(userName, envDbName, tableName))
-//      throw new RuntimeException("There is no corresponding table!")
+    // metadata Verify
+    if (!MetadataVerifyUtil.tableVerify(userName, dbName, tableName))
+      throw new RuntimeException("There is no corresponding table!")
 
     // Analytic filter condition
     val condition = n.getCondition.toString.replace("`", "")
@@ -55,7 +54,7 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     // remove value
     var affectRows = 0
     val params = new util.HashMap[String, String]()
-    // ToDO 传入参数的问题(先写死)
+    // ToDO Sql Param
     val CATALOG = "start_db.db_test"
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")

@@ -11,13 +11,9 @@
 
 package org.urbcomp.start.db
 
-import org.geotools.data.DataStoreFinder
 import org.junit.Assert.assertEquals
-import org.locationtech.geomesa.utils.io.WithClose
-
-import java.sql.DriverManager
-import java.util
-import java.util.Properties
+import org.urbcomp.start.db.model.roadnetwork.{RoadNetwork, RoadSegment}
+import org.urbcomp.start.db.model.sample.ModelGenerator
 
 /**
   * test for Insert
@@ -25,6 +21,9 @@ import java.util.Properties
   * @date    2022-06-08
   */
 class InsertTest extends AbstractCalciteFunctionTest {
+
+  val rs: RoadSegment = ModelGenerator.generateRoadSegment()
+  val rsGeoJson: String = rs.toGeoJSON
 
   /**
     * test for insert
@@ -41,6 +40,23 @@ class InsertTest extends AbstractCalciteFunctionTest {
     set1.next()
     val valueAfter: Long = set1.getObject(1).asInstanceOf[Long]
     assertEquals(1, valueAfter - valueBefore)
+  }
+
+  /**
+    * test for roadsegment insert
+    */
+  test("roadsegment insert") {
+    val statement = connect.createStatement()
+    val rsBefore = statement.executeQuery("select count(1) from t_road_segment_test")
+    rsBefore.next()
+    val beforeValue = rsBefore.getObject(1).asInstanceOf[Long]
+    val set = statement.execute(
+      "insert into t_road_segment_test (a, b, c) values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+    )
+    val rsAfter = statement.executeQuery("select count(1) from t_road_segment_test")
+    rsAfter.next()
+    val afterValue = rsAfter.getObject(1).asInstanceOf[Long]
+    assertEquals(1, afterValue - beforeValue)
   }
 
 }

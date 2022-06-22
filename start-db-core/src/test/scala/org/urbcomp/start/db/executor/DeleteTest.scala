@@ -26,13 +26,23 @@ class DeleteTest extends AbstractCalciteFunctionTest {
     val set = statement.executeQuery("select count(1) from t_test")
     set.next()
     val valueBefore: Long = set.getObject(1).asInstanceOf[Long]
+    val resultSet = statement.executeQuery("select max(idx) from t_test")
+    resultSet.next()
+    val maxIdx = resultSet.getObject(1)
+    val id = maxIdx.asInstanceOf[Int] + 1
     statement.execute(
-      "Insert into t_test (idx, ride_id, start_point) values (191, '05608CC867EBDF63', st_makePoint(2.1, 2))"
+      s"Insert into t_test (idx, ride_id, start_point) values ($id, '05608CC867EBDF63', st_makePoint(2.1, 2))"
     )
-    statement.execute("Delete from t_test where idx = 191")
+    val setMid = statement.executeQuery("select count(1) from t_test")
+    setMid.next()
+    val valueMid = setMid.getObject(1).asInstanceOf[Long]
+    // check insert
+    assertEquals(valueMid - 1, valueBefore)
+    statement.execute(s"Delete from t_test where idx = $id")
     val set1 = statement.executeQuery("select count(1) from t_test")
     set1.next()
     val valueAfter: Long = set1.getObject(1).asInstanceOf[Long]
+    // check delete
     assertEquals(valueAfter, valueBefore)
   }
 }
