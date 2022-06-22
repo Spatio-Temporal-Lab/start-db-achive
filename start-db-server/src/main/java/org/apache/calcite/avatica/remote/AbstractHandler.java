@@ -18,6 +18,7 @@ import org.apache.calcite.avatica.remote.Service.Request;
 import org.apache.calcite.avatica.remote.Service.Response;
 import org.apache.calcite.avatica.remote.Service.RpcMetadataResponse;
 import org.urbcomp.start.db.server.AuthenticationHelper;
+import org.urbcomp.start.db.util.SqlParam;
 
 import java.io.IOException;
 import java.util.Map;
@@ -90,12 +91,46 @@ public abstract class AbstractHandler<T> implements Handler<T> {
             final Service.Request request = decode(serializedRequest);
             if (request instanceof Service.OpenConnectionRequest) {
                 Service.OpenConnectionRequest openConnection =
-                    (Service.OpenConnectionRequest) request;
+                        (Service.OpenConnectionRequest) request;
                 final Map<String, String> info = openConnection.info;
                 if (info == null
-                    || !AuthenticationHelper.auth(info.get("user"), info.get("password"))) {
+                        || !AuthenticationHelper.auth(info.get("user"), info.get("password"))) {
                     // TODO custom exception
                     throw new RuntimeException("Auth Failed");
+                }
+                final SqlParam param = new SqlParam(info.get("user"), info.getOrDefault("db", "default"));
+                SqlParam.CACHE.set(param);
+                SqlParam.setParam(openConnection.connectionId, param);
+            } else {
+                // get connectionId from request
+                String connectionId = "";
+                if (request instanceof Service.PrepareAndExecuteRequest) {
+                    Service.PrepareAndExecuteRequest p = (Service.PrepareAndExecuteRequest) request;
+                    connectionId = p.connectionId;
+                } else if (request instanceof Service.ExecuteRequest) {
+                    Service.ExecuteRequest e = (Service.ExecuteRequest) request;
+                    connectionId = e.statementHandle.connectionId;
+                } else if (request instanceof Service.ExecuteBatchRequest) {
+                    Service.ExecuteBatchRequest e = (Service.ExecuteBatchRequest) request;
+                    connectionId = e.connectionId;
+                } else if (request instanceof Service.FetchRequest) {
+                    Service.FetchRequest e = (Service.FetchRequest) request;
+                    connectionId = e.connectionId;
+                } else if (request instanceof Service.ConnectionSyncRequest) {
+                    Service.ConnectionSyncRequest e = (Service.ConnectionSyncRequest) request;
+                    connectionId = e.connectionId;
+                } else if (request instanceof Service.PrepareAndExecuteBatchRequest) {
+                    Service.PrepareAndExecuteBatchRequest e = (Service.PrepareAndExecuteBatchRequest) request;
+                    connectionId = e.connectionId;
+                } else if (request instanceof Service.PrepareRequest) {
+                    Service.PrepareRequest e = (Service.PrepareRequest) request;
+                    connectionId = e.connectionId;
+                }
+                SqlParam.CACHE.set(SqlParam.getParam(connectionId));
+                if (request instanceof Service.CloseConnectionRequest) {
+                    Service.CloseConnectionRequest c = (Service.CloseConnectionRequest) request;
+                    SqlParam.removeParam(c.connectionId);
+                    SqlParam.CACHE.remove();
                 }
             }
             final Service.Response response = request.accept(service);

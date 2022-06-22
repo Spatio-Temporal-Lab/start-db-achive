@@ -15,12 +15,13 @@ import org.antlr.v4.runtime.{CharStream, CharStreams, CommonTokenStream}
 import org.apache.calcite.sql.SqlNode
 import org.urbcomp.start.db.parser.parser.{StartDBSqlLexer, StartDBSqlParser}
 import org.urbcomp.start.db.parser.visitor.StartDBVisitor
+import org.urbcomp.start.db.util.SqlParam
 
 /**
-  * Start DB parse driver
-  *
-  * @author : zaiyuan
-  */
+ * Start DB parse driver
+ *
+ * @author : zaiyuan
+ */
 object StartDBParseDriver {
   def parseSql(sql: String): SqlNode = {
     val charStream: CharStream = CharStreams.fromString(sql)
@@ -29,8 +30,8 @@ object StartDBParseDriver {
     val parser = new StartDBSqlParser(new CommonTokenStream(lexer))
     parser.removeErrorListeners()
     val tree = parser.program()
-    // TODO 这里先写死，要从用户参数里获取
-    val visitor = new StartDBVisitor("start_db", "db_test")
+    val param = SqlParam.CACHE.get()
+    val visitor = new StartDBVisitor(param.getUserName, param.getDbName)
     visitor.visitProgram(tree)
   }
 }
