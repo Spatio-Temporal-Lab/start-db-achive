@@ -12,13 +12,14 @@
 package org.urbcomp.start.db.executor
 
 import org.apache.calcite.sql.ddl.{SqlColumnDeclaration, SqlCreateTable}
-import org.geojson.{GeometryCollection, MultiPoint}
 import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.locationtech.jts.geom.{
   Geometry,
+  GeometryCollection,
   LineString,
   MultiLineString,
+  MultiPoint,
   MultiPolygon,
   Point,
   Polygon
@@ -100,7 +101,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
         case "Double"    => sfb.add(name, classOf[java.lang.Double])
         case "String"    => sfb.add(name, classOf[java.lang.String])
         case "Boolean"   => sfb.add(name, classOf[java.lang.Boolean])
-        case "Binary"    => sfb.add(name, classOf[java.sql.Blob])
+        case "Binary"    => sfb.add(name, classOf[Array[Byte]])
         case "Timestamp" => sfb.add(name, classOf[java.sql.Timestamp])
         case "Datetime"  => sfb.add(name, classOf[java.sql.Date])
       }

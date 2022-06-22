@@ -37,6 +37,7 @@ public class TypeHelper {
         Geometry.TYPENAME_MULTIPOINT,
         Geometry.TYPENAME_MULTILINESTRING,
         Geometry.TYPENAME_MULTIPOLYGON,
+        Geometry.TYPENAME_GEOMETRYCOLLECTION,
         "Geometry",
         "RoadSegment",
         "Trajectory",
@@ -54,6 +55,8 @@ public class TypeHelper {
 
     static {
         Arrays.asList(SUPPORT_TYPES).forEach(t -> typeMapping.put(t.toLowerCase(), t));
+        typeMapping.put("int", "Integer");
+        typeMapping.put("bool", "Boolean");
     }
 
     public static String normalizeType(String raw) {
