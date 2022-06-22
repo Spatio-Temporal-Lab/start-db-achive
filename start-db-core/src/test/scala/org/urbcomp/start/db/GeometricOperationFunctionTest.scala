@@ -13,7 +13,7 @@ package org.urbcomp.start.db
 
 import org.junit.Assert.{assertEquals, assertTrue}
 
-class GeometricOperationFunctionTestAbstract extends AbstractCalciteFunctionTest {
+class GeometricOperationFunctionTest extends AbstractCalciteFunctionTest {
   test("st_translate(geom, deltaX, deltaY)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
