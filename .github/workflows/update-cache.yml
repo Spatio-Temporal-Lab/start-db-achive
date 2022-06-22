@@ -1,0 +1,42 @@
+name: update-cache
+
+on:
+  pull_request:
+    branches:
+      - "dev"
+    types:
+      - closed
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-cache:
+    if: ${{ github.event.pull_request.merged }}
+    name: Build Cache
+    runs-on: ubuntu-20.04
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: set up maven and java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "8"
+          distribution: "temurin"
+
+      # Step that does that actual cache save and restore
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Install dependencies
+        run: |
+          mvn dependency:resolve
