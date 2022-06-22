@@ -13,6 +13,7 @@ package org.urbcomp.start.db
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import org.urbcomp.start.db.metadata.CalciteHelper
+import org.urbcomp.start.db.util.SqlParam
 
 import java.sql.Connection
 
@@ -27,6 +28,7 @@ abstract class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterA
   var connect: Connection = _
 
   override protected def beforeAll(): Unit = {
+    SqlParam.CACHE.set(new SqlParam("start_db", "db_test"))
     connect = CalciteHelper.createConnection()
   }
 

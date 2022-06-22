@@ -35,8 +35,7 @@ public class SqlParam {
      */
     private String dbName;
 
-    public SqlParam() {
-    }
+    public SqlParam() {}
 
     public SqlParam(String userName, String dbName) {
         this.userName = userName;
