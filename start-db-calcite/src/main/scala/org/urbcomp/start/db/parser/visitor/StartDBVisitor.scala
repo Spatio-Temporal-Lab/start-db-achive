@@ -631,7 +631,9 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
       .toArray
     val source = new SqlBasicCall(SqlStdOperatorTable.VALUES, rows, pos)
     val columnList =
-      new SqlNodeList(ctx.insertStmtCols().ident().asScala.map(visitIdent).asJava, pos)
+      if (ctx.insertStmtCols() != null)
+        new SqlNodeList(ctx.insertStmtCols().ident().asScala.map(visitIdent).asJava, pos)
+      else null
     new SqlInsert(pos, keyWords, targetTale, source, columnList)
   }
 
