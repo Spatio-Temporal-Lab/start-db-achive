@@ -76,4 +76,38 @@ class InsertTest extends AbstractCalciteFunctionTest {
     assertEquals(2, valueAfter - valueBefore)
   }
 
+  /**
+    * test for insert (insert into t values (1, 2))
+    */
+  test("insert test (without target column)") {
+    val statement = connect.createStatement()
+    val rsBefore = statement.executeQuery("select count(1) from t_road_segment_test")
+    rsBefore.next()
+    val beforeValue = rsBefore.getObject(1).asInstanceOf[Long]
+    val set = statement.execute(
+      "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+    )
+    val rsAfter = statement.executeQuery("select count(1) from t_road_segment_test")
+    rsAfter.next()
+    val afterValue = rsAfter.getObject(1).asInstanceOf[Long]
+    assertEquals(1, afterValue - beforeValue)
+  }
+
+  /**
+    * test for insert (insert into t values (1, 2), (3, 4))
+    */
+  test("multiple data insert test (without target column)") {
+    val statement = connect.createStatement()
+    val rsBefore = statement.executeQuery("select count(1) from t_road_segment_test")
+    rsBefore.next()
+    val beforeValue = rsBefore.getObject(1).asInstanceOf[Long]
+    val set = statement.execute(
+      "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_rs_fromGeoJSON(\'" + rsGeoJson + "\')), (3, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+    )
+    val rsAfter = statement.executeQuery("select count(1) from t_road_segment_test")
+    rsAfter.next()
+    val afterValue = rsAfter.getObject(1).asInstanceOf[Long]
+    assertEquals(2, afterValue - beforeValue)
+  }
+
 }

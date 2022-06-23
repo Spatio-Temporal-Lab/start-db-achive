@@ -90,7 +90,12 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         val sf = writer.next()
         val count = i.size()
         for (x <- 0 until count) {
-          val name = n.getTargetColumnList.get(x).toString
+          var name: String = null
+          if (n.getTargetColumnList == null) {
+            name = fields.get(fieldIndex).getName
+          } else {
+            name = n.getTargetColumnList.get(x).toString
+          }
           while (fields.get(fieldIndex).getName != name) {
             fieldIndex += 1
           }
@@ -103,6 +108,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
           } else {
             sf.setAttribute(name, i.get(x))
           }
+          fieldIndex += 1
         }
         affectRows += 1
         writer.write()
