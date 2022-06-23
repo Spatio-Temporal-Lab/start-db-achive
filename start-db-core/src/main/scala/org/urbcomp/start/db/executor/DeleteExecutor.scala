@@ -16,14 +16,14 @@ import org.geotools.data.{DataStoreFinder, Transaction}
 import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataVerifyUtil}
+import org.urbcomp.start.db.metadata.MetadataVerifyUtil
 
 import java.util
 
 /**
   * delete executor
   * @author Wang Bohong
-  * @param n
+  * @param n one SqlNode(SqlDelete) instance
   */
 case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
 

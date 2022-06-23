@@ -16,16 +16,13 @@ import org.geotools.data.{DataStoreFinder, FeatureReader, Query, Transaction}
 import org.geotools.filter.text.ecql.ECQL
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.urbcomp.start.db.common.ConfigProvider
-import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataVerifyUtil}
-import org.urbcomp.start.db.metadata.entity.Field
+import org.urbcomp.start.db.metadata.MetadataVerifyUtil
 import org.urbcomp.start.db.transformer.{
   RoadSegmentAndGeomesaTransformer,
   TrajectoryAndFeatureTransformer
 }
 import org.urbcomp.start.db.util.MetadataUtil
-
 import java.util
-import java.util.{Collections, Comparator}
 import scala.collection.JavaConverters._
 
 /**
@@ -55,7 +52,6 @@ class GeomesaEnumerator(
       var index = 0
       val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
       if (fields == null) return false
-      fields.toArray()
       val feature = reader.next()
       val array = feature.getAttributes.asScala.toArray
       val list = new util.ArrayList[AnyRef]

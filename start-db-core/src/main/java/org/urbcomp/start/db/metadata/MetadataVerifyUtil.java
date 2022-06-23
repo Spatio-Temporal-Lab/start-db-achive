@@ -20,7 +20,6 @@ import org.urbcomp.start.db.metadata.entity.Field;
 import org.urbcomp.start.db.metadata.entity.Table;
 import org.urbcomp.start.db.metadata.entity.User;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,16 +37,7 @@ public class MetadataVerifyUtil {
      * @return isValid
      */
     public static boolean tableVerify(String userName, String dbName, String tableName) {
-        UserAccessor userAccessor = AccessorFactory.getUserAccessor();
-        DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-        TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        FieldAccessor fieldAccessor = AccessorFactory.getFieldAccessor();
-        User user = userAccessor.selectByFidAndName(0L, userName, true);
-        if (user == null) return false;
-        Database database = databaseAccessor.selectByFidAndName(user.getId(), dbName, true);
-        if (database == null) return false;
-        Table table = tableAccessor.selectByFidAndName(database.getId(), tableName, true);
-        return table != null;
+        return getTable(userName, dbName, tableName) != null;
     }
 
     /**
@@ -58,18 +48,25 @@ public class MetadataVerifyUtil {
      * @return field list
      */
     public static List<Field> getFields(String userName, String dbName, String tableName) {
+        Table table = getTable(userName, dbName, tableName);
+        if (table == null) return null;
+        FieldAccessor fieldAccessor = AccessorFactory.getFieldAccessor();
+        List<Field> fields = fieldAccessor.selectAllByFid(table.getId(), true);
+        fields.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
+        return fields;
+    }
+
+    /**
+     * get table from metadata
+     */
+    private static Table getTable (String userName, String dbName, String tableName) {
         UserAccessor userAccessor = AccessorFactory.getUserAccessor();
         DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        FieldAccessor fieldAccessor = AccessorFactory.getFieldAccessor();
         User user = userAccessor.selectByFidAndName(0L, userName, true);
         if (user == null) return null;
         Database database = databaseAccessor.selectByFidAndName(user.getId(), dbName, true);
         if (database == null) return null;
-        Table table = tableAccessor.selectByFidAndName(database.getId(), tableName, true);
-        if (table == null) return null;
-        List<Field> fields = fieldAccessor.selectAllByFid(table.getId(), true);
-        Collections.sort(fields, (o1, o2) -> (int) (o1.getId() - o2.getId()));
-        return fields;
+        return tableAccessor.selectByFidAndName(database.getId(), tableName, true);
     }
 }

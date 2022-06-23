@@ -59,4 +59,21 @@ class InsertTest extends AbstractCalciteFunctionTest {
     assertEquals(1, afterValue - beforeValue)
   }
 
+  /**
+   * test for multiple data insert (insert into t (a, b) values (1, 2), (3, 4);)
+   */
+  test("multiple data insert") {
+    val statement = connect.createStatement()
+    val set = statement.executeQuery("select count(1) from t_test")
+    set.next()
+    val valueBefore: Long = set.getObject(1).asInstanceOf[Long]
+    statement.execute(
+      "Insert into t_test (idx, ride_id, start_point) values (171, '05608CC867EBDF63', st_makePoint(2.1, 2)), (172, '05608CC867EBDF63', st_makePoint(4.1, 2))"
+    )
+    val set1 = statement.executeQuery("select count(1) from t_test")
+    set1.next()
+    val valueAfter: Long = set1.getObject(1).asInstanceOf[Long]
+    assertEquals(2, valueAfter - valueBefore)
+  }
+
 }

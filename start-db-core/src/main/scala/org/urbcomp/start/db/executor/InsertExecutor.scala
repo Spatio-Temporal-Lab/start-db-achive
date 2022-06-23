@@ -14,27 +14,24 @@ package org.urbcomp.start.db.executor
 import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
-import org.locationtech.jts.geom.LineString
+import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.{AccessorFactory, CalciteHelper, MetadataVerifyUtil}
+import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.util.{GeoFunctions, MetadataUtil, WKTUtils}
 
 import java.sql.ResultSet
 import java.util
-import scala.collection.JavaConverters.asScalaBufferConverter
 
 /**
   * @author zaiyuan
   */
 case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
 
-  val set = Set("RoadSegment", "Trajectory")
 
   override def execute[Int](): MetadataResult[Int] = {
     // extract database name and table name
-    // ToDO 与path一样，需要封装统一的传入参数（先写死）
+    // ToDO SqlParam
     val userName = "start_db"
     val envDbName = "db_test"
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
@@ -47,8 +44,9 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
     // metaDataVerify
+    if (MetadataVerifyUtil.tableVerify(userName, dbName, tableName) == null) throw new RuntimeException("There is no corresponding table!")
     val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
-    if (fields == null) throw new RuntimeException("There is no corresponding table!")
+    if (fields == null) throw new RuntimeException("There is no corresponding fields!")
     // construct sql
     val resultObjs: Array[util.ArrayList[AnyRef]] =
       n.getSource
@@ -65,7 +63,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
                |SELECT $queryItem
                |""".stripMargin
           val querySql = originalQuerySql.replace("`", "")
-          WithClose(executeQuery(userName, dbName, querySql)) { rs =>
+          WithClose(executeQuery(querySql)) { rs =>
             {
               val count = rs.getMetaData.getColumnCount
               val result = new util.ArrayList[AnyRef](count)
@@ -86,38 +84,22 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
-    var fieldIndex = 0
     WithClose(dataStore.getFeatureWriterAppend(tableName, Transaction.AUTO_COMMIT)) { writer =>
       resultObjs.foreach { i =>
+        var fieldIndex = 0
         val sf = writer.next()
         val count = i.size()
-        // 這個地方需要處理特殊字段的邏輯
         for (x <- 0 until count) {
-//          sf.setAttribute(n.getTargetColumnList.get(x).toString, i.get(x))
           val name = n.getTargetColumnList.get(x).toString
           while (fields.get(fieldIndex).getName != name) {
             fieldIndex += 1
           }
           if (fields.get(fieldIndex).getType == "RoadSegment") {
             val rs = i.get(x).asInstanceOf[RoadSegment]
-            val item = rs.getPoints.asScala
-              .map { i =>
-                s"${i.getLng} ${i.getLat}"
-              }
-              .mkString(", ")
-            val wkt = s"LINESTRING($item)"
-            val geom = WKTUtils.read(wkt).asInstanceOf[LineString]
-            sf.setAttribute(name + ".rsId", rs.getRoadSegmentId)
-            sf.setAttribute(name + ".geom", geom)
-            sf.setAttribute(name + ".rsGeoJson", rs.toGeoJSON)
+            ExecutorUtil.writeRoadSegment(name, sf, rs)
           } else if (fields.get(fieldIndex).getType == "Trajectory") {
             val traj = i.get(x).asInstanceOf[Trajectory]
-            sf.setAttribute(name + ".tid", traj.getTid)
-            sf.setAttribute(name + ".oid", traj.getOid)
-            sf.setAttribute(name + ".start_time", traj.getStartTime)
-            sf.setAttribute(name + ".end_time", traj.getEndTime)
-            sf.setAttribute(name + ".geom", GeoFunctions.bboxFromEnvelopeToPolygon(traj.getBBox))
-            sf.setAttribute(name + ".geoJson", traj.toGeoJSON)
+            ExecutorUtil.writeTrajectory(name, sf, traj)
           } else {
             sf.setAttribute(name, i.get(x))
           }
@@ -133,7 +115,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
   /**
     * Execute the SQL parsed from the contents of values
     */
-  def executeQuery[R](user: String, dbName: String, querySql: String): ResultSet = {
+  def executeQuery[R](querySql: String): ResultSet = {
     val connection = CalciteHelper.createConnection()
     val statement = connection.createStatement()
     statement.executeQuery(querySql)

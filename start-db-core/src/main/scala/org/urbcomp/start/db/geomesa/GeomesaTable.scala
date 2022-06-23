@@ -27,7 +27,7 @@ import org.locationtech.jts.geom.{
   Polygon
 }
 import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan
-import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataVerifyUtil}
+import org.urbcomp.start.db.metadata.MetadataVerifyUtil
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import java.lang.reflect.Type
@@ -104,8 +104,8 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
       case "Double"             => return classOf[java.lang.Double]
       case "String"             => return classOf[java.lang.String]
       case "Integer"            => return classOf[java.lang.Boolean]
-      case "Blob"               => return classOf[java.sql.Blob]
-      case "Timestamp"          => return classOf[java.sql.Blob]
+      case "Binary"             => return classOf[Array[Byte]]
+      case "Timestamp"          => return classOf[java.sql.Timestamp]
       case "Date"               => return classOf[java.sql.Date]
     }
     null

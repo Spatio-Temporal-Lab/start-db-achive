@@ -15,16 +15,14 @@ import org.apache.calcite.sql.{SqlIdentifier, SqlUpdate}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
-import org.locationtech.jts.geom.LineString
+import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.{AccessorFactory, CalciteHelper, MetadataVerifyUtil}
+import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.util.{GeoFunctions, WKTUtils}
 
 import java.sql.ResultSet
 import java.util
-import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
 
 /**
@@ -55,8 +53,9 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
     // metadata verify
+    if (MetadataVerifyUtil.tableVerify(userName, dbName, tableName) == null) throw new RuntimeException("There is no corresponding table!")
     val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
-    if (fields == null) throw new RuntimeException("There is no corresponding table!")
+    if (fields == null) throw new RuntimeException("There is no corresponding fields!")
     // filter condition
     val condition = n.getCondition.toString.replace("`", "")
     // construct sql
@@ -68,7 +67,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
          |""".stripMargin
     val querySql = originalQuerySql.replace("`", "")
     val result = new util.ArrayList[AnyRef]()
-    WithClose(executeQuery(userName, dbName, querySql)) { rs =>
+    WithClose(executeQuery(querySql)) { rs =>
       {
         rs.next()
         val count = rs.getMetaData.getColumnCount
@@ -86,7 +85,6 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
     val filter = CQL.toFilter(condition)
-    // 行数怎么处理
     WithClose(dataStore.getFeatureWriter(tableName, filter, Transaction.AUTO_COMMIT)) { writer =>
       {
         while (writer.hasNext) {
@@ -96,24 +94,10 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
             val name = n.getTargetColumnList.get(x).toString
             if (result.get(x).isInstanceOf[RoadSegment]) {
               val rs = result.get(x).asInstanceOf[RoadSegment]
-              val item = rs.getPoints.asScala
-                .map { i =>
-                  s"${i.getLng} ${i.getLat}"
-                }
-                .mkString(", ")
-              val wkt = s"LINESTRING($item)"
-              val geom = WKTUtils.read(wkt).asInstanceOf[LineString]
-              sf.setAttribute(name + ".rsId", rs.getRoadSegmentId)
-              sf.setAttribute(name + ".geom", geom)
-              sf.setAttribute(name + ".rsGeoJson", rs.toGeoJSON)
+              ExecutorUtil.writeRoadSegment(name, sf, rs)
             } else if (result.get(x).isInstanceOf[Trajectory]) {
               val traj = result.get(x).asInstanceOf[Trajectory]
-              sf.setAttribute(name + ".tid", traj.getTid)
-              sf.setAttribute(name + ".oid", traj.getOid)
-              sf.setAttribute(name + ".start_time", traj.getStartTime)
-              sf.setAttribute(name + ".end_time", traj.getEndTime)
-              sf.setAttribute(name + ".geom", GeoFunctions.bboxFromEnvelopeToPolygon(traj.getBBox))
-              sf.setAttribute(name + ".geoJson", traj.toGeoJSON)
+              ExecutorUtil.writeTrajectory(name, sf, traj)
             } else {
               sf.setAttribute(name, result.get(x))
             }
@@ -129,7 +113,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
   /**
     * Execute the SQL parsed from the contents of values
     */
-  def executeQuery[R](user: String, dbName: String, querySql: String): ResultSet = {
+  def executeQuery[R](querySql: String): ResultSet = {
     val statement = CalciteHelper.createConnection().createStatement()
     statement.executeQuery(querySql)
   }
