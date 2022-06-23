@@ -50,16 +50,21 @@ public class SqlOperatorTables extends ReflectiveSqlOperatorTable {
             GeometricRelationFunction.class.getName(),
             GeometricRelationTypeConversionFunction.class.getName(),
             TrajectoryFunction.class.getName(),
-            RoadFunction.class.getName()
+            RoadFunction.class.getName(),
+            CoordTransformFunction.class.getName()
         );
     }
 
-    /** Returns the Spatial operator table, creating it if necessary. */
+    /**
+     * Returns the Spatial operator table, creating it if necessary.
+     */
     public static SqlOperatorTable spatialInstance() {
         return SPATIAL.get();
     }
 
-    /** Creates a composite operator table. */
+    /**
+     * Creates a composite operator table.
+     */
     public static SqlOperatorTable chain(Iterable<SqlOperatorTable> tables) {
         final ImmutableList<SqlOperatorTable> list = ImmutableList.copyOf(tables);
         if (list.size() == 1) {
@@ -68,7 +73,9 @@ public class SqlOperatorTables extends ReflectiveSqlOperatorTable {
         return new ChainedSqlOperatorTable(list);
     }
 
-    /** Creates a composite operator table from an array of tables. */
+    /**
+     * Creates a composite operator table from an array of tables.
+     */
     public static SqlOperatorTable chain(SqlOperatorTable... tables) {
         return chain(ImmutableList.copyOf(tables));
     }
