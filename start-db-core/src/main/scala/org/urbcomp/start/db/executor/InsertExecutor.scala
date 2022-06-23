@@ -43,7 +43,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
     // metaDataVerify
-    if (MetadataVerifyUtil.tableVerify(userName, dbName, tableName) == null)
+    if (!MetadataVerifyUtil.tableVerify(userName, dbName, tableName))
       throw new RuntimeException("There is no corresponding table!")
     val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
     if (fields == null) throw new RuntimeException("There is no corresponding fields!")
