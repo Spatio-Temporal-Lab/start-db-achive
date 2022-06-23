@@ -77,8 +77,8 @@ class InsertTest extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for insert (insert into t values (1, 2))
-   */
+    * test for insert (insert into t values (1, 2))
+    */
   test("insert test (without target column)") {
     val statement = connect.createStatement()
     val rsBefore = statement.executeQuery("select count(1) from t_road_segment_test")
@@ -94,8 +94,8 @@ class InsertTest extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for insert (insert into t values (1, 2), (3, 4))
-   */
+    * test for insert (insert into t values (1, 2), (3, 4))
+    */
   test("multiple data insert test (without target column)") {
     val statement = connect.createStatement()
     val rsBefore = statement.executeQuery("select count(1) from t_road_segment_test")
