@@ -40,7 +40,6 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     val userName = "start_db"
     val envDbName = "db_test"
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val str = targetTable.names.get(0)
     val target = targetTable.names.get(0).split('.')
     val (dbName, tableName) = target.length match {
       case 3 =>
