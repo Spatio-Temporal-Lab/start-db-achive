@@ -15,8 +15,11 @@ import org.apache.calcite.sql.{SqlIdentifier, SqlUpdate}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
+import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.{AccessorFactory, CalciteHelper}
+import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment
+import org.urbcomp.start.db.model.trajectory.Trajectory
 
 import java.sql.ResultSet
 import java.util
@@ -33,11 +36,10 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
 
   override def execute[Int](): MetadataResult[Int] = {
     // extract database name and table name
-    // ToDO 传入参数
+    // ToDO Sql Param
     val userName = "start_db"
     val envDbName = "db_test"
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val str = targetTable.names.get(0)
     val target = targetTable.names.get(0).split('.')
     val (dbName, tableName) = target.length match {
       case 3 =>
@@ -49,10 +51,13 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
       case _ =>
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
-    //    if (!metaDataVerify(userName, envDbName, tableName))
-    //      throw new RuntimeException("There is no corresponding table!")
+    // metadata verify
+    if (!MetadataVerifyUtil.tableVerify(userName, dbName, tableName))
+      throw new RuntimeException("There is no corresponding table!")
+    val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
+    if (fields == null) throw new RuntimeException("There is no corresponding fields!")
+    // filter condition
     val condition = n.getCondition.toString.replace("`", "")
-
     // construct sql
     val list = n.getSourceExpressionList.getList
     val queryItem = list.map(j => j.toString).mkString(",")
@@ -62,7 +67,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
          |""".stripMargin
     val querySql = originalQuerySql.replace("`", "")
     val result = new util.ArrayList[AnyRef]()
-    WithClose(executeQuery(userName, dbName, querySql)) { rs =>
+    WithClose(executeQuery(querySql)) { rs =>
       {
         rs.next()
         val count = rs.getMetaData.getColumnCount
@@ -74,20 +79,28 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     // update data
     var affectRows = 0
     val params = new util.HashMap[String, String]()
-    // ToDO 传入参数的问题(先写死)
+    // ToDO: SqlParam
     val CATALOG = "start_db.db_test"
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
     val filter = CQL.toFilter(condition)
-    // 行数怎么处理
     WithClose(dataStore.getFeatureWriter(tableName, filter, Transaction.AUTO_COMMIT)) { writer =>
       {
         while (writer.hasNext) {
           val sf = writer.next()
           val count = result.size()
           for (x <- 0 until count) {
-            sf.setAttribute(n.getTargetColumnList.get(x).toString, result.get(x))
+            val name = n.getTargetColumnList.get(x).toString
+            if (result.get(x).isInstanceOf[RoadSegment]) {
+              val rs = result.get(x).asInstanceOf[RoadSegment]
+              ExecutorUtil.writeRoadSegment(name, sf, rs)
+            } else if (result.get(x).isInstanceOf[Trajectory]) {
+              val traj = result.get(x).asInstanceOf[Trajectory]
+              ExecutorUtil.writeTrajectory(name, sf, traj)
+            } else {
+              sf.setAttribute(name, result.get(x))
+            }
           }
           affectRows += 1
           writer.write()
@@ -100,26 +113,9 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
   /**
     * Execute the SQL parsed from the contents of values
     */
-  def executeQuery[R](user: String, dbName: String, querySql: String): ResultSet = {
+  def executeQuery[R](querySql: String): ResultSet = {
     val statement = CalciteHelper.createConnection().createStatement()
     statement.executeQuery(querySql)
   }
 
-  /**
-    * Verify if corresponding table exists in the metadata
-    */
-  def metaDataVerify(userName: String, dbName: String, tableName: String): Boolean = {
-    val userAccessor = AccessorFactory.getUserAccessor
-    val databaseAccessor = AccessorFactory.getDatabaseAccessor
-    val tableAccessor = AccessorFactory.getTableAccessor
-    val user = userAccessor.selectByFidAndName(0L, userName, true)
-    if (user == null) return false
-    val userId = user.getId
-    val database = databaseAccessor.selectByFidAndName(userId, dbName, true)
-    if (database == null) return false
-    val dbId = database.getId
-    val table = tableAccessor.selectByFidAndName(dbId, tableName, true)
-    if (table == null) return false
-    true
-  }
 }

@@ -68,4 +68,20 @@ INSERT INTO sys_database(id, user_id, name) VALUE (1, 1, 'db_test');
 INSERT INTO sys_table(id, db_id, name, storage_engine) VALUE (1, 1, 't_test', 'hbase');
 INSERT INTO sys_table(id, db_id, name, storage_engine) VALUE (2, 1, 't_road_segment_test', 'hbase');
 INSERT INTO sys_table(id, db_id, name, storage_engine) VALUE (3, 1, 't_trajectory_test', 'hbase');
--- field暂时是从geomesa里查的
+-- field
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (1, 1, 'idx', 'Integer', 1);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (2, 1, 'ride_id', 'String', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (3, 1, 'rideable_type', 'String', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (4, 1, 'started_at', 'Timestamp', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (5, 1, 'ended_at', 'Timestamp', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (6, 1, 'start_station_name', 'String', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (7, 1, 'start_station_id', 'Double', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (8, 1, 'start_point', 'Point', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (9, 1, 'end_station_name', 'String', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (10, 1, 'end_station_id', 'Double', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (11, 1, 'end_point', 'Point', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (12, 1, 'track', 'LineString', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (13, 1, 'member_casual', 'String', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (14, 2, 'a', 'Integer', 1);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (15, 2, 'b', 'RoadSegment', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (16, 2, 'c', 'RoadSegment', 0);

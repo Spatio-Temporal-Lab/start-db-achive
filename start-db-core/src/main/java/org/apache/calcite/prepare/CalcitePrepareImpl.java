@@ -713,8 +713,6 @@ public class CalcitePrepareImpl implements CalcitePrepare {
             // modify start
             switch (sqlNode.getKind()) {
                 case DELETE:
-                    // ToDO
-                    return null;
                 case OTHER:
                 case DESCRIBE_TABLE:
                 case INSERT:

@@ -17,15 +17,20 @@ import org.apache.calcite.plan.RelOptTable
 import org.apache.calcite.rel.RelNode
 import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeFactory}
 import org.apache.calcite.schema.{SchemaPlus, TranslatableTable}
-import org.geotools.data.{DataStoreFinder, Query}
-import org.urbcomp.start.db.common.ConfigProvider
+import org.geojson.{GeometryCollection, MultiPoint}
+import org.locationtech.jts.geom.{
+  Geometry,
+  LineString,
+  MultiLineString,
+  MultiPolygon,
+  Point,
+  Polygon
+}
 import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan
+import org.urbcomp.start.db.metadata.MetadataVerifyUtil
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.util.MetadataUtil
-
 import java.lang.reflect.Type
-import scala.collection.JavaConverters._
 
 /**
   * Table of Geomesa
@@ -65,48 +70,44 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     * @return RelDataType
     */
   override def getRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
-    // ToDO： Temporary operation
-    if ("t_road_segment_test".equals(tableName))
-      return tempRoadSegmentGetRowType(relDataTypeFactory)
-    if ("t_trajectory_test".equals(tableName)) return tempTrajectoryGetRowType(relDataTypeFactory)
-    val catalog = MetadataUtil.makeCatalog(userName, dbName)
-    val dataStore =
-      DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
-    val query = new Query(tableName)
-    val sft = dataStore.getSchema(query.getTypeName)
-    // TODO Geometry type should be supported
     val builder = relDataTypeFactory.builder()
-    sft.getDescriptors.asScala.foreach { i =>
-      builder.add(i.getName.toString, relDataTypeFactory.createJavaType(i.getType.getBinding))
+    val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
+    if (fields != null) {
+      fields.forEach { i =>
+        builder.add(i.getName, relDataTypeFactory.createJavaType(getClass(i.getType)))
+      }
     }
-    dataStore.dispose()
     builder.build()
   }
 
   /**
-    * Temporary method for He Xiang's RoadSegment test table
+    * convert dataType to class
     * @author Wang Bohong
-    * @param relDataTypeFactory  RelDataTypeFactory intance
-    * @return RelDataType instance
+    * @param dataType datatype string
+    * @return class instance
     */
-  private def tempRoadSegmentGetRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
-    val builder = relDataTypeFactory.builder()
-    builder.add("a", relDataTypeFactory.createJavaType(Integer.TYPE))
-    builder.add("b", relDataTypeFactory.createJavaType(classOf[RoadSegment]))
-    builder.add("c", relDataTypeFactory.createJavaType(classOf[RoadSegment]))
-    builder.build()
-  }
-
-  /**
-    * Temporary method for He Xiang's RoadSegment test table
-    * @author Wang Bohong
-    * @param relDataTypeFactory  RelDataTypeFactory intance
-    * @return RelDataType instance
-    */
-  private def tempTrajectoryGetRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
-    val builder = relDataTypeFactory.builder()
-    builder.add("id1", relDataTypeFactory.createJavaType(Integer.TYPE))
-    builder.add("t1", relDataTypeFactory.createJavaType(classOf[Trajectory]))
-    builder.build()
+  def getClass(dataType: String): Class[_ <: AnyRef] = {
+    dataType match {
+      case "Point"              => return classOf[Point]
+      case "Polygon"            => return classOf[Polygon]
+      case "LineString"         => return classOf[LineString]
+      case "MultiPoint"         => return classOf[MultiPoint]
+      case "MultiLineString"    => return classOf[MultiLineString]
+      case "MultiPolygon"       => return classOf[MultiPolygon]
+      case "GeometryCollection" => return classOf[GeometryCollection]
+      case "Geometry"           => return classOf[Geometry]
+      case "RoadSegment"        => return classOf[RoadSegment]
+      case "Trajectory"         => return classOf[Trajectory]
+      case "Integer"            => return classOf[java.lang.Integer]
+      case "Long"               => return classOf[java.lang.Long]
+      case "Float"              => return classOf[java.lang.Float]
+      case "Double"             => return classOf[java.lang.Double]
+      case "String"             => return classOf[java.lang.String]
+      case "Integer"            => return classOf[java.lang.Boolean]
+      case "Binary"             => return classOf[Array[Byte]]
+      case "Timestamp"          => return classOf[java.sql.Timestamp]
+      case "Date"               => return classOf[java.sql.Date]
+    }
+    null
   }
 }
