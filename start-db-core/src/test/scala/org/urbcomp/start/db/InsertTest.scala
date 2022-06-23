@@ -60,8 +60,8 @@ class InsertTest extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for multiple data insert (insert into t (a, b) values (1, 2), (3, 4);)
-   */
+    * test for multiple data insert (insert into t (a, b) values (1, 2), (3, 4);)
+    */
   test("multiple data insert") {
     val statement = connect.createStatement()
     val set = statement.executeQuery("select count(1) from t_test")

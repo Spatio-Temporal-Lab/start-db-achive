@@ -28,7 +28,6 @@ import java.util
   */
 case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
 
-
   override def execute[Int](): MetadataResult[Int] = {
     // extract database name and table name
     // ToDO SqlParam
@@ -44,7 +43,8 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
     // metaDataVerify
-    if (MetadataVerifyUtil.tableVerify(userName, dbName, tableName) == null) throw new RuntimeException("There is no corresponding table!")
+    if (MetadataVerifyUtil.tableVerify(userName, dbName, tableName) == null)
+      throw new RuntimeException("There is no corresponding table!")
     val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
     if (fields == null) throw new RuntimeException("There is no corresponding fields!")
     // construct sql
