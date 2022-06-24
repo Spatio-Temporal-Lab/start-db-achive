@@ -28,7 +28,7 @@ class UpdateTest extends AbstractCalciteFunctionTest {
       s"Insert into t_test (idx, ride_id, start_point) values ($id, '05608CC867EBDF63', st_makePoint(2.1, 2))"
     )
     statement.execute(
-      s"update db_test.t_test set ride_id = 'temp', start_point = st_makePoint(3.1, 2) where idx = $id"
+      s"update default.t_test set ride_id = 'temp', start_point = st_makePoint(3.1, 2) where idx = $id"
     )
     val resultSet1 = statement.executeQuery(s"select ride_id from t_test where idx = $id")
     resultSet1.next()

@@ -26,7 +26,7 @@ public class DriverTest {
     public void testDriver() throws SQLException {
         try (
             Connection conn = DriverManager.getConnection(
-                "jdbc:start-db:url=http://127.0.0.1:8000;db=db_test",
+                "jdbc:start-db:url=http://127.0.0.1:8000;db=default",
                 "start_db",
                 "start-db"
             )
@@ -50,7 +50,7 @@ public class DriverTest {
         ) {
             final Statement stmt = conn.createStatement();
 
-            final ResultSet rs = stmt.executeQuery("select * from `start_db.db_test.t_test`");
+            final ResultSet rs = stmt.executeQuery("select * from `start_db.default.t_test`");
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
                 for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -72,7 +72,7 @@ public class DriverTest {
             final Statement stmt = conn.createStatement();
 
             final ResultSet rs = stmt.executeQuery(
-                "select started_at,st_x(start_point) from `start_db.db_test.t_test`"
+                "select started_at,st_x(start_point) from `start_db.default.t_test`"
             );
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
@@ -95,7 +95,7 @@ public class DriverTest {
         ) {
             final Statement stmt = conn.createStatement();
 
-            final ResultSet rs = stmt.executeQuery("show create table `start_db.db_test.t_test`");
+            final ResultSet rs = stmt.executeQuery("show create table `start_db.default.t_test`");
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
                 for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -111,7 +111,7 @@ public class DriverTest {
         final Properties info = new Properties();
         info.put("user", "start_db");
         info.put("password", "start-db");
-        info.put("db", "db_test");
+        info.put("db", "default");
         try (
             Connection conn = DriverManager.getConnection(
                 "jdbc:start-db:url=http://127.0.0.1:8000",
@@ -141,7 +141,7 @@ public class DriverTest {
         ) {
             final Statement stmt = conn.createStatement();
 
-            stmt.execute("use db_test");
+            stmt.execute("use default");
 
             final ResultSet rs = stmt.executeQuery("select count(1) from t_test");
             rs.next();
