@@ -45,7 +45,7 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     // metadata Verify
     if (!MetadataVerifyUtil.tableVerify(userName, dbName, tableName))
       throw new RuntimeException("There is no corresponding table!")
-
+    val tableId = MetadataVerifyUtil.getFields(userName, dbName, tableName).get(0).getTableId
     // Analytic filter condition
     val condition = n.getCondition.toString.replace("`", "")
 
@@ -58,14 +58,15 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
     val filter = CQL.toFilter(condition)
-    WithClose(dataStore.getFeatureWriter(tableName, filter, Transaction.AUTO_COMMIT)) { writer =>
-      {
-        while (writer.hasNext) {
-          writer.next()
-          affectRows += 1
-          writer.remove()
+    WithClose(dataStore.getFeatureWriter("t_" + tableId, filter, Transaction.AUTO_COMMIT)) {
+      writer =>
+        {
+          while (writer.hasNext) {
+            writer.next()
+            affectRows += 1
+            writer.remove()
+          }
         }
-      }
     }
     dataStore.dispose()
     MetadataResult.buildDDLResult(affectRows)

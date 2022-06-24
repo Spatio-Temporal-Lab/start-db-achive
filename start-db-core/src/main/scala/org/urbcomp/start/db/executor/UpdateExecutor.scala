@@ -54,6 +54,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
       throw new RuntimeException("There is no corresponding table!")
     val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
     if (fields == null) throw new RuntimeException("There is no corresponding fields!")
+    val tableId = fields.get(0).getTableId
     // filter condition
     val condition = n.getCondition.toString.replace("`", "")
     // construct sql
@@ -83,27 +84,28 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
     val filter = CQL.toFilter(condition)
-    WithClose(dataStore.getFeatureWriter(tableName, filter, Transaction.AUTO_COMMIT)) { writer =>
-      {
-        while (writer.hasNext) {
-          val sf = writer.next()
-          val count = result.size()
-          for (x <- 0 until count) {
-            val name = n.getTargetColumnList.get(x).toString
-            if (result.get(x).isInstanceOf[RoadSegment]) {
-              val rs = result.get(x).asInstanceOf[RoadSegment]
-              ExecutorUtil.writeRoadSegment(name, sf, rs)
-            } else if (result.get(x).isInstanceOf[Trajectory]) {
-              val traj = result.get(x).asInstanceOf[Trajectory]
-              ExecutorUtil.writeTrajectory(name, sf, traj)
-            } else {
-              sf.setAttribute(name, result.get(x))
+    WithClose(dataStore.getFeatureWriter("t_" + tableId, filter, Transaction.AUTO_COMMIT)) {
+      writer =>
+        {
+          while (writer.hasNext) {
+            val sf = writer.next()
+            val count = result.size()
+            for (x <- 0 until count) {
+              val name = n.getTargetColumnList.get(x).toString
+              if (result.get(x).isInstanceOf[RoadSegment]) {
+                val rs = result.get(x).asInstanceOf[RoadSegment]
+                ExecutorUtil.writeRoadSegment(name, sf, rs)
+              } else if (result.get(x).isInstanceOf[Trajectory]) {
+                val traj = result.get(x).asInstanceOf[Trajectory]
+                ExecutorUtil.writeTrajectory(name, sf, traj)
+              } else {
+                sf.setAttribute(name, result.get(x))
+              }
             }
+            affectRows += 1
+            writer.write()
           }
-          affectRows += 1
-          writer.write()
         }
-      }
     }
     MetadataResult.buildDDLResult(affectRows)
   }
