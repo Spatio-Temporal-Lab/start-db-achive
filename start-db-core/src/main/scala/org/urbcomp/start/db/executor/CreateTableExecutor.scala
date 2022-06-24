@@ -111,7 +111,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     })
 
     val params: util.Map[String, String] = new util.HashMap[String, String]
-    val CATALOG: String = "start_db.default"
+    val CATALOG: String = userName + "." + dbName
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
