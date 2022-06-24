@@ -16,6 +16,7 @@ import org.apache.calcite.sql.parser.SqlParser
 import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
 import org.scalatest.FunSuite
 import org.urbcomp.start.db.parser.StartDBSQLSamples
+import org.urbcomp.start.db.parser.dcl.SqlCreateUser
 import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
 import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver
@@ -126,4 +127,13 @@ class StartDBVisitorTest extends FunSuite {
     assertEquals(calciteNode.getTargetColumnList.size(), node.getTargetColumnList.size());
     assertEquals(calciteNode.getSourceExpressionList.size(), node.getSourceExpressionList.size());
   }
+
+  test("convert create user statement to SqlNode") {
+    val sql = StartDBSQLSamples.CREATE_USER_SAMPLE;
+    val parsed = driver.parseSql(sql)
+    val node = parsed.asInstanceOf[SqlCreateUser]
+    assertEquals("test_user", node.getUserName.names.get(0));
+    assertEquals("password", node.getPassword)
+  }
+
 }

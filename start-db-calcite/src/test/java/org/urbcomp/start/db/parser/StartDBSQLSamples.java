@@ -71,6 +71,10 @@ public class StartDBSQLSamples {
     // Create table
     public static final String CREATE_TABLE_SAMPLE = loadSample("create-table");
 
+    // Create user
+    public static final String CREATE_USER_SAMPLE =
+        "CREATE USER test_user IDENTIFIED BY 'password'";
+
     private static String loadSample(String resource) {
         String path = "/sql/samples/" + resource + ".sample.sql";
         try {

@@ -18,6 +18,7 @@ import org.apache.calcite.sql.ddl.{SqlDdlNodes, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
+import org.urbcomp.start.db.parser.dcl.SqlCreateUser
 import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
 import org.urbcomp.start.db.parser.dql.{
   SqlShowCreateTable,
@@ -46,21 +47,22 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   override def visitProgram(ctx: ProgramContext): SqlNode = visitStmt(ctx.stmt())
 
   override def visitStmt(ctx: StmtContext): SqlNode = ctx.getChild(0) match {
-    case c: SelectStmtContext          => visitSelectStmt(c) // done
+    case c: SelectStmtContext          => visitSelectStmt(c)
     case c: CreateTableStmtContext     => visitCreateTableStmt(c)
-    case c: ShowTablesStmtContext      => visitShowTablesStmt(c) // done
-    case c: CreateDatabaseStmtContext  => visitCreateDatabaseStmt(c) // done
-    case c: DropDatabaseStmtContext    => visitDropDatabaseStmt(c) // done
-    case c: ShowDatabasesStmtContext   => visitShowDatabasesStmt(c) // done
-    case c: ShowCreateTableStmtContext => visitShowCreateTableStmt(c) // done
-    case c: ShowStatusStmtContext      => visitShowStatusStmt(c) // done
-    case c: DropTableStmtContext       => visitDropTableStmt(c) // done
-    case c: UseStmtContext             => visitUseStmt(c) // done
-    case c: DescribeStmtContext        => visitDescribeStmt(c) // done
-    case c: InsertStmtContext          => visitInsertStmt(c) // done
-    case c: DeleteStmtContext          => visitDeleteStmt(c) // done
-    case c: TruncateStmtContext        => visitTruncateStmt(c) // done
-    case c: UpdateStmtContext          => visitUpdateStmt(c) // done
+    case c: ShowTablesStmtContext      => visitShowTablesStmt(c)
+    case c: CreateDatabaseStmtContext  => visitCreateDatabaseStmt(c)
+    case c: DropDatabaseStmtContext    => visitDropDatabaseStmt(c)
+    case c: ShowDatabasesStmtContext   => visitShowDatabasesStmt(c)
+    case c: ShowCreateTableStmtContext => visitShowCreateTableStmt(c)
+    case c: ShowStatusStmtContext      => visitShowStatusStmt(c)
+    case c: DropTableStmtContext       => visitDropTableStmt(c)
+    case c: UseStmtContext             => visitUseStmt(c)
+    case c: DescribeStmtContext        => visitDescribeStmt(c)
+    case c: InsertStmtContext          => visitInsertStmt(c)
+    case c: DeleteStmtContext          => visitDeleteStmt(c)
+    case c: TruncateStmtContext        => visitTruncateStmt(c)
+    case c: UpdateStmtContext          => visitUpdateStmt(c)
+    case c: CreateUserStmtContext      => visitCreateUserStmt(c)
     case _                             => null // TODO 补全其他情况
   }
 
@@ -611,6 +613,15 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
 
   override def visitTruncateStmt(ctx: TruncateStmtContext): SqlNode = {
     new SqlTruncateTable(pos, visitIdent(ctx.ident()));
+  }
+
+  override def visitCreateUserStmt(ctx: CreateUserStmtContext): SqlNode = {
+    var password = ctx.password.getText
+    if (password.startsWith("'") && password.endsWith("'") ||
+        password.startsWith("\"") && password.endsWith("\"")) {
+      password = password.substring(1, password.length - 1)
+    }
+    new SqlCreateUser(pos, new SqlIdentifier(ctx.user_name.getText, pos), password)
   }
 
   /////////////////////////////////////////////////////////////////////////

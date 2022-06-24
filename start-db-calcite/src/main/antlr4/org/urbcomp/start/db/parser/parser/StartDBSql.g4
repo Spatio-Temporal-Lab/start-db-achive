@@ -29,6 +29,7 @@ stmt :
      | updateStmt
      | deleteStmt
      | selectStmt
+     | createUserStmt
      ;
 
 dbDotTable:
@@ -70,6 +71,11 @@ showStatusStmt :
 createTableStmt :
        T_CREATE T_TABLE (T_IF T_NOT T_EXISTS)? table_name create_table_preoptions? create_table_definition
      ;
+
+createUserStmt :
+      T_CREATE T_USER user_name T_IDENTIFIED T_BY password=string
+    ;
+
 
 create_table_definition :
       (T_AS? T_OPEN_P selectStmt T_CLOSE_P | T_AS? selectStmt | T_OPEN_P create_table_columns T_CLOSE_P | T_LIKE table_name) create_table_options?
@@ -613,6 +619,11 @@ funcParam :
 table_name :
        qident
      ;
+
+user_name :
+    ident
+    ;
+
 
 qident :                                  // qualified identifier e.g: table_name.col_name or db_name._table_name
        ident ('.'ident)*

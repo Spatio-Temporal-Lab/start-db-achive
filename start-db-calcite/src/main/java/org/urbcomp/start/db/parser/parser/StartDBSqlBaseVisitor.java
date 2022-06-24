@@ -165,6 +165,17 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
+    public T visitCreateUserStmt(StartDBSqlParser.CreateUserStmtContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
     public T visitCreate_table_definition(StartDBSqlParser.Create_table_definitionContext ctx) {
         return visitChildren(ctx);
     }
@@ -1241,6 +1252,17 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      */
     @Override
     public T visitTable_name(StartDBSqlParser.Table_nameContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
+    public T visitUser_name(StartDBSqlParser.User_nameContext ctx) {
         return visitChildren(ctx);
     }
 
