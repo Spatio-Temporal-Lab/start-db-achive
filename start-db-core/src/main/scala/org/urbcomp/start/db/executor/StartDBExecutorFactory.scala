@@ -14,7 +14,7 @@ package org.urbcomp.start.db.executor
 import org.apache.calcite.sql.ddl.SqlCreateTable
 import org.apache.calcite.sql.{SqlDelete, SqlInsert, SqlNode, SqlUpdate}
 import org.urbcomp.start.db.infra.{BaseExecutor, BaseExecutorFactory}
-import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase
+import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlUseDatabase}
 import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowStatus}
 
 class StartDBExecutorFactory extends BaseExecutorFactory {
@@ -27,5 +27,6 @@ class StartDBExecutorFactory extends BaseExecutorFactory {
     case n: SqlCreateTable     => CreateTableExecutor(n)
     case _: SqlShowDatabases   => ShowDatabaseExecutor()
     case _: SqlShowStatus      => ShowStatusExecutor()
+    case n: SqlUseDatabase     => UseDbExecutor(n)
   }
 }
