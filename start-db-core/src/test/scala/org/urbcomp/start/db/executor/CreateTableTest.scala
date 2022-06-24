@@ -21,7 +21,7 @@ class CreateTableTest extends AbstractCalciteFunctionTest {
 
   /**
     * test for create
-    * ToDO : 在一个test方法内，执行create与insert，insert会失败
+    * ToDO : 在一个test方法内，同时执行create与insert，insert会失败
     */
   test("create & insert_0") {
     val statement = connect.createStatement()
