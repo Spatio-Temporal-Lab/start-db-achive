@@ -20,7 +20,7 @@
     </select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.urbcomp.start.db.metadata.entity.User">
-        INSERT INTO sys_user(name, `password`) VALUE (#{name}, md5(#{password}))
+        INSERT INTO sys_user(`name`, `password`) VALUE (#{user.name}, md5(#{user.password}))
     </insert>
     <update id="update">
         UPDATE sys_user

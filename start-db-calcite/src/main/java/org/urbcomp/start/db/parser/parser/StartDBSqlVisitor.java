@@ -110,6 +110,13 @@ public interface StartDBSqlVisitor<T> extends ParseTreeVisitor<T> {
     T visitCreateTableStmt(StartDBSqlParser.CreateTableStmtContext ctx);
 
     /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#createUserStmt}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitCreateUserStmt(StartDBSqlParser.CreateUserStmtContext ctx);
+
+    /**
      * Visit a parse tree produced by {@link StartDBSqlParser#create_table_definition}.
      * @param ctx the parse tree
      * @return the visitor result
@@ -800,6 +807,13 @@ public interface StartDBSqlVisitor<T> extends ParseTreeVisitor<T> {
      * @return the visitor result
      */
     T visitTable_name(StartDBSqlParser.Table_nameContext ctx);
+
+    /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#user_name}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitUser_name(StartDBSqlParser.User_nameContext ctx);
 
     /**
      * Visit a parse tree produced by {@link StartDBSqlParser#qident}.
