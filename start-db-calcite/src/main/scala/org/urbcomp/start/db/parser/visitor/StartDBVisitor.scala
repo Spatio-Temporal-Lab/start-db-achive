@@ -826,22 +826,6 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
     new SqlIdentifier(ctx.identItem().asScala.map(_.getText).asJava, pos)
   }
 
-//  def addUserandDb(tableName: SqlIdentifier): Unit = {
-//    var res: SqlIdentifier = null
-//    var dbName: String = null
-//    var table: String = null
-//    if (tableName.names.size() == 1) {
-//      table = tableName.names.get(0)
-//    } else {
-//      dbName = tableName.names.get(0)
-//      table = tableName.names.get(1)
-//    }
-//    val list = new util.ArrayList[String]()
-//    list.add(user)
-//    list.add(dbName)
-//    list.add(table)
-//    tableName.setNames(list , null)
-//  }
 }
 
 object StartDBVisitor {
