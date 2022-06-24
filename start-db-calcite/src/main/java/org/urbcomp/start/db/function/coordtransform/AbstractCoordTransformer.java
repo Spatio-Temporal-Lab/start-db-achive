@@ -64,6 +64,16 @@ public abstract class AbstractCoordTransformer {
         return geometryFactory.createPolygon(shell, holes);
     }
 
+    public MultiLineString multiLineStringTransform(MultiLineString multiLineString) {
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
+        LineString[] lineStrings = new LineString[multiLineString.getNumGeometries()];
+        for (int i = 0; i < multiLineString.getNumGeometries(); i++) {
+            LineString lineString = (LineString) multiLineString.getGeometryN(i);
+            lineStrings[i] = lineStringTransform(lineString);
+        }
+        return geometryFactory.createMultiLineString(lineStrings);
+    }
+
     public MultiPolygon multiPolygonTransform(MultiPolygon mPolygon) {
         GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         Polygon[] polygons = new Polygon[mPolygon.getNumGeometries()];

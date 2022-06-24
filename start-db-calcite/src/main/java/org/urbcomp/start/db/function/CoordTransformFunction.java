@@ -49,6 +49,12 @@ public class CoordTransformFunction {
     }
 
     @StartDBFunction("st_BD09ToWGS84")
+    public MultiLineString st_BD09ToWGS84(MultiLineString multiLineString) {
+        AbstractCoordTransformer transformer = new BD09ToWGS84Transformer();
+        return transformer.multiLineStringTransform(multiLineString);
+    }
+
+    @StartDBFunction("st_BD09ToWGS84")
     public MultiPolygon st_BD09ToWGS84(MultiPolygon mPolygon) {
         AbstractCoordTransformer transformer = new BD09ToWGS84Transformer();
         return transformer.multiPolygonTransform(mPolygon);
