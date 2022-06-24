@@ -25,10 +25,12 @@ package org.urbcomp.start.db.function.coordtransform;
 import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
+import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,6 +105,12 @@ public abstract class AbstractCoordTransformer {
             rs.getEndNode().getNodeId(),
             points
         );
+    }
+
+    public RoadNetwork roadNetworkTransform(RoadNetwork rn) {
+        List<RoadSegment> roadSegments = new ArrayList<>();
+        rn.getRoadSegments().forEach(o -> roadSegments.add(roadSegmentTransform(o)));
+        return new RoadNetwork(roadSegments);
     }
 
     protected abstract double[] transform(double lng, double lat);
