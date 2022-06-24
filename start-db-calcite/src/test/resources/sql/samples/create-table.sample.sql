@@ -1,4 +1,4 @@
-CREATE TABLE start_db_test_table (
+CREATE TABLE start_default_table (
     idx Integer,
     ride_id String,
     started_at Timestamp,

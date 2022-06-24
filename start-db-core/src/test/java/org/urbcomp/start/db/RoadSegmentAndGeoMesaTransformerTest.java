@@ -82,7 +82,7 @@ public class RoadSegmentAndGeoMesaTransformerTest {
 
         // build GeoMesa table
         Map<String, String> params = new HashMap<>();
-        String CATALOG = "root.db_test";
+        String CATALOG = "root.default";
         params.put("hbase.catalog", CATALOG);
         params.put("hbase.zookeepers", "localhost:2181");
         DataStore dataStore = DataStoreFinder.getDataStore(params);
