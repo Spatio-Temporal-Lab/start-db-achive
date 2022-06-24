@@ -51,7 +51,8 @@ public class BatchUpLoader implements Closeable {
     private FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
     private DataStore dataStore;
     private SimpleFeatureType sft;
-    private final String TABLE_NAME = "t_test";
+    // Match the normal schema name
+    private final String TABLE_NAME = "t_1";
 
     public BatchUpLoader() throws IOException {
         mkConnection();

@@ -49,7 +49,7 @@ public class RoadSegmentAndGeoMesaTransformerTest {
     @Test
     public void test() throws IOException, FactoryException {
 
-        String tableName = "t_road_segment_test";
+        String tableName = "t_2";
 
         // build test sft
         RoadSegmentAndGeomesaTransformer transformer = new RoadSegmentAndGeomesaTransformer();
