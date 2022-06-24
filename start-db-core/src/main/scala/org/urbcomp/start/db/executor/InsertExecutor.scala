@@ -86,7 +86,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
-    WithClose(dataStore.getFeatureWriterAppend("t_" + tableId.toString, Transaction.AUTO_COMMIT)) {
+    WithClose(dataStore.getFeatureWriterAppend("t_" + tableId, Transaction.AUTO_COMMIT)) {
       writer =>
         resultObjs.foreach { i =>
           var fieldIndex = 0

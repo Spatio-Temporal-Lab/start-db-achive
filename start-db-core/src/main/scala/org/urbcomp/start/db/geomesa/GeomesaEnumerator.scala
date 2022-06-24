@@ -88,7 +88,8 @@ object GeomesaEnumerator {
     val catalog = MetadataUtil.makeCatalog(user, dbName)
     val dataStore =
       DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
-    val query = new Query(tableName, ECQL.toFilter(filter))
+    val id = MetadataVerifyUtil.getFields(user, dbName, tableName).get(0).getTableId
+    val query = new Query("t_" + id, ECQL.toFilter(filter))
     new GeomesaEnumerator(
       dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT),
       user,
