@@ -11,15 +11,18 @@
 
 package org.urbcomp.start.db.executor
 
+import org.apache.calcite.sql.SqlIdentifier
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.metadata.entity.Database
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase
+import org.urbcomp.start.db.util.SqlParam
 
 case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
     // TODO: get username from context
-    val userName = "start_db";
+    val param = SqlParam.CACHE.get()
+    val userName = param.getUserName
     val databaseAccessor = AccessorFactory.getDatabaseAccessor
     val userAccessor = AccessorFactory.getUserAccessor
     val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)

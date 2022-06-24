@@ -11,38 +11,28 @@
 
 package org.urbcomp.start.db.executor
 
+import org.apache.calcite.sql.SqlIdentifier
 import org.apache.calcite.sql.ddl.{SqlColumnDeclaration, SqlCreateTable}
 import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
-import org.locationtech.jts.geom.{
-  Geometry,
-  GeometryCollection,
-  LineString,
-  MultiLineString,
-  MultiPoint,
-  MultiPolygon,
-  Point,
-  Polygon
-}
+import org.locationtech.jts.geom.{Geometry, GeometryCollection, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon}
 import org.urbcomp.start.db.`type`.TypeHelper
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.transformer.{
-  RoadSegmentAndGeomesaTransformer,
-  TrajectoryAndFeatureTransformer
-}
+import org.urbcomp.start.db.transformer.{RoadSegmentAndGeomesaTransformer, TrajectoryAndFeatureTransformer}
+import org.urbcomp.start.db.util.SqlParam
 
 import java.util
 
 case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
     // TODO userName dbName context
-    val userName = "start_db";
-    val envDbName = "db_test";
-
+    val param = SqlParam.CACHE.get()
+    val userName = param.getUserName
+    val envDbName = param.getDbName
     val targetTable = n.name
     val (dbName, tableName) = targetTable.names.size() match {
       case 2 =>

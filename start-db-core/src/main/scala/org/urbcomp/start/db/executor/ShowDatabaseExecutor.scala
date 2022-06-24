@@ -15,6 +15,7 @@ import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.metadata.accessor.DatabaseAccessor
 import org.urbcomp.start.db.metadata.entity.Database
+import org.urbcomp.start.db.util.SqlParam
 
 import java.util
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -23,7 +24,8 @@ case class ShowDatabaseExecutor() extends BaseExecutor {
 
   override def execute[Array](): MetadataResult[Array] = {
     // TODO userName context
-    val userName = "start_db"
+    val param = SqlParam.CACHE.get()
+    val userName = param.getUserName
     // TODO close accessor
     val userAccessor = AccessorFactory.getUserAccessor
     val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)

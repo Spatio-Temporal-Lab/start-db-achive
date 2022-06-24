@@ -619,7 +619,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
 
   override def visitInsertStmt(ctx: InsertStmtContext): SqlInsert = {
     val keyWords = SqlNodeList.EMPTY
-    val targetTale = visitIdent(ctx.tableName().ident())
+    val targetTable = visitIdent(ctx.tableName().ident())
     val rows: Array[SqlNode] = ctx
       .insertStmtRows()
       .insertStmtRow()
@@ -634,7 +634,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
       if (ctx.insertStmtCols() != null)
         new SqlNodeList(ctx.insertStmtCols().ident().asScala.map(visitIdent).asJava, pos)
       else null
-    new SqlInsert(pos, keyWords, targetTale, source, columnList)
+    new SqlInsert(pos, keyWords, targetTable, source, columnList)
   }
 
   private def mkOriginSql(ctx: ParserRuleContext): String = {
@@ -644,14 +644,14 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   }
 
   override def visitDeleteStmt(ctx: DeleteStmtContext): SqlNode = {
-    val tableIdentifier = visitTableName(ctx.tableName())
+    val tableIdentifier = visitIdent(ctx.tableName().ident())
     val condition = visitWhereClause(ctx.whereClause());
     // TODO  complete sourceSelect and alias
     new SqlDelete(pos, tableIdentifier, condition, null, null)
   }
 
   override def visitUpdateStmt(ctx: UpdateStmtContext): SqlNode = {
-    val targetTable = visitUpdateTable(ctx.updateTable());
+    val targetTable = visitIdent(ctx.updateTable().tableName().ident());
     val condition = visitWhereClause(ctx.whereClause());
     val assignments = ctx.updateAssignment().assignmentStmtItem();
     val columns = assignments.asScala
@@ -825,6 +825,23 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   def visitIdentOrigin(ctx: IdentContext): SqlIdentifier = {
     new SqlIdentifier(ctx.identItem().asScala.map(_.getText).asJava, pos)
   }
+
+//  def addUserandDb(tableName: SqlIdentifier): Unit = {
+//    var res: SqlIdentifier = null
+//    var dbName: String = null
+//    var table: String = null
+//    if (tableName.names.size() == 1) {
+//      table = tableName.names.get(0)
+//    } else {
+//      dbName = tableName.names.get(0)
+//      table = tableName.names.get(1)
+//    }
+//    val list = new util.ArrayList[String]()
+//    list.add(user)
+//    list.add(dbName)
+//    list.add(table)
+//    tableName.setNames(list , null)
+//  }
 }
 
 object StartDBVisitor {
