@@ -30,7 +30,6 @@ import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,8 +107,10 @@ public abstract class AbstractCoordTransformer {
     }
 
     public RoadNetwork roadNetworkTransform(RoadNetwork rn) {
-        List<RoadSegment> roadSegments = new ArrayList<>();
-        rn.getRoadSegments().forEach(o -> roadSegments.add(roadSegmentTransform(o)));
+        List<RoadSegment> roadSegments = rn.getRoadSegments()
+            .stream()
+            .map(this::roadSegmentTransform)
+            .collect(Collectors.toList());
         return new RoadNetwork(roadSegments);
     }
 
