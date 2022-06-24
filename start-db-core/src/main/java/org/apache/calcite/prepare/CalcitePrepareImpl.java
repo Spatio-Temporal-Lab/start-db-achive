@@ -76,6 +76,7 @@ import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
 import org.urbcomp.start.db.executor.StartDBExecutorFactory;
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase;
+import org.urbcomp.start.db.parser.ddl.SqlUseDatabase;
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver;
 
 import java.lang.reflect.Type;
@@ -690,7 +691,9 @@ public class CalcitePrepareImpl implements CalcitePrepare {
             StartDBExecutorFactory startDBExecutorFactory = new StartDBExecutorFactory();
             if (sqlNode.getKind().belongsTo(SqlKind.DDL)) {
 
-                if (sqlNode instanceof SqlCreateDatabase || sqlNode instanceof SqlCreateTable) {
+                if (sqlNode instanceof SqlCreateDatabase
+                    || sqlNode instanceof SqlCreateTable
+                    || sqlNode instanceof SqlUseDatabase) {
                     return startDBExecutorFactory.convertExecutor(sqlNode).execute();
                 }
 
