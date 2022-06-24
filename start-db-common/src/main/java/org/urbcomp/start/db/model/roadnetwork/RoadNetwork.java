@@ -137,4 +137,8 @@ public class RoadNetwork {
             .collect(Collectors.toList());
         return new RoadNetwork(roadSegmentList);
     }
+
+    public List<RoadSegment> getRoadSegments() {
+        return roadSegments;
+    }
 }
