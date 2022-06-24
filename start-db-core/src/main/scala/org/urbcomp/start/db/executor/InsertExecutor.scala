@@ -86,36 +86,35 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
-    WithClose(dataStore.getFeatureWriterAppend("t_" + tableId, Transaction.AUTO_COMMIT)) {
-      writer =>
-        resultObjs.foreach { i =>
-          var fieldIndex = 0
-          val sf = writer.next()
-          val count = i.size()
-          for (x <- 0 until count) {
-            var name: String = null
-            if (n.getTargetColumnList == null) {
-              name = fields.get(fieldIndex).getName
-            } else {
-              name = n.getTargetColumnList.get(x).toString
-            }
-            while (fields.get(fieldIndex).getName != name) {
-              fieldIndex += 1
-            }
-            if (fields.get(fieldIndex).getType == "RoadSegment") {
-              val rs = i.get(x).asInstanceOf[RoadSegment]
-              ExecutorUtil.writeRoadSegment(name, sf, rs)
-            } else if (fields.get(fieldIndex).getType == "Trajectory") {
-              val traj = i.get(x).asInstanceOf[Trajectory]
-              ExecutorUtil.writeTrajectory(name, sf, traj)
-            } else {
-              sf.setAttribute(name, i.get(x))
-            }
+    WithClose(dataStore.getFeatureWriterAppend("t_" + tableId, Transaction.AUTO_COMMIT)) { writer =>
+      resultObjs.foreach { i =>
+        var fieldIndex = 0
+        val sf = writer.next()
+        val count = i.size()
+        for (x <- 0 until count) {
+          var name: String = null
+          if (n.getTargetColumnList == null) {
+            name = fields.get(fieldIndex).getName
+          } else {
+            name = n.getTargetColumnList.get(x).toString
+          }
+          while (fields.get(fieldIndex).getName != name) {
             fieldIndex += 1
           }
-          affectRows += 1
-          writer.write()
+          if (fields.get(fieldIndex).getType == "RoadSegment") {
+            val rs = i.get(x).asInstanceOf[RoadSegment]
+            ExecutorUtil.writeRoadSegment(name, sf, rs)
+          } else if (fields.get(fieldIndex).getType == "Trajectory") {
+            val traj = i.get(x).asInstanceOf[Trajectory]
+            ExecutorUtil.writeTrajectory(name, sf, traj)
+          } else {
+            sf.setAttribute(name, i.get(x))
+          }
+          fieldIndex += 1
         }
+        affectRows += 1
+        writer.write()
+      }
     }
     dataStore.dispose()
     MetadataResult.buildDDLResult(affectRows)
