@@ -11,6 +11,7 @@
 
 package org.urbcomp.start.db.executor
 
+import org.junit.Assert.assertNotNull
 import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
 class TableExecutorTest extends AbstractCalciteFunctionTest {
@@ -42,5 +43,12 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
   test("test create table") {
     val stmt = connect.createStatement()
     stmt.executeUpdate(CREATE_TABLE_EXAMPLE)
+  }
+
+  test("test show tables") {
+    val stmt = connect.createStatement()
+    val rs = stmt.executeQuery("show tables")
+    rs.next()
+    assertNotNull(rs.getString(1))
   }
 }
