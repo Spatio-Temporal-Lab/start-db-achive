@@ -44,8 +44,8 @@ public abstract class AbstractCoordTransformer {
         Coordinate[] coordinates = lineString.getCoordinates();
         Coordinate[] res = new Coordinate[coordinates.length];
         for (int i = 0; i < coordinates.length; i++) {
-            double[] WGSLngLat = transform(coordinates[i].getX(), coordinates[i].getY());
-            res[i] = new Coordinate(WGSLngLat[0], WGSLngLat[1]);
+            double[] LngLat = transform(coordinates[i].getX(), coordinates[i].getY());
+            res[i] = new Coordinate(LngLat[0], LngLat[1]);
         }
         return geometryFactory.createLineString(res);
     }
