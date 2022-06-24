@@ -20,6 +20,7 @@ import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
+import org.urbcomp.start.db.util.SqlParam
 
 import java.sql.ResultSet
 import java.util
@@ -36,18 +37,15 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
 
   override def execute[Int](): MetadataResult[Int] = {
     // extract database name and table name
-    // ToDO Sql Param
-    val userName = "start_db"
-    val envDbName = "db_test"
+    val param = SqlParam.CACHE.get()
+    val userName = param.getUserName
+    val envDbName = param.getDbName
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val target = targetTable.names.get(0).split('.')
-    val (dbName, tableName) = target.length match {
-      case 3 =>
-        (target(1), target(2))
+    val (dbName, tableName) = targetTable.names.size() match {
       case 2 =>
-        (target(0), target(1))
+        (targetTable.names.get(0), targetTable.names.get(1))
       case 1 =>
-        (envDbName, target(0))
+        (envDbName, targetTable.names.get(0))
       case _ =>
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
@@ -80,7 +78,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     var affectRows = 0
     val params = new util.HashMap[String, String]()
     // ToDO: SqlParam
-    val CATALOG = "start_db.db_test"
+    val CATALOG = userName + "." + dbName
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)

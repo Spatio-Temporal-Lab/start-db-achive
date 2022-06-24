@@ -19,6 +19,7 @@ import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
+import org.urbcomp.start.db.util.SqlParam
 
 import java.sql.ResultSet
 import java.util
@@ -30,9 +31,9 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
 
   override def execute[Int](): MetadataResult[Int] = {
     // extract database name and table name
-    // ToDO SqlParam
-    val userName = "start_db"
-    val envDbName = "db_test"
+    val param = SqlParam.CACHE.get()
+    val userName = param.getUserName
+    val envDbName = param.getDbName
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
     val (dbName, tableName) = targetTable.names.size() match {
       case 2 =>
@@ -80,7 +81,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     var affectRows = 0
     val params = new util.HashMap[String, String]()
     // ToDO 传入参数的问题(先写死)
-    val CATALOG = "start_db.db_test"
+    val CATALOG = userName + "." + dbName
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)

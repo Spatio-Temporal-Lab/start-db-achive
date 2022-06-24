@@ -28,7 +28,7 @@ abstract class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterA
   var connect: Connection = _
 
   override protected def beforeAll(): Unit = {
-    SqlParam.CACHE.set(new SqlParam("start_db", "db_test"))
+    SqlParam.CACHE.set(new SqlParam("root", "db_test"))
     connect = CalciteHelper.createConnection()
   }
 

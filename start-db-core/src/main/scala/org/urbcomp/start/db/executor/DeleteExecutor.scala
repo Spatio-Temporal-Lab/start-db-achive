@@ -17,6 +17,7 @@ import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.MetadataVerifyUtil
+import org.urbcomp.start.db.util.SqlParam
 
 import java.util
 
@@ -29,21 +30,18 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
 
   override def execute[Int](): MetadataResult[Int] = {
     // extract database name and table name
-    val userName = "start_db"
-    val envDbName = "db_test"
+    val param = SqlParam.CACHE.get()
+    val userName = param.getUserName
+    val envDbName = param.getDbName
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val target = targetTable.names.get(0).split('.')
-    val (dbName, tableName) = target.length match {
-      case 3 =>
-        (target(1), target(2))
+    val (dbName, tableName) = targetTable.names.size() match {
       case 2 =>
-        (target(0), target(1))
+        (targetTable.names.get(0), targetTable.names.get(1))
       case 1 =>
-        (envDbName, target(0))
+        (envDbName, targetTable.names.get(0))
       case _ =>
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
-
     // metadata Verify
     if (!MetadataVerifyUtil.tableVerify(userName, dbName, tableName))
       throw new RuntimeException("There is no corresponding table!")
@@ -55,7 +53,7 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     var affectRows = 0
     val params = new util.HashMap[String, String]()
     // ToDO Sql Param
-    val CATALOG = "start_db.db_test"
+    val CATALOG = userName + "." + dbName
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
