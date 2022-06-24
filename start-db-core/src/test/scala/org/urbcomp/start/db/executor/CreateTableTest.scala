@@ -23,7 +23,7 @@ class CreateTableTest extends AbstractCalciteFunctionTest {
     * test for create
     * ToDO : 在一个test方法内，同时执行create与insert，insert会失败
     */
-  test("create & insert_0") {
+  ignore("create & insert_0") {
     val statement = connect.createStatement()
     statement.execute("create table t_create (tid integer, name string)")
   }
