@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 public abstract class AbstractCoordTransformer {
     public Point pointTransform(Point point) {
         GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
-        double[] LngLat = transform(point.getX(), point.getY());
-        return geometryFactory.createPoint(new Coordinate(LngLat[0], LngLat[1]));
+        double[] lngLat = transform(point.getX(), point.getY());
+        return geometryFactory.createPoint(new Coordinate(lngLat[0], lngLat[1]));
     }
 
     public LineString lineStringTransform(LineString lineString) {
@@ -44,8 +44,8 @@ public abstract class AbstractCoordTransformer {
         Coordinate[] coordinates = lineString.getCoordinates();
         Coordinate[] res = new Coordinate[coordinates.length];
         for (int i = 0; i < coordinates.length; i++) {
-            double[] LngLat = transform(coordinates[i].getX(), coordinates[i].getY());
-            res[i] = new Coordinate(LngLat[0], LngLat[1]);
+            double[] lngLat = transform(coordinates[i].getX(), coordinates[i].getY());
+            res[i] = new Coordinate(lngLat[0], lngLat[1]);
         }
         return geometryFactory.createLineString(res);
     }
