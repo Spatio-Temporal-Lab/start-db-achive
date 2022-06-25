@@ -35,7 +35,8 @@ public class TrajectoryAndFeatureTransformerTest {
     @Test
     public void test() throws IOException, FactoryException {
 
-        String tableName = "t_trajectory_test";
+        // t_trajectory_test tableId is 3, mapped to schema name t_3
+        String tableName = "t_3";
 
         // init GeoMesa table
         Map<String, String> params = new HashMap<>();
