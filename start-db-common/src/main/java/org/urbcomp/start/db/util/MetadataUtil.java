@@ -60,4 +60,11 @@ public class MetadataUtil {
     public static String makeCatalog(String user, String db) {
         return user + UDT_SPLITTER + db;
     }
+
+    /**
+     * Internal schema name spec
+     */
+    public static String makeSchemaName(long tableId) {
+        return String.format("t_%d", tableId);
+    }
 }

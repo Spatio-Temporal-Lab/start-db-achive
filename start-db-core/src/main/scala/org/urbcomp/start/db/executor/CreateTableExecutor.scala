@@ -11,7 +11,6 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.SqlIdentifier
 import org.apache.calcite.sql.ddl.{SqlColumnDeclaration, SqlCreateTable}
 import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
@@ -27,21 +26,20 @@ import org.locationtech.jts.geom.{
 }
 import org.urbcomp.start.db.`type`.TypeHelper
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
+import org.urbcomp.start.db.metadata.{AccessorFactory, SqlSessionUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.transformer.{
   RoadSegmentAndGeomesaTransformer,
   TrajectoryAndFeatureTransformer
 }
-import org.urbcomp.start.db.util.SqlParam
+import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
 
 import java.util
 
 case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
-    // TODO userName dbName context
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
     val envDbName = param.getDbName
@@ -75,7 +73,9 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     val tableId = createdTable.getId
     val fieldAccessor = AccessorFactory.getFieldAccessor
     val sfb = new SimpleFeatureTypeBuilder
-    sfb.setName("t_%d".format(tableId))
+    val schemaName = MetadataUtil.makeSchemaName(tableId);
+    sfb.setName(schemaName)
+
     n.columnList.forEach(column => {
       val node = column.asInstanceOf[SqlColumnDeclaration]
       val name = node.name.names.get(0);
@@ -115,9 +115,9 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
-    val schema = dataStore.getSchema(tableName);
+    val schema = dataStore.getSchema(schemaName);
     if (schema != null) {
-      throw new IllegalStateException("table already exist " + tableName);
+      throw new IllegalStateException("schema already exist " + schemaName);
     }
 
     // TODO transform start db type
@@ -127,10 +127,12 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
 
     // allow mixed geometry types for support start-db type `Geometry`
     sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
+    dataStore.createSchema(sft)
 
-    dataStore.createSchema(sft);
     tableAccessor.commit()
     fieldAccessor.commit()
+    // HOTFIX: session should end here
+    SqlSessionUtil.clearCache()
     MetadataResult.buildDDLResult(affectedRows.toInt)
   }
 }
