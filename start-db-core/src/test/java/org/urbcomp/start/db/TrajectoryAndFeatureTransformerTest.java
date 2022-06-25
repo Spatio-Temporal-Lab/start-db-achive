@@ -34,7 +34,7 @@ public class TrajectoryAndFeatureTransformerTest {
 
     @Test
     public void test() throws IOException, FactoryException {
-
+        // TODO: move global table to environment setup
         // t_trajectory_test tableId is 3, mapped to schema name t_3
         String tableName = "t_3";
 
