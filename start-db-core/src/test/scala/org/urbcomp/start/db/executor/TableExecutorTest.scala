@@ -15,34 +15,32 @@ import org.junit.Assert.assertNotNull
 import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
 class TableExecutorTest extends AbstractCalciteFunctionTest {
-
-  private val randomNum = scala.util.Random.nextInt(100000)
-  private val CREATE_TABLE_EXAMPLE = s"""CREATE TABLE start_db_table_test_%d (
-                                        |    idx Integer,
-                                        |    ride_id String,
-                                        |    started_at Timestamp,
-                                        |    ended_at Timestamp,
-                                        |    start_station_name String,
-                                        |    start_station_id Double,
-                                        |    start_point Point,
-                                        |    end_station_name String,
-                                        |    end_station_id Double,
-                                        |    end_point Point,
-                                        |    track LineString,
-                                        |    member_casual String,
-                                        |    tr Trajectory,
-                                        |    rs RoadSegment,
-                                        |    gm Geometry,
-                                        |    rn RoadNetwork,
-                                        |    bi Binary,
-                                        |    mp MultiPoint,
-                                        |    gc GeometryCollection,
-                                        |    int_val int
-                                        |);""".format(randomNum).stripMargin
-
   test("test create table") {
+    val randomNum = scala.util.Random.nextInt(100000)
+    val createTableSQL = s"""CREATE TABLE start_db_table_test_%d (
+                                  |    idx Integer,
+                                  |    ride_id String,
+                                  |    started_at Timestamp,
+                                  |    ended_at Timestamp,
+                                  |    start_station_name String,
+                                  |    start_station_id Double,
+                                  |    start_point Point,
+                                  |    end_station_name String,
+                                  |    end_station_id Double,
+                                  |    end_point Point,
+                                  |    track LineString,
+                                  |    member_casual String,
+                                  |    tr Trajectory,
+                                  |    rs RoadSegment,
+                                  |    gm Geometry,
+                                  |    rn RoadNetwork,
+                                  |    bi Binary,
+                                  |    mp MultiPoint,
+                                  |    gc GeometryCollection,
+                                  |    int_val int
+                                  |);""".format(randomNum).stripMargin
     val stmt = connect.createStatement()
-    stmt.executeUpdate(CREATE_TABLE_EXAMPLE)
+    stmt.executeUpdate(createTableSQL)
   }
 
   test("test show tables") {

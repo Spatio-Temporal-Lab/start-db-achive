@@ -40,7 +40,7 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
         .expireAfterAccess(10, TimeUnit.MINUTES)
         .build();
 
-    private static Set<Entry<String, Table>> tableNameCache;
+    private static final Set<Entry<String, Table>> tableNameCache = refreshTableNames();
 
     private static Set<Entry<String, Table>> refreshTableNames() {
         Set<Entry<String, Table>> tableNames = new HashSet<>(32);
@@ -117,9 +117,6 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
     @Nonnull
     @Override
     public Set<Entry<String, Table>> entrySet() {
-        if (tableNameCache == null) {
-            tableNameCache = refreshTableNames();
-        }
         return tableNameCache;
     }
 
