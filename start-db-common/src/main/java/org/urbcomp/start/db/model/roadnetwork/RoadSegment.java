@@ -209,4 +209,13 @@ public class RoadSegment {
             .setLevel(level)
             .setLengthInMeter(lengthInMeter);
     }
+
+    @Override
+    public String toString() {
+        try {
+            return this.toGeoJSON();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
