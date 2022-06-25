@@ -110,7 +110,8 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
      */
     @Override
     default void close() {
-        SqlSessionUtil.getSession(false).close();
+        // HOTFIX: session should never close under current design
+        // SqlSessionUtil.getSession(false).close();
     }
 
     /**
