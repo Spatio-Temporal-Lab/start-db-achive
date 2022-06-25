@@ -30,8 +30,6 @@ import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 
-import javax.activation.MimeTypeParameterList;
-
 public class CoordTransformFunction {
     @StartDBFunction("st_BD09ToWGS84")
     public Point st_BD09ToWGS84(Point point) {
@@ -56,6 +54,7 @@ public class CoordTransformFunction {
         AbstractCoordTransformer transformer = new BD09ToWGS84Transformer();
         return transformer.multiPointTransform(multiPoint);
     }
+
     @StartDBFunction("st_BD09ToWGS84")
     public MultiLineString st_BD09ToWGS84(MultiLineString multiLineString) {
         AbstractCoordTransformer transformer = new BD09ToWGS84Transformer();
@@ -363,67 +362,67 @@ public class CoordTransformFunction {
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public Point st_GCJ02ToWGS84(Point point){
+    public Point st_GCJ02ToWGS84(Point point) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.pointTransform(point);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public LineString st_GCJ02ToWGS84(LineString lineString){
+    public LineString st_GCJ02ToWGS84(LineString lineString) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.lineStringTransform(lineString);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public Polygon st_GCJ02ToWGS84(Polygon polygon){
+    public Polygon st_GCJ02ToWGS84(Polygon polygon) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.polygonTransform(polygon);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public MultiPoint st_GCJ02ToWGS84(MultiPoint multiPoint){
+    public MultiPoint st_GCJ02ToWGS84(MultiPoint multiPoint) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.multiPointTransform(multiPoint);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public MultiLineString st_GCJ02ToWGS84(MultiLineString multiLineString){
+    public MultiLineString st_GCJ02ToWGS84(MultiLineString multiLineString) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.multiLineStringTransform(multiLineString);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public MultiPolygon st_GCJ02ToWGS84(MultiPolygon multiPolygon){
+    public MultiPolygon st_GCJ02ToWGS84(MultiPolygon multiPolygon) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.multiPolygonTransform(multiPolygon);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public Geometry st_GCJ02ToWGS84(Geometry geometry){
+    public Geometry st_GCJ02ToWGS84(Geometry geometry) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.geometryTransform(geometry);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public GeometryCollection st_GCJ02ToWGS84(GeometryCollection geometryCollection){
+    public GeometryCollection st_GCJ02ToWGS84(GeometryCollection geometryCollection) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return (GeometryCollection) transformer.geometryTransform(geometryCollection);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public Trajectory st_GCJ02ToWGS84(Trajectory trajectory){
+    public Trajectory st_GCJ02ToWGS84(Trajectory trajectory) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.trajectoryTransform(trajectory);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public RoadSegment st_GCJ02ToWGS84(RoadSegment roadSegment){
+    public RoadSegment st_GCJ02ToWGS84(RoadSegment roadSegment) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.roadSegmentTransform(roadSegment);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")
-    public RoadNetwork st_GCJ02ToWGS84(RoadNetwork roadNetwork){
+    public RoadNetwork st_GCJ02ToWGS84(RoadNetwork roadNetwork) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
         return transformer.roadNetworkTransform(roadNetwork);
     }

@@ -53,9 +53,8 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
 
   test("st_BD09ToWGS84(MultiPoint)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_BD09ToWGS84(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))"
-    )
+    val resultSet =
+      statement.executeQuery("select st_BD09ToWGS84(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
     resultSet.next()
     assertEquals(
       "MULTIPOINT ((0.9935048779206697 1.9940125213262534), (2.9934995619203466 3.993975880501857))",
@@ -105,63 +104,79 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
   test("st_WGS84ToBD09(LineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_WGS84ToBD09(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))")
+      "select st_WGS84ToBD09(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))"
+    )
     resultSet.next()
-    assertEquals("LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177," +
-      " 1.006495254008945 2.005983008075984)", resultSet.getObject(1).toString)
+    assertEquals(
+      "LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177," +
+        " 1.006495254008945 2.005983008075984)",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToBD09(Polygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_WGS84ToBD09(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))")
+      "select st_WGS84ToBD09(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))"
+    )
     resultSet.next()
-    assertEquals("POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 1.0059958968045013," +
-      " 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
-      "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407," +
-      " 2.00650449999775 3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806" +
-      " 2.0059993922585364, 2.006490752530665 2.005984752567407))", resultSet.getObject(1).toString)
+    assertEquals(
+      "POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 1.0059958968045013," +
+        " 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
+        "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407," +
+        " 2.00650449999775 3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806" +
+        " 2.0059993922585364, 2.006490752530665 2.005984752567407))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToBD09(MultiPoint)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_WGS84ToBD09(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    val resultSet =
+      statement.executeQuery("select st_WGS84ToBD09(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
     resultSet.next()
-    assertEquals("MULTIPOINT ((1.006495254008945 2.005983008075984), " +
-      "(3.0064983922497763 4.006022856419637))", resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), " +
+        "(3.0064983922497763 4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToBD09(MultiLineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_WGS84ToBD09(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))")
+      "select st_WGS84ToBD09(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))"
+    )
     resultSet.next()
-    assertEquals("MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296" +
-      " 5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699," +
-      " -9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296" +
+        " 5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699," +
+        " -9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToBD09(MultiPolygon)") {
-      val statement = connect.createStatement
-      val resultSet = statement.executeQuery(
-        "select st_WGS84ToBD09(st_mPolygonFromWKT(" +
-          "'MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))'))")
-      resultSet.next()
-      assertEquals("MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982" +
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_WGS84ToBD09(st_mPolygonFromWKT(" +
+        "'MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))'))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982" +
         " 1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
         "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775" +
         " 3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364," +
         " 2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913" +
         " 2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
-        resultSet.getObject(1).toString)
-    }
+      resultSet.getObject(1).toString
+    )
+  }
 
   test("st_GCJ02ToBD09(Point)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_GCJ02ToBD09(st_makePoint(1, 2))")
+    val resultSet = statement.executeQuery("select st_GCJ02ToBD09(st_makePoint(1, 2))")
     resultSet.next()
     assertEquals("POINT (1.006495254008945 2.005983008075984)", resultSet.getObject(1).toString)
   }
@@ -169,256 +184,309 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
   test("st_GCJ02ToBD09(LineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_GCJ02ToBD09(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))")
+      "select st_GCJ02ToBD09(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))"
+    )
     resultSet.next()
-    assertEquals("LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177, " +
-      "1.006495254008945 2.005983008075984)", resultSet.getObject(1).toString)
+    assertEquals(
+      "LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177, " +
+        "1.006495254008945 2.005983008075984)",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToBD09(Polygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_GCJ02ToBD09(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))")
+      "select st_GCJ02ToBD09(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))"
+    )
     resultSet.next()
-    assertEquals("POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 1.0059958968045013," +
-      " 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, 1.0065137474659602" +
-      " 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 3.0059969999966243," +
-      " 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, 2.006490752530665" +
-      " 2.005984752567407))", resultSet.getObject(1).toString)
+    assertEquals(
+      "POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 1.0059958968045013," +
+        " 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, 1.0065137474659602" +
+        " 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 3.0059969999966243," +
+        " 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, 2.006490752530665" +
+        " 2.005984752567407))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToBD09(MultiPoint)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_GCJ02ToBD09(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    val resultSet =
+      statement.executeQuery("select st_GCJ02ToBD09(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
     resultSet.next()
-    assertEquals("MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763" +
-      " 4.006022856419637))", resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763" +
+        " 4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToBD09(MultiLineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_GCJ02ToBD09(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))")
+      "select st_GCJ02ToBD09(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))"
+    )
     resultSet.next()
-    assertEquals("MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296" +
-      " 5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699," +
-      " -9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296" +
+        " 5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699," +
+        " -9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToBD09(MultiPolygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
       "select st_GCJ02ToBD09(st_mPolygonFromWKT('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))," +
-        "((6 3,9 2,9 4,6 3)))'))")
+        "((6 3,9 2,9 4,6 3)))'))"
+    )
     resultSet.next()
-    assertEquals("MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
-      "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958," +
-      " 1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775" +
-      " 3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364," +
-      " 2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913" +
-      " 2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
+        "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958," +
+        " 1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775" +
+        " 3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364," +
+        " 2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913" +
+        " 2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_BD09ToGCJ02(Point)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_makePoint(1, 2))")
+    val resultSet = statement.executeQuery("select st_BD09ToGCJ02(st_makePoint(1, 2))")
     resultSet.next()
-    assertEquals("POINT (1.006495254008945 2.005983008075984)",
-      resultSet.getObject(1).toString)
+    assertEquals("POINT (1.006495254008945 2.005983008075984)", resultSet.getObject(1).toString)
   }
 
   test("st_BD09ToGCJ02(LineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))")
+      "select st_BD09ToGCJ02(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))"
+    )
     resultSet.next()
-    assertEquals("LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177, 1.006495254008945 2.005983008075984)",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177, 1.006495254008945 2.005983008075984)",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_BD09ToGCJ02(Polygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))")
+      "select st_BD09ToGCJ02(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))"
+    )
     resultSet.next()
-    assertEquals("POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 1.0059958968045013, " +
-      "5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, 1.0065137474659602 " +
-      "1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 3.0059969999966243," +
-      " 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
-      "2.006490752530665 2.005984752567407))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 1.0059958968045013, " +
+        "5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, 1.0065137474659602 " +
+        "1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 3.0059969999966243," +
+        " 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
+        "2.006490752530665 2.005984752567407))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_BD09ToGCJ02(MultiPoint)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    val resultSet =
+      statement.executeQuery("select st_BD09ToGCJ02(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
     resultSet.next()
-    assertEquals("MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 4.006022856419637))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_BD09ToGCJ02(MultiLineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))")
+      "select st_BD09ToGCJ02(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))"
+    )
     resultSet.next()
-    assertEquals("MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296 " +
-      "5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699, " +
-      "-9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296 " +
+        "5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699, " +
+        "-9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_BD09ToGCJ02(MultiPolygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
       "select st_BD09ToGCJ02(st_mPolygonFromWKT('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))," +
-        "((6 3,9 2,9 4,6 3)))'))")
+        "((6 3,9 2,9 4,6 3)))'))"
+    )
     resultSet.next()
-    assertEquals("MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
-      "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
-      "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 " +
-      "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
-      "2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913 " +
-      "2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
+        "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
+        "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 " +
+        "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
+        "2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913 " +
+        "2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToGCJ02(Point)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_makePoint(1, 2))")
+    val resultSet = statement.executeQuery("select st_BD09ToGCJ02(st_makePoint(1, 2))")
     resultSet.next()
-    assertEquals("POINT (1.006495254008945 2.005983008075984)",
-      resultSet.getObject(1).toString)
+    assertEquals("POINT (1.006495254008945 2.005983008075984)", resultSet.getObject(1).toString)
   }
 
   test("st_WGS84ToGCJ02(LineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))")
+      "select st_BD09ToGCJ02(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))"
+    )
     resultSet.next()
-    assertEquals("LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177, " +
-      "1.006495254008945 2.005983008075984)",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177, " +
+        "1.006495254008945 2.005983008075984)",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToGCJ02(Polygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))")
+      "select st_BD09ToGCJ02(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))"
+    )
     resultSet.next()
-    assertEquals("POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 1.0059958968045013," +
-      " 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, 1.0065137474659602 " +
-      "1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 3.0059969999966243, " +
-      "3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, 2.006490752530665 " +
-      "2.005984752567407))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 1.0059958968045013," +
+        " 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, 1.0065137474659602 " +
+        "1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 3.0059969999966243, " +
+        "3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, 2.006490752530665 " +
+        "2.005984752567407))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToGCJ02(MultiPoint)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    val resultSet =
+      statement.executeQuery("select st_BD09ToGCJ02(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
     resultSet.next()
-    assertEquals("MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 4.006022856419637))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToGCJ02(MultiLineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))")
+      "select st_BD09ToGCJ02(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))"
+    )
     resultSet.next()
-    assertEquals("MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296 " +
-      "5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699," +
-      " -9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296 " +
+        "5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699," +
+        " -9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_WGS84ToGCJ02(MultiPolygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
       "select st_BD09ToGCJ02(st_mPolygonFromWKT('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))," +
-        "((6 3,9 2,9 4,6 3)))'))")
+        "((6 3,9 2,9 4,6 3)))'))"
+    )
     resultSet.next()
-    assertEquals("MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
-      "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
-      "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 " +
-      "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
-      "2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913" +
-      " 2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
+        "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
+        "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 " +
+        "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
+        "2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913" +
+        " 2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToWGS84(Point)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_makePoint(1, 2))")
+    val resultSet = statement.executeQuery("select st_BD09ToGCJ02(st_makePoint(1, 2))")
     resultSet.next()
-    assertEquals("POINT (1.006495254008945 2.005983008075984)",
-      resultSet.getObject(1).toString)
+    assertEquals("POINT (1.006495254008945 2.005983008075984)", resultSet.getObject(1).toString)
   }
 
   test("st_GCJ02ToWGS84(LineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))")
+      "select st_BD09ToGCJ02(st_lineStringFromWKT('LINESTRING(0 0,1 1,1 2)'))"
+    )
     resultSet.next()
-    assertEquals("LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177, " +
-      "1.006495254008945 2.005983008075984)",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "LINESTRING (0.0065 0.006, 1.0065137474659602 1.0060107474292177, " +
+        "1.006495254008945 2.005983008075984)",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToWGS84(Polygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))")
+      "select st_BD09ToGCJ02(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))"
+    )
     resultSet.next()
-    assertEquals("POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
-      "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
-      "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 " +
-      "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
-      "2.006490752530665 2.005984752567407))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "POLYGON ((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
+        "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
+        "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 " +
+        "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
+        "2.006490752530665 2.005984752567407))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToWGS84(MultiPoint)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    val resultSet =
+      statement.executeQuery("select st_BD09ToGCJ02(st_mPointFromWKT('MULTIPOINT((1 2),(3 4))'))")
     resultSet.next()
-    assertEquals("MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 4.006022856419637))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToWGS84(MultiLineString)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))")
+      "select st_BD09ToGCJ02(st_mLineStringFromWKT('MULTILINESTRING((3 4,1 5,2 5),(-5 -8,-10 -8,-15 -4))'))"
+    )
     resultSet.next()
-    assertEquals("MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296 " +
-      "5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699, " +
-      "-9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTILINESTRING ((3.0064983922497763 4.006022856419637, 1.006504103142296 " +
+        "5.005981515843958, 2.0065010672984185 5.005980918316001), (-4.993521179867331 -7.994007187738699, " +
+        "-9.9935255250495 -7.993995820006325, -14.993471264265814 -3.9940405370837717))",
+      resultSet.getObject(1).toString
+    )
   }
 
   test("st_GCJ02ToWGS84(MultiPolygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
       "select st_BD09ToGCJ02(st_mPolygonFromWKT('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))," +
-        "((6 3,9 2,9 4,6 3)))'))")
+        "((6 3,9 2,9 4,6 3)))'))"
+    )
     resultSet.next()
-    assertEquals("MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
-      "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
-      "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 " +
-      "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
-      "2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913 " +
-      "2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
-      resultSet.getObject(1).toString)
+    assertEquals(
+      "MULTIPOLYGON (((1.0065137474659602 1.0060107474292177, 5.006518484154982 " +
+        "1.0059958968045013, 5.00649525252729 5.005980252564032, 1.006504103142296 5.005981515843958, " +
+        "1.0065137474659602 1.0060107474292177), (2.006490752530665 2.005984752567407, 2.00650449999775 " +
+        "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
+        "2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913 " +
+        "2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
+      resultSet.getObject(1).toString
+    )
   }
 }
