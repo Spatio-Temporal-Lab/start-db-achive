@@ -15,9 +15,10 @@ import org.apache.calcite.sql.{SqlDelete, SqlIdentifier}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
+import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.MetadataVerifyUtil
-import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
+import org.urbcomp.start.db.util.MetadataUtil
 
 import java.util
 
@@ -29,19 +30,8 @@ import java.util
 case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
 
   override def execute[Int](): MetadataResult[Int] = {
-    // extract database name and table name
-    val param = SqlParam.CACHE.get()
-    val userName = param.getUserName
-    val envDbName = param.getDbName
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val (dbName, tableName) = targetTable.names.size() match {
-      case 2 =>
-        (targetTable.names.get(0), targetTable.names.get(1))
-      case 1 =>
-        (envDbName, targetTable.names.get(0))
-      case _ =>
-        throw new RuntimeException("target table format should like dbname.tablename or tablename")
-    }
+    val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
     // metadata Verify
     val table = MetadataVerifyUtil.getTable(userName, dbName, tableName)
     if (table == null) {

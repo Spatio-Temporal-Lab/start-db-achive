@@ -23,7 +23,6 @@ import scala.collection.JavaConverters.asScalaBufferConverter
 case class ShowDatabaseExecutor() extends BaseExecutor {
 
   override def execute[Array](): MetadataResult[Array] = {
-    // TODO userName context
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
     // TODO close accessor

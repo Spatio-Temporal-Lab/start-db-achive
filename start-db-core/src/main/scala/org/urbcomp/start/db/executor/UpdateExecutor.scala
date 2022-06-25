@@ -20,7 +20,7 @@ import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
+import org.urbcomp.start.db.util.MetadataUtil
 
 import java.sql.ResultSet
 import java.util
@@ -36,19 +36,8 @@ import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
 case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
 
   override def execute[Int](): MetadataResult[Int] = {
-    // extract database name and table name
-    val param = SqlParam.CACHE.get()
-    val userName = param.getUserName
-    val envDbName = param.getDbName
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val (dbName, tableName) = targetTable.names.size() match {
-      case 2 =>
-        (targetTable.names.get(0), targetTable.names.get(1))
-      case 1 =>
-        (envDbName, targetTable.names.get(0))
-      case _ =>
-        throw new RuntimeException("target table format should like dbname.tablename or tablename")
-    }
+    val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
     // metadata verify
     val table = MetadataVerifyUtil.getTable(userName, dbName, tableName)
     if (table == null) {
@@ -93,14 +82,13 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
           val count = result.size()
           for (x <- 0 until count) {
             val name = n.getTargetColumnList.get(x).toString
-            if (result.get(x).isInstanceOf[RoadSegment]) {
-              val rs = result.get(x).asInstanceOf[RoadSegment]
-              ExecutorUtil.writeRoadSegment(name, sf, rs)
-            } else if (result.get(x).isInstanceOf[Trajectory]) {
-              val traj = result.get(x).asInstanceOf[Trajectory]
-              ExecutorUtil.writeTrajectory(name, sf, traj)
-            } else {
-              sf.setAttribute(name, result.get(x))
+            result.get(x) match {
+              case rs: RoadSegment =>
+                ExecutorUtil.writeRoadSegment(name, sf, rs)
+              case traj: Trajectory =>
+                ExecutorUtil.writeTrajectory(name, sf, traj)
+              case _ =>
+                sf.setAttribute(name, result.get(x))
             }
           }
           affectRows += 1
