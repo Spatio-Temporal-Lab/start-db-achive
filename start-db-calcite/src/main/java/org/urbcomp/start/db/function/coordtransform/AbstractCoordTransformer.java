@@ -22,6 +22,7 @@
 
 package org.urbcomp.start.db.function.coordtransform;
 
+import org.locationtech.jts.awt.PointTransformation;
 import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
@@ -30,8 +31,10 @@ import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class AbstractCoordTransformer {
     public Point pointTransform(Point point) {
@@ -65,6 +68,15 @@ public abstract class AbstractCoordTransformer {
         return geometryFactory.createPolygon(shell, holes);
     }
 
+    public MultiPoint multiPointTransform(MultiPoint multiPoint){
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
+        Point[] points = new Point[multiPoint.getNumGeometries()];
+        for (int i = 0; i < multiPoint.getNumGeometries(); i++) {
+            Point point = (Point) multiPoint.getGeometryN(i);
+            points[i] = pointTransform(point);
+        }
+        return  geometryFactory.createMultiPoint(points);
+    }
     public MultiLineString multiLineStringTransform(MultiLineString multiLineString) {
         GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
         LineString[] lineStrings = new LineString[multiLineString.getNumGeometries()];
@@ -84,6 +96,28 @@ public abstract class AbstractCoordTransformer {
         }
         return geometryFactory.createMultiPolygon(polygons);
     }
+
+    public Geometry geometryTransform(Geometry geometry) {
+        if (geometry instanceof Point) {
+            return pointTransform((Point) geometry);
+        }else if(geometry instanceof LineString){
+            return lineStringTransform((LineString) geometry);
+        }else if(geometry instanceof Polygon){
+            return polygonTransform((Polygon) geometry);
+        }else if(geometry instanceof MultiPoint){
+            return multiPointTransform((MultiPoint) geometry);
+        }else if(geometry instanceof MultiLineString){
+            return multiLineStringTransform((MultiLineString) geometry);
+        }else if(geometry instanceof MultiPolygon){
+            return multiPolygonTransform((MultiPolygon) geometry);
+        }
+        return null;
+    }
+
+//    public GeometryCollection geometryCollectionTransform(GeometryCollection geometryCollection) {
+//
+//
+//    }
 
     public Trajectory trajectoryTransform(Trajectory trajectory) {
         List<GPSPoint> points = trajectory.getGPSPointList().stream().map(o -> {
