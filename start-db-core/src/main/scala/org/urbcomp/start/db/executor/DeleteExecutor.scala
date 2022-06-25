@@ -17,7 +17,7 @@ import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.MetadataVerifyUtil
-import org.urbcomp.start.db.util.SqlParam
+import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
 
 import java.util
 
@@ -43,8 +43,10 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
     // metadata Verify
-    if (!MetadataVerifyUtil.tableVerify(userName, dbName, tableName))
+    val table = MetadataVerifyUtil.getTable(userName, dbName, tableName)
+    if (table == null) {
       throw new RuntimeException("There is no corresponding table!")
+    }
 
     // Analytic filter condition
     val condition = n.getCondition.toString.replace("`", "")
@@ -58,7 +60,8 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
     val filter = CQL.toFilter(condition)
-    WithClose(dataStore.getFeatureWriter(tableName, filter, Transaction.AUTO_COMMIT)) { writer =>
+    val schemaName = MetadataUtil.makeSchemaName(table.getId)
+    WithClose(dataStore.getFeatureWriter(schemaName, filter, Transaction.AUTO_COMMIT)) { writer =>
       {
         while (writer.hasNext) {
           writer.next()
