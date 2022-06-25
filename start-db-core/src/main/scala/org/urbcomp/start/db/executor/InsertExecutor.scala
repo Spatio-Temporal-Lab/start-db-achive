@@ -19,7 +19,7 @@ import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.util.SqlParam
+import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
 
 import java.sql.ResultSet
 import java.util
@@ -43,9 +43,10 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
       case _ =>
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
-    // metaDataVerify
-    if (!MetadataVerifyUtil.tableVerify(userName, dbName, tableName))
+    val table = MetadataVerifyUtil.getTable(userName, dbName, tableName)
+    if (table == null) {
       throw new RuntimeException("There is no corresponding table!")
+    }
     val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
     if (fields == null) throw new RuntimeException("There is no corresponding fields!")
     // construct sql
@@ -85,7 +86,8 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
-    WithClose(dataStore.getFeatureWriterAppend(tableName, Transaction.AUTO_COMMIT)) { writer =>
+    val schemaName = MetadataUtil.makeSchemaName(table.getId)
+    WithClose(dataStore.getFeatureWriterAppend(schemaName, Transaction.AUTO_COMMIT)) { writer =>
       resultObjs.foreach { i =>
         var fieldIndex = 0
         val sf = writer.next()

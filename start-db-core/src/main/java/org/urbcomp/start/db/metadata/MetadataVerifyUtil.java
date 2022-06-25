@@ -59,7 +59,7 @@ public class MetadataVerifyUtil {
     /**
      * get table from metadata
      */
-    private static Table getTable(String userName, String dbName, String tableName) {
+    public static Table getTable(String userName, String dbName, String tableName) {
         UserAccessor userAccessor = AccessorFactory.getUserAccessor();
         DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();

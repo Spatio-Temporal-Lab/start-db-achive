@@ -86,4 +86,9 @@ public class SqlSessionUtil {
             return SqlSessionUtilHolder.INSTANCE.sqlSessionManualCommit;
         }
     }
+
+    public static void clearCache() {
+        SqlSessionUtilHolder.INSTANCE.sqlSession.clearCache();
+        SqlSessionUtilHolder.INSTANCE.sqlSessionManualCommit.clearCache();
+    }
 }
