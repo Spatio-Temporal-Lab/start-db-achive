@@ -28,6 +28,7 @@ import java.util.Map;
 public class Main {
 
     private static int SOURCE_BATCH_SIZE = 512;
+    private static int TABLE_MAX_WIDTH = 100000;
 
     private static class CmdArg {
         String username;
@@ -39,18 +40,30 @@ public class Main {
         int batchSize = 512;
 
         boolean check() {
-            return username != null && password != null && url != null && batchSize > 0 && maxWidth > 0;
+            return username != null
+                && password != null
+                && url != null
+                && batchSize > 0
+                && maxWidth > 0;
         }
 
         @Override
         public String toString() {
-            return "{" +
-                    "username='" + username + '\'' +
-                    ", password='" + password + '\'' +
-                    ", url='" + url + '\'' +
-                    ", maxWidth=" + maxWidth +
-                    ", batchSize=" + batchSize +
-                    '}';
+            return "{"
+                + "username='"
+                + username
+                + '\''
+                + ", password='"
+                + password
+                + '\''
+                + ", url='"
+                + url
+                + '\''
+                + ", maxWidth="
+                + maxWidth
+                + ", batchSize="
+                + batchSize
+                + '}';
         }
     }
 
@@ -58,6 +71,7 @@ public class Main {
         CmdArg cmdArg = parseArgs(args);
         Assert.isTrue(cmdArg.check(), "missing params: " + cmdArg);
         SOURCE_BATCH_SIZE = cmdArg.batchSize;
+        TABLE_MAX_WIDTH = cmdArg.maxWidth;
         Map<String, String> paramKv = new HashMap<>(8);
         paramKv.put("-ac", StartApplication.class.getCanonicalName());
         paramKv.put("-n", cmdArg.username);
@@ -107,5 +121,9 @@ public class Main {
 
     public static int getSourceBatchSize() {
         return SOURCE_BATCH_SIZE;
+    }
+
+    public static int getTableMaxWidth() {
+        return TABLE_MAX_WIDTH;
     }
 }
