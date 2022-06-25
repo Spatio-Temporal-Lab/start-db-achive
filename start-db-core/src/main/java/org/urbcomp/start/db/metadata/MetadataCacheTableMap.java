@@ -103,12 +103,10 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
 
     public static void dropTableCache(String key) {
         tableNameCache.remove(new NullTableEntry(key));
-        // TODO removeTableCache(key);
     }
 
     public static void addTableCache(String key) {
         tableNameCache.add(new NullTableEntry(key));
-        // TODO addTableCache(key);
     }
 
     /**

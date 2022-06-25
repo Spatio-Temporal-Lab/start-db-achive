@@ -27,7 +27,7 @@ import org.locationtech.jts.geom.{
 import org.urbcomp.start.db.`type`.TypeHelper
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
-import org.urbcomp.start.db.metadata.{AccessorFactory, SqlSessionUtil}
+import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataCacheTableMap, SqlSessionUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.transformer.{
@@ -133,6 +133,9 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     fieldAccessor.commit()
     // HOTFIX: session should end here
     SqlSessionUtil.clearCache()
+    MetadataCacheTableMap.addTableCache(
+      MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+    );
     MetadataResult.buildDDLResult(affectedRows.toInt)
   }
 }
