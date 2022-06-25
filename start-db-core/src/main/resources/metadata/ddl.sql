@@ -85,3 +85,5 @@ INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (13, 1, 'membe
 INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (14, 2, 'a', 'Integer', 1);
 INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (15, 2, 'b', 'RoadSegment', 0);
 INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (16, 2, 'c', 'RoadSegment', 0);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (17, 3, 'id1', 'Integer', 1);
+INSERT INTO sys_field(id, table_id, name, type, is_primary) VALUE (18, 3, 't1', 'Trajectory', 0);
