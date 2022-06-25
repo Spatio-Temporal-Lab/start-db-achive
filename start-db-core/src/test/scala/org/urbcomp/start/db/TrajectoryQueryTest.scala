@@ -26,7 +26,7 @@ class TrajectoryQueryTest extends AbstractCalciteFunctionTest {
   /**
     * test for trajectory TODO fix create table
     */
-  ignore("trajectory test") {
+  test("trajectory test") {
     val stmt = connect.createStatement()
     val rs = stmt.executeQuery("select * from t_trajectory_test")
     while (rs.next()) {
