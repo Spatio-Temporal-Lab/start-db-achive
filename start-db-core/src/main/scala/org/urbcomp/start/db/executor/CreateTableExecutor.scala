@@ -14,20 +14,12 @@ package org.urbcomp.start.db.executor
 import org.apache.calcite.sql.ddl.{SqlColumnDeclaration, SqlCreateTable}
 import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
-import org.locationtech.jts.geom.{
-  Geometry,
-  GeometryCollection,
-  LineString,
-  MultiLineString,
-  MultiPoint,
-  MultiPolygon,
-  Point,
-  Polygon
-}
-import org.urbcomp.start.db.`type`.TypeHelper
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
+import org.urbcomp.start.db.metadata.{AccessorFactory, SqlSessionUtil}
+import org.urbcomp.start.db.transformer.{RoadSegmentAndGeomesaTransformer, TrajectoryAndFeatureTransformer}
+import org.urbcomp.start.db.util.{DataTypeUtils, MetadataUtil}
 import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataCacheTableMap, SqlSessionUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
@@ -47,56 +39,36 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     val userAccessor = AccessorFactory.getUserAccessor
     val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
     val databaseAccessor = AccessorFactory.getDatabaseAccessor
-    val db = databaseAccessor.selectByFidAndName(user.getId, dbName, true);
+    val db = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
     val tableAccessor = AccessorFactory.getTableAccessor
-    val existedTable = tableAccessor.selectByFidAndName(db.getId, tableName, false);
+    val existedTable = tableAccessor.selectByFidAndName(db.getId, tableName, false)
     if (existedTable != null) {
       if (n.ifNotExists) {
         return MetadataResult.buildDDLResult(0)
       } else {
-        throw new IllegalArgumentException("table already exist " + tableName);
+        throw new IllegalArgumentException("table already exist " + tableName)
       }
     }
 
     val affectedRows =
-      tableAccessor.insert(new Table(0L /* unused */, db.getId, tableName, "hbase"), false);
-    val createdTable = tableAccessor.selectByFidAndName(db.getId, tableName, false);
+      tableAccessor.insert(new Table(0L /* unused */, db.getId, tableName, "hbase"), false)
+    val createdTable = tableAccessor.selectByFidAndName(db.getId, tableName, false)
     val tableId = createdTable.getId
     val fieldAccessor = AccessorFactory.getFieldAccessor
     val sfb = new SimpleFeatureTypeBuilder
-    val schemaName = MetadataUtil.makeSchemaName(tableId);
+    val schemaName = MetadataUtil.makeSchemaName(tableId)
     sfb.setName(schemaName)
 
     n.columnList.forEach(column => {
       val node = column.asInstanceOf[SqlColumnDeclaration]
-      val name = node.name.names.get(0);
+      val name = node.name.names.get(0)
       // TODO: unify typename when parse sql
-      val dataType = TypeHelper.normalizeType(node.dataType.getTypeName.names.get(0));
-      dataType match {
-        // geometry types
-        case Geometry.TYPENAME_POINT           => sfb.add(name, classOf[Point], 4326)
-        case Geometry.TYPENAME_LINESTRING      => sfb.add(name, classOf[LineString], 4326)
-        case Geometry.TYPENAME_POLYGON         => sfb.add(name, classOf[Polygon], 4326)
-        case Geometry.TYPENAME_MULTIPOINT      => sfb.add(name, classOf[MultiPoint], 4326)
-        case Geometry.TYPENAME_MULTILINESTRING => sfb.add(name, classOf[MultiLineString], 4326)
-        case Geometry.TYPENAME_MULTIPOLYGON    => sfb.add(name, classOf[MultiPolygon], 4326)
-        case Geometry.TYPENAME_GEOMETRYCOLLECTION =>
-          sfb.add(name, classOf[GeometryCollection], 4326)
-        case "Geometry" => sfb.add(name, classOf[Geometry], 4326)
-        // start db types
-        case "RoadSegment" => sfb.add(name, classOf[RoadSegment])
-        case "Trajectory"  => sfb.add(name, classOf[Trajectory])
-        case "RoadNetwork" => sfb.add(name, classOf[java.lang.String]) // temporary
-        // base types
-        case "Integer"   => sfb.add(name, classOf[java.lang.Integer])
-        case "Long"      => sfb.add(name, classOf[java.lang.Long])
-        case "Float"     => sfb.add(name, classOf[java.lang.Float])
-        case "Double"    => sfb.add(name, classOf[java.lang.Double])
-        case "String"    => sfb.add(name, classOf[java.lang.String])
-        case "Boolean"   => sfb.add(name, classOf[java.lang.Boolean])
-        case "Binary"    => sfb.add(name, classOf[Array[Byte]])
-        case "Timestamp" => sfb.add(name, classOf[java.sql.Timestamp])
-        case "Datetime"  => sfb.add(name, classOf[java.sql.Date])
+      val dataType = node.dataType.getTypeName.names.get(0)
+      val classType = DataTypeUtils.getClass(dataType)
+      if (DataTypeUtils.isGeometry(dataType)) {
+        sfb.add(name, classType, 4326)
+      } else {
+        sfb.add(name, classType)
       }
       fieldAccessor.insert(new Field(0, tableId, name, dataType, 1), false)
     })
@@ -106,13 +78,13 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     params.put("hbase.catalog", CATALOG)
     params.put("hbase.zookeepers", "localhost:2181")
     val dataStore = DataStoreFinder.getDataStore(params)
-    val schema = dataStore.getSchema(schemaName);
+    val schema = dataStore.getSchema(schemaName)
     if (schema != null) {
-      throw new IllegalStateException("schema already exist " + schemaName);
+      throw new IllegalStateException("schema already exist " + schemaName)
     }
 
     // TODO transform start db type
-    var sft = sfb.buildFeatureType();
+    var sft = sfb.buildFeatureType()
     sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft)
     sft = new RoadSegmentAndGeomesaTransformer().getGeoMesaSFT(sft)
 
