@@ -141,4 +141,13 @@ public class RoadNetwork {
     public List<RoadSegment> getRoadSegments() {
         return roadSegments;
     }
+
+    @Override
+    public String toString() {
+        try {
+            return this.toGeoJSON();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
