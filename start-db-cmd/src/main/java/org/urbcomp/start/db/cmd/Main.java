@@ -87,7 +87,7 @@ public class Main {
         final SqlLineOpts sqlLineOpts = new SqlLineOpts(sqlline);
         sqlLineOpts.set(BuiltInProperty.PROMPT, "start-db> ");
         sqlline.setOpts(sqlLineOpts);
-        SqlLine.Status status = sqlline.begin(startArgs, System.in, true);
+        SqlLine.Status status = sqlline.begin(startArgs, null, true);
 
         if (!Boolean.getBoolean(SqlLineOpts.PROPERTY_NAME_EXIT)) {
             System.exit(status.ordinal());
