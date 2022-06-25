@@ -27,32 +27,37 @@ import java.util.Map;
  **/
 public class Main {
 
+    private static int SOURCE_BATCH_SIZE = 512;
+
     private static class CmdArg {
         String username;
         String password;
         String url = "jdbc:start-db:url=http://127.0.0.1:8000";
+        // set bigger to show full value, bug it's ugly
+        int maxWidth = 100000;
+        // batch size of source command execute
+        int batchSize = 512;
 
         boolean check() {
-            return username != null && password != null && url != null;
+            return username != null && password != null && url != null && batchSize > 0 && maxWidth > 0;
         }
 
         @Override
         public String toString() {
-            return "username='"
-                + username
-                + '\''
-                + ", password='"
-                + password
-                + '\''
-                + ", url='"
-                + url
-                + '\'';
+            return "{" +
+                    "username='" + username + '\'' +
+                    ", password='" + password + '\'' +
+                    ", url='" + url + '\'' +
+                    ", maxWidth=" + maxWidth +
+                    ", batchSize=" + batchSize +
+                    '}';
         }
     }
 
     public static void main(String[] args) throws IOException {
         CmdArg cmdArg = parseArgs(args);
         Assert.isTrue(cmdArg.check(), "missing params: " + cmdArg);
+        SOURCE_BATCH_SIZE = cmdArg.batchSize;
         Map<String, String> paramKv = new HashMap<>(8);
         paramKv.put("-ac", StartApplication.class.getCanonicalName());
         paramKv.put("-n", cmdArg.username);
@@ -68,7 +73,7 @@ public class Main {
         final SqlLineOpts sqlLineOpts = new SqlLineOpts(sqlline);
         sqlLineOpts.set(BuiltInProperty.PROMPT, "start-db> ");
         sqlline.setOpts(sqlLineOpts);
-        SqlLine.Status status = sqlline.begin(startArgs, null, true);
+        SqlLine.Status status = sqlline.begin(startArgs, System.in, true);
 
         if (!Boolean.getBoolean(SqlLineOpts.PROPERTY_NAME_EXIT)) {
             System.exit(status.ordinal());
@@ -88,9 +93,19 @@ public class Main {
                 case "-r":
                     cmdArg.url = args[++i];
                     break;
+                case "-maxWidth":
+                    cmdArg.maxWidth = Integer.parseInt(args[++i]);
+                    break;
+                case "-batchSize":
+                    cmdArg.batchSize = Integer.parseInt(args[++i]);
+                    break;
                 default:
             }
         }
         return cmdArg;
+    }
+
+    public static int getSourceBatchSize() {
+        return SOURCE_BATCH_SIZE;
     }
 }
