@@ -25,6 +25,7 @@ import org.locationtech.jts.geom.{
   Polygon
 }
 import org.urbcomp.start.db.`type`.TypeHelper
+import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
 import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataCacheTableMap, SqlSessionUtil}
@@ -34,24 +35,14 @@ import org.urbcomp.start.db.transformer.{
   RoadSegmentAndGeomesaTransformer,
   TrajectoryAndFeatureTransformer
 }
-import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
+import org.urbcomp.start.db.util.MetadataUtil
 
 import java.util
 
 case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
-    val param = SqlParam.CACHE.get()
-    val userName = param.getUserName
-    val envDbName = param.getDbName
     val targetTable = n.name
-    val (dbName, tableName) = targetTable.names.size() match {
-      case 2 =>
-        (targetTable.names.get(0), targetTable.names.get(1))
-      case 1 =>
-        (envDbName, targetTable.names.get(0))
-      case _ =>
-        throw new RuntimeException("target table format should like dbname.tablename or tablename")
-    }
+    val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
 
     val userAccessor = AccessorFactory.getUserAccessor
     val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)

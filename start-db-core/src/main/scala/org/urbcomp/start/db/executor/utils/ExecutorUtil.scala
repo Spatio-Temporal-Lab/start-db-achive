@@ -11,11 +11,12 @@
 
 package org.urbcomp.start.db.executor.utils
 
+import org.apache.calcite.sql.SqlIdentifier
 import org.locationtech.jts.geom.LineString
 import org.opengis.feature.simple.SimpleFeature
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.util.{GeoFunctions, WKTUtils}
+import org.urbcomp.start.db.util.{GeoFunctions, SqlParam, WKTUtils}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
@@ -58,5 +59,20 @@ object ExecutorUtil {
     sf.setAttribute(name + ".end_time", traj.getEndTime)
     sf.setAttribute(name + ".geom", GeoFunctions.bboxFromEnvelopeToPolygon(traj.getBBox))
     sf.setAttribute(name + ".geoJson", traj.toGeoJSON)
+  }
+
+  def getUserNameDbNameAndTableName(targetTable: SqlIdentifier): (String, String, String) = {
+    val param = SqlParam.CACHE.get()
+    val userName = param.getUserName
+    val envDbName = param.getDbName
+    val (dbName, tableName) = targetTable.names.size() match {
+      case 2 =>
+        (targetTable.names.get(0), targetTable.names.get(1))
+      case 1 =>
+        (envDbName, targetTable.names.get(0))
+      case _ =>
+        throw new RuntimeException("target table format should like dbname.tablename or tablename")
+    }
+    (userName, dbName, tableName)
   }
 }

@@ -19,7 +19,7 @@ import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
-import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
+import org.urbcomp.start.db.util.MetadataUtil
 
 import java.sql.ResultSet
 import java.util
@@ -30,19 +30,8 @@ import java.util
 case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
 
   override def execute[Int](): MetadataResult[Int] = {
-    // extract database name and table name
-    val param = SqlParam.CACHE.get()
-    val userName = param.getUserName
-    val envDbName = param.getDbName
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
-    val (dbName, tableName) = targetTable.names.size() match {
-      case 2 =>
-        (targetTable.names.get(0), targetTable.names.get(1))
-      case 1 =>
-        (envDbName, targetTable.names.get(0))
-      case _ =>
-        throw new RuntimeException("target table format should like dbname.tablename or tablename")
-    }
+    val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
     val table = MetadataVerifyUtil.getTable(userName, dbName, tableName)
     if (table == null) {
       throw new RuntimeException("There is no corresponding table!")
