@@ -19,7 +19,10 @@ import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
 import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataCacheTableMap, SqlSessionUtil}
-import org.urbcomp.start.db.transformer.{RoadSegmentAndGeomesaTransformer, TrajectoryAndFeatureTransformer}
+import org.urbcomp.start.db.transformer.{
+  RoadSegmentAndGeomesaTransformer,
+  TrajectoryAndFeatureTransformer
+}
 import org.urbcomp.start.db.util.{DataTypeUtils, MetadataUtil}
 
 import java.util
