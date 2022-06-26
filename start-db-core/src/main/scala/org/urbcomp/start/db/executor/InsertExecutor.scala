@@ -91,12 +91,10 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
           while (fields.get(fieldIndex).getName != name) {
             fieldIndex += 1
           }
-          fields.get(fieldIndex).getType match {
-            case "RoadSegment" =>
-              val rs = i.get(x).asInstanceOf[RoadSegment]
+          i.get(x) match {
+            case rs: RoadSegment =>
               ExecutorUtil.writeRoadSegment(name, sf, rs)
-            case "Trajectory" =>
-              val traj = i.get(x).asInstanceOf[Trajectory]
+            case traj: Trajectory =>
               ExecutorUtil.writeTrajectory(name, sf, traj)
             case _ =>
               sf.setAttribute(name, i.get(x))
