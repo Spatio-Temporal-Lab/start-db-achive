@@ -85,6 +85,10 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
           var name: String = null
           if (n.getTargetColumnList == null) {
             name = fields.get(fieldIndex).getName
+          } else if (n.getTargetColumnList.size() != count) {
+            throw new RuntimeException(
+              "The number of target fields does not match the number of values!"
+            )
           } else {
             name = n.getTargetColumnList.get(x).toString
           }
