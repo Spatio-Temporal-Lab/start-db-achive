@@ -47,11 +47,12 @@ class InsertTest extends AbstractCalciteFunctionTest {
     */
   test("roadsegment insert") {
     val statement = connect.createStatement()
+    statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
     val rsBefore = statement.executeQuery("select count(1) from t_road_segment_test")
     rsBefore.next()
     val beforeValue = rsBefore.getObject(1).asInstanceOf[Long]
     val set = statement.execute(
-      "insert into t_road_segment_test (a, b, c) values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+      "insert into t_road_segment_test (a, b) values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
     )
     val rsAfter = statement.executeQuery("select count(1) from t_road_segment_test")
     rsAfter.next()
@@ -81,11 +82,12 @@ class InsertTest extends AbstractCalciteFunctionTest {
     */
   test("insert test (without target column)") {
     val statement = connect.createStatement()
+    statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
     val rsBefore = statement.executeQuery("select count(1) from t_road_segment_test")
     rsBefore.next()
     val beforeValue = rsBefore.getObject(1).asInstanceOf[Long]
     val set = statement.execute(
-      "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+      "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
     )
     val rsAfter = statement.executeQuery("select count(1) from t_road_segment_test")
     rsAfter.next()
@@ -98,11 +100,12 @@ class InsertTest extends AbstractCalciteFunctionTest {
     */
   test("multiple data insert test (without target column)") {
     val statement = connect.createStatement()
+    statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
     val rsBefore = statement.executeQuery("select count(1) from t_road_segment_test")
     rsBefore.next()
     val beforeValue = rsBefore.getObject(1).asInstanceOf[Long]
     val set = statement.execute(
-      "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_rs_fromGeoJSON(\'" + rsGeoJson + "\')), (3, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+      "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\')), (3, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
     )
     val rsAfter = statement.executeQuery("select count(1) from t_road_segment_test")
     rsAfter.next()
