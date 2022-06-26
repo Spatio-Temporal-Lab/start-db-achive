@@ -19,3 +19,10 @@ docker build -t start-db-server:1.0.0 .
 ```shell
 docker run --name start-db -p 8000:8000 -d start-db-server:1.0.0
 ```
+
+5. deploy to dockerhub
+
+```shell
+docker tag start-db-server:1.0.0 jimolonely1234/start-db-server:1.0.0
+docker push jimolonely1234/start-db-server:1.0.0
+```
