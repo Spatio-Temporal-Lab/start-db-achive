@@ -42,7 +42,7 @@ public class DataTypeUtils {
         nameToClass.put("Double", Double.class);
         nameToClass.put("String", String.class);
         nameToClass.put("Boolean", Boolean.class);
-        nameToClass.put("Binary", Byte[].class);
+        nameToClass.put("Binary", byte[].class);
         nameToClass.put("Timestamp", Timestamp.class);
         nameToClass.put("Datetime", LocalDateTime.class);
 
