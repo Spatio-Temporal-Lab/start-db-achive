@@ -14,6 +14,7 @@ package org.urbcomp.start.db.executor
 import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
+import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
@@ -73,7 +74,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     // ToDO 传入参数的问题(先写死)
     val CATALOG = userName + "." + dbName
     params.put("hbase.catalog", CATALOG)
-    params.put("hbase.zookeepers", "localhost:2181")
+    params.put("hbase.zookeepers", ConfigProvider.getHBaseZookeepers)
     val dataStore = DataStoreFinder.getDataStore(params)
     val schemaName = MetadataUtil.makeSchemaName(table.getId)
     WithClose(dataStore.getFeatureWriterAppend(schemaName, Transaction.AUTO_COMMIT)) { writer =>
