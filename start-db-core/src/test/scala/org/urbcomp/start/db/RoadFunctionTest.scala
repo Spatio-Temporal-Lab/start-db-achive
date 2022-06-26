@@ -39,10 +39,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
       )
     resultSet.next()
     assertEquals(
-      "Path{lengthInMeter=346582.30322217953, " +
-        "points=[POINT (111.37939453125 54.00776876193478)," +
-        " -1|346582.30322217953|0|0.0, -1|0.0|0|0.0, " +
-        "POINT (116.3671875 53.05442186546102)], roadSegmentIds=[-1]}",
+      "{\"type\":\"Feature\",\"properties\":{\"roadSegmentIds\":[-1],\"lengthInMeter\":346582.30322217953},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[111.37939453125,54.00776876193478],[111.37939453125,54.00776876193478],[116.3671875,53.05442186546102],[116.3671875,53.05442186546102]]}}",
       resultSet.getObject(1).toString
     )
   }
