@@ -14,14 +14,12 @@ package org.urbcomp.start.db.executor
 import org.apache.calcite.sql.ddl.{SqlColumnDeclaration, SqlCreateTable}
 import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
+import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
 import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataCacheTableMap, SqlSessionUtil}
-import org.urbcomp.start.db.transformer.{
-  RoadSegmentAndGeomesaTransformer,
-  TrajectoryAndFeatureTransformer
-}
+import org.urbcomp.start.db.transformer.{RoadSegmentAndGeomesaTransformer, TrajectoryAndFeatureTransformer}
 import org.urbcomp.start.db.util.{DataTypeUtils, MetadataUtil}
 
 import java.util
@@ -71,7 +69,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     val params: util.Map[String, String] = new util.HashMap[String, String]
     val CATALOG: String = userName + "." + dbName
     params.put("hbase.catalog", CATALOG)
-    params.put("hbase.zookeepers", "localhost:2181")
+    params.put("hbase.zookeepers", ConfigProvider.getHBaseZookeepers)
     val dataStore = DataStoreFinder.getDataStore(params)
     val schema = dataStore.getSchema(schemaName)
     if (schema != null) {
