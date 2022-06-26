@@ -52,7 +52,7 @@ class InsertTest extends AbstractCalciteFunctionTest {
     rsBefore.next()
     val beforeValue = rsBefore.getObject(1).asInstanceOf[Long]
     val set = statement.execute(
-      "insert into t_road_segment_test (a, b, c) values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+      "insert into t_road_segment_test (a, b) values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
     )
     val rsAfter = statement.executeQuery("select count(1) from t_road_segment_test")
     rsAfter.next()
