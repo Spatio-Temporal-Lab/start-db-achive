@@ -50,7 +50,7 @@ public class RoadSegmentAndGeoMesaTransformerTest {
     public void test() throws IOException, FactoryException {
         // TODO: move global table to environment setup
         // t_road_segment_test tableId is 2, mapped to schema name t_2
-        String tableName = "t_2";
+        String tableName = "road_segment_test";
 
         // build test sft
         RoadSegmentAndGeomesaTransformer transformer = new RoadSegmentAndGeomesaTransformer();
