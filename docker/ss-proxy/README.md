@@ -31,5 +31,10 @@ replace `192.168.0.100` to your start-db ip
 docker run --add-host=start-db:192.168.0.100 -v ./conf:/usr/local/ss-proxy/conf --name ss-proxy -d -p 3307:3307 ss-proxy:1.0.0 
 ```
 
+10. deploy to dockerhub
 
+```shell
+docker tag ss-proxy:1.0.0 jimolonely1234/ss-proxy:1.0.0
+docker push jimolonely1234/ss-proxy:1.0.0
+```
 
