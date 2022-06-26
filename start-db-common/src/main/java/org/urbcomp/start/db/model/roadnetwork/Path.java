@@ -75,14 +75,11 @@ public class Path {
 
     @Override
     public String toString() {
-        return "Path{"
-            + "lengthInMeter="
-            + lengthInMeter
-            + ", points="
-            + points
-            + ", roadSegmentIds="
-            + roadSegmentIds
-            + '}';
+        try {
+            return this.toGeoJSON();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Path addPath(Path path) {
