@@ -24,13 +24,13 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.urbcomp.start.db.executor.utils.ExecutorUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -72,7 +72,10 @@ public class BatchUpLoader implements Closeable {
      * used to make connection with geomesa-hbase datastore
      */
     private void mkConnection() throws IOException {
-        Map<String, String> params = ExecutorUtil.getDataStoreParams("root", "default");
+        Map<String, String> params = new HashMap<>();
+        String CATALOG = "root.default";
+        params.put("hbase.catalog", CATALOG);
+        params.put("hbase.zookeepers", "localhost:2181");
 
         this.dataStore = DataStoreFinder.getDataStore(params);
     }
