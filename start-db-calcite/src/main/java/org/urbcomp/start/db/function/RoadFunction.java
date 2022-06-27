@@ -30,7 +30,6 @@ import org.locationtech.jts.geom.Point;
 import org.urbcomp.start.db.algorithm.shortestpath.BiDijkstraShortestPath;
 import org.urbcomp.start.db.exception.AlgorithmExecuteException;
 import org.urbcomp.start.db.model.point.SpatialPoint;
-import org.urbcomp.start.db.model.roadnetwork.Path;
 import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.util.GeometryFactoryUtils;
