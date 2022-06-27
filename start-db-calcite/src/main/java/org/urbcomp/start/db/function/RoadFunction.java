@@ -65,7 +65,7 @@ public class RoadFunction {
         return RoadSegment.fromGeoJSON(geoJson);
     }
 
-    @StartDBFunction("st_rs_toGeoJSON")
+    @StartDBFunction("st_rs_asGeoJSON")
     public String st_rs_asGeoJSON(RoadSegment rs) throws JsonProcessingException {
         return rs.toGeoJSON();
     }
