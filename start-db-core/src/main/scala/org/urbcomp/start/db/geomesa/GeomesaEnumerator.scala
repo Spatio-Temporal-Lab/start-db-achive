@@ -17,11 +17,14 @@ import org.geotools.filter.text.ecql.ECQL
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.metadata.MetadataVerifyUtil
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment
+import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.transformer.{
   RoadSegmentAndGeomesaTransformer,
   TrajectoryAndFeatureTransformer
 }
-import org.urbcomp.start.db.util.MetadataUtil
+import org.urbcomp.start.db.util.{DataTypeUtils, MetadataUtil}
+
 import java.util
 import scala.collection.JavaConverters._
 
@@ -57,11 +60,11 @@ class GeomesaEnumerator(
       val list = new util.ArrayList[AnyRef]
       for (i <- 0 until fields.size()) {
         val field = fields.get(i)
-        if (field.getType == "RoadSegment") {
+        if (DataTypeUtils.getClass(field.getType) == classOf[RoadSegment]) {
           val transformer = new RoadSegmentAndGeomesaTransformer
           list.add(transformer.toRoadSegment(feature, field.getName))
           index += 3
-        } else if (field.getType == "Trajectory") {
+        } else if (DataTypeUtils.getClass(field.getType) == classOf[Trajectory]) {
           val transformer = new TrajectoryAndFeatureTransformer
           list.add(transformer.toTrajectory(feature, field.getName))
           index += 6
