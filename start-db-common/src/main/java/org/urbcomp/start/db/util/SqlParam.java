@@ -26,7 +26,7 @@ public class SqlParam {
     private static final Map<String, SqlParam> connectionParams = new HashMap<>();
 
     /**
-     * user name
+     * username
      */
     private String userName;
 
