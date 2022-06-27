@@ -30,16 +30,16 @@ case class CreateUserExecutor(n: SqlCreateUser) extends BaseExecutor {
     userAccessor.insert(new User(-1, userName, password), true)
     val user = userAccessor.selectByFidAndName(-1, userName, true)
     databaseAccessor.insert(new Database(-1, user.getId, "default"), true)
-    MetadataResult.buildDDLResult(2);
+    MetadataResult.buildDDLResult(2)
   }
 
   // TODO password spec
   def checkPassword(password: String): Unit = {
     if (password == "") {
-      throw new IllegalArgumentException("password must not empty");
+      throw new IllegalArgumentException("password must not empty")
     }
     if (password.contains(" ") || password.contains("\t") || password.contains("\n")) {
-      throw new IllegalArgumentException("password must not contains empty characters");
+      throw new IllegalArgumentException("password must not contains empty characters")
     }
   }
 }
