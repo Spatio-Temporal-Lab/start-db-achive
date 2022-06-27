@@ -45,13 +45,13 @@ import java.util.List;
 public class RoadFunction {
 
     @StartDBFunction("st_rn_shortestPath")
-    public Path st_rn_shortestPath(RoadNetwork roadNetwork, Point startPoint, Point endPoint)
-        throws AlgorithmExecuteException {
+    public String st_rn_shortestPath(RoadNetwork roadNetwork, Point startPoint, Point endPoint)
+        throws AlgorithmExecuteException, JsonProcessingException {
         BiDijkstraShortestPath biDijkstraShortestPath = new BiDijkstraShortestPath(roadNetwork);
         return biDijkstraShortestPath.findShortestPath(
             new SpatialPoint(startPoint.getCoordinate()),
             new SpatialPoint(endPoint.getCoordinate())
-        );
+        ).toGeoJSON();
     }
 
     @StartDBFunction("st_rn_makeRoadNetwork")
