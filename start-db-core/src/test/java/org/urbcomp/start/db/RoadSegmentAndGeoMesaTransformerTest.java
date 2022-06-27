@@ -22,12 +22,12 @@ import org.locationtech.jts.util.Assert;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
+import org.urbcomp.start.db.executor.utils.ExecutorUtil;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.model.sample.ModelGenerator;
 import org.urbcomp.start.db.transformer.RoadSegmentAndGeomesaTransformer;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class RoadSegmentAndGeoMesaTransformerTest {
@@ -82,10 +82,7 @@ public class RoadSegmentAndGeoMesaTransformerTest {
         SimpleFeature sf = builder.buildFeature(null);
 
         // build GeoMesa table
-        Map<String, String> params = new HashMap<>();
-        String CATALOG = "root.default";
-        params.put("hbase.catalog", CATALOG);
-        params.put("hbase.zookeepers", "localhost:2181");
+        Map<String, String> params = ExecutorUtil.getDataStoreParams("root", "default");
         DataStore dataStore = DataStoreFinder.getDataStore(params);
         if (dataStore.getSchema(tableName) == null) {
             dataStore.createSchema(sft);

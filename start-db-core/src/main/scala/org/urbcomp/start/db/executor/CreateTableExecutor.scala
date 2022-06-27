@@ -14,7 +14,6 @@ package org.urbcomp.start.db.executor
 import org.apache.calcite.sql.ddl.{SqlColumnDeclaration, SqlCreateTable}
 import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
-import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
@@ -24,8 +23,6 @@ import org.urbcomp.start.db.transformer.{
   TrajectoryAndFeatureTransformer
 }
 import org.urbcomp.start.db.util.{DataTypeUtils, MetadataUtil}
-
-import java.util
 
 case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
@@ -58,7 +55,6 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     n.columnList.forEach(column => {
       val node = column.asInstanceOf[SqlColumnDeclaration]
       val name = node.name.names.get(0)
-      // TODO: unify typename when parse sql
       val dataType = node.dataType.getTypeName.names.get(0)
       val classType = DataTypeUtils.getClass(dataType)
       if (DataTypeUtils.isGeometry(dataType)) {
@@ -69,17 +65,13 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
       fieldAccessor.insert(new Field(0, tableId, name, dataType, 1), false)
     })
 
-    val params: util.Map[String, String] = new util.HashMap[String, String]
-    val CATALOG: String = userName + "." + dbName
-    params.put("hbase.catalog", CATALOG)
-    params.put("hbase.zookeepers", ConfigProvider.getHBaseZookeepers)
+    val params = ExecutorUtil.getDataStoreParams(userName, dbName)
     val dataStore = DataStoreFinder.getDataStore(params)
     val schema = dataStore.getSchema(schemaName)
     if (schema != null) {
       throw new IllegalStateException("schema already exist " + schemaName)
     }
 
-    // TODO transform start db type
     var sft = sfb.buildFeatureType()
     sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft)
     sft = new RoadSegmentAndGeomesaTransformer().getGeoMesaSFT(sft)
@@ -94,7 +86,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     SqlSessionUtil.clearCache()
     MetadataCacheTableMap.addTableCache(
       MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
-    );
+    )
     MetadataResult.buildDDLResult(affectedRows.toInt)
   }
 }

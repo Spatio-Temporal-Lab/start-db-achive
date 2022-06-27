@@ -15,7 +15,6 @@ import org.apache.calcite.sql.{SqlIdentifier, SqlUpdate}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.geotools.filter.text.cql2.CQL
 import org.locationtech.geomesa.utils.io.WithClose
-import org.urbcomp.start.db.common.ConfigProvider
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
@@ -32,8 +31,7 @@ import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
   *
   * @param n SqlUpdate instance
   * @author Wang Bohong
-  * @date 2022-06-13
-  */
+  * */
 case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
 
   override def execute[Int](): MetadataResult[Int] = {
@@ -68,11 +66,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     }
     // update data
     var affectRows = 0
-    val params = new util.HashMap[String, String]()
-    // ToDO: SqlParam
-    val CATALOG = userName + "." + dbName
-    params.put("hbase.catalog", CATALOG)
-    params.put("hbase.zookeepers", ConfigProvider.getHBaseZookeepers)
+    val params = ExecutorUtil.getDataStoreParams(userName, dbName)
     val dataStore = DataStoreFinder.getDataStore(params)
     val filter = CQL.toFilter(condition)
     val schemaName = MetadataUtil.makeSchemaName(table.getId)

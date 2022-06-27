@@ -11,7 +11,6 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.SqlIdentifier
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.metadata.entity.Database
@@ -20,7 +19,6 @@ import org.urbcomp.start.db.util.SqlParam
 
 case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
-    // TODO: get username from context
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
     val databaseAccessor = AccessorFactory.getDatabaseAccessor
@@ -32,7 +30,7 @@ case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
       if (n.isIfNotExists) {
         return MetadataResult.buildDDLResult(0)
       } else {
-        throw new IllegalArgumentException("database already exist " + dbName);
+        throw new IllegalArgumentException("database already exist " + dbName)
       }
     }
     MetadataResult.buildDDLResult(
