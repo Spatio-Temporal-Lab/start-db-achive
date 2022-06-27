@@ -4,7 +4,7 @@ Our cmd is based on [sqlline](https://github.com/julianhyde/sqlline), and the sq
 # package
 
 ```shell
-mvn package -pl cmd -am -DskipTests=true
+mvn package -pl start-db-cmd -am -DskipTests=true -Dcheckstyle.skip
 ```
 
 # usage

@@ -13,11 +13,15 @@ package org.urbcomp.start.db.model.trajectory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
+import org.urbcomp.start.db.serializer.TrajDeserializer;
+import org.urbcomp.start.db.serializer.TrajSerializer;
 import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
 import org.urbcomp.start.db.util.GeoFunctions;
 import org.urbcomp.start.db.util.GeometryFactoryUtils;
@@ -28,6 +32,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@JsonSerialize(using = TrajSerializer.class)
+@JsonDeserialize(using = TrajDeserializer.class)
 public class Trajectory {
     private String tid;
     private String oid;
