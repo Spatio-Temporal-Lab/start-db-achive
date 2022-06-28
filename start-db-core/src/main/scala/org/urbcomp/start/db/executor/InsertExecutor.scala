@@ -77,6 +77,10 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
         var fieldIndex = 0
         val sf = writer.next()
         val count = i.size()
+        if (n.getTargetColumnList != null && n.getTargetColumnList.size() != count)
+          throw new RuntimeException(
+            "The number of target fields does not match the number of values!"
+          )
         for (x <- 0 until count) {
           var name: String = null
           if (n.getTargetColumnList == null) {
