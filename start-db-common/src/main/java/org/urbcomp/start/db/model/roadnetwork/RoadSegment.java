@@ -35,7 +35,7 @@ public class RoadSegment {
     // road segment id
     private final int roadSegmentId;
     // the road geometry
-    private final List<SpatialPoint> points;
+    private List<SpatialPoint> points;
     // the start node id
     private final RoadNode startNode;
     // the end node id
@@ -70,6 +70,10 @@ public class RoadSegment {
 
     public List<SpatialPoint> getPoints() {
         return points;
+    }
+
+    public void setPoints(List<SpatialPoint> points){
+        this.points = points;
     }
 
     public RoadSegmentDirection getDirection() {
