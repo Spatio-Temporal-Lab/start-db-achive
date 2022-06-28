@@ -14,18 +14,17 @@ package org.urbcomp.start.db.serializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.urbcomp.start.db.model.trajectory.Trajectory;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 
 import java.io.IOException;
 
-public class TrajDeserializer extends StdDeserializer<Trajectory> {
-
-    protected TrajDeserializer(Class<?> vc) {
+public class RoadSegmentDeserializer extends StdDeserializer<RoadSegment> {
+    protected RoadSegmentDeserializer(Class<?> vc) {
         super(vc);
     }
 
     @Override
-    public Trajectory deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        return Trajectory.fromGeoJSON(p.getValueAsString());
+    public RoadSegment deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return RoadSegment.fromGeoJSON(p.getValueAsString());
     }
 }

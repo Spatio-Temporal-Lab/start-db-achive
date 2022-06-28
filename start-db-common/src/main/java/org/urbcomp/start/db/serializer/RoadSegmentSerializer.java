@@ -11,21 +11,22 @@
 
 package org.urbcomp.start.db.serializer;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.urbcomp.start.db.model.trajectory.Trajectory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 
 import java.io.IOException;
 
-public class TrajDeserializer extends StdDeserializer<Trajectory> {
+public class RoadSegmentSerializer extends StdSerializer<RoadSegment> {
 
-    protected TrajDeserializer(Class<?> vc) {
-        super(vc);
+    protected RoadSegmentSerializer(Class<RoadSegment> t) {
+        super(t);
     }
 
     @Override
-    public Trajectory deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        return Trajectory.fromGeoJSON(p.getValueAsString());
+    public void serialize(RoadSegment value, JsonGenerator gen, SerializerProvider provider)
+        throws IOException {
+        gen.writeString(value.toGeoJSON());
     }
 }

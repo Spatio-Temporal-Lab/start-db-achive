@@ -12,7 +12,6 @@
 package org.urbcomp.start.db.serializer;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
@@ -25,8 +24,7 @@ public class RoadNetworkDeserializer extends StdDeserializer<RoadNetwork> {
     }
 
     @Override
-    public RoadNetwork deserialize(JsonParser p, DeserializationContext ctxt) throws IOException,
-        JsonProcessingException {
+    public RoadNetwork deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         return RoadNetwork.fromGeoJSON(p.getValueAsString());
     }
 }
