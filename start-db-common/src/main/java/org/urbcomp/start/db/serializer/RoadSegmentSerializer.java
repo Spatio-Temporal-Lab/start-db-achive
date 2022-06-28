@@ -20,6 +20,10 @@ import java.io.IOException;
 
 public class RoadSegmentSerializer extends StdSerializer<RoadSegment> {
 
+    public RoadSegmentSerializer() {
+        this(null);
+    }
+
     protected RoadSegmentSerializer(Class<RoadSegment> t) {
         super(t);
     }
