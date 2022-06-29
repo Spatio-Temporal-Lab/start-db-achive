@@ -11,8 +11,10 @@
 
 package org.urbcomp.start.db.executor
 
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.{assertEquals, assertNotNull}
 import org.urbcomp.start.db.AbstractCalciteFunctionTest
+
+import scala.collection.mutable.ArrayBuffer
 
 class TableExecutorTest extends AbstractCalciteFunctionTest {
   test("test create table") {
@@ -48,5 +50,43 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     val rs = stmt.executeQuery("show tables")
     rs.next()
     assertNotNull(rs.getString(1))
+  }
+
+  test("test drop table") {
+    val randomNum = scala.util.Random.nextInt(100000)
+    val createTableSQL = s"""CREATE TABLE xxx_%d (
+                            |    idx Integer,
+                            |    ride_id String,
+                            |    x1 String,
+                            |    x2 String
+                            |);""".format(randomNum).stripMargin
+    val stmt = connect.createStatement()
+
+    val rs1 = stmt.executeQuery("show tables")
+    val tablesBefore = ArrayBuffer[String]()
+    while (rs1.next()) {
+      tablesBefore += rs1.getString(1)
+    }
+    println(tablesBefore)
+
+    stmt.executeUpdate(createTableSQL)
+    val tablesBefore1 = ArrayBuffer[String]()
+    val rs11 = stmt.executeQuery("show tables")
+    while (rs11.next()) {
+      tablesBefore1 += rs11.getString(1)
+    }
+    println(tablesBefore1)
+
+    val dropTableSQL = s"""DROP TABLE xxx_%d;""".format(randomNum).stripMargin
+    stmt.executeUpdate(dropTableSQL)
+
+    val rs2 = stmt.executeQuery("show tables")
+    val tablesAfter = ArrayBuffer[String]()
+    while (rs2.next()) {
+      tablesAfter += rs2.getString(1)
+    }
+    println(tablesAfter)
+
+    assertEquals(tablesBefore.sorted, tablesAfter.sorted)
   }
 }
