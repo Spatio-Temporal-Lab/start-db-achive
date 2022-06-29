@@ -130,7 +130,6 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
-
   test("st_WGS84ToBD09(Point)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select st_WGS84ToBD09(st_makePoint(1, 2))")
