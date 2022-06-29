@@ -76,7 +76,7 @@ public class CoordTransformFunction {
     @StartDBFunction("st_BD09ToWGS84")
     public GeometryCollection st_BD09ToWGS84(GeometryCollection geometryCollection) {
         AbstractCoordTransformer transformer = new BD09ToWGS84Transformer();
-        return (GeometryCollection) transformer.geometryTransform(geometryCollection);
+        return transformer.geometryCollectionTransform(geometryCollection);
     }
 
     @StartDBFunction("st_BD09ToWGS84")
@@ -142,7 +142,7 @@ public class CoordTransformFunction {
     @StartDBFunction("st_WGS84ToBD09")
     public GeometryCollection st_WGS84ToBD09(GeometryCollection geometryCollection) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
-        return (GeometryCollection) transformer.geometryTransform(geometryCollection);
+        return transformer.geometryCollectionTransform(geometryCollection);
     }
 
     @StartDBFunction("st_WGS84ToBD09")
@@ -208,7 +208,7 @@ public class CoordTransformFunction {
     @StartDBFunction("st_GCJ02ToBD09")
     public GeometryCollection st_GCJ02ToBD09(GeometryCollection geometryCollection) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
-        return (GeometryCollection) transformer.geometryTransform(geometryCollection);
+        return transformer.geometryCollectionTransform(geometryCollection);
     }
 
     @StartDBFunction("st_GCJ02ToBD09")
@@ -274,7 +274,7 @@ public class CoordTransformFunction {
     @StartDBFunction("st_BD09ToGCJ02")
     public GeometryCollection st_BD09ToGCJ02(GeometryCollection geometryCollection) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
-        return (GeometryCollection) transformer.geometryTransform(geometryCollection);
+        return transformer.geometryCollectionTransform(geometryCollection);
     }
 
     @StartDBFunction("st_BD09ToGCJ02")
@@ -340,7 +340,7 @@ public class CoordTransformFunction {
     @StartDBFunction("st_WGS84ToGCJ02")
     public GeometryCollection st_WGS84ToGCJ02(GeometryCollection geometryCollection) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
-        return (GeometryCollection) transformer.geometryTransform(geometryCollection);
+        return transformer.geometryCollectionTransform(geometryCollection);
     }
 
     @StartDBFunction("st_WGS84ToGCJ02")
@@ -406,7 +406,7 @@ public class CoordTransformFunction {
     @StartDBFunction("st_GCJ02ToWGS84")
     public GeometryCollection st_GCJ02ToWGS84(GeometryCollection geometryCollection) {
         AbstractCoordTransformer transformer = new WGS84ToBD09Transformer();
-        return (GeometryCollection) transformer.geometryTransform(geometryCollection);
+        return transformer.geometryCollectionTransform(geometryCollection);
     }
 
     @StartDBFunction("st_GCJ02ToWGS84")

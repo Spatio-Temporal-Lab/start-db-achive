@@ -12,10 +12,19 @@
 package org.urbcomp.start.db
 
 import org.junit.Assert.assertEquals
+import org.urbcomp.start.db.model.roadnetwork.{RoadNetwork, RoadSegment}
+import org.urbcomp.start.db.model.sample.ModelGenerator
+import org.urbcomp.start.db.model.trajectory.Trajectory
 
 class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
 
-  test("st_BD09ToWGS84(point)") {
+  val trajectory: Trajectory = ModelGenerator.generateTrajectory()
+  val tGeo: String = trajectory.toGeoJSON
+  val rs: RoadSegment = ModelGenerator.generateRoadSegment()
+  val rn: RoadNetwork = ModelGenerator.generateRoadNetwork()
+  val rsGeoJson: String = rs.toGeoJSON
+
+  test("st_BD09ToWGS84(Point)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select st_BD09ToWGS84(st_makePoint(1, 2))")
     resultSet.next()
@@ -35,7 +44,7 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
-  test("st_BD09ToWGS84(polygon)") {
+  test("st_BD09ToWGS84(Polygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
       "select st_BD09ToWGS84(st_polygonFromWKT('POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))'))"
@@ -76,10 +85,11 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
-  test("st_BD09ToWGS84(mPolygon)") {
+  test("st_BD09ToWGS84(MPolygon)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToWGS84(st_mPolygonFromWKT('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))'))"
+      "select st_BD09ToWGS84(st_mPolygonFromWKT('MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))" +
+        ",((6 3,9 2,9 4,6 3)))'))"
     )
     resultSet.next()
     assertEquals(
@@ -94,7 +104,55 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
-  test("st_WGS84ToBD09(point)") {
+  test("st_BD09ToWGS84(Geometry)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToWGS84(st_geomFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((0.9935048779206697 1.9940125213262534)," +
+        " (2.9934995619203466 3.993975880501857))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_BD09ToWGS84(GeometryCollection)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_BD09ToWGS84(st_geomFromWKT(" +
+        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((0.9935048779206697 1.9940125213262534), " +
+        "(2.9934995619203466 3.993975880501857))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_BD09ToWGS84(Trajectory)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToWGS84(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(
+      "org.urbcomp.start.db.model.trajectory.Trajectory@1fbf088b",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_BD09ToWGS84(RoadSegment)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToWGS84(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
+    resultSet.next()
+    assertEquals(
+      "org.urbcomp.start.db.model.roadnetwork.RoadSegment@1",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_WGS84ToBD09(Point)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select st_WGS84ToBD09(st_makePoint(1, 2))")
     resultSet.next()
@@ -170,6 +228,43 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
         " 3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364," +
         " 2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913" +
         " 2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_WGS84ToBD09(Geometry)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_WGS84ToBD09(st_geomFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_WGS84ToBD09(GeometryCollection)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_WGS84ToBD09(st_geomFromWKT(" +
+        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_WGS84ToBD09(Trajectory)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToWGS84(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(
+      "org.urbcomp.start.db.model.trajectory.Trajectory@1fbf088b",
       resultSet.getObject(1).toString
     )
   }
@@ -254,6 +349,32 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
+  test("st_GCJ02ToBD09(Geometry)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_GCJ02ToBD09(st_geomFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_GCJ02ToBD09(GeometryCollection)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_GCJ02ToBD09(st_geomFromWKT(" +
+        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
+  }
+
   test("st_BD09ToGCJ02(Point)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select st_BD09ToGCJ02(st_makePoint(1, 2))")
@@ -328,6 +449,32 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
         "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
         "2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913 " +
         "2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_BD09ToGCJ02(Geometry)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToGCJ02(st_geomFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_BD09ToGCJ02(GeometryCollection)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_BD09ToGCJ02(st_geomFromWKT(" +
+        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
       resultSet.getObject(1).toString
     )
   }
@@ -411,6 +558,32 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
+  test("st_WGS84ToGCJ02(Geometry)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_WGS84ToGCJ02(st_geomFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_WGS84ToGCJ02(GeometryCollection)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_WGS84ToGCJ02(st_geomFromWKT(" +
+        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
+  }
+
   test("st_GCJ02ToWGS84(Point)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery("select st_BD09ToGCJ02(st_makePoint(1, 2))")
@@ -486,6 +659,32 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
         "3.0059969999966243, 3.0064909999865 3.0060089999864994, 3.0064795884814806 2.0059993922585364, " +
         "2.006490752530665 2.005984752567407)), ((6.006490999973001 3.0060179999864993, 9.006477091914913 " +
         "2.0060232425945292, 9.006503827618703 4.006034034554063, 6.006490999973001 3.0060179999864993)))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_GCJ02ToWGS84(Geometry)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_GCJ02ToWGS84(st_geomFromWKT('MULTIPOINT((1 2),(3 4))'))")
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_GCJ02ToWGS84(GeometryCollection)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_GCJ02ToWGS84(st_geomFromWKT(" +
+        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+    )
+    resultSet.next()
+    assertEquals(
+      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
+        "4.006022856419637))",
       resultSet.getObject(1).toString
     )
   }
