@@ -14,6 +14,7 @@ package org.urbcomp.start.db.transformer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
@@ -36,7 +37,7 @@ public class RoadSegmentAndGeomesaTransformer {
         for (PropertyDescriptor i : sft.getDescriptors()) {
             if (i.getType().getBinding().equals(RoadSegment.class)) {
                 sftBuilder.add(i.getName() + ".rsId", Integer.class);
-                sftBuilder.add(i.getName() + ".geom", LineString.class, 4326);
+                sftBuilder.add(i.getName() + ".geom", LineString.class, DefaultGeographicCRS.WGS84);
                 sftBuilder.add(i.getName() + ".rsGeoJson", String.class);
             } else {
                 sftBuilder.add(i.getName().toString(), i.getType().getBinding());

@@ -58,13 +58,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- start-db modules -->
-            <dependency>
-                <groupId>org.urbcomp</groupId>
-                <artifactId>start-db-calcite</artifactId>
-                <version>${version}</version>
-            </dependency>
-
             <!--  Calcite Dependency  -->
             <dependency>
                 <groupId>org.apache.calcite</groupId>

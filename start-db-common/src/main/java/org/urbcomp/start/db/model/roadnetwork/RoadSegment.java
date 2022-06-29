@@ -13,11 +13,15 @@ package org.urbcomp.start.db.model.roadnetwork;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.locationtech.jts.geom.Envelope;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.util.GeoFunctions;
+import org.urbcomp.start.db.serializer.RoadSegmentSerializer;
+import org.urbcomp.start.db.serializer.RoadSegmentDeserializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@JsonSerialize(using = RoadSegmentSerializer.class)
+@JsonDeserialize(using = RoadSegmentDeserializer.class)
 public class RoadSegment {
     // road segment id
     private final int roadSegmentId;

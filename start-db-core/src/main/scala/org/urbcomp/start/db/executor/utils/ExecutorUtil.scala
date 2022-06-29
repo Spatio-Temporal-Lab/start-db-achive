@@ -14,17 +14,18 @@ package org.urbcomp.start.db.executor.utils
 import org.apache.calcite.sql.SqlIdentifier
 import org.locationtech.jts.geom.LineString
 import org.opengis.feature.simple.SimpleFeature
+import org.urbcomp.start.db.common.{ConfigProvider, ConfigurationConstants}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.util.{GeoFunctions, SqlParam, WKTUtils}
 
+import java.util
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 /**
   * universal methods for executors
   * @author Wang Bohong
-  * @date  2022-06-23
-  */
+  * */
 object ExecutorUtil {
 
   /**
@@ -74,5 +75,13 @@ object ExecutorUtil {
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
     (userName, dbName, tableName)
+  }
+
+  def getDataStoreParams(userName: String, dbName: String): util.Map[String, String] = {
+    val params: util.Map[String, String] = new util.HashMap[String, String]
+    val CATALOG: String = userName + "." + dbName
+    params.put(ConfigurationConstants.GEOMESA_HBASE_CATALOG, CATALOG)
+    params.put(ConfigurationConstants.GEOMESA_HBASE_ZOOKEEPERS, ConfigProvider.getHBaseZookeepers)
+    params
   }
 }

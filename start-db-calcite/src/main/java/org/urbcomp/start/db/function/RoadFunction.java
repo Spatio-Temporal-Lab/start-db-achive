@@ -30,7 +30,6 @@ import org.locationtech.jts.geom.Point;
 import org.urbcomp.start.db.algorithm.shortestpath.BiDijkstraShortestPath;
 import org.urbcomp.start.db.exception.AlgorithmExecuteException;
 import org.urbcomp.start.db.model.point.SpatialPoint;
-import org.urbcomp.start.db.model.roadnetwork.Path;
 import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.util.GeometryFactoryUtils;
@@ -45,13 +44,13 @@ import java.util.List;
 public class RoadFunction {
 
     @StartDBFunction("st_rn_shortestPath")
-    public Path st_rn_shortestPath(RoadNetwork roadNetwork, Point startPoint, Point endPoint)
-        throws AlgorithmExecuteException {
+    public String st_rn_shortestPath(RoadNetwork roadNetwork, Point startPoint, Point endPoint)
+        throws AlgorithmExecuteException, JsonProcessingException {
         BiDijkstraShortestPath biDijkstraShortestPath = new BiDijkstraShortestPath(roadNetwork);
         return biDijkstraShortestPath.findShortestPath(
             new SpatialPoint(startPoint.getCoordinate()),
             new SpatialPoint(endPoint.getCoordinate())
-        );
+        ).toGeoJSON();
     }
 
     @StartDBFunction("st_rn_makeRoadNetwork")
@@ -63,6 +62,11 @@ public class RoadFunction {
     @StartDBFunction("st_rs_fromGeoJSON")
     public RoadSegment st_rs_fromGeoJSON(String geoJson) throws JsonProcessingException {
         return RoadSegment.fromGeoJSON(geoJson);
+    }
+
+    @StartDBFunction("st_rs_asGeoJSON")
+    public String st_rs_asGeoJSON(RoadSegment rs) throws JsonProcessingException {
+        return rs.toGeoJSON();
     }
 
     @StartDBFunction("st_rs_rsid")
