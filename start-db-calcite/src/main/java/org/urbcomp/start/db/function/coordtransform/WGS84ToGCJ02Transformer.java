@@ -26,6 +26,6 @@ import org.urbcomp.start.db.util.CoordTransformUtils;
 
 public class WGS84ToGCJ02Transformer extends AbstractCoordTransformer {
     protected double[] transform(double lng, double lat) {
-        return CoordTransformUtils.gcj02Tobd09(lng, lat);
+        return CoordTransformUtils.wgs84Togcj02(lng, lat);
     }
 }
