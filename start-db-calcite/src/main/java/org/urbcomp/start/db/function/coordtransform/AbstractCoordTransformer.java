@@ -112,11 +112,15 @@ public abstract class AbstractCoordTransformer {
         return null;
     }
 
-    // public GeometryCollection geometryCollectionTransform(GeometryCollection geometryCollection)
-    // {
-    //
-    //
-    // }
+    public GeometryCollection geometryCollectionTransform(GeometryCollection geometryCollection) {
+        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
+        Geometry[] geometries = new Geometry[geometryCollection.getNumGeometries()];
+        for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
+            Geometry geometry = geometryCollection.getGeometryN(i);
+            geometries[i] = geometryTransform(geometry);
+        }
+        return geometryFactory.createGeometryCollection(geometries);
+    }
 
     public Trajectory trajectoryTransform(Trajectory trajectory) {
         List<GPSPoint> points = trajectory.getGPSPointList().stream().map(o -> {
