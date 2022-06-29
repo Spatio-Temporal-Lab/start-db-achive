@@ -315,6 +315,22 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
     }
   }
 
+  def visitDropTableName(ctx: TableNameContext): SqlIdentifier = {
+    var names: mutable.Buffer[String] = ctx.ident().identItem().asScala.map(v => v.getText)
+    // TODO 这里应该在antlr里解决反引号的解析问题：select * from `a.b.c` 要解析成 3个字符串，现在是一个
+    if (names.length == 1 && names.head.contains("`")) {
+      names = StringUtil.dropQuota(names.head).split('.').toBuffer
+    }
+    // keep username case sensitive
+    if (names.length >= 3)
+      names = names.takeRight(2).map(v => v.toLowerCase).+:(names(names.length - 3))
+    var result = ""
+    for (name <- names) {
+      result = result.concat(name).concat(".")
+    }
+    new SqlIdentifier(result.substring(0, result.length - 1), pos)
+  }
+
   //////////////////////////////////////////////////////
   //                    Boolean expression            //
   //////////////////////////////////////////////////////
@@ -600,7 +616,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   }
 
   override def visitDropTableStmt(ctx: DropTableStmtContext): SqlNode = {
-    new SqlDropTable(pos, ctx.T_EXISTS() != null, visitTableName(ctx.tableName()))
+    new SqlDropTable(pos, ctx.T_EXISTS() != null, visitDropTableName(ctx.tableName()))
   }
 
   override def visitShowTablesStmt(ctx: ShowTablesStmtContext): SqlNode = {

@@ -16,20 +16,22 @@ import java.util
 import org.apache.calcite.sql.ddl.SqlDropTable
 import org.geotools.data.DataStoreFinder
 import org.urbcomp.start.db.common.ConfigProvider
+import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataCacheTableMap, SqlSessionUtil}
 import org.urbcomp.start.db.util.MetadataUtil
 
 case class DropTableExecutor(n: SqlDropTable) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
-    val targetTable = n.name.toString.split('.')
-    val (userName, dbName, tableName) = (targetTable(0), targetTable(1), targetTable(2))
+    val targetTable = n.name
+    val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
 
     val userAccessor = AccessorFactory.getUserAccessor
     val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
     val databaseAccessor = AccessorFactory.getDatabaseAccessor
     val db = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
     val tableAccessor = AccessorFactory.getTableAccessor
+    val fieldAccessor = AccessorFactory.getFieldAccessor
     val existedTable = tableAccessor.selectByFidAndName(db.getId, tableName, false)
 
     if (existedTable == null) {
@@ -41,8 +43,10 @@ case class DropTableExecutor(n: SqlDropTable) extends BaseExecutor {
     }
 
     val tableId = existedTable.getId
+    println("table id: " + tableId)
     val affectedRows =
-      tableAccessor.deleteById(tableId, false)
+      tableAccessor.deleteById(tableId, true)
+    fieldAccessor.deleteByFid(tableId, true)
     val schemaName = MetadataUtil.makeSchemaName(tableId)
 
     val params: util.Map[String, String] = new util.HashMap[String, String]
@@ -56,9 +60,9 @@ case class DropTableExecutor(n: SqlDropTable) extends BaseExecutor {
     }
 
     // TODO transform start db type
-    dataStore.removeSchema(schemaName)
 
     tableAccessor.commit()
+    fieldAccessor.commit()
     // HOTFIX: session should end here
     SqlSessionUtil.clearCache()
     MetadataCacheTableMap.dropTableCache(

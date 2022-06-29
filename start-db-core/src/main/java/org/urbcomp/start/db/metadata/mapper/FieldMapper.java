@@ -17,7 +17,7 @@ import org.urbcomp.start.db.metadata.entity.Field;
 /**
  * This interface is used to encapsulate some table mapping information.
  * 
- * @author Wang Bohong
+ * @author Wang Bohong, Xiang He
  * @Date 2022-05-20 17:32:15
  */
 public interface FieldMapper extends IMapper<Field> {
@@ -39,5 +39,8 @@ public interface FieldMapper extends IMapper<Field> {
      */
     @Override
     long update(@Param("field") Field field);
+
+    @Override
+    long deleteByFid(@Param("fid")long fid);
 
 }

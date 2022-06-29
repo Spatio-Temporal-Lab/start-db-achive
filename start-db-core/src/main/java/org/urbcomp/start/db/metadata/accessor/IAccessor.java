@@ -91,6 +91,18 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
         return getMapper(commit).deleteById(id);
     }
 
+
+    /**
+     * delete one entity instance in table
+     *
+     * @param fid     fid
+     * @param commit auto_commit
+     * @return number of affected rows
+     */
+    default long deleteByFid(long fid, boolean commit) {
+        return getMapper(commit).deleteByFid(fid);
+    }
+
     /**
      * commit operation
      */
