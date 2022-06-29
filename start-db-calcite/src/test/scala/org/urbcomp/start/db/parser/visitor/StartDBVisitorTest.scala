@@ -88,10 +88,7 @@ class StartDBVisitorTest extends FunSuite {
     val parsed = driver.parseSql(StartDBSQLSamples.DROP_TABLE_IF_EXISTS_SAMPLE)
     val node = parsed.asInstanceOf[SqlDropTable]
     assertEquals(SqlKind.DROP_TABLE, node.getKind)
-    assertEquals(
-      MetadataUtil.combineUserDbTableKey(testUser, testDatabase, tableName),
-      node.name.names.get(0)
-    )
+    assertEquals(tableName, node.name.names.get(0))
   }
 
   test("convert delete statement to SqlNode") {

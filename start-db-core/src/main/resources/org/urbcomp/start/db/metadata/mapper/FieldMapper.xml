@@ -35,4 +35,9 @@
         SET delete_time = current_timestamp()
         WHERE id = #{id};
     </delete>
+    <delete id="deleteByFid">
+        UPDATE sys_field
+        SET delete_time = current_timestamp()
+        WHERE table_id = #{fid};
+    </delete>
 </mapper>

@@ -72,4 +72,12 @@ public interface IMapper<T extends AbstractEntity> {
      * @return number of affected rows
      */
     long deleteById(@Param("id") long id);
+
+    /**
+     * delete on entity in a table by fid
+     *
+     * @param fid fid
+     * @return number of affected rows
+     */
+    long deleteByFid(@Param("fid")long fid);
 }
