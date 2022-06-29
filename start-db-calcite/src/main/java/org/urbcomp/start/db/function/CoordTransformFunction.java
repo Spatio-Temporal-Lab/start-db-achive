@@ -409,7 +409,6 @@ public class CoordTransformFunction {
 
     @StartDBFunction("st_GCJ02ToWGS84")
     public Trajectory st_GCJ02ToWGS84(Trajectory trajectory) {
-
         AbstractCoordTransformer transformer = new GCJ02ToWGS84Transformer();
         return transformer.trajectoryTransform(trajectory);
     }
