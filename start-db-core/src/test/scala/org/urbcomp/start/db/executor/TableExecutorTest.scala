@@ -67,15 +67,8 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     while (rs1.next()) {
       tablesBefore += rs1.getString(1)
     }
-    println(tablesBefore)
 
     stmt.executeUpdate(createTableSQL)
-    val tablesBefore1 = ArrayBuffer[String]()
-    val rs11 = stmt.executeQuery("show tables")
-    while (rs11.next()) {
-      tablesBefore1 += rs11.getString(1)
-    }
-    println(tablesBefore1)
 
     val dropTableSQL = s"""DROP TABLE xxx_%d;""".format(randomNum).stripMargin
     stmt.executeUpdate(dropTableSQL)
@@ -85,7 +78,6 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     while (rs2.next()) {
       tablesAfter += rs2.getString(1)
     }
-    println(tablesAfter)
 
     assertEquals(tablesBefore.sorted, tablesAfter.sorted)
   }
