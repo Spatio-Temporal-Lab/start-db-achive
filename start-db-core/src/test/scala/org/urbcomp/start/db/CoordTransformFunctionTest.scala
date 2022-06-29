@@ -130,27 +130,6 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
-  test("st_BD09ToWGS84(Trajectory)") {
-    val statement = connect.createStatement
-    val resultSet =
-      statement.executeQuery("select st_BD09ToWGS84(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
-    resultSet.next()
-    assertEquals(
-      "org.urbcomp.start.db.model.trajectory.Trajectory@1fbf088b",
-      resultSet.getObject(1).toString
-    )
-  }
-
-  test("st_BD09ToWGS84(RoadSegment)") {
-    val statement = connect.createStatement
-    val resultSet =
-      statement.executeQuery("select st_BD09ToWGS84(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
-    resultSet.next()
-    assertEquals(
-      "org.urbcomp.start.db.model.roadnetwork.RoadSegment@1",
-      resultSet.getObject(1).toString
-    )
-  }
 
   test("st_WGS84ToBD09(Point)") {
     val statement = connect.createStatement
@@ -254,17 +233,6 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     assertEquals(
       "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
         "4.006022856419637))",
-      resultSet.getObject(1).toString
-    )
-  }
-
-  test("st_WGS84ToBD09(Trajectory)") {
-    val statement = connect.createStatement
-    val resultSet =
-      statement.executeQuery("select st_BD09ToWGS84(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
-    resultSet.next()
-    assertEquals(
-      "org.urbcomp.start.db.model.trajectory.Trajectory@1fbf088b",
       resultSet.getObject(1).toString
     )
   }
