@@ -79,5 +79,5 @@ public interface IMapper<T extends AbstractEntity> {
      * @param fid fid
      * @return number of affected rows
      */
-    long deleteByFid(@Param("fid")long fid);
+    long deleteByFid(@Param("fid") long fid);
 }

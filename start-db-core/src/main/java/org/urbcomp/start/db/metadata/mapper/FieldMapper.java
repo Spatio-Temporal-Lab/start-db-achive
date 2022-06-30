@@ -41,6 +41,6 @@ public interface FieldMapper extends IMapper<Field> {
     long update(@Param("field") Field field);
 
     @Override
-    long deleteByFid(@Param("fid")long fid);
+    long deleteByFid(@Param("fid") long fid);
 
 }
