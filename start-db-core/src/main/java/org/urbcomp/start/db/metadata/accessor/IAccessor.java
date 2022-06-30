@@ -91,7 +91,6 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
         return getMapper(commit).deleteById(id);
     }
 
-
     /**
      * delete one entity instance in table
      *
