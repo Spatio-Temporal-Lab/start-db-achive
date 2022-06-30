@@ -43,7 +43,6 @@ case class DropTableExecutor(n: SqlDropTable) extends BaseExecutor {
     }
 
     val tableId = existedTable.getId
-    println("table id: " + tableId)
     val affectedRows =
       tableAccessor.deleteById(tableId, true)
     fieldAccessor.deleteByFid(tableId, true)
