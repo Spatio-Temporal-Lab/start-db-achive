@@ -44,19 +44,8 @@ case class DropTableExecutor(n: SqlDropTable) extends BaseExecutor {
 
     val tableId = existedTable.getId
     val affectedRows =
-      tableAccessor.deleteById(tableId, true)
-    fieldAccessor.deleteByFid(tableId, true)
-    val schemaName = MetadataUtil.makeSchemaName(tableId)
-
-    val params: util.Map[String, String] = new util.HashMap[String, String]
-    val CATALOG: String = userName + "." + dbName
-    params.put("hbase.catalog", CATALOG)
-    params.put("hbase.zookeepers", ConfigProvider.getHBaseZookeepers)
-    val dataStore = DataStoreFinder.getDataStore(params)
-    val schema = dataStore.getSchema(schemaName)
-    if (schema == null) {
-      throw new IllegalStateException("schema does not exist " + schemaName)
-    }
+      tableAccessor.deleteById(tableId, false)
+    fieldAccessor.deleteByFid(tableId, false)
 
     // TODO transform start db type
 
