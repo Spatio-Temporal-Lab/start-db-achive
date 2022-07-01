@@ -42,9 +42,9 @@ class GeomesaEnumerator(
     tableName: String
 ) extends Enumerator[Object] {
 
-  var curr: Array[AnyRef] = _
+  var curr: AnyRef = _
 
-  override def current(): Array[AnyRef] = curr
+  override def current(): AnyRef = curr
 
   override def moveNext(): Boolean = {
     try {
@@ -73,7 +73,8 @@ class GeomesaEnumerator(
           index += 1
         }
       }
-      curr = list.toArray
+      // one column return the object , not an array
+      curr = if (fields.size() == 1) list.get(0) else list.toArray
     } catch {
       case _: Exception => return false
     }
