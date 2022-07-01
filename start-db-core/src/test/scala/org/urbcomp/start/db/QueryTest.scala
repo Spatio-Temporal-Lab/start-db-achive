@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db
 
-import org.junit.Assert.assertTrue
+import org.junit.Assert.{assertEquals, assertTrue}
 
 import java.sql.Timestamp
 
@@ -35,5 +35,15 @@ class QueryTest extends AbstractCalciteFunctionTest {
         }
       }
     }
+  }
+
+  test("test select one column") {
+    val stmt = connect.createStatement()
+    stmt.execute("create table if not exists t_int(i int)")
+    stmt.execute("insert into t_int values (123)")
+
+    val rs = stmt.executeQuery("select * from t_int")
+    rs.next()
+    assertEquals(123, rs.getInt(1))
   }
 }
