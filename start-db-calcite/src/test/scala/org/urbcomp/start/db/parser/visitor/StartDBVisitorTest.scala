@@ -14,21 +14,25 @@ import org.apache.calcite.sql._
 import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.parser.SqlParser
 import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
-import org.scalatest.FunSuite
+import org.scalatest.{BeforeAndAfterEach, FunSuite}
 import org.urbcomp.start.db.parser.StartDBSQLSamples
 import org.urbcomp.start.db.parser.dcl.SqlCreateUser
 import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
 import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver
-import org.urbcomp.start.db.util.MetadataUtil
+import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
 
-class StartDBVisitorTest extends FunSuite {
+class StartDBVisitorTest extends FunSuite with BeforeAndAfterEach {
 
   def driver = StartDBParseDriver
 
   def testUser = "start_db";
   def testDatabase = "default";
   def tableName = "table_name";
+
+  override def beforeEach(): Unit = {
+    SqlParam.CACHE.set(new SqlParam(testUser, testDatabase))
+  }
 
   def calciteParse(sql: String): SqlNode = {
     val parser = SqlParser.create(sql);
@@ -43,6 +47,8 @@ class StartDBVisitorTest extends FunSuite {
   test("convert describe statement to SqlNode") {
     val parsed = driver.parseSql(StartDBSQLSamples.DESCRIBE_TABLE_SAMPLE)
     assertTrue(parsed.isInstanceOf[SqlDescribeTable])
+    val node = parsed.asInstanceOf[SqlDescribeTable]
+    assertEquals(3, node.getTable.names.size())
   }
 
   test("convert truncate table statement to SqlNode") {
