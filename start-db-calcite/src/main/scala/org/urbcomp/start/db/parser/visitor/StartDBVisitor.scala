@@ -656,7 +656,7 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
 
   override def visitDeleteStmt(ctx: DeleteStmtContext): SqlNode = {
     val tableIdentifier = visitIdent(ctx.tableName().ident())
-    val condition = visitWhereClause(ctx.whereClause());
+    val condition = if (ctx.whereClause() != null) visitWhereClause(ctx.whereClause()) else null
     // TODO  complete sourceSelect and alias
     new SqlDelete(pos, tableIdentifier, condition, null, null)
   }

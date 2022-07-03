@@ -13,7 +13,7 @@ package org.urbcomp.start.db.executor
 
 import org.apache.calcite.sql.{SqlIdentifier, SqlUpdate}
 import org.geotools.data.{DataStoreFinder, Transaction}
-import org.geotools.filter.text.cql2.CQL
+import org.geotools.filter.text.ecql.ECQL
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
@@ -68,7 +68,7 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     var affectRows = 0
     val params = ExecutorUtil.getDataStoreParams(userName, dbName)
     val dataStore = DataStoreFinder.getDataStore(params)
-    val filter = CQL.toFilter(condition)
+    val filter = ECQL.toFilter(condition)
     val schemaName = MetadataUtil.makeSchemaName(table.getId)
     WithClose(dataStore.getFeatureWriter(schemaName, filter, Transaction.AUTO_COMMIT)) { writer =>
       {
