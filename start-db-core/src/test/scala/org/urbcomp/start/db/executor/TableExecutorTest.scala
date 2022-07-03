@@ -111,4 +111,21 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
 
     assertEquals(tablesBefore.sorted, tablesAfter.sorted)
   }
+
+  test("test describe table") {
+    val tableName = "test_describe_table_" + scala.util.Random.nextInt(Integer.MAX_VALUE)
+    val createTableSQL = s"""CREATE TABLE $tableName (
+                            |    tr Trajectory,
+                            |    rs RoadSegment,
+                            |    gm Geometry
+                            |);""".stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+    val rss = stmt.executeQuery(s"describe $tableName")
+    var fields = List[String]()
+    while (rss.next()) {
+      fields = fields :+ s"${rss.getString(1)}:${rss.getString(2)}:${rss.getString(3)}"
+    }
+    assertEquals(3, fields.length)
+  }
 }
