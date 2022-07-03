@@ -66,15 +66,16 @@ object ExecutorUtil {
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
     val envDbName = param.getDbName
-    val (dbName, tableName) = targetTable.names.size() match {
+    targetTable.names.size() match {
+      case 3 =>
+        (targetTable.names.get(0), targetTable.names.get(1), targetTable.names.get(2))
       case 2 =>
-        (targetTable.names.get(0), targetTable.names.get(1))
+        (userName, targetTable.names.get(0), targetTable.names.get(1))
       case 1 =>
-        (envDbName, targetTable.names.get(0))
+        (userName, envDbName, targetTable.names.get(0))
       case _ =>
         throw new RuntimeException("target table format should like dbname.tablename or tablename")
     }
-    (userName, dbName, tableName)
   }
 
   def getDataStoreParams(userName: String, dbName: String): util.Map[String, String] = {
