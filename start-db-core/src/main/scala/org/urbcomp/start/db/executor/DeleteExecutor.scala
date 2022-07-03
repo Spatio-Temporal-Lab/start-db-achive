@@ -13,7 +13,7 @@ package org.urbcomp.start.db.executor
 
 import org.apache.calcite.sql.{SqlDelete, SqlIdentifier}
 import org.geotools.data.{DataStoreFinder, Transaction}
-import org.geotools.filter.text.cql2.CQL
+import org.geotools.filter.text.ecql.ECQL
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
@@ -37,13 +37,14 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     }
 
     // Analytic filter condition
-    val condition = n.getCondition.toString.replace("`", "")
+//    val condition = n.getCondition.toString.replace("`", "")
+    val condition = if (n.getCondition != null) n.getCondition.toString.replace("`", "") else null
 
     // remove value
     var affectRows = 0
     val params = ExecutorUtil.getDataStoreParams(userName, dbName)
     val dataStore = DataStoreFinder.getDataStore(params)
-    val filter = CQL.toFilter(condition)
+    val filter = if (condition != null) ECQL.toFilter(condition) else ECQL.toFilter("INCLUDE")
     val schemaName = MetadataUtil.makeSchemaName(table.getId)
     WithClose(dataStore.getFeatureWriter(schemaName, filter, Transaction.AUTO_COMMIT)) { writer =>
       {

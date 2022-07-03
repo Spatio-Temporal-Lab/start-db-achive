@@ -21,6 +21,9 @@ import org.urbcomp.start.db.AbstractCalciteFunctionTest
   */
 class DeleteTest extends AbstractCalciteFunctionTest {
 
+  /**
+    * test for delete
+    */
   test("test for delete") {
     val statement = connect.createStatement()
     val set = statement.executeQuery("select count(1) from t_test")
@@ -44,5 +47,26 @@ class DeleteTest extends AbstractCalciteFunctionTest {
     val valueAfter: Long = set1.getObject(1).asInstanceOf[Long]
     // check delete
     assertEquals(valueAfter, valueBefore)
+  }
+
+  /**
+    * test for delete filter (1 = 1 and no where condition)
+    */
+  test("test for filter") {
+    val statement = connect.createStatement()
+    statement.execute("create table if not exists t_test_delete (idx integer, name string)")
+    statement.execute("insert into t_test_delete values (1, 'hate')")
+    val set0 = statement.executeQuery("select count(1) from t_test_delete")
+    set0.next()
+    assertEquals(1L, set0.getObject(1))
+    statement.execute("delete from t_test_delete")
+    val set1 = statement.executeQuery("select count(1) from t_test_delete")
+    set1.next()
+    assertEquals(0L, set1.getObject(1))
+    statement.execute("insert into t_test_delete values (1, 'hate')")
+    statement.execute("delete from t_test_delete where 1 = 1")
+    val set2 = statement.executeQuery("select count(1) from t_test_delete")
+    set2.next()
+    assertEquals(0L, set2.getObject(1))
   }
 }
