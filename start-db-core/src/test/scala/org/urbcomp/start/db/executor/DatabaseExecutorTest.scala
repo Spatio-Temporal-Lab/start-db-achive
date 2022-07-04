@@ -38,7 +38,6 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
     while (rs1.next()) {
       databasesBefore = databasesBefore :+ rs1.getString(1)
     }
-    println(databasesBefore)
     assertTrue(databasesBefore.contains(databaseName))
 
     stmt.executeUpdate("DROP DATABASE %s".format(databaseName))
@@ -47,7 +46,6 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
     while (rs2.next()) {
       databasesAfter = databasesAfter :+ rs2.getString(1)
     }
-    println(databasesAfter)
     assertFalse(databasesAfter.contains(databaseName))
   }
 
@@ -61,7 +59,6 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
     while (rs1.next()) {
       databasesBefore = databasesBefore :+ rs1.getString(1)
     }
-    println(databasesBefore)
     assertTrue(databasesBefore.contains(databaseName))
 
     stmt.executeUpdate("DROP DATABASE IF EXISTS %s".format(databaseName))
@@ -70,7 +67,6 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
     while (rs2.next()) {
       databasesAfter = databasesAfter :+ rs2.getString(1)
     }
-    println(databasesAfter)
     assertFalse(databasesAfter.contains(databaseName))
   }
 }
