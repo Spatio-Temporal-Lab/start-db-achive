@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * This interface is used to encapsulate some table mapping information.
  *
- * @author Wang Bohong
+ * @author Wang Bohong, Xiang He
  * @Date 2022-05-20 17:00:05
  */
 public interface TableMapper extends IMapper<Table> {
@@ -47,4 +47,7 @@ public interface TableMapper extends IMapper<Table> {
      * get all user db table
      */
     List<UserDbTable> getAllUserDbTable();
+
+    @Override
+    long deleteByFid(@Param("fid") long fid);
 }

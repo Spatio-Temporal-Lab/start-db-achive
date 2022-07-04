@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDropTable}
+import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.{SqlDelete, SqlInsert, SqlNode, SqlUpdate}
 import org.urbcomp.start.db.infra.{BaseExecutor, BaseExecutorFactory}
 import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlUseDatabase}
@@ -37,6 +37,7 @@ class StartDBExecutorFactory extends BaseExecutorFactory {
     case n: SqlCreateUser      => CreateUserExecutor(n)
     case n: SqlShowTables      => ShowTablesExecutor(n)
     case n: SqlDropTable       => DropTableExecutor(n)
+    case n: SqlDropSchema      => DropDatabaseExecutor(n)
     case _                     => throw new IllegalStateException("Not Support SQL")
   }
 }

@@ -56,6 +56,7 @@ import org.apache.calcite.server.CalciteServerStatement;
 import org.apache.calcite.server.DdlExecutor;
 import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.ddl.SqlCreateTable;
+import org.apache.calcite.sql.ddl.SqlDropSchema;
 import org.apache.calcite.sql.ddl.SqlDropTable;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.sql.parser.SqlParseException;
@@ -695,7 +696,8 @@ public class CalcitePrepareImpl implements CalcitePrepare {
                 if (sqlNode instanceof SqlCreateDatabase
                     || sqlNode instanceof SqlCreateTable
                     || sqlNode instanceof SqlUseDatabase
-                    || sqlNode instanceof SqlDropTable) {
+                    || sqlNode instanceof SqlDropTable
+                    || sqlNode instanceof SqlDropSchema) {
                     return startDBExecutorFactory.convertExecutor(sqlNode).execute();
                 }
 
