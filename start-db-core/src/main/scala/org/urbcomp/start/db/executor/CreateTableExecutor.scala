@@ -62,7 +62,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
       } else {
         sfb.add(name, classType)
       }
-      fieldAccessor.insert(new Field(0, tableId, name, dataType, 1), false)
+      fieldAccessor.insert(new Field(0, tableId, name, dataType, 0), false)
     })
 
     val params = ExecutorUtil.getDataStoreParams(userName, dbName)
