@@ -6,166 +6,166 @@
     <!--  求普通对数，num > 0  log(base: Double, num: Double): Double  -->
     <case>
         <sql type="query">select log(?, ?);</sql>
-        <assertion id="01" expected="math_001.xml">[2][2]</assertion>
-        <assertion id="02" expected="error:参数有误">[2][0]</assertion>
-        <assertion id="03" expected="error:参数有误">[2][-1]</assertion>
+        <assertion expected="math_001.xml">[2][2]</assertion>
+        <assertion expected="error:参数有误">[2][0]</assertion>
+        <assertion expected="error:参数有误">[2][-1]</assertion>
     </case>
 
     <!--  求π  PI()  -->
     <case>
         <sql type="query">select pi( );</sql>
-        <assertion id="01" expected="math_002.xml" />
+        <assertion expected="math_002.xml" />
     </case>
 
     <!--  求以2为底对数，num > 0  log2(num: Double): Double  -->
     <case>
         <sql type="query">select log2(?);</sql>
-        <assertion id="01" expected="math_003.xml">[4]</assertion>
-        <assertion id="02" expected="error:参数有误">[0]</assertion>
-        <assertion id="03" expected="error:参数有误">[-1]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_003.xml">[4]</assertion>
+        <assertion expected="error:参数有误">[0]</assertion>
+        <assertion expected="error:参数有误">[-1]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  求以1p为底对数，num > -1  log1p(num: Double): Double  -->
     <case>
         <sql type="query">select log1p(?);</sql>
-        <assertion id="01" expected="math_004.xml">[10]</assertion>
-        <assertion id="02" expected="math_004.xml">[0]</assertion>
-        <assertion id="03" expected="math_004.xml">[-0.9]</assertion>
-        <assertion id="04" expected="error:参数有误">[-1]</assertion>
-        <assertion id="05" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_004.xml">[10]</assertion>
+        <assertion expected="math_005.xml">[0]</assertion>
+        <assertion expected="math_006.xml">[-0.9]</assertion>
+        <assertion expected="error:参数有误">[-1]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  求以e为底对数, num > 0  ln(num: Double): Double  -->
     <case>
         <sql type="query">select ln(?);</sql>
-        <assertion id="01" expected="math_005.xml">[2]</assertion>
-        <assertion id="02" expected="error:参数有误">[0]</assertion>
-        <assertion id="03" expected="error:参数有误">[-1]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_007.xml">[2]</assertion>
+        <assertion expected="error:参数有误">[0]</assertion>
+        <assertion expected="error:参数有误">[-1]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  求以10为底对数 ，num > 0  log10(num: Double): Double  -->
     <case>
         <sql type="query">select log10(?);</sql>
-        <assertion id="01" expected="math_006.xml">[100]</assertion>
-        <assertion id="02" expected="error:参数有误">[0]</assertion>
-        <assertion id="03" expected="error:参数有误">[-1]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_008.xml">[100]</assertion>
+        <assertion expected="error:参数有误">[0]</assertion>
+        <assertion expected="error:参数有误">[-1]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  绝对值  abs(num: Double): Double  -->
     <case>
         <sql type="query">select abs(?);</sql>
-        <assertion id="01" expected="math_007.xml">[-100]</assertion>
-        <assertion id="02" expected="math_007.xml">[0]</assertion>
-        <assertion id="03" expected="math_007.xml">[100]</assertion>
-        <assertion id="04" expected="math_007.xml">[100.123]</assertion>
-        <assertion id="05" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_009.xml">[-100]</assertion>
+        <assertion expected="math_010.xml">[0]</assertion>
+        <assertion expected="math_011.xml">[100]</assertion>
+        <assertion expected="math_012.xml">[100.123]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  向上取整  ceil(num: Double): Double  -->
     <case>
         <sql type="query">select ceil(?);</sql>
-        <assertion id="01" expected="math_008.xml">[1.23]</assertion>
-        <assertion id="02" expected="math_008.xml">[0]</assertion>
-        <assertion id="03" expected="math_008.xml">[-1.23]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_013.xml">[1.23]</assertion>
+        <assertion expected="math_014.xml">[0]</assertion>
+        <assertion expected="math_015.xml">[-1.23]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  向下取整  floor(num: Double): Double  -->
     <case>
         <sql type="query">select floor(?);</sql>
-        <assertion id="01" expected="math_009.xml">[12.34]</assertion>
-        <assertion id="02" expected="math_009.xml">[0]</assertion>
-        <assertion id="03" expected="math_009.xml">[-12.34]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_016.xml">[12.34]</assertion>
+        <assertion expected="math_017.xml">[0]</assertion>
+        <assertion expected="math_018.xml">[-12.34]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  保留小数位  round(num: Double[, precision:int]): Double  -->
     <case>
         <sql type="query">select round(?, ?);</sql>
-        <assertion id="01" expected="math_0010.xml">[123.456][1]</assertion>
-        <assertion id="02" expected="math_0010.xml">[123.456][0]</assertion>
-        <assertion id="03" expected="math_0010.xml">[123.456][4]</assertion>
-        <assertion id="04" expected="math_0010.xml">[123.456][-1]</assertion>
-        <assertion id="05" expected="math_0010.xml">[123.456][-3]</assertion>
+        <assertion expected="math_0019.xml">[123.456][1]</assertion>
+        <assertion expected="math_0020.xml">[123.456][0]</assertion>
+        <assertion expected="math_0021.xml">[123.456][4]</assertion>
+        <assertion expected="math_0022.xml">[123.456][-1]</assertion>
+        <assertion expected="math_0023.xml">[123.456][-3]</assertion>
     </case>
 
     <!--  符号函数值  sign(num: Double): Integer  -->
     <case>
         <sql type="query">select sign(?);</sql>
-        <assertion id="01" expected="math_011.xml">[-20]</assertion>
-        <assertion id="02" expected="math_011.xml">[0]</assertion>
-        <assertion id="03" expected="math_011.xml">[20]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_024.xml">[-20]</assertion>
+        <assertion expected="math_025.xml">[0]</assertion>
+        <assertion expected="math_026.xml">[20]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  取模  mod(num1: Integer, num2: Integer): Integer  -->
     <case>
         <sql type="query">select mod(?, ?);</sql>
-        <assertion id="01" expected="math_012.xml">[4][3]</assertion>
-        <assertion id="02" expected="math_012.xml">[4][4]</assertion>
-        <assertion id="03" expected="math_012.xml">[4][5]</assertion>
-        <assertion id="04" expected="math_012.xml">[-4][3]</assertion>
-        <assertion id="05" expected="math_012.xml">[-4][4]</assertion>
-        <assertion id="06" expected="math_012.xml">[-4][5]</assertion>
-        <assertion id="07" expected="math_012.xml">[0][-233]</assertion>
+        <assertion expected="math_027.xml">[4][3]</assertion>
+        <assertion expected="math_028.xml">[4][4]</assertion>
+        <assertion expected="math_029.xml">[4][5]</assertion>
+        <assertion expected="math_030.xml">[-4][3]</assertion>
+        <assertion expected="math_031.xml">[-4][4]</assertion>
+        <assertion expected="math_032.xml">[-4][5]</assertion>
+        <assertion expected="math_033.xml">[0][-233]</assertion>
     </case>
 
     <!--  正弦值  sin(num: Double): Double  -->
     <case>
         <sql type="query">select sin(?);</sql>
-        <assertion id="01" expected="math_013.xml">[-90]</assertion>
-        <assertion id="02" expected="math_013.xml">[0]</assertion>
-        <assertion id="03" expected="math_013.xml">[90]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_034.xml">[-90]</assertion>
+        <assertion expected="math_035.xml">[0]</assertion>
+        <assertion expected="math_036.xml">[90]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  余弦值  cos(num: Double): Double  -->
     <case>
         <sql type="query">select cos(?);</sql>
-        <assertion id="01" expected="math_0014.xml">[-90]</assertion>
-        <assertion id="02" expected="math_0014.xml">[0]</assertion>
-        <assertion id="03" expected="math_0014.xml">[90]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_0037.xml">[-90]</assertion>
+        <assertion expected="math_0038.xml">[0]</assertion>
+        <assertion expected="math_0039.xml">[90]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  正切值  tan(num: Double): Double  -->
     <case>
         <sql type="query">select tan(?);</sql>
-        <assertion id="01" expected="math_015.xml">[45]</assertion>
-        <assertion id="02" expected="math_015.xml">[0]</assertion>
-        <assertion id="03" expected="math_015.xml">[-45]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_040.xml">[45]</assertion>
+        <assertion expected="math_041.xml">[0]</assertion>
+        <assertion expected="math_042.xml">[-45]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  余切值  cot(num: Double): Double  -->
     <case>
         <sql type="query">select cot(?);</sql>
-        <assertion id="01" expected="math_016.xml">[90]</assertion>
-        <assertion id="02" expected="math_016.xml">[45]</assertion>
-        <assertion id="03" expected="math_016.xml">[0]</assertion>
-        <assertion id="04" expected="math_016.xml">[90]</assertion>
-        <assertion id="05" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_043.xml">[90]</assertion>
+        <assertion expected="math_044.xml">[45]</assertion>
+        <assertion expected="math_045.xml">[0]</assertion>
+        <assertion expected="math_046.xml">[90]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  反余弦值  acos(num: Double): Double  -->
     <case>
         <sql type="query">select acos(?);</sql>
-        <assertion id="01" expected="math_017.xml">[90]</assertion>
-        <assertion id="02" expected="math_017.xml">[0]</assertion>
-        <assertion id="03" expected="math_017.xml">[-90]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_047.xml">[90]</assertion>
+        <assertion expected="math_048.xml">[0]</assertion>
+        <assertion expected="math_049.xml">[-90]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  反正弦值  asin(num: Double): Double  -->
     <case>
         <sql type="query">select asin(?);</sql>
-        <assertion id="01" expected="math_018.xml">[0.5]</assertion>
-        <assertion id="02" expected="math_018.xml">[0]</assertion>
-        <assertion id="03" expected="math_018.xml">[-0.5]</assertion>
-        <assertion id="04" expected="error:参数有误">[null]</assertion>
+        <assertion expected="math_050.xml">[0.5]</assertion>
+        <assertion expected="math_051.xml">[0]</assertion>
+        <assertion expected="math_052.xml">[-0.5]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
 

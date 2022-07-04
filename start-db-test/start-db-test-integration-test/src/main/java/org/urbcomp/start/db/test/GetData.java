@@ -80,13 +80,11 @@ public class GetData {
      *
      * @param expectData 预期字符串
      * @param filePath sql用例的文件路径
-     * @param paramId 参数id值
      * @return 预期内容
      * */
     public static ArrayList<String> getExpectDataArray(
         String expectData,
-        String filePath,
-        String paramId
+        String filePath
     ) throws Exception {
         File parentFile = new File(filePath).getParentFile();
         String expectedPath = parentFile.getPath()
@@ -114,12 +112,10 @@ public class GetData {
         }
         expectedArray.add(expectValue.toString());
         expectValue.setLength(0);
-        // 获取指定id的返回数据信息 row标签
-        String paramStr = String.format("//case[@id=%s]\"", paramId);
-        List<Node> idNodes = rootElement.selectNodes(paramStr);
-        for (Node idNode : idNodes) {
-            Element idElement = (Element) idNode;
-            String rowText = idElement.getText();
+        // 获取row标签的内容
+        List<Element> rowElements = rootElement.elements("row");
+        for (Element rowElement : rowElements) {
+            String rowText = rowElement.getText();
             expectedArray.add(rowText);
         }
         return expectedArray;

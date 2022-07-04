@@ -29,7 +29,7 @@ import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
 public class MainTest {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static Connection getConn() throws Exception {
+    private static Connection getConn(){
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(
@@ -44,42 +44,7 @@ public class MainTest {
     }
 
     @Test
-    public void testCreateTable() throws Exception {
-        try {
-            Connection conn = getConn();
-            Statement stmt = conn.createStatement();
-            String sql = "create table all_Type ("
-                + "int1 int, "
-                + "int2 integer, "
-                + "long_ long,"
-                + "float_ float,"
-                + "double_ double,"
-                + "string_ string,"
-                + "boolean1 bool,"
-                + "boolean2 boolean,"
-                + "binary_ binary,"
-                + "datetime_ datetime,"
-                + "timestamp_ timestamp,"
-                + "geometry_ geometry,"
-                + "point_ point,"
-                + "linestring_ linestring,"
-                + "polygon_ polygon,"
-                + "MultiPoint_ multipoint,"
-                + "MultiLineString_ MultiLineString,"
-                + "MultiPolygon_ MultiPolygon,"
-                + "GeometryCollection_ GeometryCollection"
-                + ")";
-            int rowCount = stmt.executeUpdate(sql);
-            System.out.println(rowCount);
-            stmt.close();
-            conn.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
-    public void testCreateTable2() throws Exception {
+    public void testUpdate() throws Exception {
         try {
             Connection conn = getConn();
             Statement stmt = conn.createStatement();
@@ -92,56 +57,10 @@ public class MainTest {
             throw new RuntimeException(e);
         }
     }
-    
+
+
     @Test
     public void testQuery() throws Exception{
-        Connection conn = getConn();
-        Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery("select st_makepoint(10,20)");
-        ArrayList<String> resultArray = getResultArray(result);
-        for (String row : resultArray) {
-            System.out.println(row);
-        }
-    }
-
-    @Test
-    @Ignore
-    public void singleQuerySql() throws SQLException {
-        Connection connect;
-        try (
-                Connection conn = DriverManager.getConnection(
-                        "jdbc:start-db:url=http://127.0.0.1:8000",
-                        "start_db",
-                        "start-db"
-                )
-        ) {
-            Statement stmt = conn.createStatement();
-            // final ResultSet rs = stmt.executeQuery("select st_aswkt(st_makepoint(10,20))");
-            ResultSet rs = stmt.executeQuery("select * from t_test order by idx;");
-
-            int columnCount = rs.getMetaData().getColumnCount();
-            System.out.println("col:" + columnCount);
-            for (int i = 1; i <= columnCount; i++) {
-                System.out.print(rs.getMetaData().getColumnName(i) + "\t");
-            }
-            System.out.println();
-            for (int i = 1; i <= columnCount; i++) {
-                System.out.print(rs.getMetaData().getColumnTypeName(i) + "\t");
-            }
-            System.out.println();
-            while (rs.next()) {
-                for (int i = 1; i <= columnCount; i++) {
-                    System.out.print(rs.getObject(i) + "\t");
-                }
-                System.out.println();
-            }
-            rs.close();
-            stmt.close();
-        }
-    }
-
-    @Test
-    public void testQuery2() throws Exception{
         Connection conn = getConn();
         Statement stat = conn.createStatement();
         ResultSet result = stat.executeQuery("select * from t_test order by idx;");
@@ -177,6 +96,7 @@ public class MainTest {
     @Test
     @Ignore
     public void singleSQLCaseTest() throws Exception {
+        // 执行单个xml测试用例文件
         String xmlResource = Objects.requireNonNull(
             RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
         ).getPath();
@@ -187,8 +107,8 @@ public class MainTest {
     @Test
     @Ignore
     public void allSQLCaseTest() throws Exception {
+        // 执行所有测试用例文件
         ArrayList<String> sqlCaseXMLs = getSqlCaseXMLs();
-        // 遍历
         for (String sqlCaseXML : sqlCaseXMLs) {
             log.info("执行文件:" + sqlCaseXML);
             runSingleCase(sqlCaseXML);

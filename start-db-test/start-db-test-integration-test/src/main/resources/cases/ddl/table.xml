@@ -2,15 +2,286 @@
 
 <testCase>
     <case>
-        <sql type="update">create database db;</sql>
-        <sql type="update">use db;</sql>
-        <sql type="update">create table db.t1 (a1 int);</sql>
-        <sql type="update">insert into t1 values(?);</sql>
-        <assertion>[1]</assertion>
-        <assertion>[2]</assertion>
-        <sql type="query">select * from t1 where a = ?;</sql>
-        <assertion id="01" expected="data_01.xml">[1]</assertion>
-        <assertion id="02" expected="data_01.xml">[2]</assertion>
-        <sql type="update">drop table t1;</sql>
+        <!--   创建除roadNetwork外，含有其他所有字段类型的表   -->
+        <sql type="update">use {dbname};</sql>
+        <sql type="update">drop table if exists all_type;</sql>
+        <sql type="update">
+            create table all_type ( int1 int, int2 integer, long_ long, float_ float, double_ double, string_ string,
+            boolean1 bool, boolean2 boolean, binary_ binary, datetime_ datetime, timestamp_ timestamp,
+            geometry_ geometry, point_ point, linestring_ linestring, polygon_ polygon,
+            MultiPoint_ multipoint, MultiLineString_ MultiLineString, MultiPolygon_ MultiPolygon,
+            GeometryCollection_ GeometryCollection, traj trajectory, road roadSegment);
+        </sql>
+        <sql type="update">
+            insert into all_type values(
+            123, 456, 1234567890, 123.456, 123456.789, 'abc!@#$%^*()_+-=字符串',
+            true, false, st_asWKB(st_GeomFromWkt("Point(10 20)")),
+            toDatestamp("2022-06-29"), toTimestamp("2022-06-29 10:00:00.000"),
+            st_GeomFromWkt("Point(10 20)"), st_PointFromWkt("Point(10 20)"),
+            st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)"), st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))"),
+            st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)"),
+            st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))"),
+            st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))"),
+            st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))"),
+            st_traj_fromGeoJSON( '{
+                "type":"FeatureCollection",
+                "features":[
+                    {"type":"Feature",
+                    "properties":{"time":"2018-10-09 07:30:41.0"},
+                    "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+                    {"type":"Feature",
+                    "properties":{"time":"2018-10-09 07:30:56.0"},
+                    "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+                "properties":{
+                    "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+                    "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' ),
+            st_rs_fromGeoJSON('{
+                "type":"Feature",
+                "properties":{
+                    "endId":70832,
+                    "level":3,
+                    "startId":70831,
+                    "rsId":100320,
+                    "speedLimit":50.0,
+                    "lengthInMeter":50.57964091335451,
+                    "direction":1},
+                "geometry":{
+                    "type":"LineString",
+                    "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}'))
+        </sql>
+        <sql type="query">select * from all_type</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">select * from {dbname}.all_type</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table all_type</sql>
+        <assertion  expected="table_002.xml"/>
+        <sql type="query">desc table {dbname}.all_type</sql>
+        <assertion expected="table_002.xml"/>
     </case>
+    
+    <case>
+        <!--    对每一个字段类型都操作等值查询, 并使用返回的结果创建新的表    -->
+        <sql type="update">create table as_t1 as select * from all_type where int1 = 123;</sql>
+        <sql type="query">select * from as_t1;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t1;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t2 as select * from all_type where int2 = 456;</sql>
+        <sql type="query">select * from as_t2;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t2;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t3 as select * from all_type where long_ = 1234567890;</sql>
+        <sql type="query">select * from as_t3;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t3;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t4 as select * from all_type where float_ = 123.456;</sql>
+        <sql type="query">select * from as_t4;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t4;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t5 as select * from all_type where double_ = 123456.789;</sql>
+        <sql type="query">select * from as_t5;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t5;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t6 as select * from all_type where string_ = 'abc!@#$%^*()_+-=字符串';</sql>
+        <sql type="query">select * from as_t6;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t6;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t7 as select * from all_type where boolean1 = true;</sql>
+        <sql type="query">select * from as_t7;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t7;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t8 as select * from all_type where boolean2 = false;</sql>
+        <sql type="query">select * from as_t8;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t8;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t9 as select * from all_type where binary_ = st_asWKB(st_GeomFromWkt("Point(10 20)"));</sql>
+        <sql type="query">select * from as_t9;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t9;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t10 as select * from all_type where datetime = toDatestamp("2022-06-29");</sql>
+        <sql type="query">select * from as_t10;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t10;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t11 as select * from all_type where timestamp_ = toTimestamp("2022-06-29 10:00:00.000");</sql>
+        <sql type="query">select * from as_t11;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t11;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t12 as select * from all_type where geometry_ = st_GeomFromWkt("Point(10 20)");</sql>
+        <sql type="query">select * from as_t12;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t12;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t13 as select * from all_type where point_ = st_PointFromWkt("Point(10 20)");</sql>
+        <sql type="query">select * from as_t13;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t13;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t14 as select * from all_type where linestring_ = st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)");</sql>
+        <sql type="query">select * from as_t14;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t14;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t15 as select * from all_type where polygon_ = st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))");</sql>
+        <sql type="query">select * from as_t15;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t15;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t16 as select * from all_type where MultiPoint_ = st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)");</sql>
+        <sql type="query">select * from as_t16;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t16;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t17 as select * from all_type where MultiLineString_ = st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))");</sql>
+        <sql type="query">select * from as_t17;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t17;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t18 as select * from all_type where MultiPolygon_ = st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))");</sql>
+        <sql type="query">select * from as_t18;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t18;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t19 as select * from all_type where GeometryCollection_ = st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))");</sql>
+        <sql type="query">select * from as_t19;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t19;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t20 as select * from all_type where traj = st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' );</sql>
+        <sql type="query">select * from as_t20;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t20;</sql>
+        <assertion expected="table_002.xml"/>
+        
+        <sql type="update">create table as_t21 as select * from all_type where road = st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' ),
+            st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}'));</sql>
+        <sql type="query">select * from as_t21;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="query">desc table as_t21;</sql>
+        <assertion expected="table_002.xml"/>
+    </case>
+
+    <case>
+        <!--   查看建表语句  表信息     -->
+        <sql type="query">show create tale all_type;</sql>
+        <assertion expected="table_003.xml"/>
+        <sql type="query">show create tale {dbname}.all_type;</sql>
+        <assertion expected="table_003.xml"/>
+        <sql type="query">show create tale test_{timestamp};</sql>
+        <assertion expected="error: 表不存在"/>
+        <sql type="query">show tables;</sql>
+        <assertion expected="table_004.xml"/>
+        <sql type="query">show metadata;</sql>
+        <assertion expected="table_005.xml"/>
+        <sql type="query">show metadata from all_type;</sql>
+        <assertion expected="table_006.xml"/>
+    </case>
+
+    <case>
+        <!--    跨库建表 跨库查询    -->
+        <sql type="update">
+            create table {dbname}.across_table1 ( int1 int, int2 integer, long_ long, float_ float, double_ double, string_ string,
+            boolean1 bool, boolean2 boolean, binary_ binary, datetime_ datetime, timestamp_ timestamp,
+            geometry_ geometry, point_ point, linestring_ linestring, polygon_ polygon,
+            MultiPoint_ multipoint, MultiLineString_ MultiLineString, MultiPolygon_ MultiPolygon,
+            GeometryCollection_ GeometryCollection, traj trajectory, road roadSegment);
+        </sql>
+        <sql type="update">create table {dbname}.across_table2 as select * from all_type;</sql>
+        <sql type="query">select * from {dbname}.all_type;</sql>
+        <assertion expected="table_007.xml"/>
+        <sql type="query">desc table {dbname}.all_type;</sql>
+        <assertion expected="table_008.xml"/>
+    </case>
+
+    <case>
+        <!--    清空表    -->
+        <sql type="update">truncate table across_table;</sql>
+        <assertion expected="error:表不存在"/>
+
+        <sql type="query">select * from table across_table1;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="update">truncate table across_table1;</sql>
+        <sql type="query">select * from table across_table1;</sql>
+        <assertion expected="table_009.xml"/>
+
+        <sql type="query">select * from table across_table2;</sql>
+        <assertion expected="table_001.xml"/>
+        <sql type="update">truncate table {dbname}.across_table2;</sql>
+        <sql type="query">select * from table across_table2;</sql>
+        <assertion expected="table_010.xml"/>
+    </case>
+
+    <case>
+        <!--   查看指定数据库中的表     -->
+        <sql type="query">show tables;</sql>
+        <assertion expected="table_011.xml"/>
+        <sql type="query">show tables in {dbname};</sql>
+        <assertion expected="table_011.xml"/>
+        <sql type="query">show tables in test_{timestamp};</sql>
+        <assertion expected="error: 数据库不存在"/>
+    </case>
+
+
 </testCase>

@@ -121,7 +121,6 @@ public class RunSingleSQLCase {
                         }
                     } else if (elementName.equals("assertion")) {
                         String params = element.getText();
-                        String paramId = element.attributeValue("paramId");
                         String expected = element.attributeValue("expected");
 
                         // 1. 有参数的话就重新拼接sql, 执行, 获取返回值
@@ -136,12 +135,10 @@ public class RunSingleSQLCase {
 
                         // 2. 获取预期结果或者预期异常
                         ArrayList<String> expectArray = new ArrayList<>();
-                        // id不为null, 说明有返回值
-                        if (paramId != null && expected != null) {
-                            // 获取预期结果
-                            expectArray = getExpectDataArray(expected, xmlPath, paramId);
-                            // id为null, 说明为预期异常
-                        } else if (paramId == null && expected != null) {
+                        // 如果不是以 error开头说明有预期结果, 否则为预期异常
+                        if (!expected.startsWith("error:")) {
+                            expectArray = getExpectDataArray(expected, xmlPath);
+                        } else {
                             expectArray.add(expected);
                         }
 

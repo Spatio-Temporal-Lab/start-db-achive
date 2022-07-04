@@ -6,141 +6,141 @@
     <!--  将日期时间字符串转换为datetime  toDatetime(dateString: String[, format: String]): Datetime  -->
     <case>
         <sql type="query">select toDatetime(?);</sql>
-        <assertion id="01" expected="time_001.xml">['2022-05-25']</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_001.xml">['2022-05-25']</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <case>
         <sql type="query">select toDatetime(?, ?);</sql>
-        <assertion id="01" expected="time_001.xml">['2022-05-25']['yyyy-MM-dd']</assertion>
+        <assertion expected="time_001.xml">['2022-05-25']['yyyy-MM-dd']</assertion>
     </case>
 
     <!--  将日期字符串转换为timestamp  toTimestamp(dateString: String[, format: String]): Timestamp  -->
     <case>
         <sql type="query">select toTimestamp(?);</sql>
-        <assertion id="01" expected="time_002.xml">['2022-05-25 12:34:56.789']</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_002.xml">['2022-05-25 12:34:56.789']</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <case>
         <sql type="query">select toTimestamp(?, ?);</sql>
-        <assertion id="01" expected="time_002.xml">['2022-05-25 12:34:56.789']['yyyy-MM-dd HH:mm:ss.SSS']</assertion>
+        <assertion expected="time_002.xml">['2022-05-25 12:34:56.789']['yyyy-MM-dd HH:mm:ss.SSS']</assertion>
     </case>
 
     <!--  将datetime类型转成timestamp  datetimeToTimestamp(dt: Datetime): Timestamp  -->
     <case>
         <sql type="query">select datetimeToTimestamp(?);</sql>
-        <assertion id="01" expected="time_003.xml">[toDatetime('2022-05-25')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_003.xml">[toDatetime('2022-05-25')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  将timestamp类型转化成datetime类型  timestampToDatetime(ts: Timestamp): Datetime  -->
     <case>
         <sql type="query">select timestampToDatetime(?);</sql>
-        <assertion id="01" expected="time_004.xml">[toTimestamp('2022-05-25 12:34:56.789']</assertion>
-        <assertion id="01" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_004.xml">[toTimestamp('2022-05-25 12:34:56.789']</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获取当前日期时间  currentDatetime(): Datetime  -->
     <case>
         <sql type="query">select currentDatetime();</sql>
-        <assertion id="01" expected="time_005.xml"/>
+        <assertion expected="time_005.xml"/>
     </case>
 
     <!--  获取当前系统时间戳  currentTimestamp():Timestamp  -->
     <case>
         <sql type="query">select currentTimestamp();</sql>
-        <assertion id="01" expected="time_006.xml"/>
+        <assertion expected="time_006.xml"/>
     </case>
 
     <!--  timestamp转long类型  timestampToLong(ts: Timestamp): Long  -->
     <case>
         <sql type="query">select timestampToLong(?);</sql>
-        <assertion id="01" expected="time_007.xml">[toTimestamp('2022-05-25 12:34:56.789')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_007.xml">[toTimestamp('2022-05-25 12:34:56.789')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  long转Timestamp类型  longToTimestamp(num: Long): Timestamp
   -->
     <case>
         <sql type="query">select longToTimestamp(?);</sql>
-        <assertion id="01" expected="time_008.xml">[1653453296789]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_008.xml">[1653453296789]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  按照给定格式，格式化时间  datetimeFormat(dt: Datetime, string: String): String  -->
     <case>
         <sql type="query">select datetimeFormat(?, ?);</sql>
-        <assertion id="01" expected="time_009.xml">[toDatetime('2022-05-25')]['yyyyMMdd']</assertion>
+        <assertion expected="time_009.xml">[toDatetime('2022-05-25')]['yyyyMMdd']</assertion>
     </case>
 
     <!--  按照给定的格式，格式化时间戳  timestampFormat(ts: Timestamp, string: String): String  -->
     <case>
         <sql type="query">select timestampFormat(?, ?);</sql>
-        <assertion id="01" expected="time_0010.xml">[toTimestamp('2022-05-25 12:34:56.789')]['yyyyMMddHHmmssSSS']</assertion>
+        <assertion expected="time_0010.xml">[toTimestamp('2022-05-25 12:34:56.789')]['yyyyMMddHHmmssSSS']</assertion>
     </case>
 
     <!--  获得Timestamp对应的小时  hour(dt: Timestamp): Integer  -->
     <case>
         <sql type="query">select hour(?);</sql>
-        <assertion id="01" expected="time_011.xml">[toTimestamp('2022-05-25 12:34:56.789')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_011.xml">[toTimestamp('2022-05-25 12:34:56.789')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获得Timestamp对应的分钟  minute(dt: Timestamp): Integer  -->
     <case>
         <sql type="query">select minute(?);</sql>
-        <assertion id="01" expected="time_012.xml">[toTimestamp('2022-05-25 12:34:56.789')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_012.xml">[toTimestamp('2022-05-25 12:34:56.789')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获得Timestamp对应的秒  second(dt: Timestamp)): Integer  -->
     <case>
         <sql type="query">select second(?));</sql>
-        <assertion id="01" expected="time_013.xml">[toTimestamp('2022-05-25 12:34:56.789']</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_013.xml">[toTimestamp('2022-05-25 12:34:56.789']</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获得datetime对应的周  week(dt Datetime): Integer  -->
     <case>
         <sql type="query">select week(?);</sql>
-        <assertion id="01" expected="time_014.xml">[toDatetime('2022-05-25')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_014.xml">[toDatetime('2022-05-25')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获得datetime对应的月份  month(dt: Datetime): Integer  -->
     <case>
         <sql type="query">select month(?);</sql>
-        <assertion id="01" expected="time_015.xml">[toDatetime('2022-05-25')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_015.xml">[toDatetime('2022-05-25')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获得datetime对应的年份  year(dt: Datetime): Integer  -->
     <case>
         <sql type="query">select year(?);</sql>
-        <assertion id="01" expected="time_016.xml">[toDatetime('2022-05-25')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_016.xml">[toDatetime('2022-05-25')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获得datetime对应的时间在月份中是第几天  dayOfMonth(dt: Datetime): Integer  -->
     <case>
         <sql type="query">select dayOfMonth(?);</sql>
-        <assertion id="01" expected="time_017.xml">[toDatetime('2022-05-25')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_017.xml">[toDatetime('2022-05-25')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获得datetime对应的时间在星期中是第几天，星期日为1，星期一为2，依次类推  dayOfWeek(dt: Datetime): Integer  -->
     <case>
         <sql type="query">elect dayOfWeek(?);</sql>
-        <assertion id="01" expected="time_018.xml">[toDatetime('2022-05-25')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_018.xml">[toDatetime('2022-05-25')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
     <!--  获得入datetime对应的时间在年份中是第几天  dayOfYear(dt: Datetime): Integer  -->
     <case>
         <sql type="query">select dayOfYear(?);</sql>
-        <assertion id="01" expected="time_019.xml">[toDatetime('2022-05-25')]</assertion>
-        <assertion id="02" expected="error:参数有误">[null]</assertion>
+        <assertion expected="time_019.xml">[toDatetime('2022-05-25')]</assertion>
+        <assertion expected="error:参数有误">[null]</assertion>
     </case>
 
 
