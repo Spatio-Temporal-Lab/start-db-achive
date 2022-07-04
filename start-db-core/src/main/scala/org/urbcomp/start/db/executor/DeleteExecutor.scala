@@ -37,7 +37,6 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     }
 
     // Analytic filter condition
-//    val condition = n.getCondition.toString.replace("`", "")
     val condition = if (n.getCondition != null) n.getCondition.toString.replace("`", "") else null
 
     // remove value
