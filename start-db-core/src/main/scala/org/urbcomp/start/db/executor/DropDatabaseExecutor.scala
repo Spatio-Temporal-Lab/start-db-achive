@@ -27,7 +27,7 @@ case class DropDatabaseExecutor(n: SqlDropSchema) extends BaseExecutor {
     val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
     val dbName = n.name.names.get(0)
     val existed = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
-    println("existed: " + existed)
+
     if (existed == null) {
       if (n.ifExists) {
         return MetadataResult.buildDDLResult(0)
