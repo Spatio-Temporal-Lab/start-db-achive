@@ -237,6 +237,12 @@
         <assertion expected="table_005.xml"/>
         <sql type="query">show metadata from all_type;</sql>
         <assertion expected="table_006.xml"/>
+        <sql type="query">show metadata from {dbname}.all_type;</sql>
+        <assertion expected="table_006.xml"/>
+        <sql type="query">desc table all_type;</sql>
+        <assertion expected="table_008.xml"/>
+        <sql type="query">desc table {dbname}.all_type;</sql>
+        <assertion expected="table_008.xml"/>
     </case>
 
     <case>
@@ -251,8 +257,6 @@
         <sql type="update">create table {dbname}.across_table2 as select * from all_type;</sql>
         <sql type="query">select * from {dbname}.all_type;</sql>
         <assertion expected="table_007.xml"/>
-        <sql type="query">desc table {dbname}.all_type;</sql>
-        <assertion expected="table_008.xml"/>
     </case>
 
     <case>
