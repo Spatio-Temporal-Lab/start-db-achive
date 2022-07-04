@@ -32,7 +32,7 @@ case class DescribeTableExecutor(n: SqlDescribeTable) extends BaseExecutor {
           Array[Object](
             field.getName,
             field.getType,
-            if (field.getIsPrimary == 0) "PRI"
+            if (field.getIsPrimary == 1) "PRI"
             else ""
           )
       )
