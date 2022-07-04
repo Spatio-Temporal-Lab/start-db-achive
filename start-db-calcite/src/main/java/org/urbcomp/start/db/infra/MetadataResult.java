@@ -81,22 +81,23 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
     /**
      * DDL
      */
-    public MetadataResult(List<ColumnMetaData> metaData) {
-        this(metaData, null, Meta.CursorFactory.OBJECT, Meta.StatementType.OTHER_DDL);
+    public MetadataResult(List<ColumnMetaData> metaData, int updateCount) {
+        this(metaData, null, Meta.CursorFactory.OBJECT, Meta.StatementType.OTHER_DDL, updateCount);
     }
 
     /**
      * with result
      */
     public MetadataResult(List<ColumnMetaData> metaData, Bindable<T> bindable) {
-        this(metaData, bindable, Meta.CursorFactory.ARRAY, Meta.StatementType.SELECT);
+        this(metaData, bindable, Meta.CursorFactory.ARRAY, Meta.StatementType.SELECT, -1);
     }
 
     public MetadataResult(
         List<ColumnMetaData> metaData,
         Bindable<T> bindable,
         Meta.CursorFactory cursorFactory,
-        Meta.StatementType type
+        Meta.StatementType type,
+        int updateCount
     ) {
         this(
             "",
@@ -107,7 +108,7 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
             cursorFactory,
             null,
             ImmutableList.of(),
-            -1,
+            updateCount, // use the maxRowCount to store the updateCount in DDL
             bindable,
             type
         );
@@ -124,7 +125,7 @@ public class MetadataResult<T> extends CalcitePrepare.CalciteSignature<T> {
                 )
             )
         );
-        return new MetadataResult<>(metaData);
+        return new MetadataResult<>(metaData, affectRows);
     }
 
     /**
