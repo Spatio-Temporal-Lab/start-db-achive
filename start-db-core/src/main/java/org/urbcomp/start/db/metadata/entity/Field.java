@@ -30,7 +30,7 @@ public class Field extends AbstractEntity {
     private String type;
 
     /**
-     * 0: primary key; 1: else
+     * 1: primary key; 0: else
      */
     private int isPrimary;
 
