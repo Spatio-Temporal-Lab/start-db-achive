@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.executor
 
-import org.junit.Assert.assertTrue
+import org.junit.Assert.{assertFalse, assertTrue}
 import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
 class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
@@ -26,5 +26,47 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
       databases = databases :+ rs.getString(1)
     }
     assertTrue(databases.contains(databaseName))
+  }
+
+  test("test create then drop database") {
+    val stmt = connect.createStatement()
+    val databaseName = "test_%d".format(scala.util.Random.nextInt(100000))
+
+    stmt.executeUpdate("CREATE DATABASE %s".format(databaseName))
+    val rs1 = stmt.executeQuery("SHOW DATABASES")
+    var databasesBefore = List[String]()
+    while (rs1.next()) {
+      databasesBefore = databasesBefore :+ rs1.getString(1)
+    }
+    assertTrue(databasesBefore.contains(databaseName))
+
+    stmt.executeUpdate("DROP DATABASE %s".format(databaseName))
+    val rs2 = stmt.executeQuery("SHOW DATABASES")
+    var databasesAfter = List[String]()
+    while (rs2.next()) {
+      databasesAfter = databasesAfter :+ rs2.getString(1)
+    }
+    assertFalse(databasesAfter.contains(databaseName))
+  }
+
+  test("test create then drop if exists database") {
+    val stmt = connect.createStatement()
+    val databaseName = "test_%d".format(scala.util.Random.nextInt(100000))
+
+    stmt.executeUpdate("CREATE DATABASE %s".format(databaseName))
+    val rs1 = stmt.executeQuery("SHOW DATABASES")
+    var databasesBefore = List[String]()
+    while (rs1.next()) {
+      databasesBefore = databasesBefore :+ rs1.getString(1)
+    }
+    assertTrue(databasesBefore.contains(databaseName))
+
+    stmt.executeUpdate("DROP DATABASE IF EXISTS %s".format(databaseName))
+    val rs2 = stmt.executeQuery("SHOW DATABASES")
+    var databasesAfter = List[String]()
+    while (rs2.next()) {
+      databasesAfter = databasesAfter :+ rs2.getString(1)
+    }
+    assertFalse(databasesAfter.contains(databaseName))
   }
 }

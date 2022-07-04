@@ -47,4 +47,7 @@ public interface TableMapper extends IMapper<Table> {
      * get all user db table
      */
     List<UserDbTable> getAllUserDbTable();
+
+    @Override
+    long deleteByFid(@Param("fid") long fid);
 }
