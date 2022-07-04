@@ -30,7 +30,7 @@ import org.locationtech.jts.io.geojson.GeoJsonReader;
 import java.io.IOException;
 import java.io.StringWriter;
 
-public class GeometricRelationTypeConversionFunction {
+public class GeometricTypeConversionFunction {
     @StartDBFunction("st_pointFromGeoJSON")
     public Point st_pointFromGeoJSON(String geoJson) throws ParseException {
         return st_castToPoint(st_geomFromGeoJSON(geoJson));

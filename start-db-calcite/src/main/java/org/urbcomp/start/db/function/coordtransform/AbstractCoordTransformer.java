@@ -108,6 +108,8 @@ public abstract class AbstractCoordTransformer {
             return multiLineStringTransform((MultiLineString) geometry);
         } else if (geometry instanceof MultiPolygon) {
             return multiPolygonTransform((MultiPolygon) geometry);
+        } else if (geometry instanceof GeometryCollection) {
+            return geometryCollectionTransform((GeometryCollection) geometry);
         }
         return null;
     }
