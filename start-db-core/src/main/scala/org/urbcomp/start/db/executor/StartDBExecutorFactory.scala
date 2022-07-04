@@ -16,7 +16,12 @@ import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDropSchema, SqlDropTable}
 import org.urbcomp.start.db.infra.{BaseExecutor, BaseExecutorFactory}
 import org.urbcomp.start.db.parser.dcl.SqlCreateUser
 import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlUseDatabase}
-import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowStatus, SqlShowTables}
+import org.urbcomp.start.db.parser.dql.{
+  SqlShowCreateTable,
+  SqlShowDatabases,
+  SqlShowStatus,
+  SqlShowTables
+}
 
 class StartDBExecutorFactory extends BaseExecutorFactory {
   override def convertExecutor(node: SqlNode): BaseExecutor = node match {
