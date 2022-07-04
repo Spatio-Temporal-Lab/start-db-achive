@@ -1167,6 +1167,8 @@ public abstract class AbstractCursor implements Cursor {
                 timestamp = new Timestamp((Long) obj);
             } else if (obj instanceof Timestamp) {
                 timestamp = (Timestamp) obj;
+            } else if (obj instanceof java.util.Date) {
+                timestamp = new Timestamp(((java.util.Date) obj).getTime());
             }
             // start-db modify end
             if (timestamp == null) {

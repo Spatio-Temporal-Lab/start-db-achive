@@ -46,4 +46,14 @@ class QueryTest extends AbstractCalciteFunctionTest {
     rs.next()
     assertEquals(123, rs.getInt(1))
   }
+
+  test("select timestamp") {
+    val stmt = connect.createStatement()
+    stmt.execute("create table if not exists t_timestamp  (timestamp11 timestamp);")
+    stmt.execute("insert into t_timestamp values (toTimestamp(\"2022-06-29 10:00:00.000\"));")
+    val rs = stmt.executeQuery("select * from t_timestamp;")
+    rs.next()
+    val value = rs.getObject(1)
+    assertEquals(false, value == null)
+  }
 }
