@@ -56,4 +56,15 @@ class QueryTest extends AbstractCalciteFunctionTest {
     val value = rs.getObject(1)
     assertEquals(false, value == null)
   }
+
+  test("bool equal test") {
+    val stmt = connect.createStatement()
+    stmt.execute("create table t_bool (bool7 bool);")
+    stmt.execute("insert into t_bool values (true);")
+
+    val rs = stmt.executeQuery("select * from t_bool where bool7 = true;")
+    while (rs.next()) {
+      assertEquals(true, rs.getObject(1))
+    }
+  }
 }
