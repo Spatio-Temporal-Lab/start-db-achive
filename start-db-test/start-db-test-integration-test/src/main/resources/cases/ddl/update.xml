@@ -1,8 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <testCase>
-    <case>
-        <!--   update   -->
-        <sql type="update"></sql>
-    </case>
+    <caee>
+        <!--   update init   -->
+        <sql type="update">drop table if exists insert_table;</sql>
+        <sql type="update">
+            create table insert_table ( int1 int, int2 integer, long_ long, float_ float, double_ double, string_ string,
+            boolean1 bool, boolean2 boolean, binary_ binary, datetime_ datetime, timestamp_ timestamp,
+            geometry_ geometry, point_ point, linestring_ linestring, polygon_ polygon,
+            MultiPoint_ multipoint, MultiLineString_ MultiLineString, MultiPolygon_ MultiPolygon,
+            GeometryCollection_ GeometryCollection, traj trajectory, road roadSegment);
+        </sql>
+        <sql type="update">
+            insert into insert_table values(
+            123, 456, 1234567890, 123.456, 123456.789, 'abc!@#$%^*()_+-=字符串',
+            true, false, st_asWKB(st_GeomFromWkt("Point(10 20)")),
+            toDatestamp("2022-06-29"), toTimestamp("2022-06-29 10:00:00.000"),
+            st_GeomFromWkt("Point(10 20)"), st_PointFromWkt("Point(10 20)"),
+            st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)"), st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))"),
+            st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)"),
+            st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))"),
+            st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))"),
+            st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))"),
+            st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' ),
+            st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')
+        </sql>
+        <sql type="query">select * from insert_table;</sql>
+        <assertion expected="insert_000.xml"/>
+    </caee>
+
+    <caee>
+        <!--   int   -->
+        <sql type="update">create table update_int(int1 int);</sql>
+        <sql type="update">insert into table update_int values(1);</sql>
+        <sql type="query">select * from update_int;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set int1=2 where int1=2;</sql>
+        <sql type="query">select * from update_int;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set int1=2 where int1=1;</sql>
+        <sql type="query">select * from update_int;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_int;</sql>
+    </caee>
+    
+    
 </testCase>
