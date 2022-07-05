@@ -17,6 +17,7 @@ import org.apache.calcite.rel.`type`.RelDataType
 import org.apache.calcite.rel.core.{Filter => CalciteFilter}
 import org.apache.calcite.rex.{RexCall, RexInputRef, RexLiteral, RexNode}
 import org.apache.calcite.sql.SqlKind._
+import org.apache.calcite.sql.`type`.{BasicSqlType, SqlTypeName}
 import org.apache.calcite.sql.validate.SqlValidatorUtil
 import org.opengis.filter.expression.Expression
 import org.opengis.filter.{Filter => GeoToolsFilter}
@@ -78,6 +79,11 @@ class GeomesaFilter(
       case AND => ff.and(convertFilter(call.operands.get(0)), convertFilter(call.operands.get(1)))
       case OR  => ff.or(convertFilter(call.operands.get(0)), convertFilter(call.operands.get(1)))
       case NOT => ff.not(convertFilter(call.operands.get(0)))
+      case CAST =>
+        node.getType.getSqlTypeName match {
+          case SqlTypeName.BOOLEAN =>
+            ff.equals(convertExpr(call.operands.get(0)), ff.literal(true))
+        }
       // GeoTools Spatial Function Converter
       case OTHER_FUNCTION =>
         call.op.toString match {
