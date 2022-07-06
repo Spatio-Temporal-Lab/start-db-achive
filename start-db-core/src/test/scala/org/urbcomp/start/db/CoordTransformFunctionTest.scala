@@ -154,15 +154,6 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
 
   test("st_BD09ToWGS84(RoadNetwork)") {
     val statement = connect.createStatement
-    statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
-    val set = statement.executeQuery("select count(1) from t_road_segment_test")
-    set.next()
-    val count = set.getObject(1)
-    if (count == 0) {
-      statement.execute(
-        "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
-      )
-    }
     val resultSet = statement.executeQuery(
       "select st_BD09ToWGS84(st_rn_makeRoadNetwork(collect_list(b))) from t_road_segment_test"
     )
@@ -303,15 +294,6 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
 
   test("st_WGS84ToBD09(RoadNetwork)") {
     val statement = connect.createStatement
-    statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
-    val set = statement.executeQuery("select count(1) from t_road_segment_test")
-    set.next()
-    val count = set.getObject(1)
-    if (count == 0) {
-      statement.execute(
-        "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
-      )
-    }
     val resultSet = statement.executeQuery(
       "select st_WGS84ToBD09(st_rn_makeRoadNetwork(collect_list(b))) from t_road_segment_test"
     )
