@@ -2010,7 +2010,7 @@ public class Commands {
     public void source(String line, DispatchCallback callback) {
         final String[] tokens = line.split("\\s+");
         if (tokens.length < 2) {
-            sqlLine.info("usage: !source path/data-file.csv");
+            sqlLine.info("usage: !source path/data-file.csv [-batchSize size]");
             callback.setToCancel();
             return;
         }
@@ -2021,7 +2021,8 @@ public class Commands {
             callback.setToFailure();
             return;
         }
-        int bufSize = Main.getSourceBatchSize();
+        int bufSize = parseBatchSize(tokens);
+        bufSize = bufSize == 0 ? Main.getSourceBatchSize() : bufSize;
         try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
             final Statement statement = sqlLine.getConnection().createStatement();
             String insertSql;
@@ -2045,6 +2046,19 @@ public class Commands {
             sqlLine.error(e);
             callback.setToFailure();
         }
+    }
+
+    private int parseBatchSize(String[] tokens) {
+        try {
+            for (int i = 0; i < tokens.length - 1; i++) {
+                if ("-batchSize".equals(tokens[i])) {
+                    return Integer.parseInt(tokens[++i]);
+                }
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid batchSize: " + e.getMessage());
+        }
+        return 0;
     }
     // start-db add end
 
