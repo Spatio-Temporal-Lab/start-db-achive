@@ -143,7 +143,9 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                             |);""".format(tableName).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
-    stmt.execute("INSERT INTO " + tableName + " (idx, traj) values " + "(1, st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    stmt.execute(
+      "INSERT INTO " + tableName + " (idx, traj) values " + "(1, st_traj_fromGeoJSON(\'" + tGeo + "\'))"
+    )
     val selectSQL = s"""SELECT * FROM xxx_%d;""".format(randomNum)
     val result1 = stmt.executeQuery(selectSQL)
     var resultSize1 = 0
@@ -154,7 +156,9 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
 
     val truncateTableSQL = s"""TRUNCATE TABLE xxx_%d;""".format(randomNum)
     stmt.executeUpdate(truncateTableSQL)
-    stmt.execute("INSERT INTO " + tableName + " (idx, traj) values " + "(1, st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    stmt.execute(
+      "INSERT INTO " + tableName + " (idx, traj) values " + "(1, st_traj_fromGeoJSON(\'" + tGeo + "\'))"
+    )
     val result2 = stmt.executeQuery(selectSQL)
     var resultSize2 = 0
     while (result2.next()) {
