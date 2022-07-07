@@ -28,9 +28,10 @@ case class TruncateTableExecutor(n: SqlTruncateTable) extends BaseExecutor {
     val databaseAccessor = AccessorFactory.getDatabaseAccessor
     val db = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
     val tableAccessor = AccessorFactory.getTableAccessor
-    val existedTable = tableAccessor.selectByFidAndName(db.getId, tableName, false)
-
-    // TODO transform start db type
+    val existedTable = tableAccessor.selectByFidAndName(db.getId, tableName, true)
+    if (existedTable == null) {
+      throw new IllegalStateException("table does not exist " + tableName)
+    }
 
     val tableId = existedTable.getId
     val schemaName = MetadataUtil.makeSchemaName(tableId)
@@ -45,7 +46,6 @@ case class TruncateTableExecutor(n: SqlTruncateTable) extends BaseExecutor {
     dataStore.removeSchema(schemaName)
     dataStore.createSchema(newSchema)
 
-    tableAccessor.commit()
     // HOTFIX: session should end here
     SqlSessionUtil.clearCache()
     MetadataResult.buildDDLResult(0)
