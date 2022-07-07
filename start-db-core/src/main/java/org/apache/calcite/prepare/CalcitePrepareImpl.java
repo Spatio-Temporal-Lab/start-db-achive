@@ -78,6 +78,7 @@ import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
 import org.urbcomp.start.db.executor.StartDBExecutorFactory;
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase;
+import org.urbcomp.start.db.parser.ddl.SqlTruncateTable;
 import org.urbcomp.start.db.parser.ddl.SqlUseDatabase;
 import org.urbcomp.start.db.parser.driver.StartDBParseDriver;
 
@@ -697,7 +698,8 @@ public class CalcitePrepareImpl implements CalcitePrepare {
                     || sqlNode instanceof SqlCreateTable
                     || sqlNode instanceof SqlUseDatabase
                     || sqlNode instanceof SqlDropTable
-                    || sqlNode instanceof SqlDropSchema) {
+                    || sqlNode instanceof SqlDropSchema
+                    || sqlNode instanceof SqlTruncateTable) {
                     return startDBExecutorFactory.convertExecutor(sqlNode).execute();
                 }
 
