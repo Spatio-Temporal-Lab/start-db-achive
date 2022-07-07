@@ -13,6 +13,8 @@ package org.urbcomp.start.db.executor
 
 import org.junit.Assert.{assertEquals, assertNotNull}
 import org.urbcomp.start.db.AbstractCalciteFunctionTest
+import org.urbcomp.start.db.model.sample.ModelGenerator
+import org.urbcomp.start.db.model.trajectory.Trajectory
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -130,19 +132,19 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
   }
 
   test("test truncate table") {
+    val trajectory: Trajectory = ModelGenerator.generateTrajectory()
+    val tGeo: String = trajectory.toGeoJSON
     val randomNum = scala.util.Random.nextInt(100000)
-    val createTableSQL = s"""CREATE TABLE xxx_%d (
+    val tableName = "xxx_" + randomNum
+
+    val createTableSQL = s"""CREATE TABLE %s (
                             |    idx Integer,
-                            |    x String
-                            |);""".format(randomNum).stripMargin
+                            |    traj Trajectory
+                            |);""".format(tableName).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
-
-    val insertSQL =
-      s"""INSERT INTO xxx_%d (idx, x) values (1, 'yyy');""".format(randomNum).stripMargin
-    stmt.execute(insertSQL)
-
-    val selectSQL = s"""SELECT * FROM xxx_%d;""".format(randomNum).stripMargin
+    stmt.execute("INSERT INTO " + tableName + " (idx, traj) values " + "(1, st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    val selectSQL = s"""SELECT * FROM xxx_%d;""".format(randomNum)
     val result1 = stmt.executeQuery(selectSQL)
     var resultSize1 = 0
     while (result1.next()) {
@@ -150,14 +152,14 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     }
     assertEquals(resultSize1, 1)
 
-    val truncateTableSQL = s"""TRUNCATE TABLE xxx_%d;""".format(randomNum).stripMargin
+    val truncateTableSQL = s"""TRUNCATE TABLE xxx_%d;""".format(randomNum)
     stmt.executeUpdate(truncateTableSQL)
-
+    stmt.execute("INSERT INTO " + tableName + " (idx, traj) values " + "(1, st_traj_fromGeoJSON(\'" + tGeo + "\'))")
     val result2 = stmt.executeQuery(selectSQL)
     var resultSize2 = 0
     while (result2.next()) {
       resultSize2 = resultSize2 + 1
     }
-    assertEquals(resultSize2, 0)
+    assertEquals(resultSize2, 1)
   }
 }
