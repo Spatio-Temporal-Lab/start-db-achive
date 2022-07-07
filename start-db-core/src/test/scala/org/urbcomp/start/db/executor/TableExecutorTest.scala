@@ -128,4 +128,36 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     }
     assertEquals(3, fields.length)
   }
+
+  test("test truncate table") {
+    val randomNum = scala.util.Random.nextInt(100000)
+    val createTableSQL = s"""CREATE TABLE xxx_%d (
+                            |    idx Integer,
+                            |    x String
+                            |);""".format(randomNum).stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+
+    val insertSQL =
+      s"""INSERT INTO xxx_%d (idx, x) values (1, 'yyy');""".format(randomNum).stripMargin
+    stmt.execute(insertSQL)
+
+    val selectSQL = s"""SELECT * FROM xxx_%d;""".format(randomNum).stripMargin
+    val result1 = stmt.executeQuery(selectSQL)
+    var resultSize1 = 0
+    while (result1.next()) {
+      resultSize1 = resultSize1 + 1
+    }
+    assertEquals(resultSize1, 1)
+
+    val truncateTableSQL = s"""TRUNCATE TABLE xxx_%d;""".format(randomNum).stripMargin
+    stmt.executeUpdate(truncateTableSQL)
+
+    val result2 = stmt.executeQuery(selectSQL)
+    var resultSize2 = 0
+    while (result2.next()) {
+      resultSize2 = resultSize2 + 1
+    }
+    assertEquals(resultSize2, 0)
+  }
 }
