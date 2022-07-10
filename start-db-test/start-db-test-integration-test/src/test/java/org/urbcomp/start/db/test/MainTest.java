@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import static org.urbcomp.start.db.test.GetData.getResultArray;
 import static org.urbcomp.start.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
-
+import static org.urbcomp.start.db.test.AutoWriteExpect.writeExpect;
 public class MainTest {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -34,7 +34,7 @@ public class MainTest {
         try {
             conn = DriverManager.getConnection(
                 "jdbc:start-db:url=http://127.0.0.1:8000",
-                "start_db",
+                "root",
                 "start-db"
             );
         } catch (Exception e) {
@@ -44,7 +44,18 @@ public class MainTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    @Ignore
+    public void testAutoWriteExpect() throws Exception {
+        String xmlPath = Objects.requireNonNull(
+                MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
+        ).getPath();
+        writeExpect(xmlPath);
+
+    }
+
+    @Test
+    @Ignore
+    public void testUpdate(){
         try {
             Connection conn = getConn();
             Statement stmt = conn.createStatement();
@@ -60,6 +71,7 @@ public class MainTest {
 
 
     @Test
+    @Ignore
     public void testQuery() throws Exception{
         Connection conn = getConn();
         Statement stat = conn.createStatement();
@@ -74,9 +86,10 @@ public class MainTest {
     }
 
     @Test
+    @Ignore
     public void testPath() throws IOException {
         String xmlPath = Objects.requireNonNull(
-            RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
+            MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
         ).getPath();
         String parentPath = new File(xmlPath).getParentFile().getAbsolutePath();
         String path = parentPath + File.separator + "autoExpect";

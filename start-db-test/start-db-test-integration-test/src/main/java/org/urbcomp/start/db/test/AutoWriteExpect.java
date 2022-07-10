@@ -12,11 +12,16 @@
 package org.urbcomp.start.db.test;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +35,11 @@ public class AutoWriteExpect {
 
     /**
      * 自动执行测试用例, 并将返回值写入到target文件夹的文件中
-     * 和RunSingleSQLTest的区别就是,Run是用得到的实际结果与预期比较
-     * 而Write是将按照得到实际结果生成对应的预期结果
      *
      * @param xmlPath 用例的路径
      *
      * */
-    public void writeExpect(String xmlPath) throws Exception {
+    public static void writeExpect(String xmlPath) throws Exception {
         // 1. 执行sql文件, 得到异常信息 或 预期结果
         // 2. 将返回值写入到文件同目录下的文件夹中, 文件名用assertion标签中的
         Connection connect = getConnect();
@@ -63,16 +66,47 @@ public class AutoWriteExpect {
                     sqlType = element.attributeValue("type");
                     initSql = element.getText();
                 } else if (elementName.equals("assertion")) {
+                    // 将执行结果存到预期文件中, 不包含预期异常
                     String params = element.getText();
-                    // 1. 有参数的话就重新拼接sql, 执行, 获取返回值
+                    String expectFileName = element.attributeValue("expected");
+                    // 有参数的话就重新拼接sql, 根据type来执行sql, 获取返回值
+                    String sql;
                     if (params != null) {
                         // 将参数和sql进行拼接
-                        String sqlWithParam = getSqlWithParam(initSql, params);
-                        log.info("执行sql:" + sqlWithParam);
-                        // 2. 根据type来执行sql
-                        sqlWithParam = dataTransform(sqlWithParam);
-                        actualArray = executeSql(sqlType, sqlWithParam);
-                        // todo 将返回数据写入到预期文件
+                        sql = getSqlWithParam(initSql, params);
+                    }else {
+                        sql = initSql;
+                    }
+                    log.info("执行sql:" + sql);
+                    sql = dataTransform(sql);
+                    actualArray = executeSql(sqlType, sql);
+
+                    // todo 将返回数据写入到预期文件
+                    // 预期值为文件名的时候再将结果保存为文件
+                    if (expectFileName != null && !expectFileName.startsWith("error")) {
+                        String expectFilePath = xmlPath + File.separator + expectFileName;
+                        FileWriter out = null;
+                        try {
+                            // 写入文件
+                            out = new FileWriter(expectFilePath);
+                            createDocument(actualArray).write( out );
+
+                            // 转成字符串
+                            OutputFormat format = OutputFormat.createPrettyPrint();
+                            format.setEncoding("UTF-8");
+                            XMLWriter writer = new XMLWriter( System.out, format );
+                            writer.write(createDocument(actualArray));
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        }finally {
+                            if (out!=null) {
+                                try {
+                                    out.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
 
                     }
                 }
@@ -82,26 +116,31 @@ public class AutoWriteExpect {
         }
         connect.close();
     }
-
-    private static void addExpectXML(
-        String xmlPath,
-        ArrayList<String> actualArray,
-        Element element
-    ) {
-        try {
-            String paramId = element.attributeValue("paramId");
-            String expected = element.attributeValue("expected");
-            // 在指定文件夹中, 创建xml文件存放返回数据
-            String parentPath = new File(xmlPath).getParentFile().getAbsolutePath();
-
-            // 创建文件方法
-
-            SAXReader saxReader = new SAXReader();
-            Document document = saxReader.read(xmlPath);
-            Element root = document.addElement("root");
-        } catch (Exception e) {
-            log.info("出现异常:" + e.getMessage());
+    /**
+     * 将执行结果写入到文档
+     * @param actualArray 预期结果的字符串数组
+     * @return 预期结果对应的文档
+     * */
+    private static Document createDocument(ArrayList<String> actualArray) {
+        Document writeDoc = DocumentHelper.createDocument();
+        // 编辑文档内容
+        // 创建元素的根节点
+        Element dataset = writeDoc.addElement("dateset");
+        // 添加表头元素和属性值, 返回的数据中, 第一行时表头名, 第二行是对应的属性
+        Element metadata = dataset.addElement("metadata");
+        // 获取表头个数, 然后循环读取写入到metadata元素中
+        String[] headerList = actualArray.get(0).split("\t");
+        String[] headerTypeList = actualArray.get(1).split("\t");
+        for (int j=0; j<headerList.length; j++){
+            metadata.addElement("column")
+                    .addAttribute("name", headerList[j])
+                    .addAttribute("type", headerTypeList[j]);
         }
+        // 添加行元素, 返回的字符串数组, 从第三行都是单行的数据
+        for (int k = 2; k < actualArray.size(); k ++) {
+            dataset.addElement("row").addText(actualArray.get(k));
+        }
+        return writeDoc;
     }
 
 }
