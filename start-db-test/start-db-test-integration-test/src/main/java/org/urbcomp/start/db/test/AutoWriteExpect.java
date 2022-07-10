@@ -74,7 +74,7 @@ public class AutoWriteExpect {
                     if (params != null) {
                         // 将参数和sql进行拼接
                         sql = getSqlWithParam(initSql, params);
-                    }else {
+                    } else {
                         sql = initSql;
                     }
                     log.info("执行sql:" + sql);
@@ -89,17 +89,17 @@ public class AutoWriteExpect {
                         try {
                             // 写入文件
                             out = new FileWriter(expectFilePath);
-                            createDocument(actualArray).write( out );
+                            createDocument(actualArray).write(out);
 
                             // 转成字符串
                             OutputFormat format = OutputFormat.createPrettyPrint();
                             format.setEncoding("UTF-8");
-                            XMLWriter writer = new XMLWriter( System.out, format );
+                            XMLWriter writer = new XMLWriter(System.out, format);
                             writer.write(createDocument(actualArray));
-                        }catch (IOException e) {
+                        } catch (IOException e) {
                             e.printStackTrace();
-                        }finally {
-                            if (out!=null) {
+                        } finally {
+                            if (out != null) {
                                 try {
                                     out.close();
                                 } catch (IOException e) {
@@ -116,6 +116,7 @@ public class AutoWriteExpect {
         }
         connect.close();
     }
+
     /**
      * 将执行结果写入到文档
      * @param actualArray 预期结果的字符串数组
@@ -131,13 +132,13 @@ public class AutoWriteExpect {
         // 获取表头个数, 然后循环读取写入到metadata元素中
         String[] headerList = actualArray.get(0).split("\t");
         String[] headerTypeList = actualArray.get(1).split("\t");
-        for (int j=0; j<headerList.length; j++){
+        for (int j = 0; j < headerList.length; j++) {
             metadata.addElement("column")
-                    .addAttribute("name", headerList[j])
-                    .addAttribute("type", headerTypeList[j]);
+                .addAttribute("name", headerList[j])
+                .addAttribute("type", headerTypeList[j]);
         }
         // 添加行元素, 返回的字符串数组, 从第三行都是单行的数据
-        for (int k = 2; k < actualArray.size(); k ++) {
+        for (int k = 2; k < actualArray.size(); k++) {
             dataset.addElement("row").addText(actualArray.get(k));
         }
         return writeDoc;

@@ -14,7 +14,6 @@ package org.urbcomp.start.db.test;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 import java.io.File;
@@ -82,10 +81,8 @@ public class GetData {
      * @param filePath sql用例的文件路径
      * @return 预期内容
      * */
-    public static ArrayList<String> getExpectDataArray(
-        String expectData,
-        String filePath
-    ) throws Exception {
+    public static ArrayList<String> getExpectDataArray(String expectData, String filePath)
+        throws Exception {
         File parentFile = new File(filePath).getParentFile();
         String expectedPath = parentFile.getPath()
             + File.separator

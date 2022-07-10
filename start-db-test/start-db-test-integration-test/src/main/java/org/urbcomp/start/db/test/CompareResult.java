@@ -35,7 +35,7 @@ public class CompareResult {
             if (actual.contains(expect)) {
                 throw new Exception("异常不符合预期");
             }
-        // 比较预期结果
+            // 比较预期结果
         } else {
             if (actualArray.size() == expectArray.size()) {
                 throw new Exception("预期结果数与实际返回结果数不一致");

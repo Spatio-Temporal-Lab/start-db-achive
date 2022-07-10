@@ -14,8 +14,6 @@ package org.urbcomp.start.db.test;
 import org.junit.Test;
 import org.junit.Ignore;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -26,10 +24,11 @@ import static org.urbcomp.start.db.test.GetData.getResultArray;
 import static org.urbcomp.start.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
 import static org.urbcomp.start.db.test.AutoWriteExpect.writeExpect;
+
 public class MainTest {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static Connection getConn(){
+    private static Connection getConn() {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(
@@ -47,7 +46,7 @@ public class MainTest {
     @Ignore
     public void testAutoWriteExpect() throws Exception {
         String xmlPath = Objects.requireNonNull(
-                MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
+            MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
         ).getPath();
         writeExpect(xmlPath);
 
@@ -55,7 +54,7 @@ public class MainTest {
 
     @Test
     @Ignore
-    public void testUpdate(){
+    public void testUpdate() {
         try {
             Connection conn = getConn();
             Statement stmt = conn.createStatement();
@@ -69,10 +68,9 @@ public class MainTest {
         }
     }
 
-
     @Test
     @Ignore
-    public void testQuery() throws Exception{
+    public void testQuery() throws Exception {
         Connection conn = getConn();
         Statement stat = conn.createStatement();
         ResultSet result = stat.executeQuery("select * from t_test order by idx;");
@@ -83,27 +81,6 @@ public class MainTest {
         result.close();
         stat.close();
         conn.close();
-    }
-
-    @Test
-    @Ignore
-    public void testPath() throws IOException {
-        String xmlPath = Objects.requireNonNull(
-            MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
-        ).getPath();
-        String parentPath = new File(xmlPath).getParentFile().getAbsolutePath();
-        String path = parentPath + File.separator + "autoExpect";
-        File folder = new File(path);
-        if (!folder.exists() && !folder.isDirectory()) {
-            boolean mkdir = folder.mkdirs();
-            System.out.println("创建文件夹autoExpect:" + mkdir);
-        }
-        File file = new File(path + File.separator + "abc.xml");
-        if (!file.exists() && !file.isFile()) {
-            boolean newFile = file.createNewFile();
-            System.out.println("创建文件:" + newFile);
-        }
-
     }
 
     @Test
@@ -127,7 +104,5 @@ public class MainTest {
             runSingleCase(sqlCaseXML);
         }
     }
-
-
 
 }

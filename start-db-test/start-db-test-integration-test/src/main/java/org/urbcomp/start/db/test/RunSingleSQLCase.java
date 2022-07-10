@@ -60,11 +60,11 @@ public class RunSingleSQLCase {
             Connection connect = getConnect();
 
             // 创建测试数据库并use
-             DBNAME = String.format("td_%s", ft.format(START_TIME));
-             Statement statement = connect.createStatement();
-             statement.executeUpdate("create database is not exists " + DBNAME);
-             statement.executeUpdate("use " + DBNAME);
-             statement.close();
+            DBNAME = String.format("td_%s", ft.format(START_TIME));
+            Statement statement = connect.createStatement();
+            statement.executeUpdate("create database is not exists " + DBNAME);
+            statement.executeUpdate("use " + DBNAME);
+            statement.close();
 
             SAXReader saxReader = new SAXReader();
             Document document = saxReader.read(xmlPath);
@@ -144,7 +144,7 @@ public class RunSingleSQLCase {
 
                         // 3. 有预期结果或者预期异常时, 与实际返回值进行比较
                         if (expectArray.size() != 0) {
-                             compareArrayData(actualArray, expectArray);
+                            compareArrayData(actualArray, expectArray);
                         }
                     }
                     STMT.close();
