@@ -54,11 +54,10 @@ public class AutoWriteExpect {
 
             String initSql = "";
             String sqlType = "";
-            ArrayList<String> actualArray = new ArrayList<>();
+            ArrayList<String> actualArray;
             for (int i = 0; i < elements.size(); i++) {
                 // 每次执行sql都需要重新创建 Statement
                 STMT = connect.createStatement();
-
                 Element element = elements.get(i);
                 String elementName = element.getName();
 
@@ -81,14 +80,10 @@ public class AutoWriteExpect {
                     sql = dataTransform(sql);
                     actualArray = executeSql(sqlType, sql);
 
-                    // todo 将返回数据写入到预期文件
                     // 预期值为文件名的时候再将结果保存为文件
                     if (expectFileName != null && !expectFileName.startsWith("error")) {
                         String expectFilePath = xmlPath + File.separator + expectFileName;
-                        FileWriter out = null;
-                        try {
-                            // 写入文件
-                            out = new FileWriter(expectFilePath);
+                        try (FileWriter out = new FileWriter(expectFilePath)){
                             createDocument(actualArray).write(out);
 
                             // 转成字符串
@@ -97,15 +92,7 @@ public class AutoWriteExpect {
                             XMLWriter writer = new XMLWriter(System.out, format);
                             writer.write(createDocument(actualArray));
                         } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (out != null) {
-                                try {
-                                    out.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+                            log.info(e.getMessage());
                         }
 
                     }

@@ -17,6 +17,7 @@ import org.junit.Ignore;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,29 +25,17 @@ import static org.urbcomp.start.db.test.GetData.getResultArray;
 import static org.urbcomp.start.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.start.db.test.RunSingleSQLCase.runSingleCase;
 import static org.urbcomp.start.db.test.AutoWriteExpect.writeExpect;
+import static org.urbcomp.start.db.test.RunSingleSQLCase.getConnect;
 
 public class MainTest {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(MainTest.class);
 
-    private static Connection getConn() {
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(
-                "jdbc:start-db:url=http://127.0.0.1:8000",
-                "root",
-                "start-db"
-            );
-        } catch (Exception e) {
-            System.out.println("创建Connection异常:" + e.getMessage());
-        }
-        return conn;
-    }
 
     @Test
     @Ignore
     public void testAutoWriteExpect() throws Exception {
         String xmlPath = Objects.requireNonNull(
-            MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
+                MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
         ).getPath();
         writeExpect(xmlPath);
 
@@ -55,15 +44,13 @@ public class MainTest {
     @Test
     @Ignore
     public void testUpdate() {
-        try {
-            Connection conn = getConn();
-            Statement stmt = conn.createStatement();
+        try (Connection conn = getConnect();
+             Statement stmt = conn.createStatement())
+        {
             String sql = "create table int_table (int1 Integer)";
             int rowCount = stmt.executeUpdate(sql);
-            System.out.println(rowCount);
-            stmt.close();
-            conn.close();
-        } catch (SQLException e) {
+            log.info("影响的行数为:" + rowCount);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -71,16 +58,15 @@ public class MainTest {
     @Test
     @Ignore
     public void testQuery() throws Exception {
-        Connection conn = getConn();
-        Statement stat = conn.createStatement();
-        ResultSet result = stat.executeQuery("select * from t_test order by idx;");
-        ArrayList<String> resultArray = getResultArray(result);
-        for (String s : resultArray) {
-            System.out.println(s);
+        try(Connection conn = getConnect();
+            Statement stat = conn.createStatement();
+            ResultSet result = stat.executeQuery("select * from t_test order by idx;"))
+        {
+            ArrayList<String> resultArray = getResultArray(result);
+            for (String s : resultArray) {
+                log.info(s);
+            }
         }
-        result.close();
-        stat.close();
-        conn.close();
     }
 
     @Test
@@ -88,7 +74,7 @@ public class MainTest {
     public void singleSQLCaseTest() throws Exception {
         // 执行单个xml测试用例文件
         String xmlResource = Objects.requireNonNull(
-            RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
+                RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
         ).getPath();
         log.info("xmlResource:" + xmlResource);
         runSingleCase(xmlResource);

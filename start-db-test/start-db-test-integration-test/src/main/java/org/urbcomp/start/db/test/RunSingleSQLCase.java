@@ -39,7 +39,7 @@ public class RunSingleSQLCase {
         try {
             conn = DriverManager.getConnection(
                 "jdbc:start-db:url=http://127.0.0.1:8000",
-                "start_db",
+                "root",
                 "start-db"
             );
         } catch (Exception e) {
@@ -149,7 +149,6 @@ public class RunSingleSQLCase {
                     }
                     STMT.close();
                 }
-
             }
             connect.close();
         } catch (Exception e) {
