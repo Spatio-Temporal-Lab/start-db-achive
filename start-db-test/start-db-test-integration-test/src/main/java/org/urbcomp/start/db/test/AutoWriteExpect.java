@@ -83,7 +83,7 @@ public class AutoWriteExpect {
                     // 预期值为文件名的时候再将结果保存为文件
                     if (expectFileName != null && !expectFileName.startsWith("error")) {
                         String expectFilePath = xmlPath + File.separator + expectFileName;
-                        try (FileWriter out = new FileWriter(expectFilePath)){
+                        try (FileWriter out = new FileWriter(expectFilePath)) {
                             createDocument(actualArray).write(out);
 
                             // 转成字符串

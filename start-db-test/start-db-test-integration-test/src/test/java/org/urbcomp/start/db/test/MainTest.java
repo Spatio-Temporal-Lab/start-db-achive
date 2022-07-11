@@ -30,12 +30,11 @@ import static org.urbcomp.start.db.test.RunSingleSQLCase.getConnect;
 public class MainTest {
     private static final Logger log = LoggerFactory.getLogger(MainTest.class);
 
-
     @Test
     @Ignore
     public void testAutoWriteExpect() throws Exception {
         String xmlPath = Objects.requireNonNull(
-                MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
+            MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
         ).getPath();
         writeExpect(xmlPath);
 
@@ -44,9 +43,7 @@ public class MainTest {
     @Test
     @Ignore
     public void testUpdate() {
-        try (Connection conn = getConnect();
-             Statement stmt = conn.createStatement())
-        {
+        try (Connection conn = getConnect(); Statement stmt = conn.createStatement()) {
             String sql = "create table int_table (int1 Integer)";
             int rowCount = stmt.executeUpdate(sql);
             log.info("影响的行数为:" + rowCount);
@@ -58,10 +55,11 @@ public class MainTest {
     @Test
     @Ignore
     public void testQuery() throws Exception {
-        try(Connection conn = getConnect();
+        try (
+            Connection conn = getConnect();
             Statement stat = conn.createStatement();
-            ResultSet result = stat.executeQuery("select * from t_test order by idx;"))
-        {
+            ResultSet result = stat.executeQuery("select * from t_test order by idx;")
+        ) {
             ArrayList<String> resultArray = getResultArray(result);
             for (String s : resultArray) {
                 log.info(s);
@@ -74,7 +72,7 @@ public class MainTest {
     public void singleSQLCaseTest() throws Exception {
         // 执行单个xml测试用例文件
         String xmlResource = Objects.requireNonNull(
-                RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
+            RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
         ).getPath();
         log.info("xmlResource:" + xmlResource);
         runSingleCase(xmlResource);
