@@ -142,7 +142,10 @@ public abstract class AbstractCoordTransformer {
             rs.getStartNode().getNodeId(),
             rs.getEndNode().getNodeId(),
             points
-        );
+        ).setDirection(rs.getDirection())
+            .setSpeedLimit(rs.getSpeedLimit())
+            .setLevel(rs.getLevel())
+            .setLengthInMeter(rs.getLengthInMeter());
     }
 
     public RoadNetwork roadNetworkTransform(RoadNetwork rn) {
