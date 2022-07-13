@@ -12,24 +12,22 @@
 package org.urbcomp.start.db.executor
 
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.AccessorFactory
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.metadata.entity.{Database, User}
 import org.urbcomp.start.db.parser.dcl.SqlCreateUser
 
 case class CreateUserExecutor(n: SqlCreateUser) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
     val userName = n.getUserName.names.get(0)
-    val userAccessor = AccessorFactory.getUserAccessor
-    val databaseAccessor = AccessorFactory.getDatabaseAccessor
-    val existed = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
+    val existed = MetadataAccessUtil.getUser(userName)
     if (existed != null) {
       throw new IllegalArgumentException("User already exist " + userName)
     }
     val password = n.getPassword
     checkPassword(password)
-    userAccessor.insert(new User(-1, userName, password), true)
-    val user = userAccessor.selectByFidAndName(-1, userName, true)
-    databaseAccessor.insert(new Database(-1, user.getId, "default"), true)
+    MetadataAccessUtil.insertUser(new User(-1, userName, password))
+    val user = MetadataAccessUtil.getUser(userName)
+    MetadataAccessUtil.insertDatabase(new Database(-1, user.getId, "default"))
     MetadataResult.buildDDLResult(2)
   }
 

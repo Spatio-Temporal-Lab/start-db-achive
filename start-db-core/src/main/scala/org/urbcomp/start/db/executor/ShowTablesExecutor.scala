@@ -12,8 +12,7 @@
 package org.urbcomp.start.db.executor
 
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.AccessorFactory
-import org.urbcomp.start.db.metadata.accessor.DatabaseAccessor
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.parser.dql.SqlShowTables
 import org.urbcomp.start.db.util.SqlParam
 
@@ -30,14 +29,8 @@ case class ShowTablesExecutor(n: SqlShowTables) extends BaseExecutor {
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
     val dbName = param.getDbName
-    val userAccessor = AccessorFactory.getUserAccessor
-    val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
 
-    val databaseAccessor: DatabaseAccessor = AccessorFactory.getDatabaseAccessor
-    val db = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
-
-    val tableAccessor = AccessorFactory.getTableAccessor
-    val tables = tableAccessor.selectAllByFid(db.getId, true)
+    val tables = MetadataAccessUtil.getTables(userName, dbName)
     val tableNames = tables.asScala.map(d => Array(d.getName.asInstanceOf[AnyRef])).toArray
     MetadataResult
       .buildResult(Array("Tables"), java.util.Arrays.asList(tableNames: _*))

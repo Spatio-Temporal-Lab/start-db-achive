@@ -17,7 +17,7 @@ import org.geotools.filter.text.ecql.ECQL
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.MetadataVerifyUtil
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.util.MetadataUtil
 
 /**
@@ -31,7 +31,7 @@ case class DeleteExecutor(n: SqlDelete) extends BaseExecutor {
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
     val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
     // metadata Verify
-    val table = MetadataVerifyUtil.getTable(userName, dbName, tableName)
+    val table = MetadataAccessUtil.getTable(userName, dbName, tableName)
     if (table == null) {
       throw new RuntimeException("There is no corresponding table!")
     }

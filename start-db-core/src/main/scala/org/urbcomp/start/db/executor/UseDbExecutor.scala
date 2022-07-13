@@ -12,7 +12,7 @@
 package org.urbcomp.start.db.executor
 
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.AccessorFactory
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.parser.ddl.SqlUseDatabase
 import org.urbcomp.start.db.util.SqlParam
 
@@ -28,10 +28,7 @@ case class UseDbExecutor(n: SqlUseDatabase) extends BaseExecutor {
     val param = SqlParam.CACHE.get()
     // check db exists
     val dbName = n.getFullDatabaseName
-    val userAccessor = AccessorFactory.getUserAccessor
-    val user = userAccessor.selectByFidAndName(-1 /* not used */, param.getUserName, true)
-    val databaseAccessor = AccessorFactory.getDatabaseAccessor
-    val db = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
+    val db = MetadataAccessUtil.getDatabase(param.getUserName, dbName)
     if (db == null) {
       throw new IllegalArgumentException(s"db[$dbName] not exists")
     }
