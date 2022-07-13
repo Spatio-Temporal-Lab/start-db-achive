@@ -23,12 +23,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 
-import static org.urbcomp.start.db.test.GetData.*;
-import static org.urbcomp.start.db.test.RunSingleSQLCase.*;
+import static org.urbcomp.start.db.test.GetData.getSqlWithParam;
+import static org.urbcomp.start.db.test.GetData.dataTransform;
+import static org.urbcomp.start.db.test.RunSingleSQLCase.getConnect;
+import static org.urbcomp.start.db.test.RunSingleSQLCase.executeSql;
 
 public class AutoWriteExpect {
     private final static Logger log = LoggerFactory.getLogger(AutoWriteExpect.class);
@@ -42,66 +45,64 @@ public class AutoWriteExpect {
     public static void writeExpect(String xmlPath) throws Exception {
         // 1. 执行sql文件, 得到异常信息 或 预期结果
         // 2. 将返回值写入到文件同目录下的文件夹中, 文件名用assertion标签中的
-        Connection connect = getConnect();
         SAXReader saxReader = new SAXReader();
         Document document = saxReader.read(xmlPath);
         Element rootElement = document.getRootElement();
         // 获取根标签下的所有case标签列表
         List<Element> caseElements = rootElement.elements();
-        for (Element caseElement : caseElements) {
-            // 获取case标签下的所有子标签列表
-            List<Element> elements = caseElement.elements();
+        try(Connection connect = getConnect();
+            Statement stmt = connect.createStatement()
+        ) {
+            for (Element caseElement : caseElements) {
+                // 获取case标签下的所有子标签列表
+                List<Element> elements = caseElement.elements();
 
-            String initSql = "";
-            String sqlType = "";
-            ArrayList<String> actualArray;
-            for (int i = 0; i < elements.size(); i++) {
-                // 每次执行sql都需要重新创建 Statement
-                STMT = connect.createStatement();
-                Element element = elements.get(i);
-                String elementName = element.getName();
+                String initSql = "";
+                String sqlType = "";
+                ArrayList<String> actualArray;
+                for (int i = 0; i < elements.size(); i++) {
+                    // 每次执行sql都需要重新创建 Statement
+                    Element element = elements.get(i);
+                    String elementName = element.getName();
 
-                if (elementName.equals("sql")) {
-                    sqlType = element.attributeValue("type");
-                    initSql = element.getText();
-                } else if (elementName.equals("assertion")) {
-                    // 将执行结果存到预期文件中, 不包含预期异常
-                    String params = element.getText();
-                    String expectFileName = element.attributeValue("expected");
-                    // 有参数的话就重新拼接sql, 根据type来执行sql, 获取返回值
-                    String sql;
-                    if (params != null) {
-                        // 将参数和sql进行拼接
-                        sql = getSqlWithParam(initSql, params);
-                    } else {
-                        sql = initSql;
-                    }
-                    log.info("执行sql:" + sql);
-                    sql = dataTransform(sql);
-                    actualArray = executeSql(sqlType, sql);
-
-                    // 预期值为文件名的时候再将结果保存为文件
-                    if (expectFileName != null && !expectFileName.startsWith("error")) {
-                        String expectFilePath = xmlPath + File.separator + expectFileName;
-                        try (FileWriter out = new FileWriter(expectFilePath)) {
-                            createDocument(actualArray).write(out);
-
-                            // 转成字符串
-                            OutputFormat format = OutputFormat.createPrettyPrint();
-                            format.setEncoding("UTF-8");
-                            XMLWriter writer = new XMLWriter(System.out, format);
-                            writer.write(createDocument(actualArray));
-                        } catch (IOException e) {
-                            log.info(e.getMessage());
+                    if (elementName.equals("sql")) {
+                        sqlType = element.attributeValue("type");
+                        initSql = element.getText();
+                    } else if (elementName.equals("assertion")) {
+                        // 将执行结果存到预期文件中, 不包含预期异常
+                        String params = element.getText();
+                        String expectFileName = element.attributeValue("expected");
+                        // 有参数的话就重新拼接sql, 根据type来执行sql, 获取返回值
+                        String sql;
+                        if (params != null) {
+                            // 将参数和sql进行拼接
+                            sql = getSqlWithParam(initSql, params);
+                        } else {
+                            sql = initSql;
                         }
+                        log.info("执行sql:" + sql);
+                        sql = dataTransform(sql);
+                        actualArray = executeSql(stmt, sqlType, sql);
 
+                        // 预期值为文件名的时候再将结果保存为文件
+                        if (expectFileName != null && !expectFileName.startsWith("error")) {
+                            String expectFilePath = xmlPath + File.separator + expectFileName;
+                            try (FileWriter out = new FileWriter(expectFilePath)) {
+                                createDocument(actualArray).write(out);
+
+                                // 转成字符串
+                                OutputFormat format = OutputFormat.createPrettyPrint();
+                                format.setEncoding("UTF-8");
+                                XMLWriter writer = new XMLWriter(System.out, format);
+                                writer.write(createDocument(actualArray));
+                            } catch (IOException e) {
+                                log.info(e.getMessage());
+                            }
+                        }
                     }
                 }
-                STMT.close();
             }
-
         }
-        connect.close();
     }
 
     /**

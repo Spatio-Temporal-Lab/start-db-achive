@@ -46,7 +46,7 @@ public class GetData {
     public static String getSqlWithParam(String initSql, String parameters) throws Exception {
         // 解析参数信息 先判断内容是否是有效的, 不能为null或空字符串
         // 参数使用[]包括, 解析的时候先去掉两遍的[]中括号, 然后使用 ][ 分隔
-        String[] params = {};
+        String[] params;
         StringBuilder sql = new StringBuilder();
 
         parameters = StringUtils.strip(parameters, "[]");
