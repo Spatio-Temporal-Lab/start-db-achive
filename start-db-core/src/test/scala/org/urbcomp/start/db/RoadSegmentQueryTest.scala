@@ -12,7 +12,6 @@
 package org.urbcomp.start.db
 
 import org.junit.Assert.{assertEquals, assertTrue}
-import org.urbcomp.start.db.metadata.AccessorFactory
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.sample.ModelGenerator
 

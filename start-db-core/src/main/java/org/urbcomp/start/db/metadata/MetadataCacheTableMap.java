@@ -17,7 +17,6 @@ import org.apache.calcite.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.urbcomp.start.db.geomesa.GeomesaTable;
-import org.urbcomp.start.db.metadata.accessor.TableAccessor;
 import org.urbcomp.start.db.util.MetadataUtil;
 import org.urbcomp.start.db.util.UserDbTable;
 
@@ -45,19 +44,17 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
     private static Set<Entry<String, Table>> refreshTableNames() {
         Set<Entry<String, Table>> tableNames = new HashSet<>(32);
         // query from metadata
-        try (final TableAccessor tableAccessor = AccessorFactory.getTableAccessor()) {
-            final List<UserDbTable> allUserDbTable = tableAccessor.getAllUserDbTable();
-            for (UserDbTable udt : allUserDbTable) {
-                tableNames.add(
-                    new NullTableEntry(
-                        MetadataUtil.combineUserDbTableKey(
-                            udt.getUsername(),
-                            udt.getDbName(),
-                            udt.getTableName()
-                        )
+        final List<UserDbTable> allUserDbTable = MetadataAccessUtil.getUserDbTables();
+        for (UserDbTable udt : allUserDbTable) {
+            tableNames.add(
+                new NullTableEntry(
+                    MetadataUtil.combineUserDbTableKey(
+                        udt.getUsername(),
+                        udt.getDbName(),
+                        udt.getTableName()
                     )
-                );
-            }
+                )
+            );
         }
         logger.info("Load Table Name Cache Size: {}", tableNames.size());
         return tableNames;
