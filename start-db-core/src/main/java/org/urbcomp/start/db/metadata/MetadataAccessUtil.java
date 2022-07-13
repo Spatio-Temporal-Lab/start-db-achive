@@ -19,6 +19,8 @@ import org.urbcomp.start.db.metadata.entity.Database;
 import org.urbcomp.start.db.metadata.entity.Field;
 import org.urbcomp.start.db.metadata.entity.Table;
 import org.urbcomp.start.db.metadata.entity.User;
+import org.urbcomp.start.db.util.MetadataUtil;
+import org.urbcomp.start.db.util.UserDbTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +98,12 @@ public class MetadataAccessUtil {
         return AccessorFactory.getDatabaseAccessor().insert(database, true);
     }
 
-    public static long dropDatabase(long dbId) {
+    public static long dropDatabase(String userName, String dbName) {
+        final Database db = getDatabase(userName, dbName);
+        if (db == null) {
+            return 0;
+        }
+        final long dbId = db.getId();
         DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
         final long res = databaseAccessor.deleteById(dbId, true);
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
@@ -105,11 +112,19 @@ public class MetadataAccessUtil {
         return res;
     }
 
-    public static long dropTable(long tableId) {
+    public static long dropTable(String userName, String dbName, String tableName) {
+        final Table table = getTable(userName, dbName, tableName);
+        if (table == null) {
+            return 0;
+        }
+        final long tableId = table.getId();
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
         final long res = tableAccessor.deleteById(tableId, true);
         AccessorFactory.getFieldAccessor().deleteByFid(tableId, true);
         // 清理缓存
+        MetadataCacheTableMap.dropTableCache(
+            MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+        );
         return res;
     }
 
@@ -129,5 +144,10 @@ public class MetadataAccessUtil {
         }
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
         return tableAccessor.selectAllByFid(database.getId(), true);
+    }
+
+    public static List<UserDbTable> getUserDbTables() {
+        final TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
+        return tableAccessor.getAllUserDbTable();
     }
 }

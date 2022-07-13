@@ -32,8 +32,7 @@ case class DropTableExecutor(n: SqlDropTable) extends BaseExecutor {
       }
     }
 
-    val tableId = existedTable.getId
-    val affectedRows = MetadataAccessUtil.dropTable(tableId)
+    val affectedRows = MetadataAccessUtil.dropTable(userName, dbName, tableName)
 
     // TODO transform start db type
 

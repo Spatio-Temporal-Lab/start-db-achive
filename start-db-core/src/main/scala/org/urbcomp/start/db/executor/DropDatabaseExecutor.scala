@@ -30,8 +30,7 @@ case class DropDatabaseExecutor(n: SqlDropSchema) extends BaseExecutor {
       }
     }
 
-    val dbId = existed.getId
-    val affectedRows = MetadataAccessUtil.dropDatabase(dbId)
+    val affectedRows = MetadataAccessUtil.dropDatabase(userName, dbName)
 
     MetadataResult.buildDDLResult(affectedRows.toInt)
   }
