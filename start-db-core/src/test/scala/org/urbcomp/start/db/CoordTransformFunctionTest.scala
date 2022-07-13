@@ -208,6 +208,7 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     val resultSet = statement.executeQuery("select st_WGS84ToBD09(st_makePoint(1, 2))")
     resultSet.next()
     assertEquals("POINT (1.006495254008945 2.005983008075984)", resultSet.getObject(1).toString)
+
   }
 
   test("st_WGS84ToBD09(LineString)") {
