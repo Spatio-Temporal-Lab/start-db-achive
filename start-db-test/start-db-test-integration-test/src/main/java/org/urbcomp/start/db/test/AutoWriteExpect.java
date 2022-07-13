@@ -50,9 +50,7 @@ public class AutoWriteExpect {
         Element rootElement = document.getRootElement();
         // 获取根标签下的所有case标签列表
         List<Element> caseElements = rootElement.elements();
-        try(Connection connect = getConnect();
-            Statement stmt = connect.createStatement()
-        ) {
+        try (Connection connect = getConnect(); Statement stmt = connect.createStatement()) {
             for (Element caseElement : caseElements) {
                 // 获取case标签下的所有子标签列表
                 List<Element> elements = caseElement.elements();

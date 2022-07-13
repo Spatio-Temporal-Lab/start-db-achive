@@ -55,10 +55,10 @@ public class RunSingleSQLCase {
     public static void runSingleCase(String xmlPath) throws Exception {
         START_TIME = new Date();
         SimpleDateFormat ft = new SimpleDateFormat("MMdd_HHmmss");
-        try (Connection connect = getConnect()){
+        try (Connection connect = getConnect()) {
             // 创建测试数据库并use
             DBNAME = String.format("td_%s", ft.format(START_TIME));
-            try(Statement statement = connect.createStatement();) {
+            try (Statement statement = connect.createStatement();) {
                 statement.executeUpdate("create database is not exists " + DBNAME);
                 statement.executeUpdate("use " + DBNAME);
             }
@@ -81,7 +81,7 @@ public class RunSingleSQLCase {
                 String sqlType = "";
                 ArrayList<String> actualArray = new ArrayList<>();
                 for (int i = 0; i < elements.size(); i++) {
-                    try(Statement stmt = connect.createStatement()) {
+                    try (Statement stmt = connect.createStatement()) {
                         // 每次执行sql都需要重新创建 Statement
 
                         Element element = elements.get(i);
@@ -106,8 +106,8 @@ public class RunSingleSQLCase {
                                     isAssertion = elements.get(i + 1).getName().equals("assertion");
                                 }
                                 if (sqlType.equals("update")
-                                        && !isAssertion
-                                        && actualArray.size() == 0) {
+                                    && !isAssertion
+                                    && actualArray.size() == 0) {
                                     throw new Exception("sql执行有误" + initSql);
                                 } else if (sqlType.equals("query") && !isAssertion) {
                                     throw new Exception("query标签无预期数据");
@@ -169,7 +169,7 @@ public class RunSingleSQLCase {
                     stmt.executeUpdate(sql);
                     break;
                 case "query":
-                    try(ResultSet result = stmt.executeQuery(sql)) {
+                    try (ResultSet result = stmt.executeQuery(sql)) {
                         actualValue = GetData.getResultArray(result);
                     }
                     break;
