@@ -16,7 +16,7 @@ import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataVerifyUtil}
+import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataAccessUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.util.MetadataUtil
@@ -32,11 +32,11 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
     val targetTable = n.getTargetTable.asInstanceOf[SqlIdentifier]
     val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
-    val table = MetadataVerifyUtil.getTable(userName, dbName, tableName)
+    val table = MetadataAccessUtil.getTable(userName, dbName, tableName)
     if (table == null) {
       throw new RuntimeException("There is no corresponding table!")
     }
-    val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
+    val fields = MetadataAccessUtil.getFields(userName, dbName, tableName)
     if (fields == null) throw new RuntimeException("There is no corresponding fields!")
     // construct sql
     val resultObjs: Array[util.ArrayList[AnyRef]] =

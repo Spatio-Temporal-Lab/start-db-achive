@@ -16,7 +16,7 @@ import org.geotools.data.{DataStoreFinder, FeatureReader, Query, Transaction}
 import org.geotools.filter.text.ecql.ECQL
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.urbcomp.start.db.common.ConfigProvider
-import org.urbcomp.start.db.metadata.MetadataVerifyUtil
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.transformer.{
@@ -53,7 +53,7 @@ class GeomesaEnumerator(
       }
       // sf index
       var index = 0
-      val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
+      val fields = MetadataAccessUtil.getFields(userName, dbName, tableName)
       if (fields == null) return false
       val feature = reader.next()
       val array = feature.getAttributes.asScala.toArray
@@ -92,7 +92,7 @@ object GeomesaEnumerator {
     val catalog = MetadataUtil.makeCatalog(user, dbName)
     val dataStore =
       DataStoreFinder.getDataStore(ConfigProvider.getGeomesaHbaseParam(catalog).asJava)
-    val table = MetadataVerifyUtil.getTable(user, dbName, tableName);
+    val table = MetadataAccessUtil.getTable(user, dbName, tableName);
     val query = new Query(MetadataUtil.makeSchemaName(table.getId), ECQL.toFilter(filter))
     new GeomesaEnumerator(
       dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT),

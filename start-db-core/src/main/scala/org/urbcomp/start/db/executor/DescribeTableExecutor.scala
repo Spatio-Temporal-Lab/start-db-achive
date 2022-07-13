@@ -14,18 +14,18 @@ package org.urbcomp.start.db.executor
 import org.apache.calcite.sql.SqlDescribeTable
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.MetadataVerifyUtil
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 case class DescribeTableExecutor(n: SqlDescribeTable) extends BaseExecutor {
   override def execute[Array](): MetadataResult[Array] = {
     val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(n.getTable)
-    val table = MetadataVerifyUtil.getTable(userName, dbName, tableName)
+    val table = MetadataAccessUtil.getTable(userName, dbName, tableName)
     if (table == null) {
       throw new RuntimeException("table not exist " + tableName)
     }
-    val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
+    val fields = MetadataAccessUtil.getFields(userName, dbName, tableName)
     val rows = fields.asScala
       .map(
         field =>

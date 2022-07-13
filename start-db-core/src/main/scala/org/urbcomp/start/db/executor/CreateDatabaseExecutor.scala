@@ -12,7 +12,7 @@
 package org.urbcomp.start.db.executor
 
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.AccessorFactory
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.metadata.entity.Database
 import org.urbcomp.start.db.parser.ddl.SqlCreateDatabase
 import org.urbcomp.start.db.util.SqlParam
@@ -21,11 +21,9 @@ case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
-    val databaseAccessor = AccessorFactory.getDatabaseAccessor
-    val userAccessor = AccessorFactory.getUserAccessor
-    val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
+    val user = MetadataAccessUtil.getUser(userName)
     val dbName = n.getDatabaseName.names.get(0)
-    val existed = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
+    val existed = MetadataAccessUtil.getDatabase(user.getId, dbName)
     if (existed != null) {
       if (n.isIfNotExists) {
         return MetadataResult.buildDDLResult(0)
@@ -34,7 +32,7 @@ case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
       }
     }
     MetadataResult.buildDDLResult(
-      databaseAccessor.insert(new Database(-1, user.getId, dbName), true).toInt
+      MetadataAccessUtil.insertDatabase(new Database(-1, user.getId, dbName)).toInt
     )
   }
 }

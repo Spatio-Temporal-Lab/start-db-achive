@@ -14,7 +14,7 @@ package org.urbcomp.start.db.executor
 import org.geotools.data.DataStoreFinder
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataCacheTableMap, SqlSessionUtil}
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.parser.ddl.SqlTruncateTable
 import org.urbcomp.start.db.util.MetadataUtil
 
@@ -23,12 +23,7 @@ case class TruncateTableExecutor(n: SqlTruncateTable) extends BaseExecutor {
     val targetTable = n.getTableName
     val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
 
-    val userAccessor = AccessorFactory.getUserAccessor
-    val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
-    val databaseAccessor = AccessorFactory.getDatabaseAccessor
-    val db = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
-    val tableAccessor = AccessorFactory.getTableAccessor
-    val existedTable = tableAccessor.selectByFidAndName(db.getId, tableName, true)
+    val existedTable = MetadataAccessUtil.getTable(userName, dbName, tableName)
     if (existedTable == null) {
       throw new IllegalStateException("table does not exist " + tableName)
     }
@@ -46,8 +41,6 @@ case class TruncateTableExecutor(n: SqlTruncateTable) extends BaseExecutor {
     dataStore.removeSchema(schemaName)
     dataStore.createSchema(newSchema)
 
-    // HOTFIX: session should end here
-    SqlSessionUtil.clearCache()
     MetadataResult.buildDDLResult(0)
   }
 }

@@ -18,7 +18,7 @@ import org.apache.calcite.rel.RelNode
 import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeFactory}
 import org.apache.calcite.schema.{SchemaPlus, TranslatableTable}
 import org.urbcomp.start.db.geomesa.rel.GeomesaTableScan
-import org.urbcomp.start.db.metadata.MetadataVerifyUtil
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.util.DataTypeUtils
 
 import java.lang.reflect.Type
@@ -62,7 +62,7 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
     */
   override def getRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
     val builder = relDataTypeFactory.builder()
-    val fields = MetadataVerifyUtil.getFields(userName, dbName, tableName)
+    val fields = MetadataAccessUtil.getFields(userName, dbName, tableName)
     if (fields != null) {
       fields.forEach { i =>
         builder.add(i.getName, relDataTypeFactory.createJavaType(DataTypeUtils.getClass(i.getType)))
