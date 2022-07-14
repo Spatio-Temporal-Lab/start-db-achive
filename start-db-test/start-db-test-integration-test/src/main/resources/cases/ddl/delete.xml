@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<testCase>
+    <caee>
+        <!--   delete init   -->
+        <sql type="update">drop table if exists insert_table;</sql>
+        <sql type="update">
+            create table insert_table ( int1 int, int2 integer, long_ long, float_ float, double_ double, string_ string,
+            boolean1 bool, boolean2 boolean, binary_ binary, datetime_ datetime, timestamp_ timestamp,
+            geometry_ geometry, point_ point, linestring_ linestring, polygon_ polygon,
+            MultiPoint_ multipoint, MultiLineString_ MultiLineString, MultiPolygon_ MultiPolygon,
+            GeometryCollection_ GeometryCollection, traj trajectory, road roadSegment);
+        </sql>
+        <sql type="update">
+            insert into insert_table values(
+            123, 456, 1234567890, 123.456, 123456.789, 'abc!@#$%^*()_+-=字符串',
+            true, false, st_asWKB(st_GeomFromWkt("Point(10 20)")),
+            toDatestamp("2022-06-29"), toTimestamp("2022-06-29 10:00:00.000"),
+            st_GeomFromWkt("Point(10 20)"), st_PointFromWkt("Point(10 20)"),
+            st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)"), st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))"),
+            st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)"),
+            st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))"),
+            st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))"),
+            st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))"),
+            st_traj_fromGeoJSON( '{
+                "type":"FeatureCollection",
+                "features":[
+                    {"type":"Feature",
+                    "properties":{"time":"2018-10-09 07:30:41.0"},
+                    "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+                        {"type":"Feature",
+                        "properties":{"time":"2018-10-09 07:30:56.0"},
+                        "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+                        "properties":{
+                        "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+                        "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' ),
+            st_rs_fromGeoJSON('{
+                "type":"Feature",
+                "properties":{
+                    "endId":70832,
+                    "level":3,
+                    "startId":70831,
+                    "rsId":100320,
+                    "speedLimit":50.0,
+                    "lengthInMeter":50.57964091335451,
+                    "direction":1},
+                "geometry":{
+                    "type":"LineString",
+                    "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')
+        </sql>
+        <sql type="query">select * from insert_table;</sql>
+        <assertion expected="delete_000.xml"/>
+    </caee>
+
+    <caee>
+        <!--   int   -->
+        <sql type="update">create table delete_int(int1 int);</sql>
+        <sql type="update">insert into table delete_int values(?),(?);</sql>
+        <assertion>[1][2]</assertion>
+        <sql type="query">select * from delete_int;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_int where false;</sql>
+        <sql type="query">select * from delete_int;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_int where int1 = ?;</sql>
+        <assertion>[2]</assertion>
+        <sql type="query">select * from delete_int;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_int;</sql>
+        <sql type="query">select * from delete_int;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   long   -->
+        <sql type="update">create table delete_long(long1 long);</sql>
+        <sql type="update">insert into table delete_long values(?),(?);</sql>
+        <assertion>[123456][23456789]</assertion>
+        <sql type="query">select * from delete_long;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_long where false;</sql>
+        <sql type="query">select * from delete_long;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_long where long1 = ?;</sql>
+        <assertion>[23456789]</assertion>
+        <sql type="query">select * from delete_long;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_long;</sql>
+        <sql type="query">select * from delete_long;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   float   -->
+        <sql type="update">create table delete_float(float1 float);</sql>
+        <sql type="update">insert into table delete_float values(?),(?);</sql>
+        <assertion>[123.456][456.789]</assertion>
+        <sql type="query">select * from delete_float;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_float where false;</sql>
+        <sql type="query">select * from delete_float;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_float where float1 = ?;</sql>
+        <assertion>[456.789]</assertion>
+        <sql type="query">select * from delete_float;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_float;</sql>
+        <sql type="query">select * from delete_float;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   double   -->
+        <sql type="update">create table delete_double(double1 double);</sql>
+        <sql type="update">insert into table delete_double values(?),(?);</sql>
+        <assertion>[123465.456789][456789.789123]</assertion>
+        <sql type="query">select * from delete_double;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_double where false;</sql>
+        <sql type="query">select * from delete_double;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_double where double1 = ?;</sql>
+        <assertion>[456789.789123]</assertion>
+        <sql type="query">select * from delete_double;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_double;</sql>
+        <sql type="query">select * from delete_double;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   string   -->
+        <sql type="update">create table delete_string(string1 string);</sql>
+        <sql type="update">insert into table delete_string values(?),(?);</sql>
+        <assertion>['123abc']['中文!@#$%^*()_+']</assertion>
+        <sql type="query">select * from delete_string;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_string where false;</sql>
+        <sql type="query">select * from delete_string;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_string where string1 = ?;</sql>
+        <assertion>['中文!@#$%^*()_+']</assertion>
+        <sql type="query">select * from delete_string;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_string;</sql>
+        <sql type="query">select * from delete_string;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   boolean   -->
+        <sql type="update">create table delete_boolean(boolean1 boolean);</sql>
+        <sql type="update">insert into table delete_boolean values(?),(?);</sql>
+        <assertion>[true][false]</assertion>
+        <sql type="query">select * from delete_boolean;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_boolean where false;</sql>
+        <sql type="query">select * from delete_boolean;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_boolean where boolean1 = ?;</sql>
+        <assertion>[false]</assertion>
+        <sql type="query">select * from delete_boolean;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_boolean;</sql>
+        <sql type="query">select * from delete_boolean;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   binary   -->
+        <sql type="update">create table delete_binary(binary1 binary);</sql>
+        <sql type="update">insert into table delete_binary values(?),(?);</sql>
+        <assertion>
+            [st_asWKB(st_GeomFromWkt("Point(10 20)"))]
+            [st_asWKB(st_GeomFromWkt("Point(30 40)"))]
+        </assertion>
+        <sql type="query">select * from delete_binary;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_binary where false;</sql>
+        <sql type="query">select * from delete_binary;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_binary where binary1 = ?;</sql>
+        <assertion>[st_asWKB(st_GeomFromWkt("Point(30 40)"))]</assertion>
+        <sql type="query">select * from delete_binary;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_binary;</sql>
+        <sql type="query">select * from delete_binary;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   datetime   -->
+        <sql type="update">create table delete_datetime(datetime1 datetime);</sql>
+        <sql type="update">insert into table delete_datetime values(?),(?);</sql>
+        <assertion>
+            [toDatestamp("2022-06-29")]
+            [toDatestamp("2022-07-10")]
+        </assertion>
+        <sql type="query">select * from delete_datetime;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_datetime where false;</sql>
+        <sql type="query">select * from delete_datetime;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_datetime where datetime1 = ?;</sql>
+        <assertion>[toDatestamp("2022-07-10")]</assertion>
+        <sql type="query">select * from delete_datetime;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_datetime;</sql>
+        <sql type="query">select * from delete_datetime;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   timestamp   -->
+        <sql type="update">create table delete_timestamp(timestamp1 timestamp);</sql>
+        <sql type="update">insert into table delete_timestamp values(?),(?);</sql>
+        <assertion>
+            [toTimestamp("2022-06-29 11:22:33.444")]
+            [toTimestamp("2022-06-29 22:44:55.666")]
+        </assertion>
+        <sql type="query">select * from delete_timestamp;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_timestamp where false;</sql>
+        <sql type="query">select * from delete_timestamp;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_timestamp where timestamp1 = ?;</sql>
+        <assertion>[toTimestamp("2022-06-29 22:44:55.666")]</assertion>
+        <sql type="query">select * from delete_timestamp;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_timestamp;</sql>
+        <sql type="query">select * from delete_timestamp;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   geometry   -->
+        <sql type="update">create table delete_geometry(geometry1 geometry);</sql>
+        <sql type="update">insert into table delete_geometry values(?),(?);</sql>
+        <assertion>
+            [st_GeomFromWkt("Point(10 20)")]
+            [st_GeomFromWkt("Point(30 40)")]
+        </assertion>
+        <sql type="query">select * from delete_geometry;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_geometry where false;</sql>
+        <sql type="query">select * from delete_geometry;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_geometry where geometry1 = ?;</sql>
+        <assertion>[st_GeomFromWkt("Point(30 40)")]</assertion>
+        <sql type="query">select * from delete_geometry;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_geometry;</sql>
+        <sql type="query">select * from delete_geometry;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   point   -->
+        <sql type="update">create table delete_point(point1 point);</sql>
+        <sql type="update">insert into table delete_point values(?),(?);</sql>
+        <assertion>
+            [st_PointFromWkt("Point(10 20)")]
+            [st_PointFromWkt("Point(30 40)")]
+        </assertion>
+        <sql type="query">select * from delete_point;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_point where false;</sql>
+        <sql type="query">select * from delete_point;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_point where point1 = ?;</sql>
+        <assertion>[st_PointFromWkt("Point(30 40)")]</assertion>
+        <sql type="query">select * from delete_point;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_point;</sql>
+        <sql type="query">select * from delete_point;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   linestring   -->
+        <sql type="update">create table delete_linestring(linestring1 linestring);</sql>
+        <sql type="update">insert into table delete_linestring values(?),(?);</sql>
+        <assertion>
+            [st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)")]
+            [st_LineStringFromWkt("LINESTRING (55 66, 77 88, 99 50)")]
+        </assertion>
+        <sql type="query">select * from delete_linestring;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_linestring where false;</sql>
+        <sql type="query">select * from delete_linestring;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_linestring where linestring1 = ?;</sql>
+        <assertion>[st_LineStringFromWkt("LINESTRING (55 66, 77 88, 99 50)")]</assertion>
+        <sql type="query">select * from delete_linestring;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_linestring;</sql>
+        <sql type="query">select * from delete_linestring;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   polygon   -->
+        <sql type="update">create table delete_polygon(polygon1 polygon);</sql>
+        <sql type="update">insert into table delete_polygon values(?),(?);</sql>
+        <assertion>
+            [st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))")]
+            [st_PolygonFromWkt("POLYGON ((12 22, 13 43, 34 44, 35 25, 12 22))")]
+        </assertion>
+        <sql type="query">select * from delete_polygon;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_polygon where false;</sql>
+        <sql type="query">select * from delete_polygon;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_polygon where polygon1 = ?;</sql>
+        <assertion>[st_PolygonFromWkt("POLYGON ((12 22, 13 43, 34 44, 35 25, 12 22))")]</assertion>
+        <sql type="query">select * from delete_polygon;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_polygon;</sql>
+        <sql type="query">select * from delete_polygon;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   multipoint   -->
+        <sql type="update">create table delete_multipoint(multipoint1 multipoint);</sql>
+        <sql type="update">insert into table delete_multipoint values(?),(?);</sql>
+        <assertion>
+            [st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)")]
+            [st_mPointFromWkt("MULTIPOINT(31.51 52.62, 43.83 104.54)")]
+        </assertion>
+        <sql type="query">select * from delete_multipoint;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_multipoint where false;</sql>
+        <sql type="query">select * from delete_multipoint;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_multipoint where multipoint1 = ?;</sql>
+        <assertion>[st_mPointFromWkt("MULTIPOINT(31.51 52.62, 43.83 104.54)")]</assertion>
+        <sql type="query">select * from delete_multipoint;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_multipoint;</sql>
+        <sql type="query">select * from delete_multipoint;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   multilinestring   -->
+        <sql type="update">create table delete_multilinestring(multilinestring1 multilinestring);</sql>
+        <sql type="update">insert into table delete_multilinestring values(?),(?);</sql>
+        <assertion>
+            [st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))")]
+            [st_mLineStringFromWkt("MULTILINESTRING((31 42,103 55,21 23),(-53 -82,-103 -83,-152 -43))")]
+        </assertion>
+        <sql type="query">select * from delete_multilinestring;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_multilinestring where false;</sql>
+        <sql type="query">select * from delete_multilinestring;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_multilinestring where multilinestring1 = ?;</sql>
+        <assertion>
+            [st_mLineStringFromWkt("MULTILINESTRING((31 42,103 55,21 23),(-53 -82,-103 -83,-152 -43))")]
+        </assertion>
+        <sql type="query">select * from delete_multilinestring;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_multilinestring;</sql>
+        <sql type="query">select * from delete_multilinestring;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   multipolygon   -->
+        <sql type="update">create table delete_multipolygon(multipolygon1 multipolygon);</sql>
+        <sql type="update">insert into table delete_multipolygon values(?),(?);</sql>
+        <assertion>
+            [st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))")]
+            [st_mPolygonFromWkt("MULTIPOLYGON(((11 11,52 12,53 53,14 54,11 11),(22 22,23 33,34 34,35 25,22 22))")]
+        </assertion>
+        <sql type="query">select * from delete_multipolygon;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_multipolygon where false;</sql>
+        <sql type="query">select * from delete_multipolygon;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_multipolygon where multipolygon1 = ?;</sql>
+        <assertion>
+            [st_mPolygonFromWkt("MULTIPOLYGON(((11 11,52 12,53 53,14 54,11 11),(22 22,23 33,34 34,35 25,22 22))")]
+        </assertion>
+        <sql type="query">select * from delete_multipolygon;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_multipolygon;</sql>
+        <sql type="query">select * from delete_multipolygon;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   geometrycollection   -->
+        <sql type="update">create table delete_geometrycollection(geometrycollection1 geometrycollection);</sql>
+        <sql type="update">insert into table delete_geometrycollection values(?),(?);</sql>
+        <assertion>
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))")]
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-22 32,-23 32), LINESTRING(54 54,101 16), POLYGON((-73 43.2,-74.1 45,-75.1 45.3,-77 47.2)))")]
+        </assertion>
+        <sql type="query">select * from delete_geometrycollection;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_geometrycollection where false;</sql>
+        <sql type="query">select * from delete_geometrycollection;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_geometrycollection where geometrycollection1 = ?;</sql>
+        <assertion>
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-22 32,-23 32), LINESTRING(54 54,101 16), POLYGON((-73 43.2,-74.1 45,-75.1 45.3,-77 47.2)))")]
+        </assertion>
+        <sql type="query">select * from delete_geometrycollection;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_geometrycollection;</sql>
+        <sql type="query">select * from delete_geometrycollection;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   trajectory   -->
+        <sql type="update">create table delete_trajectory(trajectory1 trajectory);</sql>
+        <sql type="update">insert into table delete_trajectory values(?),(?);</sql>
+        <assertion>
+            [st_traj_fromGeoJSON( '{
+                "type":"FeatureCollection",
+                "features":[
+                    {"type":"Feature",
+                    "properties":{"time":"2018-10-09 07:30:41.0"},
+                    "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+                    {"type":"Feature",
+                "properties":{"time":"2018-10-09 07:30:56.0"},
+                    "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+                    "properties":{
+                    "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+                    "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' )]
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+                {"type":"Feature",
+                "properties":{"time":"2019-12-13 12:30:41.456"},
+                "geometry":{"type":"Point","coordinates":[13.93430687732173,45.2154503607423]}},
+                {"type":"Feature",
+            "properties":{"time":"2019-12-13 12:30:45.546"},
+                "geometry":{"type":"Point","coordinates":[13.93428701026465,45.21445074385308]}}],
+                "properties":{
+                "oid":"9ae8398a7748c9c5ed8ad60f7c5436d8",
+                "tid":"9ae8398a7748c9c5ed8ad60f7c5436d82019-12-13 12:30:41.456"}}' )]
+        </assertion>
+        <sql type="query">select * from delete_trajectory;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_trajectory where false;</sql>
+        <sql type="query">select * from delete_trajectory;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_trajectory where trajectory1 = ?;</sql>
+        <assertion>
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+                {"type":"Feature",
+                "properties":{"time":"2019-12-13 12:30:41.456"},
+                "geometry":{"type":"Point","coordinates":[13.93430687732173,45.2154503607423]}},
+                {"type":"Feature",
+            "properties":{"time":"2019-12-13 12:30:45.546"},
+                "geometry":{"type":"Point","coordinates":[13.93428701026465,45.21445074385308]}}],
+                "properties":{
+                "oid":"9ae8398a7748c9c5ed8ad60f7c5436d8",
+                "tid":"9ae8398a7748c9c5ed8ad60f7c5436d82019-12-13 12:30:41.456"}}' )]
+        </assertion>
+        <sql type="query">select * from delete_trajectory;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_trajectory;</sql>
+        <sql type="query">select * from delete_trajectory;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   roadSegment   -->
+        <sql type="update">create table delete_roadSegment(roadSegment1 roadSegment);</sql>
+        <sql type="update">insert into table delete_roadSegment values(?),(?);</sql>
+        <assertion>
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+                "endId":70832,
+                "level":3,
+                "startId":70831,
+                "rsId":100320,
+                "speedLimit":50.0,
+                "lengthInMeter":50.57964091335451,
+                "direction":1},
+            "geometry":{
+                "type":"LineString",
+                "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')]
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+                "endId":70842,
+                "level":3,
+                "startId":70841,
+                "rsId":100321,
+                "speedLimit":50.0,
+                "lengthInMeter":50.57964091335451,
+                "direction":1},
+            "geometry":{
+                "type":"LineString",
+                "coordinates":[[107.88093234592,34.1634619140625],[107.881090494792,34.1630268012153]]}}')]
+        </assertion>
+        <sql type="query">select * from delete_roadSegment;</sql>
+        <assertion expected="delete_001.xml"/>
+
+        <sql type="update">delete from delete_roadSegment where false;</sql>
+        <sql type="query">select * from delete_roadSegment;</sql>
+        <assertion expected="delete_002.xml"/>
+
+        <sql type="update">delete from delete_roadSegment where roadSegment1 = ?;</sql>
+        <assertion>
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70842,
+            "level":3,
+            "startId":70841,
+            "rsId":100321,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[107.88093234592,34.1634619140625],[107.881090494792,34.1630268012153]]}}')]
+        </assertion>
+        <sql type="query">select * from delete_roadSegment;</sql>
+        <assertion expected="delete_003.xml"/>
+
+        <sql type="update">delete from delete_roadSegment;</sql>
+        <sql type="query">select * from delete_roadSegment;</sql>
+        <assertion expected="delete_004.xml"/>
+
+        <sql type="update">drop table delete_int;</sql>
+    </caee>
+
+</testCase>

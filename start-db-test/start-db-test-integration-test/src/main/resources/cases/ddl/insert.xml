@@ -1,0 +1,895 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<testCase>
+    <caee>
+        <!--   insert init   -->
+        <sql type="update">drop table if exists insert_table;</sql>
+        <sql type="update">
+            create table insert_table ( int1 int, int2 integer, long_ long, float_ float, double_ double, string_ string,
+            boolean1 bool, boolean2 boolean, binary_ binary, datetime_ datetime, timestamp_ timestamp,
+            geometry_ geometry, point_ point, linestring_ linestring, polygon_ polygon,
+            MultiPoint_ multipoint, MultiLineString_ MultiLineString, MultiPolygon_ MultiPolygon,
+            GeometryCollection_ GeometryCollection, traj trajectory, road roadSegment);
+        </sql>
+        <sql type="update">
+            insert into insert_table values(
+            123, 456, 1234567890, 123.456, 123456.789, 'abc!@#$%^*()_+-=字符串',
+            true, false, st_asWKB(st_GeomFromWkt("Point(10 20)")),
+            toDatestamp("2022-06-29"), toTimestamp("2022-06-29 10:00:00.000"),
+            st_GeomFromWkt("Point(10 20)"), st_PointFromWkt("Point(10 20)"),
+            st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)"), st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))"),
+            st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)"),
+            st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))"),
+            st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))"),
+            st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))"),
+            st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' ),
+            st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')
+        </sql>
+        <sql type="query">select * from insert_table;</sql>
+        <assertion expected="insert_000.xml"/>
+    </caee>
+
+    <case>
+        <!--   int   -->
+        <sql type="update">create table insert_int (int1 int);</sql>
+        <sql type="update">insert into insert_int values(?);</sql>
+        <assertion>[0]</assertion>
+        <assertion>[-1234]</assertion>
+        <assertion>[1234]</assertion>
+        <assertion>[123.456]</assertion>
+        <assertion>[2147483647]</assertion>
+        <assertion>[-2147483648]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_int;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_int (int1) values(?),(?);</sql>
+        <assertion>[111][222]</assertion>
+        <sql type="query">select * from insert_int;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">creat table insert_int2 (int2 int);</sql>
+        <sql type="update">insert into insert_int2 as select * from insert_int;</sql>
+        <sql type="query">select * from insert_int2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_int3 (int3 int);</sql>
+        <sql type="update">insert into insert_int3 as select int1 from insert_table;</sql>
+        <sql type="query">select * from insert_int3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_int4 (int4 int);</sql>
+        <sql type="update">insert into insert_int4 (int4) as select int1 from insert_table;</sql>
+        <sql type="query">select * from insert_int4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_int;</sql>
+        <sql type="update">drop table insert_int2;</sql>
+        <sql type="update">drop table insert_int3;</sql>
+        <sql type="update">drop table insert_int4;</sql>
+    </case>
+
+    <case>
+        <!--   long   -->
+        <sql type="update">create table insert_long (long1 long);</sql>
+        <sql type="update">insert into insert_long values(?);</sql>
+        <assertion>[0]</assertion>
+        <assertion>[-1234]</assertion>
+        <assertion>[1234]</assertion>
+        <assertion>[123.456]</assertion>
+        <assertion>[9223372036854775807]</assertion>
+        <assertion>[-9223372036854775808]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_long;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_long (long1) values(?),(?);</sql>
+        <assertion>[1234567890][23456789012]</assertion>
+        <sql type="query">select * from insert_long;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_long2 (long2 long);</sql>
+        <sql type="update">insert into insert_long2 as select * from insert_long;</sql>
+        <sql type="query">select * from insert_long2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_long3 (long3 long);</sql>
+        <sql type="update">insert into insert_long3 as select long_ from insert_table;</sql>
+        <sql type="query">select * from insert_long3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_long4 (long4 long);</sql>
+        <sql type="update">insert into insert_long4 (long4) as select long_ from insert_table;</sql>
+        <sql type="query">select * from insert_long4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_long;</sql>
+        <sql type="update">drop table insert_long2;</sql>
+        <sql type="update">drop table insert_long3;</sql>
+        <sql type="update">drop table insert_long4;</sql>
+    </case>
+
+    <case>
+        <!--   float   -->
+        <sql type="update">create table insert_float (float1 float);</sql>
+        <sql type="update">insert into insert_float values(?);</sql>
+        <assertion>[0]</assertion>
+        <assertion>[-1234]</assertion>
+        <assertion>[1234]</assertion>
+        <assertion>[123.456]</assertion>
+        <assertion>[10000.1234567]</assertion>
+        <assertion>[-10000.1234567]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_float;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_float (float1) values(?),(?);</sql>
+        <assertion>[111.222333][444.555666]</assertion>
+        <sql type="query">select * from insert_float;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_float2 (float2 float);</sql>
+        <sql type="update">insert into insert_float2 as select * from insert_float;</sql>
+        <sql type="query">select * from insert_float2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_float3 (float3 float);</sql>
+        <sql type="update">insert into insert_float3 as select float_ from insert_table;</sql>
+        <sql type="query">select * from insert_float3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_float4 (float4 float);</sql>
+        <sql type="update">insert into insert_float4 (float4) as select float_ from insert_table;</sql>
+        <sql type="query">select * from insert_float4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_float;</sql>
+        <sql type="update">drop table insert_float2;</sql>
+        <sql type="update">drop table insert_float3;</sql>
+        <sql type="update">drop table insert_float4;</sql>
+    </case>
+
+    <case>
+        <!--   double   -->
+        <sql type="update">create table insert_double (double1 double);</sql>
+        <sql type="update">insert into insert_double values(?);</sql>
+        <assertion>[0]</assertion>
+        <assertion>[-1234]</assertion>
+        <assertion>[1234]</assertion>
+        <assertion>[123.456]</assertion>
+        <assertion>[100.123456789012345]</assertion>
+        <assertion>[-100.123456789012345]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_double;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_double (double1) values(?),[?];</sql>
+        <assertion>[123456.7890123456][465789.123456789]</assertion>
+        <sql type="query">select * from insert_double;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_double2 (double2 double);</sql>
+        <sql type="update">insert into insert_double2 as select * from insert_double;</sql>
+        <sql type="query">select * from insert_double2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_double3 (double3 double);</sql>
+        <sql type="update">insert into insert_double3 as select double_ from insert_table;</sql>
+        <sql type="query">select * from insert_double3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_double4 (double4 double);</sql>
+        <sql type="update">insert into insert_double4 (double4) as select double_ from insert_table;</sql>
+        <sql type="query">select * from insert_double4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_double;</sql>
+        <sql type="update">drop table insert_double2;</sql>
+        <sql type="update">drop table insert_double3;</sql>
+        <sql type="update">drop table insert_double4;</sql>
+    </case>
+
+    <case>
+        <!--   string   -->
+        <sql type="update">create table insert_string (string1 string);</sql>
+        <sql type="update">insert into insert_string values(?);</sql>
+        <assertion>['true']</assertion>
+        <assertion>['false']</assertion>
+        <assertion>['abcd']</assertion>
+        <assertion>['123']</assertion>
+        <assertion>['字符串']</assertion>
+        <assertion>['!@#$%^\*()_+=-']</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_string;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_string (string1) values(?),(?);</sql>
+        <assertion>['start']['测试中文']</assertion>
+        <sql type="query">select * from insert_string;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_string2 (string2 string);</sql>
+        <sql type="update">insert into insert_string2 as select * from insert_string;</sql>
+        <sql type="query">select * from insert_string2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_string3 (string3 string);</sql>
+        <sql type="update">insert into insert_string3 as select string_ from insert_table;</sql>
+        <sql type="query">select * from insert_string3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_string4 (string4 string);</sql>
+        <sql type="update">insert into insert_string4 (string4) as select string_ from insert_table;</sql>
+        <sql type="query">select * from insert_string4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_string;</sql>
+        <sql type="update">drop table insert_string2;</sql>
+        <sql type="update">drop table insert_string3;</sql>
+        <sql type="update">drop table insert_string4;</sql>
+    </case>
+
+    <case>
+        <!--   boolean   -->
+        <sql type="update">create table insert_boolean (boolean1 boolean);</sql>
+        <sql type="update">insert into insert_boolean values(?);</sql>
+        <assertion>[true]</assertion>
+        <assertion>[false]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_boolean;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_boolean (boolean1) values(?),(?);</sql>
+        <assertion>[true][false]</assertion>
+        <sql type="query">select * from insert_boolean;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_boolean2 (boolean2 boolean);</sql>
+        <sql type="update">insert into insert_boolean2 as select * from insert_boolean;</sql>
+        <sql type="query">select * from insert_boolean2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_boolean3 (boolean3 boolean);</sql>
+        <sql type="update">insert into insert_boolean3 as select boolean_ from insert_table;</sql>
+        <sql type="query">select * from insert_boolean3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_boolean4 (boolean4 boolean);</sql>
+        <sql type="update">insert into insert_boolean4 (boolean4) as select boolean_ from insert_table;</sql>
+        <sql type="query">select * from insert_boolean4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_boolean;</sql>
+        <sql type="update">drop table insert_boolean2;</sql>
+        <sql type="update">drop table insert_boolean3;</sql>
+        <sql type="update">drop table insert_boolean4;</sql>
+    </case>
+
+    <case>
+        <!--   binary   -->
+        <sql type="update">create table insert_binary (binary1 binary);</sql>
+        <sql type="update">insert into insert_binary values(?);</sql>
+        <assertion>[st_asWKB(st_GeomFromWkt("Point(1 2)"))]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_binary;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_binary (binary1) values(?),(?);</sql>
+        <assertion>
+            [st_asWKB(st_GeomFromWkt("Point(30 40)"))]
+            [st_asWKB(st_GeomFromWkt("Point(50 60)"))]
+        </assertion>
+        <sql type="query">select * from insert_binary;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_binary2 (binary2 binary);</sql>
+        <sql type="update">insert into insert_binary2 as select * from insert_binary;</sql>
+        <sql type="query">select * from insert_binary2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_binary3 (binary3 binary);</sql>
+        <sql type="update">insert into insert_binary3 as select binary_ from insert_table;</sql>
+        <sql type="query">select * from insert_binary3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_binary4 (binary4 binary);</sql>
+        <sql type="update">insert into insert_binary4 (binary4) as select binary_ from insert_table;</sql>
+        <sql type="query">select * from insert_binary4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_binary;</sql>
+        <sql type="update">drop table insert_binary2;</sql>
+        <sql type="update">drop table insert_binary3;</sql>
+        <sql type="update">drop table insert_binary4;</sql>
+    </case>
+
+    <case>
+        <!--   datetime   -->
+        <sql type="update">create table insert_datetime (datetime1 datetime);</sql>
+        <sql type="update">insert into insert_datetime values(?);</sql>
+        <assertion>[toDatestamp("2022-06-29")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_datetime;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_datetime (datetime1) values(?),(?);</sql>
+        <assertion>
+            [toDatestamp("2022-01-11")]
+            [toDatestamp("2022-02-22")]
+        </assertion>
+        <sql type="query">select * from insert_datetime;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_datetime2 (datetime2 datetime);</sql>
+        <sql type="update">insert into insert_datetime2 as select * from insert_datetime;</sql>
+        <sql type="query">select * from insert_datetime2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_datetime3 (datetime3 datetime);</sql>
+        <sql type="update">insert into insert_datetime3 as select datetime_ from insert_table;</sql>
+        <sql type="query">select * from insert_datetime3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_datetime4 (datetime4 datetime);</sql>
+        <sql type="update">insert into insert_datetime4 (datetime4) as select datetime_ from insert_table;</sql>
+        <sql type="query">select * from insert_datetime4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_datetime;</sql>
+        <sql type="update">drop table insert_datetime2;</sql>
+        <sql type="update">drop table insert_datetime3;</sql>
+        <sql type="update">drop table insert_datetime4;</sql>
+    </case>
+
+    <case>
+        <!--   timestamp   -->
+        <sql type="update">create table insert_timestamp (timestamp1 timestamp);</sql>
+        <sql type="update">insert into insert_timestamp values(?);</sql>
+        <assertion>[toTimestamp("2022-06-29 10:00:00.000")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_timestamp;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_timestamp (timestamp1) values(?),(?);</sql>
+        <assertion>
+            [toTimestamp("2022-01-11 10:00:00.000")]
+            [toTimestamp("2022-02-22 20:00:00.000")]
+        </assertion>
+        <sql type="query">select * from insert_timestamp;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_timestamp2 (timestamp2 timestamp);</sql>
+        <sql type="update">insert into insert_timestamp2 as select * from insert_timestamp;</sql>
+        <sql type="query">select * from insert_timestamp2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_timestamp3 (timestamp3 timestamp);</sql>
+        <sql type="update">insert into insert_timestamp3 as select timestamp_ from insert_table;</sql>
+        <sql type="query">select * from insert_timestamp3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_timestamp4 (timestamp4 timestamp);</sql>
+        <sql type="update">insert into insert_timestamp4 (timestamp4) as select timestamp_ from insert_table;</sql>
+        <sql type="query">select * from insert_timestamp4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_timestamp;</sql>
+        <sql type="update">drop table insert_timestamp2;</sql>
+        <sql type="update">drop table insert_timestamp3;</sql>
+        <sql type="update">drop table insert_timestamp4;</sql>
+    </case>
+
+    <case>
+        <!--   geometry   -->
+        <sql type="update">create table insert_geometry (geometry1 geometry);</sql>
+        <sql type="update">insert into insert_geometry values(?);</sql>
+        <assertion>[st_GeomFromWkt("Point(10 20)")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_geometry;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_geometry (geometry1) values(?),(?);</sql>
+        <assertion>
+            [st_GeomFromWkt("Point(20 30)")]
+            [st_GeomFromWkt("Point(30 40)")]
+        </assertion>
+        <sql type="query">select * from insert_geometry;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_geometry2 (geometry2 geometry);</sql>
+        <sql type="update">insert into insert_geometry2 as select * from insert_geometry;</sql>
+        <sql type="query">select * from insert_geometry2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_geometry3 (geometry3 geometry);</sql>
+        <sql type="update">insert into insert_geometry3 as select geometry_ from insert_table;</sql>
+        <sql type="query">select * from insert_geometry3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_geometry4 (geometry4 geometry);</sql>
+        <sql type="update">insert into insert_geometry4 (geometry4) as select geometry_ from insert_table;</sql>
+        <sql type="query">select * from insert_geometry4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_geometry;</sql>
+        <sql type="update">drop table insert_geometry2;</sql>
+        <sql type="update">drop table insert_geometry3;</sql>
+        <sql type="update">drop table insert_geometry4;</sql>
+    </case>
+
+    <case>
+        <!--   point   -->
+        <sql type="update">create table insert_point (point1 point);</sql>
+        <sql type="update">insert into insert_point values(?);</sql>
+        <assertion>[st_PointFromWkt("Point(10 20)")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_point;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_point (point1) values(?),(?);</sql>
+        <assertion>
+            [st_PointFromWkt("Point(20 30)")]
+            [st_PointFromWkt("Point(40 50)")]
+        </assertion>
+        <sql type="query">select * from insert_point;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_point2 (point2 point);</sql>
+        <sql type="update">insert into insert_point2 as select * from insert_point;</sql>
+        <sql type="query">select * from insert_point2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_point3 (point3 point);</sql>
+        <sql type="update">insert into insert_point3 as select point_ from insert_table;</sql>
+        <sql type="query">select * from insert_point3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_point4 (point4 point);</sql>
+        <sql type="update">insert into insert_point4 (point4) as select point_ from insert_table;</sql>
+        <sql type="query">select * from insert_point4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_point;</sql>
+        <sql type="update">drop table insert_point2;</sql>
+        <sql type="update">drop table insert_point3;</sql>
+        <sql type="update">drop table insert_point4;</sql>
+    </case>
+
+    <case>
+        <!--   linestring   -->
+        <sql type="update">create table insert_linestring (linestring1 linestring);</sql>
+        <sql type="update">insert into insert_linestring values(?);</sql>
+        <assertion>[st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_linestring;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_linestring (linestring1) values(?),(?);</sql>
+        <assertion>
+            [st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)")]
+            [st_LineStringFromWkt("LINESTRING (4 4, 5 5, 6 6)")]
+        </assertion>
+        <sql type="query">select * from insert_linestring;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_linestring2 (linestring2 linestring);</sql>
+        <sql type="update">insert into insert_linestring2 as select * from insert_linestring;</sql>
+        <sql type="query">select * from insert_linestring2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_linestring3 (linestring3 linestring);</sql>
+        <sql type="update">insert into insert_linestring3 as select linestring_ from insert_table;</sql>
+        <sql type="query">select * from insert_linestring3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_linestring4 (linestring4 linestring);</sql>
+        <sql type="update">insert into insert_linestring4 (linestring4) as select linestring_ from insert_table;</sql>
+        <sql type="query">select * from insert_linestring4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_linestring;</sql>
+        <sql type="update">drop table insert_linestring2;</sql>
+        <sql type="update">drop table insert_linestring3;</sql>
+        <sql type="update">drop table insert_linestring4;</sql>
+    </case>
+
+    <case>
+        <!--   linestring   -->
+        <sql type="update">create table insert_linestring (linestring1 linestring);</sql>
+        <sql type="update">insert into insert_linestring values(?);</sql>
+        <assertion>[st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_linestring;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_linestring (linestring1) values(?),(?);</sql>
+        <assertion>
+            [st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)")]
+            [st_LineStringFromWkt("LINESTRING (4 4, 5 5, 6 6)")]
+        </assertion>
+        <sql type="query">select * from insert_linestring;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_linestring2 (linestring2 linestring);</sql>
+        <sql type="update">insert into insert_linestring2 as select * from insert_linestring;</sql>
+        <sql type="query">select * from insert_linestring2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_linestring3 (linestring3 linestring);</sql>
+        <sql type="update">insert into insert_linestring3 as select linestring_ from insert_table;</sql>
+        <sql type="query">select * from insert_linestring3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_linestring4 (linestring4 linestring);</sql>
+        <sql type="update">insert into insert_linestring4 (linestring4) as select linestring_ from insert_table;</sql>
+        <sql type="query">select * from insert_linestring4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_linestring;</sql>
+        <sql type="update">drop table insert_linestring2;</sql>
+        <sql type="update">drop table insert_linestring3;</sql>
+        <sql type="update">drop table insert_linestring4;</sql>
+    </case>
+
+    <case>
+        <!--   polygon   -->
+        <sql type="update">create table insert_polygon (polygon1 polygon);</sql>
+        <sql type="update">insert into insert_polygon values(?);</sql>
+        <assertion>[st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_polygon;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_polygon (polygon1) values(?),(?);</sql>
+        <assertion>
+            [st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))")]
+            [st_PolygonFromWkt("POLYGON ((2 3, 2 5, 4 5, 4 3, 2 3))")]
+        </assertion>
+        <sql type="query">select * from insert_polygon;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_polygon2 (polygon2 polygon);</sql>
+        <sql type="update">insert into insert_polygon2 as select * from insert_polygon;</sql>
+        <sql type="query">select * from insert_polygon2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_polygon3 (polygon3 polygon);</sql>
+        <sql type="update">insert into insert_polygon3 as select polygon_ from insert_table;</sql>
+        <sql type="query">select * from insert_polygon3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_polygon4 (polygon4 polygon);</sql>
+        <sql type="update">insert into insert_polygon4 (polygon4) as select polygon_ from insert_table;</sql>
+        <sql type="query">select * from insert_polygon4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_polygon;</sql>
+        <sql type="update">drop table insert_polygon2;</sql>
+        <sql type="update">drop table insert_polygon3;</sql>
+        <sql type="update">drop table insert_polygon4;</sql>
+    </case>
+
+    <case>
+        <!--   multipoint   -->
+        <sql type="update">create table insert_multipoint (multipoint1 multipoint);</sql>
+        <sql type="update">insert into insert_multipoint values(?);</sql>
+        <assertion>[st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_multipoint;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_multipoint (multipoint1) values(?),(?);</sql>
+        <assertion>
+            [st_mPointFromWkt("MULTIPOINT(5 6, 8 10)")]
+            [st_mPointFromWkt("MULTIPOINT(3 5, 4 5)")]
+        </assertion>
+        <sql type="query">select * from insert_multipoint;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_multipoint2 (multipoint2 multipoint);</sql>
+        <sql type="update">insert into insert_multipoint2 as select * from insert_multipoint;</sql>
+        <sql type="query">select * from insert_multipoint2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_multipoint3 (multipoint3 multipoint);</sql>
+        <sql type="update">insert into insert_multipoint3 as select multipoint_ from insert_table;</sql>
+        <sql type="query">select * from insert_multipoint3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_multipoint4 (multipoint4 multipoint);</sql>
+        <sql type="update">insert into insert_multipoint4 (multipoint4) as select multipoint_ from insert_table;</sql>
+        <sql type="query">select * from insert_multipoint4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_multipoint;</sql>
+        <sql type="update">drop table insert_multipoint2;</sql>
+        <sql type="update">drop table insert_multipoint3;</sql>
+        <sql type="update">drop table insert_multipoint4;</sql>
+    </case>
+
+    <case>
+        <!--   multilinestring   -->
+        <sql type="update">create table insert_multilinestring (multilinestring1 multilinestring);</sql>
+        <sql type="update">insert into insert_multilinestring values(?);</sql>
+        <assertion>[st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_multilinestring;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_multilinestring (multilinestring1) values(?),(?);</sql>
+        <assertion>
+            [st_mLineStringFromWkt("MULTILINESTRING((31 43,30 50,60 45),(-51 -48,-106 -28,-115 -54))")]
+            [st_mLineStringFromWkt("MULTILINESTRING((36 48,13 55,50 75),(-53 -58,-105 -87,-153 -46))")]
+        </assertion>
+        <sql type="query">select * from insert_multilinestring;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_multilinestring2 (multilinestring2 multilinestring);</sql>
+        <sql type="update">insert into insert_multilinestring2 as select * from insert_multilinestring;</sql>
+        <sql type="query">select * from insert_multilinestring2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_multilinestring3 (multilinestring3 multilinestring);</sql>
+        <sql type="update">insert into insert_multilinestring3 as select multilinestring_ from insert_table;</sql>
+        <sql type="query">select * from insert_multilinestring3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_multilinestring4 (multilinestring4 multilinestring);</sql>
+        <sql type="update">insert into insert_multilinestring4 (multilinestring4) as select multilinestring_ from insert_table;</sql>
+        <sql type="query">select * from insert_multilinestring4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_multilinestring;</sql>
+        <sql type="update">drop table insert_multilinestring2;</sql>
+        <sql type="update">drop table insert_multilinestring3;</sql>
+        <sql type="update">drop table insert_multilinestring4;</sql>
+    </case>
+
+    <case>
+        <!--   multipolygon   -->
+        <sql type="update">create table insert_multipolygon (multipolygon1 multipolygon);</sql>
+        <sql type="update">insert into insert_multipolygon values(?);</sql>
+        <assertion>[st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_multipolygon;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_multipolygon (multipolygon1) values(?),(?);</sql>
+        <assertion>
+            [st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))")]
+            [st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))")]
+        </assertion>
+        <sql type="query">select * from insert_multipolygon;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_multipolygon2 (multipolygon2 multipolygon);</sql>
+        <sql type="update">insert into insert_multipolygon2 as select * from insert_multipolygon;</sql>
+        <sql type="query">select * from insert_multipolygon2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_multipolygon3 (multipolygon3 multipolygon);</sql>
+        <sql type="update">insert into insert_multipolygon3 as select multipolygon_ from insert_table;</sql>
+        <sql type="query">select * from insert_multipolygon3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_multipolygon4 (multipolygon4 multipolygon);</sql>
+        <sql type="update">insert into insert_multipolygon4 (multipolygon4) as select multipolygon_ from insert_table;</sql>
+        <sql type="query">select * from insert_multipolygon4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_multipolygon;</sql>
+        <sql type="update">drop table insert_multipolygon2;</sql>
+        <sql type="update">drop table insert_multipolygon3;</sql>
+        <sql type="update">drop table insert_multipolygon4;</sql>
+    </case>
+
+    <case>
+        <!--   geometrycollection   -->
+        <sql type="update">create table insert_geometrycollection (geometrycollection1 geometrycollection);</sql>
+        <sql type="update">insert into insert_geometrycollection values(?);</sql>
+        <assertion>[st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))")]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_geometrycollection;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_geometrycollection (geometrycollection1) values(?),(?);</sql>
+        <assertion>
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))")]
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))")]
+        </assertion>
+        <sql type="query">select * from insert_geometrycollection;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_geometrycollection2 (geometrycollection2 geometrycollection);</sql>
+        <sql type="update">insert into insert_geometrycollection2 as select * from insert_geometrycollection;</sql>
+        <sql type="query">select * from insert_geometrycollection2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_geometrycollection3 (geometrycollection3 geometrycollection);</sql>
+        <sql type="update">insert into insert_geometrycollection3 as select geometrycollection_ from insert_table;</sql>
+        <sql type="query">select * from insert_geometrycollection3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_geometrycollection4 (geometrycollection4 geometrycollection);</sql>
+        <sql type="update">insert into insert_geometrycollection4 (geometrycollection4) as select geometrycollection_ from insert_table;</sql>
+        <sql type="query">select * from insert_geometrycollection4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_geometrycollection;</sql>
+        <sql type="update">drop table insert_geometrycollection2;</sql>
+        <sql type="update">drop table insert_geometrycollection3;</sql>
+        <sql type="update">drop table insert_geometrycollection4;</sql>
+    </case>
+
+    <case>
+        <!--   trajectory   -->
+        <sql type="update">create table insert_trajectory (trajectory1 trajectory);</sql>
+        <sql type="update">insert into insert_trajectory values(?);</sql>
+        <assertion>
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' )]
+        </assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_trajectory;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_trajectory (trajectory1) values(?),(?);</sql>
+        <assertion>
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' )]
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' )]
+        </assertion>
+        <sql type="query">select * from insert_trajectory;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_trajectory2 (trajectory2 trajectory);</sql>
+        <sql type="update">insert into insert_trajectory2 as select * from insert_trajectory;</sql>
+        <sql type="query">select * from insert_trajectory2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_trajectory3 (trajectory3 trajectory);</sql>
+        <sql type="update">insert into insert_trajectory3 as select trajectory_ from insert_table;</sql>
+        <sql type="query">select * from insert_trajectory3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_trajectory4 (trajectory4 trajectory);</sql>
+        <sql type="update">insert into insert_trajectory4 (trajectory4) as select trajectory_ from insert_table;</sql>
+        <sql type="query">select * from insert_trajectory4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_trajectory;</sql>
+        <sql type="update">drop table insert_trajectory2;</sql>
+        <sql type="update">drop table insert_trajectory3;</sql>
+        <sql type="update">drop table insert_trajectory4;</sql>
+    </case>
+
+    <case>
+        <!--   roadsegment   -->
+        <sql type="update">create table insert_roadsegment (roadsegment1 roadsegment);</sql>
+        <sql type="update">insert into insert_roadsegment values(?);</sql>
+        <assertion>[st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')]</assertion>
+        <assertion>[null]</assertion>
+        <sql type="query">select * from insert_roadsegment;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">insert into insert_roadsegment (roadsegment1) values(?),(?);</sql>
+        <assertion>
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')]
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')]
+        </assertion>
+        <sql type="query">select * from insert_roadsegment;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_roadsegment2 (roadsegment2 roadsegment);</sql>
+        <sql type="update">insert into insert_roadsegment2 as select * from insert_roadsegment;</sql>
+        <sql type="query">select * from insert_roadsegment2;</sql>
+        <assertion expected="insert_001.xml"/>
+
+        <sql type="update">create table insert_roadsegment3 (roadsegment3 roadsegment);</sql>
+        <sql type="update">insert into insert_roadsegment3 as select roadsegment_ from insert_table;</sql>
+        <sql type="query">select * from insert_roadsegment3;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">create table insert_roadsegment4 (roadsegment4 roadsegment);</sql>
+        <sql type="update">insert into insert_roadsegment4 (roadsegment4) as select roadsegment_ from insert_table;</sql>
+        <sql type="query">select * from insert_roadsegment4;</sql>
+        <assertion expected="insert_003.xml"/>
+
+        <sql type="update">drop table insert_roadsegment;</sql>
+        <sql type="update">drop table insert_roadsegment2;</sql>
+        <sql type="update">drop table insert_roadsegment3;</sql>
+        <sql type="update">drop table insert_roadsegment4;</sql>
+    </case>
+    
+    
+</testCase>

@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<testCase>
+    <case>
+        <!--   update init   -->
+        <sql type="update">drop table if exists insert_table;</sql>
+        <sql type="update">
+            create table insert_table ( int1 int, int2 integer, long_ long, float_ float, double_ double, string_ string,
+            boolean1 bool, boolean2 boolean, binary_ binary, datetime_ datetime, timestamp_ timestamp,
+            geometry_ geometry, point_ point, linestring_ linestring, polygon_ polygon,
+            MultiPoint_ multipoint, MultiLineString_ MultiLineString, MultiPolygon_ MultiPolygon,
+            GeometryCollection_ GeometryCollection, traj trajectory, road roadSegment);
+        </sql>
+        <sql type="update">
+            insert into insert_table values(
+            123, 456, 1234567890, 123.456, 123456.789, 'abc!@#$%^*()_+-=字符串',
+            true, false, st_asWKB(st_GeomFromWkt("Point(10 20)")),
+            toDatestamp("2022-06-29"), toTimestamp("2022-06-29 10:00:00.000"),
+            st_GeomFromWkt("Point(10 20)"), st_PointFromWkt("Point(10 20)"),
+            st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)"), st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))"),
+            st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)"),
+            st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))"),
+            st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))"),
+            st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))"),
+            st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' ),
+            st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')
+        </sql>
+        <sql type="query">select * from insert_table;</sql>
+        <assertion expected="insert_000.xml"/>
+    </case>
+
+    <caee>
+        <!--   int   -->
+        <sql type="update">create table update_int(int1 int);</sql>
+        <sql type="update">insert into table update_int values(?);</sql>
+        <assertion>[1]</assertion>
+        <sql type="query">select * from update_int;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set int1=? where int1=?;</sql>
+        <assertion>[2][2]</assertion>
+        <sql type="query">select * from update_int;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set int1=? where int1=?;</sql>
+        <assertion>[2][1]</assertion>
+        <sql type="query">select * from update_int;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_int;</sql>
+    </caee>
+
+    <caee>
+        <!--   long   -->
+        <sql type="update">create table update_long(long1 long);</sql>
+        <sql type="update">insert into table update_long values(?);</sql>
+        <assertion>[123456789]</assertion>
+        <sql type="query">select * from update_long;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set long1=? where long1=?;</sql>
+        <assertion>[4567891230][4567891230]</assertion>
+        <sql type="query">select * from update_long;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set long1=? where long1=?;</sql>
+        <assertion>[4567891230][123456789]</assertion>
+        <sql type="query">select * from update_long;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_long;</sql>
+    </caee>
+
+    <caee>
+        <!--   float   -->
+        <sql type="update">create table update_float(float1 float);</sql>
+        <sql type="update">insert into table update_float values(?);</sql>
+        <assertion>[123.456]</assertion>
+        <sql type="query">select * from update_float;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set float1=? where float1=?;</sql>
+        <assertion>[456.789][456.789]</assertion>
+        <sql type="query">select * from update_float;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set float1=? where float1=?;</sql>
+        <assertion>[456.789][123.456]</assertion>
+        <sql type="query">select * from update_float;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_float;</sql>
+    </caee>
+
+    <caee>
+        <!--   double   -->
+        <sql type="update">create table update_double(double1 double);</sql>
+        <sql type="update">insert into table update_double values(?);</sql>
+        <assertion>[123456.456789]</assertion>
+        <sql type="query">select * from update_double;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set double1=? where double1=?;</sql>
+        <assertion>[456789.123456][456789.123456]</assertion>
+        <sql type="query">select * from update_double;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set double1=? where double1=?;</sql>
+        <assertion>[456789.123456][123456.456789]</assertion>
+        <sql type="query">select * from update_double;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_double;</sql>
+    </caee>
+
+    <caee>
+        <!--   string   -->
+        <sql type="update">create table update_string(string1 string);</sql>
+        <sql type="update">insert into table update_string values(?);</sql>
+        <assertion>['1230abc']</assertion>
+        <sql type="query">select * from update_string;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set string1=? where string1=?;</sql>
+        <assertion>['中文!@#-=_']['中文!@#-=_']</assertion>
+        <sql type="query">select * from update_string;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set string1=? where string1=?;</sql>
+        <assertion>['中文!@#-=_']['1230abc']</assertion>
+        <sql type="query">select * from update_string;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_string;</sql>
+    </caee>
+
+    <caee>
+        <!--   string   -->
+        <sql type="update">create table update_string(string1 string);</sql>
+        <sql type="update">insert into table update_string values(?);</sql>
+        <assertion>['1230abc']</assertion>
+        <sql type="query">select * from update_string;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set string1=? where string1=?;</sql>
+        <assertion>['中文!@#-=_']['中文!@#-=_']</assertion>
+        <sql type="query">select * from update_string;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set string1=? where string1=?;</sql>
+        <assertion>['中文!@#-=_']['1230abc']</assertion>
+        <sql type="query">select * from update_string;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_string;</sql>
+    </caee>
+
+
+    <caee>
+        <!--   boolean   -->
+        <sql type="update">create table update_boolean(boolean1 boolean);</sql>
+        <sql type="update">insert into table update_boolean values(?);</sql>
+        <assertion>[true]</assertion>
+        <sql type="query">select * from update_boolean;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set boolean1=? where boolean1=?;</sql>
+        <assertion>[false][false]</assertion>
+        <sql type="query">select * from update_boolean;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set boolean1=? where boolean1=?;</sql>
+        <assertion>[false][true]</assertion>
+        <sql type="query">select * from update_boolean;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_boolean;</sql>
+    </caee>
+
+    <caee>
+        <!--   binary   -->
+        <sql type="update">create table update_binary(binary1 binary);</sql>
+        <sql type="update">insert into table update_binary values(?);</sql>
+        <assertion>[st_asWKB(st_GeomFromWkt("Point(10 20)"))]</assertion>
+        <sql type="query">select * from update_binary;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set binary1=? where binary1=?;</sql>
+        <assertion>
+            [st_asWKB(st_GeomFromWkt("Point(30 40)"))]
+            [st_asWKB(st_GeomFromWkt("Point(30 40)"))]
+        </assertion>
+        <sql type="query">select * from update_binary;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set binary1=? where binary1=?;</sql>
+        <assertion>
+            [st_asWKB(st_GeomFromWkt("Point(30 40)"))]
+            [st_asWKB(st_GeomFromWkt("Point(10 20)"))]
+        </assertion>
+        <sql type="query">select * from update_binary;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_binary;</sql>
+    </caee>
+
+    <caee>
+        <!--   datetime   -->
+        <sql type="update">create table update_datetime(datetime1 datetime);</sql>
+        <sql type="update">insert into table update_datetime values(?);</sql>
+        <assertion>[toDatestamp("2022-06-29")]</assertion>
+        <sql type="query">select * from update_datetime;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set datetime1=? where datetime1=?;</sql>
+        <assertion>
+            [toDatestamp("2022-07-14")]
+            [toDatestamp("2022-07-14")]
+        </assertion>
+        <sql type="query">select * from update_datetime;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set datetime1=? where datetime1=?;</sql>
+        <assertion>
+            [toDatestamp("2022-07-14")]
+            [toDatestamp("2022-06-29")]
+        </assertion>
+        <sql type="query">select * from update_datetime;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_datetime;</sql>
+    </caee>
+
+    <caee>
+        <!--   timestamp   -->
+        <sql type="update">create table update_timestamp(timestamp1 timestamp);</sql>
+        <sql type="update">insert into table update_timestamp values(?);</sql>
+        <assertion>[toTimestamp("2022-06-29 10:00:00.000")]</assertion>
+        <sql type="query">select * from update_timestamp;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set timestamp1=? where timestamp1=?;</sql>
+        <assertion>
+            [toTimestamp("2021-08-15 12:34:55.795")]
+            [toTimestamp("2021-08-15 12:34:55.795")]
+        </assertion>
+        <sql type="query">select * from update_timestamp;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set timestamp1=? where timestamp1=?;</sql>
+        <assertion>
+            [toTimestamp("2021-08-15 12:34:55.795")]
+            [toTimestamp("2022-06-29 10:00:00.000")]
+        </assertion>
+        <sql type="query">select * from update_timestamp;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_timestamp;</sql>
+    </caee>
+
+    <caee>
+        <!--   geometry   -->
+        <sql type="update">create table update_geometry(geometry1 geometry);</sql>
+        <sql type="update">insert into table update_geometry values(?);</sql>
+        <assertion>[st_GeomFromWkt("Point(10 20)")]</assertion>
+        <sql type="query">select * from update_geometry;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set geometry1=? where geometry1=?;</sql>
+        <assertion>
+            [st_GeomFromWkt("Point(30 40)")]
+            [st_GeomFromWkt("Point(30 40)")]
+        </assertion>
+        <sql type="query">select * from update_geometry;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set geometry1=? where geometry1=?;</sql>
+        <assertion>
+            [st_GeomFromWkt("Point(30 40)")]
+            [st_GeomFromWkt("Point(10 20)")]
+        </assertion>
+        <sql type="query">select * from update_geometry;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_geometry;</sql>
+    </caee>
+
+    <caee>
+        <!--   point   -->
+        <sql type="update">create table update_point(point1 point);</sql>
+        <sql type="update">insert into table update_point values(?);</sql>
+        <assertion>[st_PointFromWkt("Point(10 20)")]</assertion>
+        <sql type="query">select * from update_point;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set point1=? where point1=?;</sql>
+        <assertion>
+            [st_PointFromWkt("Point(30 40)")]
+            [st_PointFromWkt("Point(30 40)")]
+        </assertion>
+        <sql type="query">select * from update_point;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set point1=? where point1=?;</sql>
+        <assertion>
+            [st_PointFromWkt("Point(30 40)")]
+            [st_PointFromWkt("Point(10 20)")]
+        </assertion>
+        <sql type="query">select * from update_point;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_point;</sql>
+    </caee>
+
+    <caee>
+        <!--   linestring   -->
+        <sql type="update">create table update_linestring(linestring1 linestring);</sql>
+        <sql type="update">insert into table update_linestring values(?);</sql>
+        <assertion>[st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)")]</assertion>
+        <sql type="query">select * from update_linestring;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set linestring1=? where linestring1=?;</sql>
+        <assertion>
+            [st_LineStringFromWkt("LINESTRING (11 11, 22 22, 33 33)")]
+            [st_LineStringFromWkt("LINESTRING (11 11, 22 22, 33 33)")]
+        </assertion>
+        <sql type="query">select * from update_linestring;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set linestring1=? where linestring1=?;</sql>
+        <assertion>
+            [st_LineStringFromWkt("LINESTRING (11 11, 22 22, 33 33)")]
+            [st_LineStringFromWkt("LINESTRING (1 1, 2 2, 3 3)")]
+        </assertion>
+        <sql type="query">select * from update_linestring;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_linestring;</sql>
+    </caee>
+
+    <caee>
+        <!--   polygon   -->
+        <sql type="update">create table update_polygon(polygon1 polygon);</sql>
+        <sql type="update">insert into table update_polygon values(?);</sql>
+        <assertion>[st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))")]</assertion>
+        <sql type="query">select * from update_polygon;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set polygon1=? where polygon1=?;</sql>
+        <assertion>
+            [st_PolygonFromWkt("POLYGON ((11 21, 12 42, 33 43, 34 24, 11 21))")]
+            [st_PolygonFromWkt("POLYGON ((11 21, 12 42, 33 43, 34 24, 11 21))")]
+        </assertion>
+        <sql type="query">select * from update_polygon;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set polygon1=? where polygon1=?;</sql>
+        <assertion>
+            [st_PolygonFromWkt("POLYGON ((11 21, 12 42, 33 43, 34 24, 11 21))")]
+            [st_PolygonFromWkt("POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))")]
+        </assertion>
+        <sql type="query">select * from update_polygon;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_polygon;</sql>
+    </caee>
+
+    <caee>
+        <!--   multipoint   -->
+        <sql type="update">create table update_multipoint(multipoint1 multipoint);</sql>
+        <sql type="update">insert into table update_multipoint values(?);</sql>
+        <assertion>[st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)")]</assertion>
+        <sql type="query">select * from update_multipoint;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set multipoint1=? where multipoint1=?;</sql>
+        <assertion>
+            [st_mPointFromWkt("MULTIPOINT(31.5 52.6, 43.8 140.5)")]
+            [st_mPointFromWkt("MULTIPOINT(31.5 52.6, 43.8 140.5)")]
+        </assertion>
+        <sql type="query">select * from update_multipoint;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set multipoint1=? where multipoint1=?;</sql>
+        <assertion>
+            [st_mPointFromWkt("MULTIPOINT(31.5 52.6, 43.8 140.5)")]
+            [st_mPointFromWkt("MULTIPOINT(3.5 5.6, 4.8 10.5)")]
+        </assertion>
+        <sql type="query">select * from update_multipoint;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_multipoint;</sql>
+    </caee>
+
+    <caee>
+        <!--   multilinestring   -->
+        <sql type="update">create table update_multilinestring(multilinestring1 multilinestring);</sql>
+        <sql type="update">insert into table update_multilinestring values(?);</sql>
+        <assertion>[st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))")]</assertion>
+        <sql type="query">select * from update_multilinestring;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set multilinestring1=? where multilinestring1=?;</sql>
+        <assertion>
+            [st_mLineStringFromWkt("MULTILINESTRING((31 42,101 52,24 25),(-51 -82,-110 -83,-155 -41))")]
+            [st_mLineStringFromWkt("MULTILINESTRING((31 42,101 52,24 25),(-51 -82,-110 -83,-155 -41))")]
+        </assertion>
+        <sql type="query">select * from update_multilinestring;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set multilinestring1=? where multilinestring1=?;</sql>
+        <assertion>
+            [st_mLineStringFromWkt("MULTILINESTRING((31 42,101 52,24 25),(-51 -82,-110 -83,-155 -41))")]
+            [st_mLineStringFromWkt("MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))")]
+        </assertion>
+        <sql type="query">select * from update_multilinestring;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_multilinestring;</sql>
+    </caee>
+
+    <caee>
+        <!--   multipolygon   -->
+        <sql type="update">create table update_multipolygon(multipolygon1 multipolygon);</sql>
+        <sql type="update">insert into table update_multipolygon values(?);</sql>
+        <assertion>
+            [st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))")]
+        </assertion>
+        <sql type="query">select * from update_multipolygon;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set multipolygon1=? where multipolygon1=?;</sql>
+        <assertion>
+            [st_mPolygonFromWkt("MULTIPOLYGON(((11 12,53 14,51 51,11 51,11 11),(22 22,22 32,32 32,32 22,22 22)))")]
+            [st_mPolygonFromWkt("MULTIPOLYGON(((11 12,53 14,51 51,11 51,11 11),(22 22,22 32,32 32,32 22,22 22)))")]
+        </assertion>
+        <sql type="query">select * from update_multipolygon;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set multipolygon1=? where multipolygon1=?;</sql>
+        <assertion>
+            [st_mPolygonFromWkt("MULTIPOLYGON(((11 12,53 14,51 51,11 51,11 11),(22 22,22 32,32 32,32 22,22 22)))")]
+            [st_mPolygonFromWkt("MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))")]
+        </assertion>
+        <sql type="query">select * from update_multipolygon;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_multipolygon;</sql>
+    </caee>
+
+    <caee>
+        <!--   geometrycollection   -->
+        <sql type="update">create table update_geometrycollection(geometrycollection1 geometrycollection);</sql>
+        <sql type="update">insert into table update_geometrycollection values(?);</sql>
+        <assertion>
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))")]
+        </assertion>
+        <sql type="query">select * from update_geometrycollection;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set geometrycollection1=? where geometrycollection1=?;</sql>
+        <assertion>
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-22 33,-21 22), LINESTRING(51 51,101 20), POLYGON((-71 42.2,-73.1 52,-74.1 64.3,-71 42.2)))")]
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-22 33,-21 22), LINESTRING(51 51,101 20), POLYGON((-71 42.2,-73.1 52,-74.1 64.3,-71 42.2)))")]
+        </assertion>
+        <sql type="query">select * from update_geometrycollection;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set geometrycollection1=? where geometrycollection1=?;</sql>
+        <assertion>
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-22 33,-21 22), LINESTRING(51 51,101 20), POLYGON((-71 42.2,-73.1 52,-74.1 64.3,-71 42.2)))")]
+            [st_GeomFromWkt("GEOMETRYCOLLECTION(MULTIPOINT(-2 3,-2 2), LINESTRING(5 5,10 10), POLYGON((-7 4.2,-7.1 5,-7.1 4.3,-7 4.2)))")]
+        </assertion>
+        <sql type="query">select * from update_geometrycollection;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_geometrycollection;</sql>
+    </caee>
+
+    <caee>
+        <!--   trajectory   -->
+        <sql type="update">create table update_trajectory(trajectory1 trajectory);</sql>
+        <sql type="update">insert into table update_trajectory values(?);</sql>
+        <assertion>
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' )]
+        </assertion>
+        <sql type="query">select * from update_trajectory;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set trajectory1=? where trajectory1=?;</sql>
+        <assertion>
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2019-12-13 12:30:41.456"},
+            "geometry":{"type":"Point","coordinates":[13.93430687732173,45.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2019-12-13 12:30:45.546"},
+            "geometry":{"type":"Point","coordinates":[13.93428701026465,45.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d8",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d82019-12-13 12:30:41.456"}}' )]
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2019-12-13 12:30:41.456"},
+            "geometry":{"type":"Point","coordinates":[13.93430687732173,45.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2019-12-13 12:30:45.546"},
+            "geometry":{"type":"Point","coordinates":[13.93428701026465,45.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d8",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d82019-12-13 12:30:41.456"}}' )]
+        </assertion>
+        <sql type="query">select * from update_trajectory;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set trajectory1=? where trajectory1=?;</sql>
+        <assertion>
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2019-12-13 12:30:41.456"},
+            "geometry":{"type":"Point","coordinates":[13.93430687732173,45.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2019-12-13 12:30:45.546"},
+            "geometry":{"type":"Point","coordinates":[13.93428701026465,45.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d8",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d82019-12-13 12:30:41.456"}}' )]
+            [st_traj_fromGeoJSON( '{
+            "type":"FeatureCollection",
+            "features":[
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:41.0"},
+            "geometry":{"type":"Point","coordinates":[108.93430687732173,34.2154503607423]}},
+            {"type":"Feature",
+            "properties":{"time":"2018-10-09 07:30:56.0"},
+            "geometry":{"type":"Point","coordinates":[108.93428701026465,34.21445074385308]}}],
+            "properties":{
+            "oid":"9ae8398a7748c9c5ed8ad60f7c5436d7",
+            "tid":"9ae8398a7748c9c5ed8ad60f7c5436d72018-10-09 07:30:41.0"}}' )]
+        </assertion>
+        <sql type="query">select * from update_trajectory;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_trajectory;</sql>
+    </caee>
+
+    <caee>
+        <!--   roadSegment   -->
+        <sql type="update">create table update_roadSegment(roadSegment1 roadSegment);</sql>
+        <sql type="update">insert into table update_roadSegment values(?);</sql>
+        <assertion>
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')]
+        </assertion>
+        <sql type="query">select * from update_roadSegment;</sql>
+        <assertion expected="update_001.xml"/>
+
+
+        <sql type="update">update table set roadSegment1=? where roadSegment1=?;</sql>
+        <assertion>
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70842,
+            "level":3,
+            "startId":70841,
+            "rsId":100321,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[107.88093234592,34.1634619140625],[107.881090494792,34.1630268012153]]}}')]
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70842,
+            "level":3,
+            "startId":70841,
+            "rsId":100321,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[107.88093234592,34.1634619140625],[107.881090494792,34.1630268012153]]}}')]
+        </assertion>
+        <sql type="query">select * from update_roadSegment;</sql>
+        <assertion expected="update_002.xml"/>
+
+        <sql type="update">update table set roadSegment1=? where roadSegment1=?;</sql>
+        <assertion>
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70842,
+            "level":3,
+            "startId":70841,
+            "rsId":100321,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[107.88093234592,34.1634619140625],[107.881090494792,34.1630268012153]]}}')]
+            [st_rs_fromGeoJSON('{
+            "type":"Feature",
+            "properties":{
+            "endId":70832,
+            "level":3,
+            "startId":70831,
+            "rsId":100320,
+            "speedLimit":50.0,
+            "lengthInMeter":50.57964091335451,
+            "direction":1},
+            "geometry":{
+            "type":"LineString",
+            "coordinates":[[108.88093234592,34.1634619140625],[108.881090494792,34.1630268012153]]}}')]
+        </assertion>
+        <sql type="query">select * from update_roadSegment;</sql>
+        <assertion expected="update_003.xml"/>
+
+        <sql type="update">drop table update_roadSegment;</sql>
+    </caee>
+
+
+    
+</testCase>

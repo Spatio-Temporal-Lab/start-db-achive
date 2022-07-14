@@ -4,39 +4,39 @@
 <testCase>
 
     <!--  点聚类  st_dbscan(points: List[Point], dInM: Double, minPointNum: Int): Table  -->
-    <case type="ignore">
-        <sql>select st_dbscan(?, ?, ?);</sql>
-        <assertion id="01" expected="stDm_001.xml"></assertion>
+    <case>
+        <sql type="query">select st_dbscan(?, ?, ?);</sql>
+        <assertion expected="stDm_001.xml"/>
     </case>
 
     <!--  将一个Geometry对象偏移给定的数值  st_translate(geom: Geometry, deltaX: Double, deltaY: Double): Geometry  -->
-    <case type="query">
-        <sql>select st_translate(?, ?, ?);</sql>
-        <assertion id="01" expected="stDm_002.xml">[st_geomFromWKT('POINT(0 0)')][5][12]</assertion>
+    <case>
+        <sql type="query">select st_translate(?, ?, ?);</sql>
+        <assertion expected="stDm_002.xml">[st_geomFromWKT('POINT(0 0)')][5][12]</assertion>
     </case>
 
     <!--  返回点的x坐标  st_x(point: Point): Double  -->
-    <case type="query">
-        <sql>select st_x(?);</sql>
-        <assertion id="01" expected="stDm_003.xml">[st_makepoint(1, 2)]</assertion>
+    <case>
+        <sql type="query">select st_x(?);</sql>
+        <assertion expected="stDm_003.xml">[st_makepoint(1, 2)]</assertion>
     </case>
 
     <!--  返回点的y坐标  st_y(point: Point): Double  -->
-    <case type="query">
-        <sql>select st_y(?);</sql>
-        <assertion id="01" expected="stDm_004.xml">[st_makepoint(1, 2)]</assertion>
+    <case>
+        <sql type="query">select st_y(?);</sql>
+        <assertion expected="stDm_004.xml">[st_makepoint(1, 2)]</assertion>
     </case>
 
     <!--  返回几何的外边框  st_BBox(geom: Geometry): Geometry  -->
-    <case type="query">
-        <sql>select st_BBox(?);</sql>
-        <assertion id="01" expected="stDm_005.xml">[st_makeBBOX(1, 1, 2, 2)]</assertion>
+    <case>
+        <sql type="query">select st_BBox(?);</sql>
+        <assertion expected="stDm_005.xml">[st_makeBBOX(1, 1, 2, 2)]</assertion>
     </case>
 
     <!--  返回geom的顶点数  st_numPoints(geom: Geometry): Integer  -->
-    <case type="query">
-        <sql>select st_numpoints(?);</sql>
-        <assertion id="01" expected="stDm_006.xml">
+    <case>
+        <sql type="query">select st_numpoints(?);</sql>
+        <assertion expected="stDm_006.xml">
             [st_geomFromText('linestring(77.29 29.07,77.42 29.26,77.27 29.31,77.29 29.07)')]
         </assertion>
     </case>
@@ -44,113 +44,113 @@
     <!--  返回输入LineString对象或者环形LineString中的第n个点。
         如果对象不是LineString，则返回NULL。如果n是负数，那么将从末尾向前计数。负值从LineString的末尾开始算起，因此-1是最后一个点。
          st_pointN(geom: Geometry, n: Integer): Point	  -->
-    <case type="query">
-        <sql>select st_pointN(?, ?);</sql>
-        <assertion id="01" expected="stDm_007.xml">[st_geomFromWKT('LINESTRING(0 0,0 1,1 1,1 0,0 2)')][-5]</assertion>
+    <case>
+        <sql type="query">select st_pointN(?, ?);</sql>
+        <assertion expected="stDm_007.xml">[st_geomFromWKT('LINESTRING(0 0,0 1,1 1,1 0,0 2)')][-5]</assertion>
     </case>
 
     <!--  返回geom的曲面面积（单位为平方度）  st_area(geom: Geometry): Double  -->
-    <case type="query">
-        <sql>select st_area(?);</sql>
-        <assertion id="01" expected="stDm_008.xml">[st_geomfromwkt('POLYGON((0 0,0 10,10 10,10 0,0 0))')]</assertion>
+    <case>
+        <sql type="query">select st_area(?);</sql>
+        <assertion expected="stDm_008.xml">[st_geomfromwkt('POLYGON((0 0,0 10,10 10,10 0,0 0))')]</assertion>
     </case>
 
     <!--  返回geom 的几何中心  st_centroid(geometry: Geometry): Point	  -->
-    <case type="query">
-        <sql>select st_centroid(?);</sql>
-        <assertion id="01" expected="stDm_009.xml">[st_geomFromWKT('POLYGON((0 0,0 10,10 10,10 0,0 0))')]</assertion>
+    <case>
+        <sql type="query">select st_centroid(?);</sql>
+        <assertion expected="stDm_009.xml">[st_geomFromWKT('POLYGON((0 0,0 10,10 10,10 0,0 0))')]</assertion>
     </case>
 
     <!--  求几何a 离几何b 最近的点  st_closestPoint(a: Geometry, b: Geometry): Point  -->
-    <case type="query">
-        <sql>select st_closestPoint(?, ?);</sql>
-        <assertion id="01" expected="stDm_010.xml">
+    <case>
+        <sql type="query">select st_closestPoint(?, ?);</sql>
+        <assertion expected="stDm_010.xml">
             [st_geomFromWKT('POLYGON((0 0,0 10,10 10,10 0,0 0))')]
             [st_geomFromWKT('POINT(15 5)')]
         </assertion>
     </case>
 
     <!--  根据给定的两个几何体返回它们之间的二维笛卡尔距离 st_distance(geom1: Geometry, geom2: Geometry): Double  -->
-    <case type="query">
-        <sql>select st_distance(?, ?);</sql>
-        <assertion id="01" expected="stDm_011.xml">[st_makePoint(1,2)][st_makePoint(2,3)]</assertion>
+    <case>
+        <sql type="query">select st_distance(?, ?);</sql>
+        <assertion expected="stDm_011.xml">[st_makePoint(1,2)][st_makePoint(2,3)]</assertion>
     </case>
 
     <!--  假设地球是球形的，近似计算两个几何的最小距离，单位为米  st_distanceSphere(a: Geometry, b: Geometry): Double  -->
-    <case type="query">
-        <sql>select st_distanceSphere(?, ?);</sql>
-        <assertion id="01" expected="stDm_012.xml">
+    <case>
+        <sql type="query">select st_distanceSphere(?, ?);</sql>
+        <assertion expected="stDm_012.xml">
             [st_geomFromWKT('POINT(0 0)')]
             [st_geomFromWKT('POINT(10 0)')]
         </assertion>
     </case>
 
     <!--  假设满足WGS84球体，计算两个几何的最小距离，单位为米  st_distanceSpheroid(a: Geometry, b: Geometry): Double  -->
-    <case type="query">
-        <sql>select st_distanceSpheroid(?, ?);</sql>
-        <assertion id="01" expected="stDm_013.xml">
+    <case>
+        <sql type="query">select st_distanceSpheroid(?, ?);</sql>
+        <assertion expected="stDm_013.xml">
             [st_geomFromWKT('POINT(0 0)')]
             [st_geomFromWKT('POINT(10 0)')]
         </assertion>
     </case>
 
     <!--  求两个几何的交集  st_intersection(a: Geometry, b: Geometry): Geometry  -->
-    <case type="query">
-        <sql>select st_intersection(?, ?);</sql>
-        <assertion id="01" expected="stDm_014.xml">
+    <case>
+        <sql type="query">select st_intersection(?, ?);</sql>
+        <assertion expected="stDm_014.xml">
             [st_geomFromWKT('POLYGON((0 0,0 10,10 10,10 0,0 0))')]
             [st_geomFromWKT('POINT(5 5)')]
         </assertion>
     </case>
 
     <!--  计算一个LineString的二维长度、或一个Polygon的周长，单位为度  st_length(geom: Geometry): Double  -->
-    <case type="query">
-        <sql>select st_length(?);</sql>
-        <assertion id="01" expected="stDm_015.xml">[st_geomFromWKT('LINESTRING(0 0,10 0)')]</assertion>
+    <case>
+        <sql type="query">select st_length(?);</sql>
+        <assertion expected="stDm_015.xml">[st_geomFromWKT('LINESTRING(0 0,10 0)')]</assertion>
     </case>
 
     <!--  使用球体地球模型近似计算LineString的二维长度，输出单位为米  st_lengthSphere(line: LineString): Double  -->
-    <case type="query">
-        <sql>select st_lengthSphere(?);</sql>
-        <assertion id="01" expected="stDm_016.xml">
+    <case>
+        <sql type="query">select st_lengthSphere(?);</sql>
+        <assertion expected="stDm_016.xml">
             [st_castToLineString(st_geomFromWKT("LINESTRING(1 2,11 2)"))]
         </assertion>
     </case>
 
     <!--  在WGS84球体的经纬坐标系中，计算LineString的二维长度，单位为米  st_lengthSpheroid(line: LineString): Double  -->
-    <case type="query">
-        <sql>select st_lengthSpheroid(?);</sql>
-        <assertion id="01" expected="stDm_017.xml">
+    <case>
+        <sql type="query">select st_lengthSpheroid(?);</sql>
+        <assertion expected="stDm_017.xml">
             [st_castToLineString(st_geomFromWKT("LINESTRING(1 2,11 2)"))]
         </assertion>
     </case>
 
     <!--  Geometry a和b的差异分析：就是a里有b里没有的所有点的集合  st_difference(a: Geometry, b: Geometry): Geometry  -->
-    <case type="query">
-        <sql>select st_difference(?, ?);</sql>
-        <assertion id="01" expected="stDm_018.xml">
+    <case>
+        <sql type="query">select st_difference(?, ?);</sql>
+        <assertion expected="stDm_018.xml">
             [st_geomFromWKT('POLYGON((0 0,0 10,10 10,10 0,0 0))')]
             [st_geomFromWKT('POINT(15 5)')]
         </assertion>
     </case>
 
     <!--  根据OGC，SFS规范，判断geom是否拓扑有效  st_isValid(geom: Geometry): Boolean  -->
-    <case type="query">
-        <sql>select st_isValid(?);</sql>
-        <assertion id="01" expected="stDm_019.xml">[st_geomFromWKT('LINESTRING(0 0,1 1)')]</assertion>
+    <case>
+        <sql type="query">select st_isValid(?);</sql>
+        <assertion expected="stDm_019.xml">[st_geomFromWKT('LINESTRING(0 0,1 1)')]</assertion>
     </case>
 
     <!--  给定一个点point和半径buffer，返回以该point为中心向外扩张buffer长度的polygon
         st_bufferPoint(p: Point, buffer: Double): Polygon  -->
-    <case type="query">
-        <sql>select st_bufferPoint(?, ?);</sql>
-        <assertion id="01" expected="stDm_020.xml">[st_makePoint(0,0)][10]</assertion>
+    <case>
+        <sql type="query">select st_bufferPoint(?, ?);</sql>
+        <assertion expected="stDm_020.xml">[st_makePoint(0,0)][10]</assertion>
     </case>
 
     <!--  返回包裹geom对象的最小凸包  st_convexHull(geom: Geometry): Polygon  -->
-    <case type="ignore">
-        <sql>select st_convexHull(?);</sql>
-        <assertion id="01" expected="stDm_021.xml"> </assertion>
+    <case>
+        <sql type="query">select st_convexHull(?);</sql>
+        <assertion expected="stDm_021.xml"> </assertion>
     </case>
 
 
