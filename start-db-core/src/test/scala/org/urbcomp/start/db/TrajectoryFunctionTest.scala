@@ -11,21 +11,46 @@
 
 package org.urbcomp.start.db
 
+import java.util.Objects
+
 import org.junit.Assert.assertEquals
-import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory
 
+import scala.collection.JavaConverters.seqAsJavaList
+
+class TestObj(var a: Integer) {
+  def getA: Integer = a
+
+  override def equals(o: Any): Boolean = {
+    if (o == null || (getClass ne o.getClass)) return false
+    val testObj = o.asInstanceOf[TestObj]
+    Objects.equals(a, testObj.a)
+  }
+
+  override def hashCode: Int = Objects.hash(a)
+}
+
 class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
-  val trajectory: Trajectory = ModelGenerator.generateTrajectory()
+  val nameArray: Array[String] = Array[String]("int", "str", "double", "list", "testObj")
+  val typeArray: Array[Class[_]] = Array[Class[_]](
+    classOf[java.lang.Integer],
+    classOf[java.lang.String],
+    classOf[java.lang.Double],
+    classOf[java.util.List[_]],
+    classOf[TestObj]
+  )
+  val trajectory: Trajectory =
+    ModelGenerator.generateTrajectory(seqAsJavaList(nameArray), seqAsJavaList(typeArray))
   val tGeo: String = trajectory.toGeoJSON
 
   test("st_traj_asGeoJSON(Trajectory)") {
     val statement = connect.createStatement()
     val resultSet =
-      statement.executeQuery("select st_traj_asGeoJSON(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+      statement.executeQuery("select st_traj_fromGeoJSON(\'" + tGeo + "\')")
     resultSet.next()
-    assertEquals(tGeo, resultSet.getObject(1))
+    println(trajectory)
+    assertEquals(trajectory, resultSet.getObject(1))
   }
 
   test("st_traj_fromGeoJSON(str)") {

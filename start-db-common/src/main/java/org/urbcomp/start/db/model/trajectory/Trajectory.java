@@ -27,6 +27,7 @@ import org.urbcomp.start.db.serializer.TrajSerializer;
 import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
 import org.urbcomp.start.db.util.GeoFunctions;
 import org.urbcomp.start.db.util.GeometryFactoryUtils;
+import org.urbcomp.start.db.util.MapUtil;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -188,7 +189,8 @@ public class Trajectory {
             || !Objects.equals(this.tid, ((Trajectory) o).tid)) {
             return false;
         }
-        return this.gpsPointList.equals(((Trajectory) o).gpsPointList);
+        return MapUtil.additionalAttributesEquals(attributes, ((Trajectory) o).attributes)
+            && this.gpsPointList.equals(((Trajectory) o).gpsPointList);
     }
 
     /**

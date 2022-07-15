@@ -13,6 +13,8 @@ package org.urbcomp.start.db.model;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.Objects;
+
 public class Attribute {
     private final Class type;
     private final Object value;
@@ -41,4 +43,16 @@ public class Attribute {
         return type.toString().split(" ")[1] + " " + value.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Attribute attribute = (Attribute) o;
+        return type.equals(attribute.type) && value.equals(attribute.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, value);
+    }
 }
