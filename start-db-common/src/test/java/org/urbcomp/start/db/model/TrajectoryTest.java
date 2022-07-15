@@ -17,30 +17,33 @@ import org.urbcomp.start.db.model.sample.ModelGenerator;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
 
 class TestObj {
-    private Integer i;
-    private Double d;
-    private String s;
+    Integer a;
 
-    public TestObj(Integer i, Double d, String s) {
-        this.i = i;
-        this.d = d;
-        this.s = s;
+    TestObj(Integer a) {
+        this.a = a;
     }
 
-    public Integer getI() {
-        return i;
+    public Integer getA() {
+        return a;
     }
 
-    public Double getD() {
-        return d;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TestObj testObj = (TestObj) o;
+        return Objects.equals(a, testObj.a);
     }
 
-    public String getS() {
-        return s;
+    @Override
+    public int hashCode() {
+        return Objects.hash(a);
     }
 }
 
@@ -50,19 +53,25 @@ public class TrajectoryTest {
     @Test
     public void toGeoJsonWithExtraAttribute() throws ClassNotFoundException,
         JsonProcessingException {
-        String[] namesStr = new String[] { "int", "str", "double", "testObj" };
-        Class[] typeStr = new Class[] { Integer.class, String.class, Double.class, TestObj.class };
+        String[] namesArray = new String[] { "int", "str", "double", "list", "testObj" };
+        Class[] typeArray = new Class[] {
+            Integer.class,
+            String.class,
+            Double.class,
+            List.class,
+            TestObj.class };
         Trajectory trajectory1 = ModelGenerator.generateTrajectory(
-            Arrays.asList(namesStr),
-            Arrays.asList(typeStr)
+            Arrays.asList(namesArray),
+            Arrays.asList(typeArray)
         );
         String geoJson = trajectory1.toGeoJSON();
         Trajectory traj = Trajectory.fromGeoJSON(geoJson);
         assertEquals(1, traj.getAttribute("int"));
         assertEquals("2", traj.getAttribute("str"));
         assertEquals(3.0, traj.getAttribute("double"));
+        assertEquals(Arrays.asList(1, 2, 3), traj.getAttribute("list"));
         TestObj testObj = (TestObj) traj.getAttribute("testObj");
-        assertEquals("3", testObj.getS());
+        assertEquals(1, (int) testObj.getA());
         assertEquals(trajectory1, traj);
     }
 

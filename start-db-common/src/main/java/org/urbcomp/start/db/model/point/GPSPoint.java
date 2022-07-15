@@ -12,6 +12,7 @@
 package org.urbcomp.start.db.model.point;
 
 import org.urbcomp.start.db.model.Attribute;
+import org.urbcomp.start.db.util.MapUtil;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -52,16 +53,12 @@ public class GPSPoint extends SpatialPoint {
         return attributes;
     }
 
-    private boolean additionalAttributesEquals(Object o) {
-        return attributes.equals(((GPSPoint) o).attributes);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         return Objects.equals(this.time, ((GPSPoint) o).time)
-            && additionalAttributesEquals(o)
+            && MapUtil.additionalAttributesEquals(attributes, ((GPSPoint) o).attributes)
             && super.equalsExact(((GPSPoint) o));
     }
 
