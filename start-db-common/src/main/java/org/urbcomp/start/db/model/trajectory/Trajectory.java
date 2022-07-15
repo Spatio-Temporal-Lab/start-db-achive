@@ -11,6 +11,7 @@
 
 package org.urbcomp.start.db.model.trajectory;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.locationtech.jts.geom.*;
+import org.urbcomp.start.db.model.Attribute;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.serializer.TrajDeserializer;
@@ -27,9 +29,7 @@ import org.urbcomp.start.db.util.GeoFunctions;
 import org.urbcomp.start.db.util.GeometryFactoryUtils;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @JsonSerialize(using = TrajSerializer.class)
@@ -38,6 +38,7 @@ public class Trajectory {
     private String tid;
     private String oid;
     private List<GPSPoint> gpsPointList;
+    private Map<String, Attribute> attributes = new HashMap<>();
 
     /**
      * Constructor of Trajectory class
@@ -50,6 +51,18 @@ public class Trajectory {
         this.tid = tid;
         this.oid = oid;
         this.gpsPointList = gpsPointList;
+    }
+
+    public Trajectory(
+        String tid,
+        String oid,
+        List<GPSPoint> gpsPointList,
+        Map<String, Attribute> attributes
+    ) {
+        this.tid = tid;
+        this.oid = oid;
+        this.gpsPointList = gpsPointList;
+        this.attributes = attributes;
     }
 
     /**
@@ -122,6 +135,40 @@ public class Trajectory {
         return this;
     }
 
+    public Object getAttribute(String name) {
+        switch (name) {
+            case "Oid":
+                return getOid();
+            case "Tid":
+                return getTid();
+            case "GPSPointList":
+                return getGPSPointList();
+            default:
+                return attributes.get(name).getValue();
+        }
+    }
+
+    public void setAttribute(String name, Object obj) {
+        switch (name) {
+            case "Oid": {
+                setOid((String) obj);
+                break;
+            }
+            case "Tid": {
+                setTid((String) obj);
+                break;
+            }
+            case "GPSPointList": {
+                setPointList((List<GPSPoint>) obj);
+                break;
+            }
+            default: {
+                Class type = attributes.get(name).getType();
+                attributes.put(name, new Attribute(type, type.cast(obj)));
+            }
+        }
+    }
+
     /**
      * add a GPSPoint to the trajectory
      *
@@ -145,7 +192,7 @@ public class Trajectory {
     }
 
     /**
-     *  get trajectory start point
+     * get trajectory start point
      *
      * @return start point
      */
@@ -154,7 +201,7 @@ public class Trajectory {
     }
 
     /**
-     *  get trajectory end point
+     * get trajectory end point
      *
      * @return end point
      */
@@ -163,7 +210,7 @@ public class Trajectory {
     }
 
     /**
-     *  get gps point start time
+     * get gps point start time
      *
      * @return start timestamp
      */
@@ -172,7 +219,7 @@ public class Trajectory {
     }
 
     /**
-     *  get the end of gpsPoint time
+     * get the end of gpsPoint time
      *
      * @return end timestamp
      */
@@ -181,7 +228,7 @@ public class Trajectory {
     }
 
     /**
-     *  get MBR
+     * get MBR
      *
      * @return MBR
      */
@@ -195,7 +242,7 @@ public class Trajectory {
 
     /**
      * get the length of the trajectory(km)
-     * 
+     *
      * @return length of the trajectory
      */
     public double getLengthInKm() {
@@ -239,6 +286,9 @@ public class Trajectory {
         for (GPSPoint gp : gpsPointList) {
             Feature f = new Feature();
             f.setProperty("time", gp.getTime().toString());
+            for (Map.Entry<String, Attribute> entry : attributes.entrySet()) {
+                f.setProperty(entry.getKey(), JSONObject.toJSONString(entry.getValue()));
+            }
             f.setGeometry(new org.geojson.Point(gp.getX(), gp.getY()));
             fcp.add(f);
         }
@@ -252,7 +302,8 @@ public class Trajectory {
      * @return a Trajectory instance
      * @throws JsonProcessingException if parse error
      */
-    public static Trajectory fromGeoJSON(String geoJsonStr) throws JsonProcessingException {
+    public static Trajectory fromGeoJSON(String geoJsonStr) throws JsonProcessingException,
+        ClassNotFoundException {
         FeatureCollectionWithProperties fcp = new ObjectMapper().readValue(
             geoJsonStr,
             FeatureCollectionWithProperties.class
@@ -260,6 +311,21 @@ public class Trajectory {
         Trajectory traj = new Trajectory(fcp.getProperty("tid"), fcp.getProperty("oid"));
         for (Feature f : fcp.getFeatures()) {
             LngLatAlt lngLatAlt = ((org.geojson.Point) f.getGeometry()).getCoordinates();
+            Map<String, Attribute> attributeMap = new HashMap<>();
+            for (Map.Entry<String, Object> entry : f.getProperties().entrySet()) {
+                if (!entry.getKey().equals("time")) {
+                    JSONObject jsonObj = JSONObject.parseObject((String) entry.getValue());
+                    Class type = Class.forName(jsonObj.getString("type"));
+                    attributeMap.put(
+                        entry.getKey(),
+                        new Attribute(
+                            type,
+                            JSONObject.parseObject(jsonObj.getString("value"), type)
+                        )
+                    );
+                }
+            }
+            traj.attributes = attributeMap;
             traj.addGPSPoint(
                 new GPSPoint(
                     Timestamp.valueOf((String) f.getProperty("time")),
