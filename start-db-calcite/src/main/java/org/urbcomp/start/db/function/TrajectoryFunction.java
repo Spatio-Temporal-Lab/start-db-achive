@@ -42,7 +42,8 @@ public class TrajectoryFunction {
     }
 
     @StartDBFunction("st_traj_fromGeoJSON")
-    public Trajectory st_traj_fromGeoJSON(String str) throws JsonProcessingException {
+    public Trajectory st_traj_fromGeoJSON(String str) throws JsonProcessingException,
+        ClassNotFoundException {
         return Trajectory.fromGeoJSON(str);
     }
 

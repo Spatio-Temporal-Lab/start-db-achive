@@ -12,6 +12,8 @@
 package org.urbcomp.start.db.model.sample;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.urbcomp.start.db.model.Attribute;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
@@ -23,10 +25,7 @@ import org.urbcomp.start.db.util.WKTUtils;
 
 import java.io.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModelGenerator {
@@ -54,6 +53,45 @@ public class ModelGenerator {
                 )
                 .collect(Collectors.toList());
             return new Trajectory(oid + pointsList.get(0).getTime(), oid, pointsList);
+        } catch (IOException e) {
+            throw new RuntimeException("Generate trajectory error: " + e.getMessage());
+        }
+    }
+
+    public static Trajectory generateTrajectory(List<String> names, List<Class> types) {
+        try (
+            InputStream in = ModelGenerator.class.getClassLoader()
+                .getResourceAsStream("data/traj1.txt");
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(Objects.requireNonNull(in))
+            )
+        ) {
+            String trajStr = br.readLine();
+            String correctStr = trajStr.replaceFirst("\\[", "[\"").replaceFirst(",", "\",");
+            List<String> result = JSON.parseArray(correctStr, String.class);
+            String oid = result.get(0);
+            List<String> pointsStrList = JSON.parseArray(result.get(1), String.class);
+            List<GPSPoint> pointsList = pointsStrList.stream()
+                .map(o -> JSON.parseArray(o, String.class))
+                .map(
+                    o -> new GPSPoint(
+                        Timestamp.valueOf(o.get(0)),
+                        Double.parseDouble(o.get(1)),
+                        Double.parseDouble(o.get(2))
+                    )
+                )
+                .collect(Collectors.toList());
+            int n = names.size();
+            Map<String, Attribute> attributeMap = new HashMap<>();
+            for (int i = 0; i < n; ++i) {
+                String name = names.get(i);
+                Class type = types.get(i);
+                attributeMap.put(
+                    name,
+                    new Attribute(type, JSONObject.parseObject(result.get(i + 2), type))
+                );
+            }
+            return new Trajectory(oid + pointsList.get(0).getTime(), oid, pointsList, attributeMap);
         } catch (IOException e) {
             throw new RuntimeException("Generate trajectory error: " + e.getMessage());
         }

@@ -11,7 +11,11 @@
 
 package org.urbcomp.start.db.model.point;
 
+import org.urbcomp.start.db.model.Attribute;
+
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -23,9 +27,17 @@ public class GPSPoint extends SpatialPoint {
      */
     private final Timestamp time;
 
+    private Map<String, Attribute> attributes = new HashMap<>();
+
     public GPSPoint(Timestamp time, double lng, double lat) {
         super(lng, lat);
         this.time = time;
+    }
+
+    public GPSPoint(Timestamp time, double lng, double lat, Map<String, Attribute> attributes) {
+        super(lng, lat);
+        this.time = time;
+        this.attributes = attributes;
     }
 
     /**
@@ -36,11 +48,21 @@ public class GPSPoint extends SpatialPoint {
         return time;
     }
 
+    public Map<String, Attribute> getAttributes() {
+        return attributes;
+    }
+
+    private boolean additionalAttributesEquals(Object o) {
+        return attributes.equals(((GPSPoint) o).attributes);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return Objects.equals(this.time, ((GPSPoint) o).time) && super.equalsExact(((GPSPoint) o));
+        return Objects.equals(this.time, ((GPSPoint) o).time)
+            && additionalAttributesEquals(o)
+            && super.equalsExact(((GPSPoint) o));
     }
 
     @Override

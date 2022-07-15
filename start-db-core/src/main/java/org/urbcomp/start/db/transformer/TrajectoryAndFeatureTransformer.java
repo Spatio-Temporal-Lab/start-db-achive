@@ -35,7 +35,8 @@ public class TrajectoryAndFeatureTransformer {
      * @return Trajectory data obtained from the name field
      * @throws JsonProcessingException
      */
-    public Trajectory toTrajectory(SimpleFeature sf, String name) throws JsonProcessingException {
+    public Trajectory toTrajectory(SimpleFeature sf, String name) throws JsonProcessingException,
+        ClassNotFoundException {
         return Trajectory.fromGeoJSON((String) sf.getAttribute(name + ".geoJson"));
     }
 
