@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.{SqlBasicCall, SqlCharStringLiteral, SqlIdentifier, SqlInsert}
+import org.apache.calcite.sql.{SqlBasicCall, SqlCharStringLiteral, SqlIdentifier, SqlInsert, SqlNode, SqlUnresolvedFunction}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
@@ -47,13 +47,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
           val queryItem = i
             .asInstanceOf[SqlBasicCall]
             .operands
-            .map {
-              case s: SqlCharStringLiteral =>
-                s"""
-                  |"${s.getStringValue}"
-                  |""".stripMargin
-              case j => j.toString
-            }
+            .map(handleLiteral)
             .mkString(" , ")
           val originalQuerySql =
             s"""
@@ -122,6 +116,16 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     val connection = CalciteHelper.createConnection()
     val statement = connection.createStatement()
     statement.executeQuery(querySql)
+  }
+
+  def handleLiteral(node: SqlNode): String = node match {
+    case s: SqlCharStringLiteral =>
+      s"""
+         |'${s.getStringValue}'
+         |""".stripMargin
+    case s: SqlBasicCall if s.getOperator.isInstanceOf[SqlUnresolvedFunction] =>
+      s"${s.getOperator.getName}(${s.operands.map(handleLiteral).mkString(", ")})"
+    case j => j.toString
   }
 
 }
