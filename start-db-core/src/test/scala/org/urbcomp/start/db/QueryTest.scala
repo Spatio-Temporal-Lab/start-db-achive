@@ -71,13 +71,12 @@ class QueryTest extends AbstractCalciteFunctionTest {
   test("geometry equal test") {
     val stmt = connect.createStatement()
     stmt.execute("create table t_point (point13 point)")
-    stmt.execute(
-      """
+    stmt.execute("""
         |insert into t_point values (st_PointFromWkt("Point(10 20)"))
         |""".stripMargin)
 
-    val rs = stmt.executeQuery(
-      """
+    val rs =
+      stmt.executeQuery("""
         |select * from t_point where point13 = st_PointFromWkt("Point(10 20)")
         |""".stripMargin)
     var count = 0

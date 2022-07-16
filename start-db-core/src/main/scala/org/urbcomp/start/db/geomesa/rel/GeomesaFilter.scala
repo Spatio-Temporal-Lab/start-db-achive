@@ -118,10 +118,10 @@ class GeomesaFilter(
     case r: RexCall =>
       r.getKind match {
         case OTHER_FUNCTION => functionConverter(r)
-        case PLUS   => ff.add(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case MINUS  => ff.subtract(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case TIMES  => ff.multiply(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case DIVIDE => ff.divide(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case PLUS           => ff.add(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case MINUS          => ff.subtract(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case TIMES          => ff.multiply(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case DIVIDE         => ff.divide(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
         // TODO
         // Cast is a basic operation of SQL, which contains many situations. However, OpenGIS itself does not support
         // cast, so some complex operations have not been implemented. Now only relatively simple logic (simple fields
@@ -134,12 +134,11 @@ class GeomesaFilter(
   }
 
   def functionConverter(r: RexCall): Expression = r.op.toString.toUpperCase match {
-      case "ST_POINTFROMWKT" | "ST_GEOMFROMWKT" | "ST_LINESTRINGFROMWKT" |
-           "ST_MLINESTRINGFROMWKT" =>
-        ff.literal(StringUtil.dropQuota(r.operands.get(0).toString))
-      case _ =>
-        ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
-    }
+    case "ST_POINTFROMWKT" | "ST_GEOMFROMWKT" | "ST_LINESTRINGFROMWKT" | "ST_MLINESTRINGFROMWKT" =>
+      ff.literal(StringUtil.dropQuota(r.operands.get(0).toString))
+    case _ =>
+      ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
+  }
 
   override def copy(traitSet: RelTraitSet, input: RelNode, condition: RexNode): CalciteFilter =
     new GeomesaFilter(cluster, traitSet, input, rowType, condition)
