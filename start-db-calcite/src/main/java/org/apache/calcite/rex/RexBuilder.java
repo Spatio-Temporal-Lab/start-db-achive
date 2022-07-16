@@ -63,6 +63,7 @@ import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
+import org.locationtech.jts.geom.Geometry;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -1769,7 +1770,7 @@ public class RexBuilder {
         if (value instanceof ByteString) {
             return typeFactory.createSqlType(SqlTypeName.BINARY, ((ByteString) value).length());
         }
-        if (value instanceof Geometries.Geom) {
+        if (value instanceof Geometry) {
             return typeFactory.createSqlType(SqlTypeName.GEOMETRY);
         }
         throw new AssertionError("unknown type " + value.getClass());

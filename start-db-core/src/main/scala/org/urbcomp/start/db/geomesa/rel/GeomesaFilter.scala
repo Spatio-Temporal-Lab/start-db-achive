@@ -24,6 +24,7 @@ import org.opengis.filter.{Filter => GeoToolsFilter}
 import org.urbcomp.start.db.geomesa.ff
 import org.urbcomp.start.db.core.geomesa.model.GeomesaQuery
 import org.urbcomp.start.db.geomesa.GeomesaConstant
+import org.urbcomp.start.db.util.StringUtil
 
 import java.util
 import scala.collection.JavaConverters._
@@ -116,8 +117,7 @@ class GeomesaFilter(
   private def convertExpr(rex: RexNode): Expression = rex match {
     case r: RexCall =>
       r.getKind match {
-        case OTHER_FUNCTION =>
-          ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
+        case OTHER_FUNCTION => functionConverter(r)
         case PLUS   => ff.add(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
         case MINUS  => ff.subtract(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
         case TIMES  => ff.multiply(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
@@ -132,6 +132,14 @@ class GeomesaFilter(
     case r: RexInputRef => ff.property(fieldList.get(r.getIndex))
     case r: RexLiteral  => ff.literal(RexLiteral.value(r))
   }
+
+  def functionConverter(r: RexCall): Expression = r.op.toString.toUpperCase match {
+      case "ST_POINTFROMWKT" | "ST_GEOMFROMWKT" | "ST_LINESTRINGFROMWKT" |
+           "ST_MLINESTRINGFROMWKT" =>
+        ff.literal(StringUtil.dropQuota(r.operands.get(0).toString))
+      case _ =>
+        ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
+    }
 
   override def copy(traitSet: RelTraitSet, input: RelNode, condition: RexNode): CalciteFilter =
     new GeomesaFilter(cluster, traitSet, input, rowType, condition)
