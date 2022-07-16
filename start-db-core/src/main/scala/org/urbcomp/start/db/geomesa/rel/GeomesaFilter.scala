@@ -132,7 +132,7 @@ class GeomesaFilter(
     case r: RexInputRef => ff.property(fieldList.get(r.getIndex))
     case r: RexLiteral if r.getTypeName == SqlTypeName.CHAR =>
       ff.literal(r.getValue.asInstanceOf[NlsString].getValue)
-    case r: RexLiteral  =>
+    case r: RexLiteral =>
       ff.literal(RexLiteral.value(r))
   }
 

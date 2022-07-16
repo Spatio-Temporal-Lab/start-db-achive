@@ -17,19 +17,19 @@ import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory
 
 /**
- * TrajectoryQuery Test
- *
- * @author Wang Bohong
- * @date 2022-06-16
- */
+  * TrajectoryQuery Test
+  *
+  * @author Wang Bohong
+  * @date 2022-06-16
+  */
 class TrajectoryQueryTest extends AbstractCalciteFunctionTest {
 
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
   val tGeo: String = trajectory.toGeoJSON
 
   /**
-   * test for trajectory
-   */
+    * test for trajectory
+    */
   test("trajectory test") {
     val stmt = connect.createStatement()
     stmt.execute("create table if not exists t_trajectory_test (idx Integer, traj Trajectory)")
@@ -47,8 +47,8 @@ class TrajectoryQueryTest extends AbstractCalciteFunctionTest {
   }
 
   /**
-   * test for trajectory field query
-   */
+    * test for trajectory field query
+    */
   test("trajectory field query test") {
     val stmt = connect.createStatement()
     stmt.execute("create table if not exists t_trajectory_test02 (tid String, traj Trajectory)")
