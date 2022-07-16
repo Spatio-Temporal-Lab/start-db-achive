@@ -11,7 +11,14 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.{SqlBasicCall, SqlCharStringLiteral, SqlIdentifier, SqlInsert, SqlNode, SqlUnresolvedFunction}
+import org.apache.calcite.sql.{
+  SqlBasicCall,
+  SqlCharStringLiteral,
+  SqlIdentifier,
+  SqlInsert,
+  SqlNode,
+  SqlUnresolvedFunction
+}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
