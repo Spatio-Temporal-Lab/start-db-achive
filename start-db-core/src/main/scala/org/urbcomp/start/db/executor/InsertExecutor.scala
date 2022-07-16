@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
+import org.apache.calcite.sql.{SqlBasicCall, SqlCharStringLiteral, SqlIdentifier, SqlInsert}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
@@ -47,7 +47,13 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
           val queryItem = i
             .asInstanceOf[SqlBasicCall]
             .operands
-            .map(j => j.toString)
+            .map {
+              case s: SqlCharStringLiteral =>
+                s"""
+                  |"${s.getStringValue}"
+                  |""".stripMargin
+              case j => j.toString
+            }
             .mkString(" , ")
           val originalQuerySql =
             s"""

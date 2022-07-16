@@ -68,17 +68,33 @@ class QueryTest extends AbstractCalciteFunctionTest {
     }
   }
 
+  test("chinese string insert test") {
+    val stmt = connect.createStatement()
+    stmt.execute("""
+                       |create table t_string10 (string6 string)
+                       |""".stripMargin)
+
+    stmt.execute("""
+                       |insert into t_string10 values ('字符串')
+                       |""".stripMargin)
+
+    val rs = stmt.executeQuery("select * from t_string10")
+    while (rs.next()) {
+      println(rs.getObject(1))
+    }
+  }
+
   test("geometry equal test") {
     val stmt = connect.createStatement()
     stmt.execute("create table t_point (point13 point)")
     stmt.execute("""
-        |insert into t_point values (st_PointFromWkt("Point(10 20)"))
-        |""".stripMargin)
+                   |insert into t_point values (st_PointFromWkt("Point(10 20)"))
+                   |""".stripMargin)
 
     val rs =
       stmt.executeQuery("""
-        |select * from t_point where point13 = st_PointFromWkt("Point(10 20)")
-        |""".stripMargin)
+                          |select * from t_point where point13 = st_PointFromWkt("Point(10 20)")
+                          |""".stripMargin)
     var count = 0
     while (rs.next()) {
       count += 1
