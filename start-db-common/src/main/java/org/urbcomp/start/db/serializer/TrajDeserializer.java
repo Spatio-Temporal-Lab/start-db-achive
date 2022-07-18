@@ -26,12 +26,6 @@ public class TrajDeserializer extends StdDeserializer<Trajectory> {
 
     @Override
     public Trajectory deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        Trajectory trajectory = null;
-        try {
-            trajectory = Trajectory.fromGeoJSON(p.getValueAsString());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return trajectory;
+        return Trajectory.fromGeoJSON(p.getValueAsString());
     }
 }

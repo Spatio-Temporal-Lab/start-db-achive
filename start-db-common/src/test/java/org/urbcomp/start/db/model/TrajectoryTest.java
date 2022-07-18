@@ -11,55 +11,24 @@
 
 package org.urbcomp.start.db.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.urbcomp.start.db.model.sample.ModelGenerator;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
-
-class TestObj {
-    Integer a;
-
-    TestObj(Integer a) {
-        this.a = a;
-    }
-
-    public Integer getA() {
-        return a;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TestObj testObj = (TestObj) o;
-        return Objects.equals(a, testObj.a);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(a);
-    }
-}
 
 public class TrajectoryTest {
     private final Trajectory trajectory = ModelGenerator.generateTrajectory();
 
     @Test
-    public void toGeoJsonWithExtraAttribute() throws ClassNotFoundException,
-        JsonProcessingException {
-        String[] namesArray = new String[] { "int", "str", "double", "list", "testObj" };
-        Class[] typeArray = new Class[] {
-            Integer.class,
-            String.class,
-            Double.class,
-            List.class,
-            TestObj.class };
+    public void toGeoJsonWithExtraAttribute() throws IOException {
+        String[] namesArray = new String[] { "int", "str", "double", "point" };
+        String[] typeArray = new String[] { "Integer", "String", "Double", "Point" };
         Trajectory trajectory1 = ModelGenerator.generateTrajectory(
             Arrays.asList(namesArray),
             Arrays.asList(typeArray)
@@ -69,14 +38,13 @@ public class TrajectoryTest {
         assertEquals(1, traj.getAttribute("int"));
         assertEquals("2", traj.getAttribute("str"));
         assertEquals(3.0, traj.getAttribute("double"));
-        assertEquals(Arrays.asList(1, 2, 3), traj.getAttribute("list"));
-        TestObj testObj = (TestObj) traj.getAttribute("testObj");
-        assertEquals(1, (int) testObj.getA());
+        GeometryFactory factory = new GeometryFactory();
+        assertEquals(factory.createPoint(new Coordinate(1, 2)), trajectory1.getAttribute("point"));
         assertEquals(trajectory1, traj);
     }
 
     @Test
-    public void toGeoJSON() throws JsonProcessingException, ClassNotFoundException {
+    public void toGeoJSON() throws IOException, ClassNotFoundException {
         String geoJson = trajectory.toGeoJSON();
         Trajectory traj = Trajectory.fromGeoJSON(geoJson);
         assertEquals(trajectory, traj);

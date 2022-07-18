@@ -32,6 +32,7 @@ import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.trajectory.MapMatchedTrajectory;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 
 public class TrajectoryFunction {
@@ -42,8 +43,7 @@ public class TrajectoryFunction {
     }
 
     @StartDBFunction("st_traj_fromGeoJSON")
-    public Trajectory st_traj_fromGeoJSON(String str) throws JsonProcessingException,
-        ClassNotFoundException {
+    public Trajectory st_traj_fromGeoJSON(String str) throws IOException {
         return Trajectory.fromGeoJSON(str);
     }
 
