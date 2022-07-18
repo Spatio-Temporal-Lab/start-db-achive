@@ -19,27 +19,9 @@ import org.urbcomp.start.db.model.trajectory.Trajectory
 
 import scala.collection.JavaConverters.seqAsJavaList
 
-class TestObj(var a: Integer) {
-  def getA: Integer = a
-
-  override def equals(o: Any): Boolean = {
-    if (o == null || (getClass ne o.getClass)) return false
-    val testObj = o.asInstanceOf[TestObj]
-    Objects.equals(a, testObj.a)
-  }
-
-  override def hashCode: Int = Objects.hash(a)
-}
-
 class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
-  val nameArray: Array[String] = Array[String]("int", "str", "double", "list", "testObj")
-  val typeArray: Array[Class[_]] = Array[Class[_]](
-    classOf[java.lang.Integer],
-    classOf[java.lang.String],
-    classOf[java.lang.Double],
-    classOf[java.util.List[_]],
-    classOf[TestObj]
-  )
+  val nameArray: Array[String] = Array[String]("int", "str", "double", "point")
+  val typeArray: Array[String] = Array[String]("Integer", "String", "Double", "Point")
   val trajectory: Trajectory =
     ModelGenerator.generateTrajectory(seqAsJavaList(nameArray), seqAsJavaList(typeArray))
   val tGeo: String = trajectory.toGeoJSON

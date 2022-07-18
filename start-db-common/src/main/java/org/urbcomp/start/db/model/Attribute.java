@@ -11,26 +11,20 @@
 
 package org.urbcomp.start.db.model;
 
-import com.alibaba.fastjson.JSONObject;
+import org.locationtech.jts.geom.*;
 
 import java.util.Objects;
 
 public class Attribute {
-    private final Class type;
+    private final String type;
     private final Object value;
 
-    public Attribute(Class type, Object value) {
+    public Attribute(String type, Object value) {
         this.type = type;
         this.value = value;
     }
 
-    public Attribute(String s) throws ClassNotFoundException {
-        String[] split = s.split(" ");
-        type = Class.forName(split[0]);
-        value = JSONObject.parseObject(split[1], type);
-    }
-
-    public Class getType() {
+    public String getType() {
         return type;
     }
 
@@ -40,7 +34,7 @@ public class Attribute {
 
     @Override
     public String toString() {
-        return type.toString().split(" ")[1] + " " + value.toString();
+        return type + " " + value.toString();
     }
 
     @Override

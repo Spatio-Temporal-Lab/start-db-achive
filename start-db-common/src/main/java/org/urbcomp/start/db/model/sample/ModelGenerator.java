@@ -13,6 +13,8 @@ package org.urbcomp.start.db.model.sample;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.geotools.geojson.geom.GeometryJSON;
+import org.locationtech.jts.geom.Geometry;
 import org.urbcomp.start.db.model.Attribute;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
@@ -21,6 +23,7 @@ import org.urbcomp.start.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegmentDirection;
 import org.urbcomp.start.db.model.roadnetwork.RoadSegmentLevel;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
+import org.urbcomp.start.db.util.DataTypeUtils;
 import org.urbcomp.start.db.util.WKTUtils;
 
 import java.io.*;
@@ -69,7 +72,7 @@ public class ModelGenerator {
         }
     }
 
-    public static Trajectory generateTrajectory(List<String> names, List<Class> types) {
+    public static Trajectory generateTrajectory(List<String> names, List<String> types) {
         try (
             InputStream in = ModelGenerator.class.getClassLoader()
                 .getResourceAsStream("data/traj1.txt");
@@ -93,13 +96,20 @@ public class ModelGenerator {
                 )
                 .collect(Collectors.toList());
             int n = names.size();
+            GeometryJSON geometryJSON = new GeometryJSON();
             Map<String, Attribute> attributeMap = new HashMap<>();
             for (int i = 0; i < n; ++i) {
                 String name = names.get(i);
-                Class type = types.get(i);
+                String typeName = types.get(i);
+                Class type = DataTypeUtils.getClass(typeName);
                 attributeMap.put(
                     name,
-                    new Attribute(type, JSONObject.parseObject(result.get(i + 2), type))
+                    new Attribute(
+                        typeName,
+                        Geometry.class.isAssignableFrom(type)
+                            ? type.cast(geometryJSON.read(result.get(i + 2)))
+                            : JSONObject.parseObject(result.get(i + 2), type)
+                    )
                 );
             }
             return new Trajectory(oid + pointsList.get(0).getTime(), oid, pointsList, attributeMap);

@@ -18,17 +18,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
+import org.geotools.geojson.geom.GeometryJSON;
 import org.locationtech.jts.geom.*;
 import org.urbcomp.start.db.model.Attribute;
 import org.urbcomp.start.db.model.point.GPSPoint;
 import org.urbcomp.start.db.model.point.SpatialPoint;
 import org.urbcomp.start.db.serializer.TrajDeserializer;
 import org.urbcomp.start.db.serializer.TrajSerializer;
-import org.urbcomp.start.db.util.FeatureCollectionWithProperties;
-import org.urbcomp.start.db.util.GeoFunctions;
-import org.urbcomp.start.db.util.GeometryFactoryUtils;
-import org.urbcomp.start.db.util.MapUtil;
+import org.urbcomp.start.db.util.*;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -164,8 +163,8 @@ public class Trajectory {
                 break;
             }
             default: {
-                Class type = attributes.get(name).getType();
-                attributes.put(name, new Attribute(type, type.cast(obj)));
+                String typeName = attributes.get(name).getType();
+                attributes.put(name, new Attribute(typeName, obj));
             }
         }
     }
@@ -282,6 +281,7 @@ public class Trajectory {
      * @return GeoJSON String
      */
     public String toGeoJSON() throws JsonProcessingException {
+        GeometryJSON geometryJSON = new GeometryJSON();
         FeatureCollectionWithProperties fcp = new FeatureCollectionWithProperties();
         fcp.setProperty("oid", oid);
         fcp.setProperty("tid", tid);
@@ -289,7 +289,16 @@ public class Trajectory {
             Feature f = new Feature();
             f.setProperty("time", gp.getTime().toString());
             for (Map.Entry<String, Attribute> entry : attributes.entrySet()) {
-                f.setProperty(entry.getKey(), JSONObject.toJSONString(entry.getValue()));
+                String typeName = entry.getValue().getType();
+                Class type = DataTypeUtils.getClass(typeName);
+                if (Geometry.class.isAssignableFrom(type)) {
+                    f.setProperty(
+                        entry.getKey(),
+                        geometryJSON.toString((Geometry) (entry.getValue().getValue()))
+                    );
+                } else {
+                    f.setProperty(entry.getKey(), JSONObject.toJSONString(entry.getValue()));
+                }
             }
             f.setGeometry(new org.geojson.Point(gp.getX(), gp.getY()));
             fcp.add(f);
@@ -304,25 +313,28 @@ public class Trajectory {
      * @return a Trajectory instance
      * @throws JsonProcessingException if parse error
      */
-    public static Trajectory fromGeoJSON(String geoJsonStr) throws JsonProcessingException,
-        ClassNotFoundException {
+    public static Trajectory fromGeoJSON(String geoJsonStr) throws IOException {
         FeatureCollectionWithProperties fcp = new ObjectMapper().readValue(
             geoJsonStr,
             FeatureCollectionWithProperties.class
         );
         Trajectory traj = new Trajectory(fcp.getProperty("tid"), fcp.getProperty("oid"));
+        GeometryJSON geometryJSON = new GeometryJSON();
         for (Feature f : fcp.getFeatures()) {
             LngLatAlt lngLatAlt = ((org.geojson.Point) f.getGeometry()).getCoordinates();
             Map<String, Attribute> attributeMap = new HashMap<>();
             for (Map.Entry<String, Object> entry : f.getProperties().entrySet()) {
                 if (!entry.getKey().equals("time")) {
                     JSONObject jsonObj = JSONObject.parseObject((String) entry.getValue());
-                    Class type = Class.forName(jsonObj.getString("type"));
+                    String typeName = jsonObj.getString("type");
+                    Class type = DataTypeUtils.getClass(typeName);
                     attributeMap.put(
                         entry.getKey(),
                         new Attribute(
-                            type,
-                            JSONObject.parseObject(jsonObj.getString("value"), type)
+                            typeName,
+                            Geometry.class.isAssignableFrom(type)
+                                ? type.cast(geometryJSON.read(jsonObj.toString()))
+                                : JSONObject.parseObject(jsonObj.getString("value"), type)
                         )
                     );
                 }

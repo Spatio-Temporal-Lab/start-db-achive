@@ -23,6 +23,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.urbcomp.start.db.model.trajectory.Trajectory;
 import org.urbcomp.start.db.util.GeoFunctions;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 
 public class TrajectoryAndFeatureTransformer {
@@ -35,8 +36,7 @@ public class TrajectoryAndFeatureTransformer {
      * @return Trajectory data obtained from the name field
      * @throws JsonProcessingException
      */
-    public Trajectory toTrajectory(SimpleFeature sf, String name) throws JsonProcessingException,
-        ClassNotFoundException {
+    public Trajectory toTrajectory(SimpleFeature sf, String name) throws IOException {
         return Trajectory.fromGeoJSON((String) sf.getAttribute(name + ".geoJson"));
     }
 
