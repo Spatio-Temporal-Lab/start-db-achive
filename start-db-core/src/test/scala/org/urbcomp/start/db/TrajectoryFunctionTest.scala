@@ -31,7 +31,6 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     val resultSet =
       statement.executeQuery("select st_traj_fromGeoJSON(\'" + tGeo + "\')")
     resultSet.next()
-    println(trajectory)
     assertEquals(trajectory, resultSet.getObject(1))
   }
 
