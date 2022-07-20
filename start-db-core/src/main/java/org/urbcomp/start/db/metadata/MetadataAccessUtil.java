@@ -11,6 +11,7 @@
 
 package org.urbcomp.start.db.metadata;
 
+import org.apache.ibatis.session.SqlSession;
 import org.urbcomp.start.db.metadata.accessor.DatabaseAccessor;
 import org.urbcomp.start.db.metadata.accessor.FieldAccessor;
 import org.urbcomp.start.db.metadata.accessor.TableAccessor;
@@ -24,6 +25,7 @@ import org.urbcomp.start.db.util.UserDbTable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * utils of metadata access
@@ -32,6 +34,8 @@ import java.util.List;
  * @date 2022-06-22
  */
 public class MetadataAccessUtil {
+
+    private final static ThreadLocal<SqlSession> SQL_SESSION = new ThreadLocal<>();
 
     /**
      * check if table exists
@@ -75,7 +79,7 @@ public class MetadataAccessUtil {
     // TODO cache
     public static User getUser(String userName) {
         return AccessorFactory.getUserAccessor()
-            .selectByFidAndName(-1 /* not used */, userName, true);
+                .selectByFidAndName(-1 /* not used */, userName, true);
     }
 
     public static long insertUser(User user) {
@@ -123,7 +127,7 @@ public class MetadataAccessUtil {
         AccessorFactory.getFieldAccessor().deleteByFid(tableId, true);
         // 清理缓存
         MetadataCacheTableMap.dropTableCache(
-            MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
         );
         return res;
     }
@@ -149,5 +153,33 @@ public class MetadataAccessUtil {
     public static List<UserDbTable> getUserDbTables() {
         final TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
         return tableAccessor.getAllUserDbTable();
+    }
+
+    public static <T> T noRollback(Function<Void, T> f) {
+        SQL_SESSION.set(SqlSessionUtil.createSqlSession(true));
+        return withRollback(f, null);
+    }
+
+    public static <T> T withRollback(Function<Void, T> f, Class<? extends Throwable> exception) {
+        SqlSession sqlSession = SQL_SESSION.get();
+        if (sqlSession == null) {
+            sqlSession = SqlSessionUtil.createSqlSession(false);
+            SQL_SESSION.set(sqlSession);
+        }
+        try {
+            final T res = f.apply(null);
+            // commit
+            sqlSession.commit();
+            return res;
+        } catch (Throwable t) {
+            if (exception != null && exception.isAssignableFrom(t.getClass())) {
+                // rollback
+                sqlSession.rollback();
+            }
+            throw t;
+        } finally {
+            sqlSession.close();
+            SQL_SESSION.remove();
+        }
     }
 }

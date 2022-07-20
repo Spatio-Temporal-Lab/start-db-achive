@@ -45,6 +45,8 @@ public class SqlSessionUtil {
      */
     private final SqlSession sqlSessionManualCommit;
 
+    private final SqlSessionFactory sqlSessionFactory;
+
     /**
      * Nonparametric construction method We use the method of reading the configuration file to
      * construct the sqlsession singleton. TODO: Maybe we should support reading configuration in
@@ -52,9 +54,9 @@ public class SqlSessionUtil {
      */
     private SqlSessionUtil() {
         InputStream inputStream = ResourceUtil.readResource(MYBATIS_CONFIG_PATH);
-        SqlSessionFactory build = new SqlSessionFactoryBuilder().build(inputStream);
-        sqlSession = build.openSession(true);
-        sqlSessionManualCommit = build.openSession();
+        this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        sqlSession = sqlSessionFactory.openSession(true);
+        sqlSessionManualCommit = sqlSessionFactory.openSession();
     }
 
     /**
@@ -76,7 +78,6 @@ public class SqlSessionUtil {
 
     /**
      * @param autoCommit autoCommit get instance of SqlSession
-     *
      * @return SqlSession
      */
     public static SqlSession getSession(boolean autoCommit) {
@@ -85,6 +86,10 @@ public class SqlSessionUtil {
         } else {
             return SqlSessionUtilHolder.INSTANCE.sqlSessionManualCommit;
         }
+    }
+
+    public static SqlSession createSqlSession(boolean autoCommit) {
+        return getInstance().sqlSessionFactory.openSession(autoCommit);
     }
 
     public static void clearCache() {
