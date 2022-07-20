@@ -116,7 +116,7 @@ public enum BuiltInProperty implements SqlLineProperty {
         false,
         new Application().getName2TableOutputFormatStyle().keySet()
     ),
-    PROMPT("prompt", Type.STRING, "sqlline> "),
+    PROMPT("prompt", Type.STRING, "start-db> "),
     PROMPT_SCRIPT("promptScript", Type.STRING, ""),
     PROPERTIES_FILE(
         "propertiesFile",
