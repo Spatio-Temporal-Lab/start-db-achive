@@ -11,8 +11,6 @@
 
 package org.urbcomp.start.db
 
-import java.util.Objects
-
 import org.junit.Assert.assertEquals
 import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory

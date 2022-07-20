@@ -32,17 +32,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModelGenerator {
-
-    public static List<String> getTestNameList() {
-        String[] namesArray = new String[] { "int", "str", "double" };
-        return Arrays.asList(namesArray);
-    }
-
-    public static List<Class> getTestTypeList() {
-        Class[] typeArray = new Class[] { Integer.class, String.class, Double.class };
-        return Arrays.asList(typeArray);
-    }
-
     public static Trajectory generateTrajectory() {
         try (
             InputStream in = ModelGenerator.class.getClassLoader()
