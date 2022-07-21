@@ -16,12 +16,9 @@ import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
-import org.urbcomp.start.db.metadata.{AccessorFactory, MetadataCacheTableMap, SqlSessionUtil}
-import org.urbcomp.start.db.transformer.{
-  RoadSegmentAndGeomesaTransformer,
-  TrajectoryAndFeatureTransformer
-}
+import org.urbcomp.start.db.transformer.{RoadSegmentAndGeomesaTransformer, TrajectoryAndFeatureTransformer}
 import org.urbcomp.start.db.util.{DataTypeUtils, MetadataUtil}
 
 case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
@@ -29,12 +26,9 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     val targetTable = n.name
     val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
 
-    val userAccessor = AccessorFactory.getUserAccessor
-    val user = userAccessor.selectByFidAndName(-1 /* not used */, userName, true)
-    val databaseAccessor = AccessorFactory.getDatabaseAccessor
-    val db = databaseAccessor.selectByFidAndName(user.getId, dbName, true)
-    val tableAccessor = AccessorFactory.getTableAccessor
-    val existedTable = tableAccessor.selectByFidAndName(db.getId, tableName, false)
+    val user = MetadataAccessUtil.getUser(userName)
+    val db = MetadataAccessUtil.getDatabase(user.getId, dbName)
+    val existedTable = MetadataAccessUtil.getTable(db.getId, tableName)
     if (existedTable != null) {
       if (n.ifNotExists) {
         return MetadataResult.buildDDLResult(0)
@@ -43,50 +37,44 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
       }
     }
 
-    val affectedRows =
-      tableAccessor.insert(new Table(0L /* unused */, db.getId, tableName, "hbase"), false)
-    val createdTable = tableAccessor.selectByFidAndName(db.getId, tableName, false)
-    val tableId = createdTable.getId
-    val fieldAccessor = AccessorFactory.getFieldAccessor
-    val sfb = new SimpleFeatureTypeBuilder
-    val schemaName = MetadataUtil.makeSchemaName(tableId)
-    sfb.setName(schemaName)
+    var affectedRows = 0L
+    MetadataAccessUtil.withRollback(_ => {
+      affectedRows = MetadataAccessUtil.insertTable(new Table(0L /* unused */ , db.getId, tableName, "hbase"))
+      val createdTable = MetadataAccessUtil.getTable(db.getId, tableName)
+      val tableId = createdTable.getId
+      val sfb = new SimpleFeatureTypeBuilder
+      val schemaName = MetadataUtil.makeSchemaName(tableId)
+      sfb.setName(schemaName)
 
-    n.columnList.forEach(column => {
-      val node = column.asInstanceOf[SqlColumnDeclaration]
-      val name = node.name.names.get(0)
-      val dataType = node.dataType.getTypeName.names.get(0)
-      val classType = DataTypeUtils.getClass(dataType)
-      if (DataTypeUtils.isGeometry(dataType)) {
-        sfb.add(name, classType, 4326)
-      } else {
-        sfb.add(name, classType)
+      n.columnList.forEach(column => {
+        val node = column.asInstanceOf[SqlColumnDeclaration]
+        val name = node.name.names.get(0)
+        val dataType = node.dataType.getTypeName.names.get(0)
+        val classType = DataTypeUtils.getClass(dataType)
+        if (DataTypeUtils.isGeometry(dataType)) {
+          sfb.add(name, classType, 4326)
+        } else {
+          sfb.add(name, classType)
+        }
+        MetadataAccessUtil.insertField(new Field(0, tableId, name, dataType, 0))
+      })
+
+      val params = ExecutorUtil.getDataStoreParams(userName, dbName)
+      val dataStore = DataStoreFinder.getDataStore(params)
+      val schema = dataStore.getSchema(schemaName)
+      if (schema != null) {
+        throw new IllegalStateException("schema already exist " + schemaName)
       }
-      fieldAccessor.insert(new Field(0, tableId, name, dataType, 0), false)
-    })
 
-    val params = ExecutorUtil.getDataStoreParams(userName, dbName)
-    val dataStore = DataStoreFinder.getDataStore(params)
-    val schema = dataStore.getSchema(schemaName)
-    if (schema != null) {
-      throw new IllegalStateException("schema already exist " + schemaName)
-    }
+      var sft = sfb.buildFeatureType()
+      sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft)
+      sft = new RoadSegmentAndGeomesaTransformer().getGeoMesaSFT(sft)
 
-    var sft = sfb.buildFeatureType()
-    sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft)
-    sft = new RoadSegmentAndGeomesaTransformer().getGeoMesaSFT(sft)
+      // allow mixed geometry types for support start-db type `Geometry`
+      sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
+      dataStore.createSchema(sft)
+    }, classOf[Exception])
 
-    // allow mixed geometry types for support start-db type `Geometry`
-    sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
-    dataStore.createSchema(sft)
-
-    tableAccessor.commit()
-    fieldAccessor.commit()
-    // HOTFIX: session should end here
-    SqlSessionUtil.clearCache()
-    MetadataCacheTableMap.addTableCache(
-      MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
-    )
     MetadataResult.buildDDLResult(affectedRows.toInt)
   }
 }
