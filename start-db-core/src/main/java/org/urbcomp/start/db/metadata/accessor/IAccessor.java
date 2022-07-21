@@ -99,8 +99,7 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
      * Close session
      */
     @Override
-    default void close() {
-    }
+    default void close() {}
 
     /**
      * get mapper instance

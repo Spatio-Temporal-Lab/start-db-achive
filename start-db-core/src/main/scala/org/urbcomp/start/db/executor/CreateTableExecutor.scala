@@ -18,7 +18,10 @@ import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
-import org.urbcomp.start.db.transformer.{RoadSegmentAndGeomesaTransformer, TrajectoryAndFeatureTransformer}
+import org.urbcomp.start.db.transformer.{
+  RoadSegmentAndGeomesaTransformer,
+  TrajectoryAndFeatureTransformer
+}
 import org.urbcomp.start.db.util.{DataTypeUtils, MetadataUtil}
 
 case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
@@ -38,42 +41,46 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     }
 
     var affectedRows = 0L
-    MetadataAccessUtil.withRollback(_ => {
-      affectedRows = MetadataAccessUtil.insertTable(new Table(0L /* unused */ , db.getId, tableName, "hbase"))
-      val createdTable = MetadataAccessUtil.getTable(db.getId, tableName)
-      val tableId = createdTable.getId
-      val sfb = new SimpleFeatureTypeBuilder
-      val schemaName = MetadataUtil.makeSchemaName(tableId)
-      sfb.setName(schemaName)
+    MetadataAccessUtil.withRollback(
+      _ => {
+        affectedRows =
+          MetadataAccessUtil.insertTable(new Table(0L /* unused */, db.getId, tableName, "hbase"))
+        val createdTable = MetadataAccessUtil.getTable(db.getId, tableName)
+        val tableId = createdTable.getId
+        val sfb = new SimpleFeatureTypeBuilder
+        val schemaName = MetadataUtil.makeSchemaName(tableId)
+        sfb.setName(schemaName)
 
-      n.columnList.forEach(column => {
-        val node = column.asInstanceOf[SqlColumnDeclaration]
-        val name = node.name.names.get(0)
-        val dataType = node.dataType.getTypeName.names.get(0)
-        val classType = DataTypeUtils.getClass(dataType)
-        if (DataTypeUtils.isGeometry(dataType)) {
-          sfb.add(name, classType, 4326)
-        } else {
-          sfb.add(name, classType)
+        n.columnList.forEach(column => {
+          val node = column.asInstanceOf[SqlColumnDeclaration]
+          val name = node.name.names.get(0)
+          val dataType = node.dataType.getTypeName.names.get(0)
+          val classType = DataTypeUtils.getClass(dataType)
+          if (DataTypeUtils.isGeometry(dataType)) {
+            sfb.add(name, classType, 4326)
+          } else {
+            sfb.add(name, classType)
+          }
+          MetadataAccessUtil.insertField(new Field(0, tableId, name, dataType, 0))
+        })
+
+        val params = ExecutorUtil.getDataStoreParams(userName, dbName)
+        val dataStore = DataStoreFinder.getDataStore(params)
+        val schema = dataStore.getSchema(schemaName)
+        if (schema != null) {
+          throw new IllegalStateException("schema already exist " + schemaName)
         }
-        MetadataAccessUtil.insertField(new Field(0, tableId, name, dataType, 0))
-      })
 
-      val params = ExecutorUtil.getDataStoreParams(userName, dbName)
-      val dataStore = DataStoreFinder.getDataStore(params)
-      val schema = dataStore.getSchema(schemaName)
-      if (schema != null) {
-        throw new IllegalStateException("schema already exist " + schemaName)
-      }
+        var sft = sfb.buildFeatureType()
+        sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft)
+        sft = new RoadSegmentAndGeomesaTransformer().getGeoMesaSFT(sft)
 
-      var sft = sfb.buildFeatureType()
-      sft = new TrajectoryAndFeatureTransformer().getGeoMesaSFT(sft)
-      sft = new RoadSegmentAndGeomesaTransformer().getGeoMesaSFT(sft)
-
-      // allow mixed geometry types for support start-db type `Geometry`
-      sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
-      dataStore.createSchema(sft)
-    }, classOf[Exception])
+        // allow mixed geometry types for support start-db type `Geometry`
+        sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
+        dataStore.createSchema(sft)
+      },
+      classOf[Exception]
+    )
 
     MetadataResult.buildDDLResult(affectedRows.toInt)
   }
