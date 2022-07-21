@@ -99,8 +99,7 @@ public class MetadataAccessUtil {
 
     // TODO cache
     public static User getUser(String userName) {
-        return AccessorFactory.getUserAccessor()
-                .selectByFidAndName(-1 /* not used */, userName);
+        return AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName);
     }
 
     public static long insertUser(User user) {
@@ -148,7 +147,7 @@ public class MetadataAccessUtil {
         AccessorFactory.getFieldAccessor().deleteByFid(tableId);
         // 清理缓存
         MetadataCacheTableMap.dropTableCache(
-                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+            MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
         );
         return res;
     }
