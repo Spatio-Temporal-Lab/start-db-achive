@@ -11,10 +11,10 @@
 
 package org.urbcomp.start.db.metadata.accessor;
 
-import org.urbcomp.start.db.metadata.SqlSessionUtil;
+import org.urbcomp.start.db.metadata.MetadataAccessUtil;
 import org.urbcomp.start.db.metadata.entity.Table;
-import org.urbcomp.start.db.util.UserDbTable;
 import org.urbcomp.start.db.metadata.mapper.TableMapper;
+import org.urbcomp.start.db.util.UserDbTable;
 
 import java.util.List;
 
@@ -28,16 +28,16 @@ import java.util.List;
 public class TableAccessor implements IAccessor<Table, TableMapper> {
 
     @Override
-    public TableMapper getMapper(boolean commit) {
-        return SqlSessionUtil.getSession(commit).getMapper(TableMapper.class);
+    public TableMapper getMapper() {
+        return MetadataAccessUtil.getSqlSession().getMapper(TableMapper.class);
     }
 
     @Override
     public boolean isNotValid(Table entity) {
-        return getMapper(true).selectByFidAndName(entity.getDbId(), entity.getName()) != null;
+        return getMapper().selectByFidAndName(entity.getDbId(), entity.getName()) != null;
     }
 
     public List<UserDbTable> getAllUserDbTable() {
-        return getMapper(true).getAllUserDbTable();
+        return getMapper().getAllUserDbTable();
     }
 }

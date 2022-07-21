@@ -37,6 +37,15 @@ public class MetadataAccessUtil {
 
     private final static ThreadLocal<SqlSession> SQL_SESSION = new ThreadLocal<>();
 
+    public static SqlSession getSqlSession() {
+        SqlSession sqlSession = SQL_SESSION.get();
+        if (sqlSession == null) {
+            sqlSession = SqlSessionUtil.createSqlSession(true);
+            SQL_SESSION.set(sqlSession);
+        }
+        return sqlSession;
+    }
+
     /**
      * check if table exists
      *
@@ -61,7 +70,7 @@ public class MetadataAccessUtil {
         Table table = getTable(userName, dbName, tableName);
         if (table == null) return null;
         FieldAccessor fieldAccessor = AccessorFactory.getFieldAccessor();
-        List<Field> fields = fieldAccessor.selectAllByFid(table.getId(), true);
+        List<Field> fields = fieldAccessor.selectAllByFid(table.getId());
         fields.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
         return fields;
     }
@@ -72,34 +81,46 @@ public class MetadataAccessUtil {
     public static Table getTable(String userName, String dbName, String tableName) {
         final Database database = getDatabase(userName, dbName);
         if (database == null) return null;
+        return getTable(database.getId(), tableName);
+    }
+
+    public static Table getTable(long dbId, String tableName) {
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        return tableAccessor.selectByFidAndName(database.getId(), tableName, true);
+        return tableAccessor.selectByFidAndName(dbId, tableName);
+    }
+
+    public static long insertTable(Table table) {
+        return AccessorFactory.getTableAccessor().insert(table);
+    }
+
+    public static long insertField(Field field) {
+        return AccessorFactory.getFieldAccessor().insert(field);
     }
 
     // TODO cache
     public static User getUser(String userName) {
         return AccessorFactory.getUserAccessor()
-                .selectByFidAndName(-1 /* not used */, userName, true);
+                .selectByFidAndName(-1 /* not used */, userName);
     }
 
     public static long insertUser(User user) {
-        return AccessorFactory.getUserAccessor().insert(user, true);
+        return AccessorFactory.getUserAccessor().insert(user);
     }
 
     public static Database getDatabase(long userId, String dbName) {
-        return AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName, true);
+        return AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName);
     }
 
     public static Database getDatabase(String userName, String dbName) {
         UserAccessor userAccessor = AccessorFactory.getUserAccessor();
         DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-        User user = userAccessor.selectByFidAndName(0L, userName, true);
+        User user = userAccessor.selectByFidAndName(0L, userName);
         if (user == null) return null;
-        return databaseAccessor.selectByFidAndName(user.getId(), dbName, true);
+        return databaseAccessor.selectByFidAndName(user.getId(), dbName);
     }
 
     public static long insertDatabase(Database database) {
-        return AccessorFactory.getDatabaseAccessor().insert(database, true);
+        return AccessorFactory.getDatabaseAccessor().insert(database);
     }
 
     public static long dropDatabase(String userName, String dbName) {
@@ -109,9 +130,9 @@ public class MetadataAccessUtil {
         }
         final long dbId = db.getId();
         DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-        final long res = databaseAccessor.deleteById(dbId, true);
+        final long res = databaseAccessor.deleteById(dbId);
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        tableAccessor.deleteByFid(dbId, true);
+        tableAccessor.deleteByFid(dbId);
         // 移除缓存 TODO
         return res;
     }
@@ -123,8 +144,8 @@ public class MetadataAccessUtil {
         }
         final long tableId = table.getId();
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        final long res = tableAccessor.deleteById(tableId, true);
-        AccessorFactory.getFieldAccessor().deleteByFid(tableId, true);
+        final long res = tableAccessor.deleteById(tableId);
+        AccessorFactory.getFieldAccessor().deleteByFid(tableId);
         // 清理缓存
         MetadataCacheTableMap.dropTableCache(
                 MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
@@ -138,7 +159,7 @@ public class MetadataAccessUtil {
             return new ArrayList<>(1);
         }
         DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-        return databaseAccessor.selectAllByFid(user.getId(), true);
+        return databaseAccessor.selectAllByFid(user.getId());
     }
 
     public static List<Table> getTables(String userName, String dbName) {
@@ -147,7 +168,7 @@ public class MetadataAccessUtil {
             return new ArrayList<>(1);
         }
         TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        return tableAccessor.selectAllByFid(database.getId(), true);
+        return tableAccessor.selectAllByFid(database.getId());
     }
 
     public static List<UserDbTable> getUserDbTables() {
@@ -155,17 +176,9 @@ public class MetadataAccessUtil {
         return tableAccessor.getAllUserDbTable();
     }
 
-    public static <T> T noRollback(Function<Void, T> f) {
-        SQL_SESSION.set(SqlSessionUtil.createSqlSession(true));
-        return withRollback(f, null);
-    }
-
     public static <T> T withRollback(Function<Void, T> f, Class<? extends Throwable> exception) {
-        SqlSession sqlSession = SQL_SESSION.get();
-        if (sqlSession == null) {
-            sqlSession = SqlSessionUtil.createSqlSession(false);
-            SQL_SESSION.set(sqlSession);
-        }
+        SqlSession sqlSession = SqlSessionUtil.createSqlSession(false);
+        SQL_SESSION.set(sqlSession);
         try {
             final T res = f.apply(null);
             // commit

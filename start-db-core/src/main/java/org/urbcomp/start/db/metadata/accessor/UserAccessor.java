@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.metadata.accessor;
 
-import org.urbcomp.start.db.metadata.SqlSessionUtil;
+import org.urbcomp.start.db.metadata.MetadataAccessUtil;
 import org.urbcomp.start.db.metadata.entity.User;
 import org.urbcomp.start.db.metadata.mapper.UserMapper;
 
@@ -25,13 +25,13 @@ import org.urbcomp.start.db.metadata.mapper.UserMapper;
 public class UserAccessor implements IAccessor<User, UserMapper> {
 
     @Override
-    public UserMapper getMapper(boolean commit) {
-        return SqlSessionUtil.getSession(commit).getMapper(UserMapper.class);
+    public UserMapper getMapper() {
+        return MetadataAccessUtil.getSqlSession().getMapper(UserMapper.class);
     }
 
     @Override
     public boolean isNotValid(User entity) {
         // here fid is not used.
-        return getMapper(true).selectByFidAndName(0, entity.getName()) != null;
+        return getMapper().selectByFidAndName(0, entity.getName()) != null;
     }
 }

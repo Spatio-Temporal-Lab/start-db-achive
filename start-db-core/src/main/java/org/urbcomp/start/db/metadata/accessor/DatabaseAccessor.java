@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.metadata.accessor;
 
-import org.urbcomp.start.db.metadata.SqlSessionUtil;
+import org.urbcomp.start.db.metadata.MetadataAccessUtil;
 import org.urbcomp.start.db.metadata.entity.Database;
 import org.urbcomp.start.db.metadata.mapper.DatabaseMapper;
 
@@ -25,12 +25,12 @@ import org.urbcomp.start.db.metadata.mapper.DatabaseMapper;
 public class DatabaseAccessor implements IAccessor<Database, DatabaseMapper> {
 
     @Override
-    public DatabaseMapper getMapper(boolean commit) {
-        return SqlSessionUtil.getSession(commit).getMapper(DatabaseMapper.class);
+    public DatabaseMapper getMapper() {
+        return MetadataAccessUtil.getSqlSession().getMapper(DatabaseMapper.class);
     }
 
     public boolean isNotValid(Database db) {
         // make sure dbName does not exist.
-        return getMapper(true).selectByFidAndName(db.getUserId(), db.getName()) != null;
+        return getMapper().selectByFidAndName(db.getUserId(), db.getName()) != null;
     }
 }

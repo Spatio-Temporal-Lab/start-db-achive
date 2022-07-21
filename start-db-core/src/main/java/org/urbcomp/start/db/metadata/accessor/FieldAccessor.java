@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.metadata.accessor;
 
-import org.urbcomp.start.db.metadata.SqlSessionUtil;
+import org.urbcomp.start.db.metadata.MetadataAccessUtil;
 import org.urbcomp.start.db.metadata.entity.Field;
 import org.urbcomp.start.db.metadata.mapper.FieldMapper;
 
@@ -20,17 +20,17 @@ import org.urbcomp.start.db.metadata.mapper.FieldMapper;
  * of fields are realized.
  *
  * @author Wang Bohong
- * @Date 2022-05-20
+ * @date 2022-05-20
  */
 public class FieldAccessor implements IAccessor<Field, FieldMapper> {
 
     @Override
-    public FieldMapper getMapper(boolean commit) {
-        return SqlSessionUtil.getSession(commit).getMapper(FieldMapper.class);
+    public FieldMapper getMapper() {
+        return MetadataAccessUtil.getSqlSession().getMapper(FieldMapper.class);
     }
 
     @Override
     public boolean isNotValid(Field entity) {
-        return getMapper(true).selectByFidAndName(entity.getTableId(), entity.getName()) != null;
+        return getMapper().selectByFidAndName(entity.getTableId(), entity.getName()) != null;
     }
 }

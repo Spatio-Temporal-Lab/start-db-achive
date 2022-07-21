@@ -11,7 +11,6 @@
 
 package org.urbcomp.start.db.metadata.accessor;
 
-import org.urbcomp.start.db.metadata.SqlSessionUtil;
 import org.urbcomp.start.db.metadata.entity.AbstractEntity;
 import org.urbcomp.start.db.metadata.mapper.IMapper;
 
@@ -25,95 +24,75 @@ import java.util.List;
  */
 public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> extends AutoCloseable {
 
-    default List<T> selectAllByFid(long fid, boolean commit) {
-        return getMapper(commit).selectAllByFid(fid);
+    default List<T> selectAllByFid(long fid) {
+        return getMapper().selectAllByFid(fid);
     }
 
     /**
      * select one entity from table by id
      *
-     * @param id     id
-     * @param commit auto_commit
+     * @param id id
      * @return entity instance
      */
-    default T selectById(long id, boolean commit) {
-        return getMapper(commit).selectById(id);
+    default T selectById(long id) {
+        return getMapper().selectById(id);
     }
 
     /**
      * select one entity from table by name
      *
-     * @param fid    foreign id
-     * @param name   name
-     * @param commit auto_commit
+     * @param fid  foreign id
+     * @param name name
      * @return entity instance
      */
-    default T selectByFidAndName(long fid, String name, boolean commit) {
-        return getMapper(commit).selectByFidAndName(fid, name);
+    default T selectByFidAndName(long fid, String name) {
+        return getMapper().selectByFidAndName(fid, name);
     }
 
     /**
      * insert one entity instance into table
      *
      * @param entity entity instance
-     * @param commit auto_commit
      * @return number of affected rows
      */
-    default long insert(T entity, boolean commit) {
+    default long insert(T entity) {
         if (isNotValid(entity)) {
             return -1;
         }
-        return getMapper(commit).insert(entity);
+        return getMapper().insert(entity);
     }
 
     /**
      * update one entity instance in table
      *
      * @param entity entity instance
-     * @param commit auto_commit
      * @return number of affected rows
      */
-    default long update(T entity, boolean commit) {
+    default long update(T entity) {
         if (isNotValid(entity)) {
             return -1;
         }
-        return getMapper(commit).update(entity);
+        return getMapper().update(entity);
     }
 
     /**
      * delete one entity instance in table
      *
-     * @param id     id
-     * @param commit auto_commit
+     * @param id id
      * @return number of affected rows
      */
-    default long deleteById(long id, boolean commit) {
-        return getMapper(commit).deleteById(id);
+    default long deleteById(long id) {
+        return getMapper().deleteById(id);
     }
 
     /**
      * delete one entity instance in table
      *
-     * @param fid     fid
-     * @param commit auto_commit
+     * @param fid fid
      * @return number of affected rows
      */
-    default long deleteByFid(long fid, boolean commit) {
-        return getMapper(commit).deleteByFid(fid);
-    }
-
-    /**
-     * commit operation
-     */
-    default void commit() {
-        SqlSessionUtil.getSession(false).commit();
-    }
-
-    /**
-     * rollback pre operation
-     */
-    default void rollback() {
-        SqlSessionUtil.getSession(false).rollback();
+    default long deleteByFid(long fid) {
+        return getMapper().deleteByFid(fid);
     }
 
     /**
@@ -121,17 +100,14 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
      */
     @Override
     default void close() {
-        // HOTFIX: session should never close under current design
-        // SqlSessionUtil.getSession(false).close();
     }
 
     /**
      * get mapper instance
      *
-     * @param commit auto-commit
      * @return IMapper<T>
      */
-    M getMapper(boolean commit);
+    M getMapper();
 
     /**
      * Check the entity is valid
