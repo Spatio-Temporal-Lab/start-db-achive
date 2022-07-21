@@ -16,7 +16,7 @@ import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
 import org.urbcomp.start.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.start.db.metadata.MetadataAccessUtil
+import org.urbcomp.start.db.metadata.{MetadataAccessUtil, MetadataCacheTableMap}
 import org.urbcomp.start.db.metadata.entity.{Field, Table}
 import org.urbcomp.start.db.transformer.{
   RoadSegmentAndGeomesaTransformer,
@@ -78,6 +78,8 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
         // allow mixed geometry types for support start-db type `Geometry`
         sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
         dataStore.createSchema(sft)
+
+        MetadataCacheTableMap.reloadCache()
       },
       classOf[Exception]
     )
