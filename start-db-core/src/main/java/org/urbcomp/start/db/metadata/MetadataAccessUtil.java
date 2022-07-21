@@ -67,112 +67,149 @@ public class MetadataAccessUtil {
      * @return field list
      */
     public static List<Field> getFields(String userName, String dbName, String tableName) {
-        Table table = getTable(userName, dbName, tableName);
-        if (table == null) return null;
-        FieldAccessor fieldAccessor = AccessorFactory.getFieldAccessor();
-        List<Field> fields = fieldAccessor.selectAllByFid(table.getId());
-        fields.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
-        return fields;
+        return noRollback(v -> {
+            Table table = getTable(userName, dbName, tableName);
+            if (table == null) return null;
+            FieldAccessor fieldAccessor = AccessorFactory.getFieldAccessor();
+            List<Field> fields = fieldAccessor.selectAllByFid(table.getId());
+            fields.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
+            return fields;
+        });
     }
 
     /**
      * get table from metadata
      */
     public static Table getTable(String userName, String dbName, String tableName) {
-        final Database database = getDatabase(userName, dbName);
-        if (database == null) return null;
-        return getTable(database.getId(), tableName);
+        return noRollback(v -> {
+            final Database database = getDatabase(userName, dbName);
+            if (database == null) return null;
+            return getTable(database.getId(), tableName);
+        });
     }
 
     public static Table getTable(long dbId, String tableName) {
-        TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        return tableAccessor.selectByFidAndName(dbId, tableName);
+        return noRollback(v -> {
+            TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
+            return tableAccessor.selectByFidAndName(dbId, tableName);
+        });
     }
 
     public static long insertTable(Table table) {
-        return AccessorFactory.getTableAccessor().insert(table);
+        return noRollback(v -> AccessorFactory.getTableAccessor().insert(table));
     }
 
     public static long insertField(Field field) {
-        return AccessorFactory.getFieldAccessor().insert(field);
+        return noRollback(v -> AccessorFactory.getFieldAccessor().insert(field));
     }
 
     // TODO cache
     public static User getUser(String userName) {
-        return AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName);
+        return noRollback(
+            v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
+        );
     }
 
     public static long insertUser(User user) {
-        return AccessorFactory.getUserAccessor().insert(user);
+        return noRollback(v -> AccessorFactory.getUserAccessor().insert(user));
     }
 
     public static Database getDatabase(long userId, String dbName) {
-        return AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName);
+        return noRollback(
+            v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
+        );
     }
 
     public static Database getDatabase(String userName, String dbName) {
-        UserAccessor userAccessor = AccessorFactory.getUserAccessor();
-        DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-        User user = userAccessor.selectByFidAndName(0L, userName);
-        if (user == null) return null;
-        return databaseAccessor.selectByFidAndName(user.getId(), dbName);
+        return noRollback(v -> {
+            UserAccessor userAccessor = AccessorFactory.getUserAccessor();
+            DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
+            User user = userAccessor.selectByFidAndName(0L, userName);
+            if (user == null) return null;
+            return databaseAccessor.selectByFidAndName(user.getId(), dbName);
+        });
     }
 
     public static long insertDatabase(Database database) {
-        return AccessorFactory.getDatabaseAccessor().insert(database);
+        return noRollback(v -> AccessorFactory.getDatabaseAccessor().insert(database));
     }
 
     public static long dropDatabase(String userName, String dbName) {
-        final Database db = getDatabase(userName, dbName);
-        if (db == null) {
-            return 0;
-        }
-        final long dbId = db.getId();
-        DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-        final long res = databaseAccessor.deleteById(dbId);
-        TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        tableAccessor.deleteByFid(dbId);
-        // 移除缓存 TODO
-        return res;
+        return noRollback(v -> {
+            final Database db = getDatabase(userName, dbName);
+            if (db == null) {
+                return 0L;
+            }
+            final long dbId = db.getId();
+            DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
+            final long res = databaseAccessor.deleteById(dbId);
+            TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
+            tableAccessor.deleteByFid(dbId);
+            // 移除缓存 TODO
+            return res;
+        });
     }
 
     public static long dropTable(String userName, String dbName, String tableName) {
-        final Table table = getTable(userName, dbName, tableName);
-        if (table == null) {
-            return 0;
-        }
-        final long tableId = table.getId();
-        TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        final long res = tableAccessor.deleteById(tableId);
-        AccessorFactory.getFieldAccessor().deleteByFid(tableId);
-        // 清理缓存
-        MetadataCacheTableMap.dropTableCache(
-            MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
-        );
-        return res;
+        return noRollback(v -> {
+            final Table table = getTable(userName, dbName, tableName);
+            if (table == null) {
+                return 0L;
+            }
+            final long tableId = table.getId();
+            TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
+            final long res = tableAccessor.deleteById(tableId);
+            AccessorFactory.getFieldAccessor().deleteByFid(tableId);
+            // 清理缓存
+            MetadataCacheTableMap.dropTableCache(
+                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+            );
+            return res;
+        });
     }
 
     public static List<Database> getDatabases(String userName) {
-        final User user = getUser(userName);
-        if (user == null) {
-            return new ArrayList<>(1);
-        }
-        DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-        return databaseAccessor.selectAllByFid(user.getId());
+        return noRollback(v -> {
+            final User user = getUser(userName);
+            if (user == null) {
+                return new ArrayList<>(1);
+            }
+            DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
+            return databaseAccessor.selectAllByFid(user.getId());
+        });
     }
 
     public static List<Table> getTables(String userName, String dbName) {
-        final Database database = getDatabase(userName, dbName);
-        if (database == null) {
-            return new ArrayList<>(1);
-        }
-        TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        return tableAccessor.selectAllByFid(database.getId());
+        return noRollback(v -> {
+            final Database database = getDatabase(userName, dbName);
+            if (database == null) {
+                return new ArrayList<>(1);
+            }
+            TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
+            return tableAccessor.selectAllByFid(database.getId());
+        });
     }
 
     public static List<UserDbTable> getUserDbTables() {
-        final TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-        return tableAccessor.getAllUserDbTable();
+        return noRollback(v -> {
+            final TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
+            return tableAccessor.getAllUserDbTable();
+        });
+    }
+
+    public static <T> T noRollback(Function<Void, T> f) {
+        SqlSession sqlSession = SQL_SESSION.get();
+        if (sqlSession == null) {
+            // means no need to rollback, just close
+            try (SqlSession session = SqlSessionUtil.createSqlSession(true)) {
+                SQL_SESSION.set(session);
+                return f.apply(null);
+            } finally {
+                SQL_SESSION.remove();
+            }
+        } else {
+            return f.apply(null);
+        }
     }
 
     public static <T> T withRollback(Function<Void, T> f, Class<? extends Throwable> exception) {

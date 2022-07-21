@@ -39,14 +39,17 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
         .expireAfterAccess(10, TimeUnit.MINUTES)
         .build();
 
-    private static final Set<Entry<String, Table>> tableNameCache = refreshTableNames();
+    private static final Set<Entry<String, Table>> tableNameCache = new HashSet<>(32);
 
-    private static Set<Entry<String, Table>> refreshTableNames() {
-        Set<Entry<String, Table>> tableNames = new HashSet<>(32);
+    static {
+        refreshTableNames();
+    }
+
+    private static void refreshTableNames() {
         // query from metadata
         final List<UserDbTable> allUserDbTable = MetadataAccessUtil.getUserDbTables();
         for (UserDbTable udt : allUserDbTable) {
-            tableNames.add(
+            tableNameCache.add(
                 new NullTableEntry(
                     MetadataUtil.combineUserDbTableKey(
                         udt.getUsername(),
@@ -56,8 +59,7 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
                 )
             );
         }
-        logger.info("Load Table Name Cache Size: {}", tableNames.size());
-        return tableNames;
+        logger.info("Load Table Name Cache Size: {}", tableNameCache.size());
     }
 
     private static class NullTableEntry implements Entry<String, Table> {
@@ -104,6 +106,10 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
 
     public static void addTableCache(String key) {
         tableNameCache.add(new NullTableEntry(key));
+    }
+
+    public static void reloadCache() {
+        refreshTableNames();
     }
 
     /**

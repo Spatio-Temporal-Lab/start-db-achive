@@ -22,7 +22,7 @@ import org.urbcomp.start.db.metadata.accessor.UserAccessor;
  * @author zaiyuan
  * @date 2022-05-01 15:17:07
  */
-public class AccessorFactory {
+class AccessorFactory {
 
     /**
      * get UserAccessor
