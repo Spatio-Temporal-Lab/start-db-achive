@@ -35,16 +35,6 @@ import java.io.InputStream;
 public class SqlSessionUtil {
     private static final String MYBATIS_CONFIG_PATH = "mybatis-config.xml";
 
-    /**
-     * SqlSession instance
-     */
-    private final SqlSession sqlSession;
-
-    /**
-     * SqlSession instance for manual commit
-     */
-    private final SqlSession sqlSessionManualCommit;
-
     private final SqlSessionFactory sqlSessionFactory;
 
     /**
@@ -55,8 +45,6 @@ public class SqlSessionUtil {
     private SqlSessionUtil() {
         InputStream inputStream = ResourceUtil.readResource(MYBATIS_CONFIG_PATH);
         this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-        sqlSession = sqlSessionFactory.openSession(true);
-        sqlSessionManualCommit = sqlSessionFactory.openSession();
     }
 
     /**
@@ -76,24 +64,7 @@ public class SqlSessionUtil {
         return SqlSessionUtilHolder.INSTANCE;
     }
 
-    /**
-     * @param autoCommit autoCommit get instance of SqlSession
-     * @return SqlSession
-     */
-    public static SqlSession getSession(boolean autoCommit) {
-        if (autoCommit) {
-            return SqlSessionUtilHolder.INSTANCE.sqlSession;
-        } else {
-            return SqlSessionUtilHolder.INSTANCE.sqlSessionManualCommit;
-        }
-    }
-
     public static SqlSession createSqlSession(boolean autoCommit) {
         return getInstance().sqlSessionFactory.openSession(autoCommit);
-    }
-
-    public static void clearCache() {
-        SqlSessionUtilHolder.INSTANCE.sqlSession.clearCache();
-        SqlSessionUtilHolder.INSTANCE.sqlSessionManualCommit.clearCache();
     }
 }
