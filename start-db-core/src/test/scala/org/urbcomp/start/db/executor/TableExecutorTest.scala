@@ -11,11 +11,22 @@
 
 package org.urbcomp.start.db.executor
 
-import org.junit.Assert.{assertEquals, assertNotNull}
+import org.apache.calcite.sql.ddl.SqlDdlNodes
+import org.apache.calcite.sql.parser.SqlParserPos
+import org.apache.calcite.sql.{
+  SqlDataTypeSpec,
+  SqlIdentifier,
+  SqlNodeList,
+  SqlUserDefinedTypeNameSpec
+}
+import org.junit.Assert.{assertEquals, assertNotNull, assertTrue}
 import org.urbcomp.start.db.AbstractCalciteFunctionTest
 import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory
+import org.urbcomp.start.db.parser.SqlHelper
 
+import java.time.Instant
+import java.util
 import scala.collection.mutable.ArrayBuffer
 
 class TableExecutorTest extends AbstractCalciteFunctionTest {
@@ -129,6 +140,25 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
       fields = fields :+ s"${rss.getString(1)}:${rss.getString(2)}:${rss.getString(3)}"
     }
     assertEquals(3, fields.length)
+  }
+
+  test("test show create table") {
+    val tableName = "test_show_create_table_" + Instant.now().toEpochMilli
+    val createTableSQL = s"""CREATE TABLE $tableName (
+                            |    tr Trajectory,
+                            |    rs RoadSegment,
+                            |    gm Geometry
+                            |);""".stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+    val rss = stmt.executeQuery(s"show create table $tableName")
+    if (!rss.next()) {
+      throw new AssertionError("unexpected show create table no result");
+    }
+    val sql = rss.getString(2)
+    assertTrue(sql.contains("tr"))
+    assertTrue(sql.contains("rs"))
+    assertTrue(sql.contains("gm"))
   }
 
   test("test truncate table") {
