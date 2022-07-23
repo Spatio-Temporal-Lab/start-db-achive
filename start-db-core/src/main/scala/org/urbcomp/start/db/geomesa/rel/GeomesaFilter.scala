@@ -30,34 +30,34 @@ import java.util
 import scala.collection.JavaConverters._
 
 /**
- * This class is specially used to convert the original filter conditions into the table
- * filter expressions required by geomesa
- *
- * @param cluster   RelOptCluster
- * @param traits    RelTraitSet
- * @param child     RelNode
- * @param condition RexNode
- * @author zaiyuan
- * @date 2022/05/21
- */
+  * This class is specially used to convert the original filter conditions into the table
+  * filter expressions required by geomesa
+  *
+  * @param cluster   RelOptCluster
+  * @param traits    RelTraitSet
+  * @param child     RelNode
+  * @param condition RexNode
+  * @author zaiyuan
+  * @date 2022/05/21
+  */
 class GeomesaFilter(
-                     cluster: RelOptCluster,
-                     traits: RelTraitSet,
-                     child: RelNode,
-                     rowType: RelDataType,
-                     condition: RexNode
-                   ) extends CalciteFilter(cluster, traits, child, condition)
-  with IGeomesaRelNode {
+    cluster: RelOptCluster,
+    traits: RelTraitSet,
+    child: RelNode,
+    rowType: RelDataType,
+    condition: RexNode
+) extends CalciteFilter(cluster, traits, child, condition)
+    with IGeomesaRelNode {
 
   val fieldList: util.List[String] =
     SqlValidatorUtil.uniquify(rowType.getFieldNames, SqlValidatorUtil.EXPR_SUGGESTER, true)
 
   /**
-   * Convert RexNode to GeoTools Filter
-   *
-   * @param node RexNode
-   * @return GeoTools Filter
-   */
+    * Convert RexNode to GeoTools Filter
+    *
+    * @param node RexNode
+    * @return GeoTools Filter
+    */
   def convertFilter(node: RexNode): GeoToolsFilter = {
     val call = node.asInstanceOf[RexCall]
     node.getKind match {
@@ -73,11 +73,11 @@ class GeomesaFilter(
         ff.greater(convertExpr(call.operands.get(0)), convertExpr(call.operands.get(1)))
       case GREATER_THAN_OR_EQUAL =>
         ff.greaterOrEqual(convertExpr(call.operands.get(0)), convertExpr(call.operands.get(1)))
-      case LIKE => ff.like(convertExpr(call.operands.get(0)), call.operands.get(1).toString)
+      case LIKE    => ff.like(convertExpr(call.operands.get(0)), call.operands.get(1).toString)
       case IS_NULL => ff.isNull(convertExpr(call.operands.get(0)))
       // Binary Logic Converter
       case AND => ff.and(convertFilter(call.operands.get(0)), convertFilter(call.operands.get(1)))
-      case OR => ff.or(convertFilter(call.operands.get(0)), convertFilter(call.operands.get(1)))
+      case OR  => ff.or(convertFilter(call.operands.get(0)), convertFilter(call.operands.get(1)))
       case NOT => ff.not(convertFilter(call.operands.get(0)))
       case CAST =>
         node.getType.getSqlTypeName match {
@@ -108,38 +108,33 @@ class GeomesaFilter(
   }
 
   /**
-   * Convert RexNode to GeoTools Expression
-   *
-   * @param rex RexNode
-   * @return Expression
-   */
+    * Convert RexNode to GeoTools Expression
+    *
+    * @param rex RexNode
+    * @return Expression
+    */
   private def convertExpr(rex: RexNode): Expression = rex match {
     case r: RexCall =>
       r.getKind match {
         case OTHER_FUNCTION => functionConverter(r)
-        case PLUS => ff.add(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case MINUS => ff.subtract(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case TIMES => ff.multiply(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case DIVIDE => ff.divide(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case PLUS           => ff.add(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case MINUS          => ff.subtract(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case TIMES          => ff.multiply(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case DIVIDE         => ff.divide(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
         // TODO
         // Cast is a basic operation of SQL, which contains many situations. However, OpenGIS itself does not support
         // cast, so some complex operations have not been implemented. Now only relatively simple logic (simple fields
         // and values) are implemented. The nested operations contained in it will be implemented later.
         case CAST => convertExpr(r.operands.get(0))
-        case _ => throw new Exception("Unsupported operator")
+        case _    => throw new Exception("Unsupported operator")
       }
     case r: RexInputRef => ff.property(fieldList.get(r.getIndex))
-    case r: RexLiteral => ff.literal(RexLiteral.value(r))
+    case r: RexLiteral  => ff.literal(RexLiteral.value(r))
   }
 
   def functionConverter(r: RexCall): Expression = r.op.toString.toUpperCase match {
-    case "ST_POINTFROMWKT" |
-         "ST_LINESTRINGFROMWKT" |
-         "ST_POLYGONFROMWKT" |
-         "ST_MPOINTFROMWKT" |
-         "ST_MLINESTRINGFROMWKT" |
-         "ST_MPOLYGONFROMWKT" |
-         "ST_GEOMFROMWKT" =>
+    case "ST_POINTFROMWKT" | "ST_LINESTRINGFROMWKT" | "ST_POLYGONFROMWKT" | "ST_MPOINTFROMWKT" |
+        "ST_MLINESTRINGFROMWKT" | "ST_MPOLYGONFROMWKT" | "ST_GEOMFROMWKT" =>
       ff.literal(StringUtil.dropQuota(r.operands.get(0).toString))
     case _ =>
       ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
