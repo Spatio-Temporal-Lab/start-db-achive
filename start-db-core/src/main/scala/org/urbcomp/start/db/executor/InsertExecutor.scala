@@ -27,6 +27,7 @@ import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataAccessUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.util.MetadataUtil
+import org.urbcomp.start.db.utils.SqlLiteralHandler
 
 import java.sql.ResultSet
 import java.util
@@ -54,7 +55,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
           val queryItem = i
             .asInstanceOf[SqlBasicCall]
             .operands
-            .map(handleLiteral)
+            .map(SqlLiteralHandler.handleLiteral)
             .mkString(" , ")
           val originalQuerySql =
             s"""
@@ -124,15 +125,4 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     val statement = connection.createStatement()
     statement.executeQuery(querySql)
   }
-
-  def handleLiteral(node: SqlNode): String = node match {
-    case s: SqlCharStringLiteral =>
-      s"""
-         |'${s.getStringValue}'
-         |""".stripMargin
-    case s: SqlBasicCall if s.getOperator.isInstanceOf[SqlUnresolvedFunction] =>
-      s"${s.getOperator.getName}(${s.operands.map(handleLiteral).mkString(", ")})"
-    case j => j.toString
-  }
-
 }
