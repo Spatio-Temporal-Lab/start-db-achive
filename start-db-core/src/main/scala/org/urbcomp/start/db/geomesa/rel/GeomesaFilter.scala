@@ -24,6 +24,7 @@ import org.opengis.filter.{Filter => GeoToolsFilter}
 import org.urbcomp.start.db.geomesa.ff
 import org.urbcomp.start.db.core.geomesa.model.GeomesaQuery
 import org.urbcomp.start.db.geomesa.GeomesaConstant
+import org.urbcomp.start.db.util.StringUtil
 
 import java.util
 import scala.collection.JavaConverters._
@@ -32,11 +33,10 @@ import scala.collection.JavaConverters._
   * This class is specially used to convert the original filter conditions into the table
   * filter expressions required by geomesa
   *
-  * @param cluster RelOptCluster
-  * @param traits  RelTraitSet
-  * @param child RelNode
+  * @param cluster   RelOptCluster
+  * @param traits    RelTraitSet
+  * @param child     RelNode
   * @param condition RexNode
-  *
   * @author zaiyuan
   * @date 2022/05/21
   */
@@ -55,8 +55,8 @@ class GeomesaFilter(
   /**
     * Convert RexNode to GeoTools Filter
     *
-    * @param node  RexNode
-    * @return  GeoTools Filter
+    * @param node RexNode
+    * @return GeoTools Filter
     */
   def convertFilter(node: RexNode): GeoToolsFilter = {
     val call = node.asInstanceOf[RexCall]
@@ -116,12 +116,11 @@ class GeomesaFilter(
   private def convertExpr(rex: RexNode): Expression = rex match {
     case r: RexCall =>
       r.getKind match {
-        case OTHER_FUNCTION =>
-          ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
-        case PLUS   => ff.add(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case MINUS  => ff.subtract(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case TIMES  => ff.multiply(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
-        case DIVIDE => ff.divide(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case OTHER_FUNCTION => functionConverter(r)
+        case PLUS           => ff.add(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case MINUS          => ff.subtract(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case TIMES          => ff.multiply(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
+        case DIVIDE         => ff.divide(convertExpr(r.operands.get(0)), convertExpr(r.operands.get(1)))
         // TODO
         // Cast is a basic operation of SQL, which contains many situations. However, OpenGIS itself does not support
         // cast, so some complex operations have not been implemented. Now only relatively simple logic (simple fields
@@ -131,6 +130,14 @@ class GeomesaFilter(
       }
     case r: RexInputRef => ff.property(fieldList.get(r.getIndex))
     case r: RexLiteral  => ff.literal(RexLiteral.value(r))
+  }
+
+  def functionConverter(r: RexCall): Expression = r.op.toString.toUpperCase match {
+    case "ST_POINTFROMWKT" | "ST_LINESTRINGFROMWKT" | "ST_POLYGONFROMWKT" | "ST_MPOINTFROMWKT" |
+        "ST_MLINESTRINGFROMWKT" | "ST_MPOLYGONFROMWKT" | "ST_GEOMFROMWKT" =>
+      ff.literal(StringUtil.dropQuota(r.operands.get(0).toString))
+    case _ =>
+      ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
   }
 
   override def copy(traitSet: RelTraitSet, input: RelNode, condition: RexNode): CalciteFilter =
