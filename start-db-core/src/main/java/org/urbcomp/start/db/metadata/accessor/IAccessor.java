@@ -102,8 +102,6 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
      */
     @Override
     default void close() {
-        final SqlSession sqlSession = MetadataAccessUtil.getSqlSession();
-
     }
 
     /**
