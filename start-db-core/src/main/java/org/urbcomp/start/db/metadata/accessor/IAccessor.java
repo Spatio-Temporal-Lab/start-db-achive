@@ -11,8 +11,6 @@
 
 package org.urbcomp.start.db.metadata.accessor;
 
-import org.apache.ibatis.session.SqlSession;
-import org.urbcomp.start.db.metadata.MetadataAccessUtil;
 import org.urbcomp.start.db.metadata.entity.AbstractEntity;
 import org.urbcomp.start.db.metadata.mapper.IMapper;
 
@@ -101,8 +99,7 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
      * Close session
      */
     @Override
-    default void close() {
-    }
+    default void close() {}
 
     /**
      * get mapper instance
