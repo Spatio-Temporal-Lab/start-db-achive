@@ -80,7 +80,7 @@ class QueryTest extends AbstractCalciteFunctionTest {
 
     val rs = stmt.executeQuery("select * from t_string10")
     while (rs.next()) {
-      println(rs.getObject(1))
+      assertEquals("字符串", rs.getObject(1))
     }
   }
 
