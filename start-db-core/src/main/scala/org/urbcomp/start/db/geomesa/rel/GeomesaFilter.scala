@@ -139,7 +139,7 @@ class GeomesaFilter(
   def functionConverter(r: RexCall): Expression = r.op.toString.toUpperCase match {
     case "ST_POINTFROMWKT" | "ST_LINESTRINGFROMWKT" | "ST_POLYGONFROMWKT" | "ST_MPOINTFROMWKT" |
         "ST_MLINESTRINGFROMWKT" | "ST_MPOLYGONFROMWKT" | "ST_GEOMFROMWKT" =>
-      ff.literal(StringUtil.dropQuota(r.operands.get(0).toString))
+      ff.literal(r.operands.get(0).asInstanceOf[RexLiteral].getValue.asInstanceOf[NlsString].getValue)
     case _ =>
       ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
   }
