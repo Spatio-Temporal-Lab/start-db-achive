@@ -20,6 +20,7 @@ stmt :
      | describeStmt
      | dropDatabaseStmt
      | dropTableStmt
+     | dropTableIndexStmt
      | truncateStmt
      | useStmt
      | showDatabasesStmt
@@ -149,6 +150,10 @@ createIndexStmt :     // CREATE INDEX statement
 
 createIndexCol :
        ident (T_ASC | T_DESC)?
+     ;
+
+dropTableIndexStmt :
+        T_DROP T_INDEX indexName=L_ID T_ON tableName
      ;
 
 dtype_default :

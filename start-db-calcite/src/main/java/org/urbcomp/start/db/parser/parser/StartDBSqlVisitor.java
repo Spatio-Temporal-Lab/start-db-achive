@@ -228,6 +228,13 @@ public interface StartDBSqlVisitor<T> extends ParseTreeVisitor<T> {
     T visitCreateIndexCol(StartDBSqlParser.CreateIndexColContext ctx);
 
     /**
+     * Visit a parse tree produced by {@link StartDBSqlParser#dropTableIndexStmt}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitDropTableIndexStmt(StartDBSqlParser.DropTableIndexStmtContext ctx);
+
+    /**
      * Visit a parse tree produced by {@link StartDBSqlParser#dtype_default}.
      * @param ctx the parse tree
      * @return the visitor result

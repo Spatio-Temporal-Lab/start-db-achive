@@ -349,6 +349,17 @@ public class StartDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
+    public T visitDropTableIndexStmt(StartDBSqlParser.DropTableIndexStmtContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
     public T visitDtype_default(StartDBSqlParser.Dtype_defaultContext ctx) {
         return visitChildren(ctx);
     }
