@@ -16,6 +16,7 @@ program : stmt T_SEMICOLON? EOF;
 stmt :
        createDatabaseStmt
      | createTableStmt
+     | createIndexStmt
      | describeStmt
      | dropDatabaseStmt
      | dropTableStmt
@@ -140,6 +141,14 @@ create_table_options_mysql_item :
      | T_COMMENT T_EQUAL? expr
      | T_DEFAULT? (T_CHARACTER T_SET | T_CHARSET) T_EQUAL? expr
      | T_ENGINE T_EQUAL? expr
+     ;
+
+createIndexStmt :     // CREATE INDEX statement
+       T_CREATE T_UNIQUE? T_INDEX ident T_ON tableName T_OPEN_P createIndexCol (T_COMMA createIndexCol)* T_CLOSE_P
+     ;
+
+createIndexCol :
+       ident (T_ASC | T_DESC)?
      ;
 
 dtype_default :
