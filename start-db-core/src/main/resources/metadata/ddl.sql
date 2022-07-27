@@ -70,9 +70,9 @@ CREATE TABLE `sys_index`
     `index_name`       varchar(50) NOT NULL COMMENT '索引名称',
     `fields_id_list`   varchar(50) NOT NULL COMMENT '索引字段',
     `index_properties` varchar(50) NOT NULL COMMENT '索引配置',
-    `delete_time`      timestamp   NOT NULL DEFAULT 0 COMMENT '被删除时间,0代表没删除',
     `created_date`     timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `modified_date`    timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `delete_time`   BIGINT       NOT NULL DEFAULT 0 COMMENT '删除时间',
     PRIMARY KEY (`id`),
     KEY `idx_table_id` (table_id),
     unique index uniq_index_table_id_name (table_id, index_name)
