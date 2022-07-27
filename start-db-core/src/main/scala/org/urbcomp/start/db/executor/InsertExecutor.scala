@@ -11,7 +11,14 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlInsert}
+import org.apache.calcite.sql.{
+  SqlBasicCall,
+  SqlCharStringLiteral,
+  SqlIdentifier,
+  SqlInsert,
+  SqlNode,
+  SqlUnresolvedFunction
+}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.locationtech.geomesa.utils.io.WithClose
 import org.urbcomp.start.db.executor.utils.ExecutorUtil
@@ -20,6 +27,7 @@ import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataAccessUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.util.MetadataUtil
+import org.urbcomp.start.db.utils.SqlLiteralHandler
 
 import java.sql.ResultSet
 import java.util
@@ -47,7 +55,7 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
           val queryItem = i
             .asInstanceOf[SqlBasicCall]
             .operands
-            .map(j => j.toString)
+            .map(SqlLiteralHandler.handleLiteral)
             .mkString(" , ")
           val originalQuerySql =
             s"""
@@ -117,5 +125,4 @@ case class InsertExecutor(n: SqlInsert) extends BaseExecutor {
     val statement = connection.createStatement()
     statement.executeQuery(querySql)
   }
-
 }

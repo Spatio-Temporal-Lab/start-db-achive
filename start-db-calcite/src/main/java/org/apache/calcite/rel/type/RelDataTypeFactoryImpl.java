@@ -628,7 +628,10 @@ public abstract class RelDataTypeFactoryImpl implements RelDataTypeFactory {
         }
 
         public Charset getCharset() {
-            return this.charset;
+            // return this.charset;
+            // start-db add start default charset
+            return Charset.forName("UTF-8");
+            // start-db end add
         }
 
         public SqlCollation getCollation() {

@@ -19,6 +19,7 @@ import org.apache.calcite.rex.{RexCall, RexInputRef, RexLiteral, RexNode}
 import org.apache.calcite.sql.SqlKind._
 import org.apache.calcite.sql.`type`.{BasicSqlType, SqlTypeName}
 import org.apache.calcite.sql.validate.SqlValidatorUtil
+import org.apache.calcite.util.NlsString
 import org.opengis.filter.expression.Expression
 import org.opengis.filter.{Filter => GeoToolsFilter}
 import org.urbcomp.start.db.geomesa.ff
@@ -129,13 +130,18 @@ class GeomesaFilter(
         case _    => throw new Exception("Unsupported operator")
       }
     case r: RexInputRef => ff.property(fieldList.get(r.getIndex))
-    case r: RexLiteral  => ff.literal(RexLiteral.value(r))
+    case r: RexLiteral if r.getTypeName == SqlTypeName.CHAR =>
+      ff.literal(r.getValue.asInstanceOf[NlsString].getValue)
+    case r: RexLiteral =>
+      ff.literal(RexLiteral.value(r))
   }
 
   def functionConverter(r: RexCall): Expression = r.op.toString.toUpperCase match {
     case "ST_POINTFROMWKT" | "ST_LINESTRINGFROMWKT" | "ST_POLYGONFROMWKT" | "ST_MPOINTFROMWKT" |
         "ST_MLINESTRINGFROMWKT" | "ST_MPOLYGONFROMWKT" | "ST_GEOMFROMWKT" =>
-      ff.literal(StringUtil.dropQuota(r.operands.get(0).toString))
+      ff.literal(
+        r.operands.get(0).asInstanceOf[RexLiteral].getValue.asInstanceOf[NlsString].getValue
+      )
     case _ =>
       ff.function(r.op.toString, r.operands.asScala.map(convertExpr).toArray)
   }

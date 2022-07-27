@@ -45,4 +45,25 @@ class TrajectoryQueryTest extends AbstractCalciteFunctionTest {
       assertEquals(classOf[Trajectory], rs.getObject(2).getClass)
     }
   }
+
+  /**
+    * test for trajectory field query
+    */
+  test("trajectory field query test") {
+    val stmt = connect.createStatement()
+    stmt.execute("create table if not exists t_trajectory_test03 (tid String, traj Trajectory)")
+    val rsCount = stmt.executeQuery("select count(1) from t_trajectory_test03")
+    rsCount.next()
+    if (rsCount.getObject(1) == 0) {
+      stmt.execute(
+        "insert into t_trajectory_test03 values ('djfalkdjlafkj', st_traj_fromGeoJSON(\'" + tGeo + "\'))"
+      )
+    }
+    val rs = stmt.executeQuery("select * from t_trajectory_test03 where tid = 'djfalkdjlafkj'")
+    var count = 0
+    while (rs.next()) {
+      count += 1
+    }
+    assertEquals(1, count)
+  }
 }

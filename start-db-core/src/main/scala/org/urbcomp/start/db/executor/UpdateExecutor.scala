@@ -11,7 +11,7 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.{SqlIdentifier, SqlUpdate}
+import org.apache.calcite.sql.{SqlBasicCall, SqlIdentifier, SqlUpdate}
 import org.geotools.data.{DataStoreFinder, Transaction}
 import org.geotools.filter.text.ecql.ECQL
 import org.locationtech.geomesa.utils.io.WithClose
@@ -21,6 +21,7 @@ import org.urbcomp.start.db.metadata.{CalciteHelper, MetadataAccessUtil}
 import org.urbcomp.start.db.model.roadnetwork.RoadSegment
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.util.MetadataUtil
+import org.urbcomp.start.db.utils.SqlLiteralHandler
 
 import java.sql.ResultSet
 import java.util
@@ -48,7 +49,9 @@ case class UpdateExecutor(n: SqlUpdate) extends BaseExecutor {
     val condition = n.getCondition.toString.replace("`", "")
     // construct sql
     val list = n.getSourceExpressionList.getList
-    val queryItem = list.map(j => j.toString).mkString(",")
+    val queryItem = list
+      .map(SqlLiteralHandler.handleLiteral)
+      .mkString(" , ")
     val originalQuerySql =
       s"""
          |SELECT $queryItem

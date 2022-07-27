@@ -797,12 +797,13 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
     case c: TimestampLiteralContext => // TODO 此处的precision仍需调研
       SqlLiteral.createTimestamp(new TimestampString(c.getText), 10, pos)
     case c: BoolLiteralContext => SqlLiteral.createBoolean(c.getText.toBoolean, pos)
-    case c: StringContext      => SqlLiteral.createCharString(StringUtil.dropQuota(c.getText), pos)
-    case c: IdentContext       => visitIdent(c) // 封装标识符
-    case c: DecNumberContext   => SqlLiteral.createExactNumeric(c.getText, pos)
-    case c: IntNumberContext   => SqlLiteral.createExactNumeric(c.getText, pos) // 封装整型数字
-    case _: NullConstContext   => SqlLiteral.createNull(pos)
-    case _                     => null // TODO 其他逻辑有待实现
+    case c: StringContext =>
+      SqlLiteral.createCharString(StringUtil.dropQuota(c.getText), "UTF-8", pos)
+    case c: IdentContext     => visitIdent(c) // 封装标识符
+    case c: DecNumberContext => SqlLiteral.createExactNumeric(c.getText, pos)
+    case c: IntNumberContext => SqlLiteral.createExactNumeric(c.getText, pos) // 封装整型数字
+    case _: NullConstContext => SqlLiteral.createNull(pos)
+    case _                   => null // TODO 其他逻辑有待实现
   }
 
   override def visitWhereClause(ctx: WhereClauseContext): SqlNode = {
