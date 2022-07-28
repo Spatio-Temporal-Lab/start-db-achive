@@ -25,7 +25,7 @@
     <update id="update">
         UPDATE sys_database
         SET name=#{database.name},
-        id = #{database.id}
+        user_id = #{database.userId}
         WHERE id = #{database.id} and delete_time = 0;
     </update>
     <delete id="deleteById">
