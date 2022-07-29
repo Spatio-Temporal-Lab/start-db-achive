@@ -15,16 +15,13 @@ import org.apache.calcite.schema.Table
 import org.apache.calcite.schema.impl.AbstractSchema
 import org.urbcomp.start.db.metadata.MetadataCacheTableMap
 
-import java.util
-
 /**
- * Schema of Geomesa
- *
- * @author zaiyuan
- * @since 0.1.0
- */
+  * Schema of Geomesa
+  *
+  * @author zaiyuan
+  * @since 0.1.0
+  */
 class GeomesaSchema extends AbstractSchema {
-  override def getTableMap: util.Map[String, Table] = new MetadataCacheTableMap
 
   override def getTable(name: String): Table = {
     MetadataCacheTableMap.getTable(name)
