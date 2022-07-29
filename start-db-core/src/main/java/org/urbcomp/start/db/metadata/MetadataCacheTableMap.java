@@ -34,10 +34,10 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
     private static final Logger logger = LoggerFactory.getLogger(MetadataCacheTableMap.class);
 
     private static final Cache<UserDbTable, Table> tableCache = Caffeine.newBuilder()
-        .initialCapacity(16)
-        .maximumSize(256)
-        .expireAfterAccess(10, TimeUnit.MINUTES)
-        .build();
+            .initialCapacity(16)
+            .maximumSize(256)
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build();
 
     private static final Set<Entry<String, Table>> tableNameCache = new HashSet<>(32);
 
@@ -50,13 +50,13 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
         final List<UserDbTable> allUserDbTable = MetadataAccessUtil.getUserDbTables();
         for (UserDbTable udt : allUserDbTable) {
             tableNameCache.add(
-                new NullTableEntry(
-                    MetadataUtil.combineUserDbTableKey(
-                        udt.getUsername(),
-                        udt.getDbName(),
-                        udt.getTableName()
+                    new NullTableEntry(
+                            MetadataUtil.combineUserDbTableKey(
+                                    udt.getUsername(),
+                                    udt.getDbName(),
+                                    udt.getTableName()
+                            )
                     )
-                )
             );
         }
         logger.info("Load Table Name Cache Size: {}", tableNameCache.size());
@@ -128,15 +128,16 @@ public class MetadataCacheTableMap extends AbstractMap<String, Table> {
      */
     @Override
     public Table get(Object key) {
+        return getTable(key.toString());
+    }
+
+    public static Table getTable(String key) {
         // split key , key must be user.db.table
-        final UserDbTable udt = MetadataUtil.splitUserDbTable(key.toString());
-        return tableCache.get(udt, userDbTable -> {
-            // query metadata table and check TODO
-            return new GeomesaTable(
+        final UserDbTable udt = MetadataUtil.splitUserDbTable(key);
+        return tableCache.get(udt, userDbTable -> new GeomesaTable(
                 userDbTable.getUsername(),
                 userDbTable.getDbName(),
                 userDbTable.getTableName()
-            );
-        });
+        ));
     }
 }

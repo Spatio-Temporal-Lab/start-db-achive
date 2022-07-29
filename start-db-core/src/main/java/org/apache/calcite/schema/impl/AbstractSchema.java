@@ -85,7 +85,7 @@ public class AbstractSchema implements Schema {
         return getTableMap().keySet();
     }
 
-    public final Table getTable(String name) {
+    public Table getTable(String name) {
         return getTableMap().get(name);
     }
 
