@@ -63,10 +63,9 @@ case class GeomesaTable(userName: String, dbName: String, tableName: String)
   override def getRowType(relDataTypeFactory: RelDataTypeFactory): RelDataType = {
     val builder = relDataTypeFactory.builder()
     val fields = MetadataAccessUtil.getFields(userName, dbName, tableName)
-    if (fields != null) {
-      fields.forEach { i =>
-        builder.add(i.getName, relDataTypeFactory.createJavaType(DataTypeUtils.getClass(i.getType)))
-      }
+    if (fields == null) throw new IllegalArgumentException(s"Table[$userName.$dbName.$tableName] Not Found")
+    fields.forEach { i =>
+      builder.add(i.getName, relDataTypeFactory.createJavaType(DataTypeUtils.getClass(i.getType)))
     }
     builder.build()
   }
