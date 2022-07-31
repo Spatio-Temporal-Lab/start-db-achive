@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.start.db.metadata.entity;
 
 /**
@@ -6,7 +17,7 @@ package org.urbcomp.start.db.metadata.entity;
  * @author Wang Bohong
  * @date 2022-07-28 11:40:19
  */
-public class Index extends AbstractEntity{
+public class Index extends AbstractEntity {
 
     /**
      * tableId of the index
@@ -35,7 +46,14 @@ public class Index extends AbstractEntity{
         this.indexProperties = indexProperties;
     }
 
-    public Index(long id, String name, long tableId, String indexType, String fieldsIdList, String indexProperties) {
+    public Index(
+        long id,
+        String name,
+        long tableId,
+        String indexType,
+        String fieldsIdList,
+        String indexProperties
+    ) {
         super(id, name);
         this.tableId = tableId;
         this.indexType = indexType;
