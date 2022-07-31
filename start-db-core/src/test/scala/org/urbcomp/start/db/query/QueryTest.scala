@@ -13,6 +13,8 @@ package org.urbcomp.start.db.query
 
 import org.junit.Assert.{assertEquals, assertTrue}
 import org.urbcomp.start.db.AbstractCalciteCRUDTest
+import org.urbcomp.start.db.model.roadnetwork.RoadSegment
+import org.urbcomp.start.db.model.trajectory.Trajectory
 
 import java.sql.Timestamp
 
@@ -106,6 +108,14 @@ class QueryTest extends AbstractCalciteCRUDTest {
       count += 1
     }
     assertEquals(1, count)
+    statement.execute("drop table if exists t_point")
   }
-  statement.execute("drop table if exists t_point")
+
+  test("roadsegment and trajectory query") {
+    val rs = statement.executeQuery("select * from t_crud_test")
+    while (rs.next()) {
+      assertEquals(classOf[RoadSegment], rs.getObject(2).getClass)
+      assertEquals(classOf[Trajectory], rs.getObject(3).getClass)
+    }
+  }
 }
