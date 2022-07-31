@@ -131,6 +131,26 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     assertEquals(3, fields.length)
   }
 
+  test("test show create table") {
+    val tableName = "test_show_create_table"
+    val createTableSQL = s"""CREATE TABLE IF NOT EXISTS $tableName (
+                            |    tr Trajectory,
+                            |    rs RoadSegment,
+                            |    gm Geometry
+                            |);""".stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+    val rss = stmt.executeQuery(s"show create table $tableName")
+    if (!rss.next()) {
+      throw new AssertionError("unexpected show create table no result");
+    }
+    val sql = rss.getString(2);
+    assertEquals(
+      "CREATE TABLE test_show_create_table (tr Trajectory, rs RoadSegment, gm Geometry)",
+      sql
+    )
+  }
+
   test("test truncate table") {
     val trajectory: Trajectory = ModelGenerator.generateTrajectory()
     val tGeo: String = trajectory.toGeoJSON
