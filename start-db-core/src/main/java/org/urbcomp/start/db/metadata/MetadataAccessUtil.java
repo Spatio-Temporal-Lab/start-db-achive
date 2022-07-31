@@ -36,6 +36,10 @@ import java.util.function.Function;
 public class MetadataAccessUtil {
 
     private final static ThreadLocal<SqlSession> SQL_SESSION = new ThreadLocal<>();
+    /**
+     * 2 weeks
+     */
+    private final static int cleanExpiredTimeS = 14 * 24 * 3600;
 
     public static SqlSession getSqlSession() {
         SqlSession sqlSession = SQL_SESSION.get();
@@ -106,7 +110,7 @@ public class MetadataAccessUtil {
     // TODO cache
     public static User getUser(String userName) {
         return noRollback(
-            v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
+                v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
         );
     }
 
@@ -116,7 +120,7 @@ public class MetadataAccessUtil {
 
     public static Database getDatabase(long userId, String dbName) {
         return noRollback(
-            v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
+                v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
         );
     }
 
@@ -162,7 +166,7 @@ public class MetadataAccessUtil {
             AccessorFactory.getFieldAccessor().deleteByFid(tableId);
             // 清理缓存
             MetadataCacheTableMap.dropTableCache(
-                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+                    MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
             );
             return res;
         });
@@ -195,6 +199,26 @@ public class MetadataAccessUtil {
             final TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
             return tableAccessor.getAllUserDbTable();
         });
+    }
+
+    public static int cleanUser() {
+        return noRollback(v -> AccessorFactory.getUserAccessor().clean(cleanExpiredTimeS));
+    }
+
+    public static int cleanDatabase() {
+        return noRollback(v -> AccessorFactory.getDatabaseAccessor().clean(cleanExpiredTimeS));
+    }
+
+    public static int cleanTable() {
+        return noRollback(v -> AccessorFactory.getTableAccessor().clean(cleanExpiredTimeS));
+    }
+
+    public static int cleanFiled() {
+        return noRollback(v -> AccessorFactory.getFieldAccessor().clean(cleanExpiredTimeS));
+    }
+
+    public static int cleanIndex() {
+        return noRollback(v -> AccessorFactory.getIndexAccessor().clean(cleanExpiredTimeS));
     }
 
     public static <T> T noRollback(Function<Void, T> f) {
