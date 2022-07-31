@@ -99,7 +99,8 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
      * Close session
      */
     @Override
-    default void close() {}
+    default void close() {
+    }
 
     /**
      * get mapper instance
@@ -115,4 +116,12 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
      * @return the check result
      */
     boolean isNotValid(T entity);
+
+    /**
+     * physical delete if the deleteTime has passed expiredTimeLenS
+     *
+     * @param expiredTimeLenS the time len before current time
+     * @return number of record deleted
+     */
+    int clean(int expiredTimeLenS);
 }

@@ -26,7 +26,7 @@ public interface IMapper<T extends AbstractEntity> {
 
     /**
      * select all entities in table
-     * 
+     *
      * @param fid fid
      * @return list of entity instance
      */
@@ -34,7 +34,7 @@ public interface IMapper<T extends AbstractEntity> {
 
     /**
      * select one entity in table based on id
-     * 
+     *
      * @param id id
      * @return entity instance
      */
@@ -43,7 +43,7 @@ public interface IMapper<T extends AbstractEntity> {
     /**
      * select one entity in table based on name
      *
-     * @param fid foreign id
+     * @param fid  foreign id
      * @param name name
      * @return entity instance
      */
@@ -51,7 +51,7 @@ public interface IMapper<T extends AbstractEntity> {
 
     /**
      * insert one entity into table
-     * 
+     *
      * @param entity entity
      * @return number of affected rows
      */
@@ -59,7 +59,7 @@ public interface IMapper<T extends AbstractEntity> {
 
     /**
      * update one entity in a table
-     * 
+     *
      * @param entity entity
      * @return number of affected rows
      */
@@ -67,7 +67,7 @@ public interface IMapper<T extends AbstractEntity> {
 
     /**
      * delete on entity in a table by id
-     * 
+     *
      * @param id id
      * @return number of affected rows
      */
@@ -80,4 +80,12 @@ public interface IMapper<T extends AbstractEntity> {
      * @return number of affected rows
      */
     long deleteByFid(@Param("fid") long fid);
+
+    /**
+     * physical delete if the deleteTime has passed expiredTimeLen
+     *
+     * @param expiredTimeLenS the time len before current time
+     * @return number of record deleted
+     */
+    int clean(@Param("expiredTimeLenS") int expiredTimeLenS);
 }

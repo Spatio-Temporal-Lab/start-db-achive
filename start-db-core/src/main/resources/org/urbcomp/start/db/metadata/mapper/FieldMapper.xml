@@ -40,4 +40,10 @@
         SET delete_time = current_timestamp()
         WHERE table_id = #{fid};
     </delete>
+    <delete id="clean">
+        DELETE
+        FROM sys_field
+        WHERE (delete_time != 0 AND TIMESTAMPDIFF(SECOND,delete_time, current_timestamp()) > expiredTimeLenS)
+           OR (table_id not in (SELECT id FROM sys_table WHERE delete_time != 0))
+    </delete>
 </mapper>
