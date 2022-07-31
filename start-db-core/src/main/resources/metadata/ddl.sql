@@ -74,8 +74,7 @@ CREATE TABLE `sys_index`
     `modified_date`    timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     `delete_time`   BIGINT       NOT NULL DEFAULT 0 COMMENT '删除时间',
     PRIMARY KEY (`id`),
-    KEY `idx_table_id` (table_id),
-    unique index uniq_index_table_id_name (table_id, index_name)
+    KEY `idx_table_id` (table_id)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
