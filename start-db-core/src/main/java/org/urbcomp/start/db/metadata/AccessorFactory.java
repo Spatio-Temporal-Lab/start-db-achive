@@ -11,10 +11,7 @@
 
 package org.urbcomp.start.db.metadata;
 
-import org.urbcomp.start.db.metadata.accessor.DatabaseAccessor;
-import org.urbcomp.start.db.metadata.accessor.FieldAccessor;
-import org.urbcomp.start.db.metadata.accessor.TableAccessor;
-import org.urbcomp.start.db.metadata.accessor.UserAccessor;
+import org.urbcomp.start.db.metadata.accessor.*;
 
 /**
  * This is a class that manages accessor instances through factory mode.
@@ -58,5 +55,9 @@ class AccessorFactory {
      */
     public static FieldAccessor getFieldAccessor() {
         return new FieldAccessor();
+    }
+
+    public static IndexAccessor getIndexAccessor() {
+        return new IndexAccessor();
     }
 }
