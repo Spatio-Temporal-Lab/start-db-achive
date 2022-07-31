@@ -9,9 +9,10 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db
+package org.urbcomp.start.db.funtion
 
-import org.junit.Assert.{assertEquals, assertNotNull, assertTrue}
+import org.junit.Assert.assertEquals
+import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
 /**
   * Geometry relation Function test

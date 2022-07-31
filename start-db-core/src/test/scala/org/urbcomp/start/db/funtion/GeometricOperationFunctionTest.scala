@@ -9,9 +9,10 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db
+package org.urbcomp.start.db.funtion
 
 import org.junit.Assert.{assertEquals, assertTrue}
+import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
 class GeometricOperationFunctionTest extends AbstractCalciteFunctionTest {
   test("st_translate(geom, deltaX, deltaY)") {

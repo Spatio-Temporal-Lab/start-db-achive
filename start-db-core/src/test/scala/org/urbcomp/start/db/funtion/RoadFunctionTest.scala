@@ -9,9 +9,10 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db
+package org.urbcomp.start.db.funtion
 
 import org.junit.Assert.{assertEquals, assertNotNull}
+import org.urbcomp.start.db.AbstractCalciteFunctionTest
 import org.urbcomp.start.db.model.roadnetwork.{RoadNetwork, RoadSegment}
 import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory

@@ -9,9 +9,10 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db
+package org.urbcomp.start.db.funtion
 
 import org.junit.Assert.{assertEquals, assertNotNull}
+import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
 class GeometricConstructorFunctionTest extends AbstractCalciteFunctionTest {
   test("st_makePoint(x, y)") {
