@@ -110,7 +110,7 @@ public class MetadataAccessUtil {
     // TODO cache
     public static User getUser(String userName) {
         return noRollback(
-                v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
+            v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
         );
     }
 
@@ -120,7 +120,7 @@ public class MetadataAccessUtil {
 
     public static Database getDatabase(long userId, String dbName) {
         return noRollback(
-                v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
+            v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
         );
     }
 
@@ -166,7 +166,7 @@ public class MetadataAccessUtil {
             AccessorFactory.getFieldAccessor().deleteByFid(tableId);
             // 清理缓存
             MetadataCacheTableMap.dropTableCache(
-                    MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
             );
             return res;
         });

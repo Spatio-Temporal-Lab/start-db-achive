@@ -14,6 +14,7 @@ package org.urbcomp.start.db.server;
 import org.apache.calcite.avatica.server.AvaticaJsonHandler;
 import org.apache.calcite.avatica.server.HttpServer;
 import org.apache.calcite.jdbc.DbMetaFactory;
+import org.urbcomp.start.db.server.daemon.DaemonManager;
 
 /**
  * @author jimo
@@ -27,6 +28,7 @@ public class Main {
             8000,
             AvaticaJsonHandler::new
         );
+        DaemonManager.start();
         server.join();
     }
 }
