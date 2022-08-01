@@ -39,6 +39,6 @@
     <delete id="clean">
         DELETE
         FROM sys_user
-        WHERE delete_time != 0 AND TIMESTAMPDIFF(SECOND,delete_time, current_timestamp()) > expiredTimeLenS
+        WHERE delete_time != 0 AND TIMESTAMPDIFF(SECOND,delete_time, current_timestamp()) > #{expiredTimeLenS}
     </delete>
 </mapper>
