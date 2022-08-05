@@ -45,7 +45,7 @@ public class CleanMetadataTask implements Runnable {
         log.info("Clean User Record:{}", MetadataAccessUtil.cleanUser());
         log.info("Clean DB Record:{}", MetadataAccessUtil.cleanDatabase());
         log.info("Clean Table Record:{}", MetadataAccessUtil.cleanTable());
-        log.info("Clean Field Record:{}", MetadataAccessUtil.cleanFiled());
+        log.info("Clean Field Record:{}", MetadataAccessUtil.cleanField());
         log.info("Clean Index Record:{}", MetadataAccessUtil.cleanIndex());
     }
 }
