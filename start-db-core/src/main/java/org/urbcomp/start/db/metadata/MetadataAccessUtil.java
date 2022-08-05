@@ -213,7 +213,7 @@ public class MetadataAccessUtil {
         return noRollback(v -> AccessorFactory.getTableAccessor().clean(cleanExpiredTimeS));
     }
 
-    public static int cleanFiled() {
+    public static int cleanField() {
         return noRollback(v -> AccessorFactory.getFieldAccessor().clean(cleanExpiredTimeS));
     }
 
