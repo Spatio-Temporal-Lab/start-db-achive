@@ -26,7 +26,7 @@ public class TimeIntervalSegmentTest {
     private static Trajectory trajectory;
 
     @Before
-    public void setup(){
+    public void setup() {
         trajectory = ModelGenerator.generateTrajectory();
         trajectortsegment = new TimeIntervalSegment(120);
     }
