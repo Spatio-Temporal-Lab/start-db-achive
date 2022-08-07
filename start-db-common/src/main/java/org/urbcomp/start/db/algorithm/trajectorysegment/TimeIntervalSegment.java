@@ -36,6 +36,7 @@ public class TimeIntervalSegment implements AbstractTrajectorySegment {
         List<Trajectory> subTrajectory = new ArrayList<>();
 
         // 遍历直到时间差超过阈值（秒为单位）
+        int flag = 1;
         for (int index = 1; index < gpslist.size(); index++) {
             double timeInterval = (gpslist.get(index).getTime().getTime() - gpslist.get(startindex)
                 .getTime()
@@ -43,11 +44,12 @@ public class TimeIntervalSegment implements AbstractTrajectorySegment {
             if (timeInterval > maxTimeIntervalInSec) {
                 subTrajectory.add(
                     new Trajectory(
-                        trajectory.getTid(),
+                        trajectory.getTid() + "_" + flag,
                         trajectory.getOid(),
                         gpslist.subList(startindex, index)
                     )
                 );
+                flag += 1;
                 startindex = index;
             }
         }
@@ -55,7 +57,7 @@ public class TimeIntervalSegment implements AbstractTrajectorySegment {
         if (startindex < gpslist.size()) {
             subTrajectory.add(
                 new Trajectory(
-                    trajectory.getTid(),
+                    trajectory.getTid() + "_" + flag,
                     trajectory.getOid(),
                     gpslist.subList(startindex, gpslist.size())
                 )
