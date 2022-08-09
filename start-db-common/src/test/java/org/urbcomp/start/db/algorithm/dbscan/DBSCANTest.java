@@ -1,46 +1,49 @@
 package org.urbcomp.start.db.algorithm.dbscan;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import com.github.davidmoten.rtree.RTree;
+import com.github.davidmoten.rtree.geometry.Point;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+@Slf4j
 public class DBSCANTest {
 
-    ArrayList<ClusterPoint> clusterPoints = new ArrayList<>();
+    DBSCAN dbscan = new DBSCAN(0.4,5);
+    ArrayList<ClusterPoint> clusterPoints;
+    RTree<String, Point> rTree;
 
     @Before
-    public void getData() throws IOException {
-
-        BufferedReader bufferedReader = new BufferedReader(
-            new FileReader("src/main/resources/data/points.csv")
-        );
-
-        String line;
-        bufferedReader.readLine();
-
-        while ((line = bufferedReader.readLine()) != null) {
-            String[] split = line.split(",");
-
-            clusterPoints.add(
-                new ClusterPoint(
-                    Timestamp.valueOf(LocalDateTime.now()),
-                    Double.parseDouble(split[0]),
-                    Double.parseDouble(split[1])
-                )
-            );
-        }
+    public void setData() throws IOException {
+        ArrayList<Object> list = this.dbscan.getRtreeData("src/test/resources/gz_2021101500.csv");
+        this.clusterPoints = (ArrayList<ClusterPoint>) list.get(0);
+        this.rTree = (RTree<String, Point>) list.get(1);
     }
 
     @Test
-    public void process() {
-        DBSCAN dbscan = new DBSCAN(300, 5);
-        ArrayList<ClusterPoint> result = dbscan.process(this.clusterPoints);
+    public void process() throws InterruptedException {
+        ArrayList<ClusterPoint> points = dbscan.process(this.clusterPoints, this.rTree);
+        assertEquals(5,points.get(30000).getCluster());
+        assertTrue(points.get(0).isNoised());
+    }
 
-        System.out.println(result.get(264).getCluster());
-        System.out.println(result.get(264).isNoised());
+    @After
+    public void writeData() throws IOException {
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src/test/resources/result.csv"));
+        bufferedWriter.write("lon,lat,cluster,noise" + "\n");
+        for (ClusterPoint point : clusterPoints) {
+            bufferedWriter.write(point.getLng() +
+                    "," + point.getLat() +
+                    "," + point.getCluster() +
+                    "," + point.isNoised() + "\n");
+        }
+        bufferedWriter.close();
     }
 }

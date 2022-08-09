@@ -11,18 +11,33 @@
 
 package org.urbcomp.start.db.algorithm.dbscan;
 
-import org.geotools.referencing.GeodeticCalculator;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
+import com.github.davidmoten.grumpy.core.Position;
+import com.github.davidmoten.rtree.Entry;
+import com.github.davidmoten.rtree.RTree;
+import com.github.davidmoten.rtree.geometry.Geometries;
+import com.github.davidmoten.rtree.geometry.Geometry;
+import com.github.davidmoten.rtree.geometry.Point;
+import com.github.davidmoten.rtree.geometry.Rectangle;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
+import rx.Observable;
+
+@Slf4j
 public class DBSCAN {
 
     /**
      * 空间DBSCAN聚类
      *
-     * @param radius 半径参数
-     * @param minPts 领域密度阈值
+     * @param radius 半径参数      (单位：km)
+     * @param minPts 领域密度阈值   (单位：个)
      */
     private final double radius;
     private final int minPts;
@@ -33,43 +48,78 @@ public class DBSCAN {
     }
 
     /**
-     * 计算两个经纬度点之间的距离
-     * @param pointA 起点
-     * @param pointB 终点
-     * @return 点距
+     * 创建MBR
+     * @param from 当前点
+     * @param distanceKm 距离
      */
-    private Double getDistance(ClusterPoint pointA, ClusterPoint pointB) {
-        GeodeticCalculator geodeticCalculator = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+    private static Rectangle createBounds(final Position from, final double distanceKm) {
+        Position north = from.predict(distanceKm, 0);
+        Position south = from.predict(distanceKm, 180);
+        Position east = from.predict(distanceKm, 90);
+        Position west = from.predict(distanceKm, 270);
 
-        geodeticCalculator.setStartingGeographicPoint(pointA.getLng(), pointA.getLat());
-        geodeticCalculator.setDestinationGeographicPoint(pointB.getLng(), pointB.getLat());
-
-        return geodeticCalculator.getOrthodromicDistance();
-
+        return Geometries
+                .rectangle(
+                        west.getLon(),
+                        south.getLat(),
+                        east.getLon(),
+                        north.getLat());
     }
 
     /**
-     * 计算中心点与其余点之间的距离，并返回满足半径参数条件下的点
-     * @param centerPoint 中心点
-     * @param points      其余点
-     * @return            满足条件点
+     * R*树空间搜索
+     * @param tree R*树
+     * @param lonlat 当前点
+     * @param distanceKm 距离
      */
-    private ArrayList<ClusterPoint> getAdjacentPoints(
-        ClusterPoint centerPoint,
-        ArrayList<ClusterPoint> points
-    ) {
+    public static <T> Observable<Entry<T, Point>> search(RTree<T,Point> tree, Point lonlat, final double distanceKm) {
+        final Position from = Position.create(lonlat.y(),lonlat.x());
+        Rectangle bounds = createBounds(from, distanceKm);
 
-        ArrayList<ClusterPoint> adjacentPoints = new ArrayList<>();
+        return tree
+                .search(bounds)
+                .filter(entry -> {
+                    Point p = entry.geometry();
+                    Position position = Position.create(p.y(), p.x());
+                    return from.getDistanceToKm(position) <= distanceKm;
+                });
+    }
 
-        for (ClusterPoint point : points) {
-            Double distance = getDistance(centerPoint, point);
+    /**
+     * 读取数据，并添加R*树索引
+     * @param csvFile csv路径
+     */
+    public ArrayList<Object> getRtreeData(String csvFile) throws IOException {
+        ArrayList<Object> list = new ArrayList<>();
 
-            if (distance <= this.radius) {
-                adjacentPoints.add(point);
-            }
+        ArrayList<ClusterPoint> clusterPoints = new ArrayList<>();
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(csvFile));
+        bufferedReader.readLine();
+
+        String line;
+        int idx = 0;
+
+        RTree<Object, Geometry> rTree = RTree.star().create();
+
+        while ((line = bufferedReader.readLine()) != null) {
+
+            String[] split = line.split(",");
+
+            double lon = Double.parseDouble(split[0]);
+            double lat = Double.parseDouble(split[1]);
+
+            clusterPoints.add(
+                    new ClusterPoint(Timestamp.valueOf(LocalDateTime.now()),
+                            lon,
+                            lat));
+
+            rTree = rTree.add(String.valueOf(idx),Geometries.point(lon,lat));
+            idx++;
         }
+        list.add(clusterPoints);
+        list.add(rTree);
 
-        return adjacentPoints;
+        return list;
     }
 
     /**
@@ -77,48 +127,55 @@ public class DBSCAN {
      * @param points 所有点
      * @return 聚类结果
      */
-    public ArrayList<ClusterPoint> process(ArrayList<ClusterPoint> points) {
+    public ArrayList<ClusterPoint> process(ArrayList<ClusterPoint> points,RTree<String,Point> rTree) throws InterruptedException {
         int size = points.size();
         int idx = 0;
         int cluster = 1;
 
         while (idx < size) {
-            System.out.println("Doing " + idx);
+            log.info("Doing " + idx);
             ClusterPoint point = points.get(idx++);
 
             if (!point.isVisited()) {
                 point.setVisited(true);
-                ArrayList<ClusterPoint> adjacentPoints = getAdjacentPoints(point, points);
+
+                List<Entry<String, Point>> adjacentPoints = search(
+                        rTree,
+                        Geometries.point(point.getLng(),point.getLat()),
+                        this.radius)
+                        .toList()
+                        .toBlocking()
+                        .single();
 
                 if (adjacentPoints != null && adjacentPoints.size() < this.minPts) {
                     point.setNoised(true);
                 } else {
                     point.setCluster(cluster);
                     for (int i = 0; i < adjacentPoints.size(); i++) {
-                        ClusterPoint adjacentPoint = adjacentPoints.get(i);
+                        Entry<String, Point> adjacentPoint = adjacentPoints.get(i);
+                        ClusterPoint adjPoint = points.get(Integer.parseInt(adjacentPoint.value()));
 
-                        if (!adjacentPoint.isVisited()) {
-                            adjacentPoint.setVisited(true);
-                            ArrayList<ClusterPoint> adjacentPoints2 = getAdjacentPoints(
-                                adjacentPoint,
-                                points
-                            );
+                        if (!adjPoint.isVisited()) {
+                            adjPoint.setVisited(true);
 
-                            if (adjacentPoints2 != null && adjacentPoints2.size() >= minPts) {
+                            List<Entry<String, Point>> adjPointsTemp = search(
+                                    rTree,
+                                    Geometries.point(adjPoint.getLng(),adjPoint.getLat()),
+                                    this.radius)
+                                    .toList()
+                                    .toBlocking()
+                                    .single();
 
-                                for (ClusterPoint pp : adjacentPoints2) {
-                                    if (!adjacentPoints.contains(pp)) {
-                                        adjacentPoints.add(pp);
+                            if (adjPointsTemp != null && adjPointsTemp.size() >= minPts) {
+                                adjacentPoints.addAll(adjPointsTemp);
                                     }
                                 }
-                            }
-                        }
 
-                        if (adjacentPoint.getCluster() == 0) {
-                            adjacentPoint.setCluster(cluster);
+                        if (adjPoint.getCluster() == 0) {
+                            adjPoint.setCluster(cluster);
 
-                            if (adjacentPoint.isNoised()) {
-                                adjacentPoint.setNoised(false);
+                            if (adjPoint.isNoised()) {
+                                adjPoint.setNoised(false);
                             }
                         }
                     }
