@@ -190,7 +190,6 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
   }
 
   def getKeyWord(list: SelectListContext): SqlNodeList = {
-    c
     if (list.selectListSet() == null) null
     else {
       val context = list.selectListSet()
