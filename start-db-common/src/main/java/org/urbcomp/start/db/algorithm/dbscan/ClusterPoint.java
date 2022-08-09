@@ -57,4 +57,5 @@ public class ClusterPoint extends GPSPoint {
     public void setNoised(boolean noised) {
         isNoised = noised;
     }
+
 }
