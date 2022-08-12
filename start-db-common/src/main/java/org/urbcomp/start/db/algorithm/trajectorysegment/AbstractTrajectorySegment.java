@@ -9,21 +9,12 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.geomesa
+package org.urbcomp.start.db.algorithm.trajectorysegment;
 
-import org.apache.calcite.schema.Table
-import org.apache.calcite.schema.impl.AbstractSchema
-import org.urbcomp.start.db.metadata.MetadataCacheTableMap
+import org.urbcomp.start.db.model.trajectory.Trajectory;
 
-/**
-  * Schema of Geomesa
-  *
-  * @author zaiyuan
-  * @since 0.1.0
-  */
-class GeomesaSchema extends AbstractSchema {
+import java.util.List;
 
-  override def getTable(name: String): Table = {
-    MetadataCacheTableMap.getTable(name)
-  }
+public interface AbstractTrajectorySegment {
+    List<Trajectory> segment(Trajectory trajectory);
 }

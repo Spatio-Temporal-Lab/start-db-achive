@@ -61,6 +61,23 @@ CREATE TABLE IF NOT EXISTS `sys_field`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
+drop table if exists sys_index;
+CREATE TABLE `sys_index`
+(
+    `id`               bigint(20)  NOT NULL AUTO_INCREMENT,
+    `table_id`         bigint      NOT NULL COMMENT 'table id',
+    `index_type`       varchar(50) NOT NULL COMMENT '索引类型',
+    `index_name`       varchar(50) NOT NULL COMMENT '索引名称',
+    `fields_id_list`   varchar(50) NOT NULL COMMENT '索引字段',
+    `index_properties` varchar(50) NOT NULL COMMENT '索引配置',
+    `created_date`     timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `modified_date`    timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `delete_time`   BIGINT       NOT NULL DEFAULT 0 COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_table_id` (table_id)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
 
 -- 插入测试用户、库、表，DDL好了后就没必要手动插入了, 密码是 start-db
 INSERT INTO sys_user(id, name, password) VALUE (1, 'root', '6ee5f4a8b6a2697f5add5ab1333968d0');

@@ -78,8 +78,6 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
         // allow mixed geometry types for support start-db type `Geometry`
         sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
         dataStore.createSchema(sft)
-
-        MetadataCacheTableMap.reloadCache()
       },
       classOf[Exception]
     )

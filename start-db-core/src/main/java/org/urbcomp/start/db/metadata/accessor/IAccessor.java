@@ -115,4 +115,14 @@ public interface IAccessor<T extends AbstractEntity, M extends IMapper<T>> exten
      * @return the check result
      */
     boolean isNotValid(T entity);
+
+    /**
+     * physical delete if the deleteTime has passed expiredTimeLenS
+     *
+     * @param expiredTimeLenS the time len before current time
+     * @return number of record deleted
+     */
+    default int clean(int expiredTimeLenS) {
+        return getMapper().clean(expiredTimeLenS);
+    }
 }

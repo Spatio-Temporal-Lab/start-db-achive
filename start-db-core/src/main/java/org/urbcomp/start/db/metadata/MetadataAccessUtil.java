@@ -36,6 +36,10 @@ import java.util.function.Function;
 public class MetadataAccessUtil {
 
     private final static ThreadLocal<SqlSession> SQL_SESSION = new ThreadLocal<>();
+    /**
+     * 2 weeks
+     */
+    private final static int cleanExpiredTimeS = 14 * 24 * 3600;
 
     public static SqlSession getSqlSession() {
         SqlSession sqlSession = SQL_SESSION.get();
@@ -195,6 +199,26 @@ public class MetadataAccessUtil {
             final TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
             return tableAccessor.getAllUserDbTable();
         });
+    }
+
+    public static int cleanUser() {
+        return noRollback(v -> AccessorFactory.getUserAccessor().clean(cleanExpiredTimeS));
+    }
+
+    public static int cleanDatabase() {
+        return noRollback(v -> AccessorFactory.getDatabaseAccessor().clean(cleanExpiredTimeS));
+    }
+
+    public static int cleanTable() {
+        return noRollback(v -> AccessorFactory.getTableAccessor().clean(cleanExpiredTimeS));
+    }
+
+    public static int cleanField() {
+        return noRollback(v -> AccessorFactory.getFieldAccessor().clean(cleanExpiredTimeS));
+    }
+
+    public static int cleanIndex() {
+        return noRollback(v -> AccessorFactory.getIndexAccessor().clean(cleanExpiredTimeS));
     }
 
     public static <T> T noRollback(Function<Void, T> f) {

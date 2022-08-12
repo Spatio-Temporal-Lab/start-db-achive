@@ -9,21 +9,14 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.geomesa
+package org.urbcomp.start.db.server.daemon;
 
-import org.apache.calcite.schema.Table
-import org.apache.calcite.schema.impl.AbstractSchema
-import org.urbcomp.start.db.metadata.MetadataCacheTableMap
+import org.junit.Test;
 
-/**
-  * Schema of Geomesa
-  *
-  * @author zaiyuan
-  * @since 0.1.0
-  */
-class GeomesaSchema extends AbstractSchema {
+public class CleanMetadataTaskTest {
 
-  override def getTable(name: String): Table = {
-    MetadataCacheTableMap.getTable(name)
-  }
+    @Test
+    public void testClean() {
+        new CleanMetadataTask().doClean();
+    }
 }
