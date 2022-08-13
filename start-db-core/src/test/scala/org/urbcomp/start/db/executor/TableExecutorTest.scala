@@ -47,6 +47,17 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     stmt.executeUpdate(createTableSQL)
   }
 
+  test("test create table with index") {
+    val randomNum = scala.util.Random.nextInt(100000)
+    val createTableSQL = s"""CREATE TABLE start_db_table_index_%d (
+                            |    idx Integer,
+                            |    track LineString INDEX Z2
+                            |);""".format(randomNum).stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+  }
+
+
   test("test show tables") {
     val stmt = connect.createStatement()
     val rs = stmt.executeQuery("show tables")

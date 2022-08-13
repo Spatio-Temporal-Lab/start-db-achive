@@ -169,6 +169,10 @@ dtype_attr :
        T_NOT? T_NULL
      | T_CHARACTER T_SET ident
      | T_NOT? (T_CASESPECIFIC | T_CS)
+     | T_INDEX (T_Z2)
+     | T_INDEX (T_Z3)
+     | T_INDEX (T_XZ2)
+     | T_INDEX (T_XZ3)
      ;
 
 dtype :                  // Data types
@@ -1397,6 +1401,11 @@ T_GEOMETRYCOLLECTION  : G E O M E T R Y C O L L E C T I O N ;
 T_TRAJECTORY    : T R A J E C T O R Y ;
 T_ROADSEGMENT   : R O A D S E G M E N T ;
 T_ROADNETWORK   : R O A D N E T W O R K ;
+
+T_Z2: Z '2';
+T_XZ2: X Z '2';
+T_Z3: Z '3';
+T_XZ3: X Z '3';
 
 T_ADD          : '+' ;
 T_COLON        : ':' ;

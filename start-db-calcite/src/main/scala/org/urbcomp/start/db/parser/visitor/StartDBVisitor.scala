@@ -14,18 +14,14 @@ package org.urbcomp.start.db.parser.visitor
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.misc.Interval
 import org.apache.calcite.sql._
-import org.apache.calcite.sql.ddl.{SqlDdlNodes, SqlDropSchema, SqlDropTable}
+import org.apache.calcite.sql.ddl.{SqlColumnExtendedDeclaration, SqlDdlNodes, SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
+import org.urbcomp.start.db.index.SpatialIndexType
 import org.urbcomp.start.db.parser.dcl.SqlCreateUser
 import org.urbcomp.start.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
-import org.urbcomp.start.db.parser.dql.{
-  SqlShowCreateTable,
-  SqlShowDatabases,
-  SqlShowStatus,
-  SqlShowTables
-}
+import org.urbcomp.start.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowStatus, SqlShowTables}
 import org.urbcomp.start.db.parser.parser.StartDBSqlBaseVisitor
 import org.urbcomp.start.db.parser.parser.StartDBSqlParser._
 import org.urbcomp.start.db.parser.visitor.StartDBVisitor._
@@ -556,8 +552,22 @@ class StartDBVisitor(user: String, db: String) extends StartDBSqlBaseVisitor[Any
             dataType =
               new SqlUserDefinedTypeNameSpec(new SqlIdentifier(i.dtype().getText, pos), pos)
           }
+
+          var indexType: SpatialIndexType = null
+          i.dtype_attr()
+            .forEach(attr => {
+              if (attr.T_XZ2() != null) {
+                indexType = SpatialIndexType.XZ2
+              } else if (attr.T_XZ3() != null) {
+                indexType = SpatialIndexType.XZ3
+              } else if (attr.T_Z2() != null) {
+                indexType = SpatialIndexType.Z2
+              } else if (attr.T_Z3() != null) {
+                indexType = SpatialIndexType.Z3
+              }
+            })
           val dataTypeSpec = new SqlDataTypeSpec(dataType, pos)
-          SqlDdlNodes.column(pos, fieldName, dataTypeSpec, null, null)
+          new SqlColumnExtendedDeclaration(pos, fieldName, dataTypeSpec, null, null, indexType);
         }
         .toList
         .asJava
