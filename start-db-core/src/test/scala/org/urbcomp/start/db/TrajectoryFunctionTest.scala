@@ -12,13 +12,12 @@
 package org.urbcomp.start.db
 
 import org.junit.Assert.assertEquals
-import org.urbcomp.start.db.algorithm.trajectorysegment.TimeIntervalSegment
 import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory
 import org.urbcomp.start.db.util.TrajStringToList
 
 import scala.collection.JavaConverters.seqAsJavaList
-import scala.collection.JavaConverters.mapAsScalaMapConverter
+import scala.collection.JavaConverters._
 
 class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
   val nameArray: Array[String] = Array[String]("int", "str", "double", "point")
@@ -144,24 +143,21 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
-  test("st_traj_timeintervalsegment") {
+  test("st_traj_timeIntervalSegment") {
     val statement = connect.createStatement()
     val resultSet =
       statement.executeQuery(
-        "select st_traj_timeintervalsegment(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 120 + ")"
+        "select st_traj_timeIntervalSegment(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 120 + ")"
       )
     resultSet.next()
-    val subtraj_str = resultSet.getObject(1).toString
-    val subtraj_list = TrajStringToList.stringtolist(subtraj_str)
-    val subtraj_Trajectory = new java.util.ArrayList[Trajectory]
-    for (index <- 0 until subtraj_list.size()) {
-      subtraj_Trajectory.add(Trajectory.fromGeoJSON(subtraj_list.get(index)))
-    }
-    var totalsize = 0
-    for (index <- 0 until subtraj_Trajectory.size()) {
-      val a = subtraj_Trajectory.get(index).getGPSPointList.size()
-      totalsize += a
-    }
-    assertEquals(trajectory.getGPSPointList.size, totalsize)
+    val subTrajStr = resultSet.getObject(1).toString
+    val subTrajStream = TrajStringToList.stringToList(subTrajStr).asScala.toStream
+    var totalSize = 0
+    subTrajStream
+      .map(x => {
+        totalSize += Trajectory.fromGeoJSON(x).getGPSPointList.size()
+      })
+      .toList
+    assertEquals(trajectory.getGPSPointList.size, totalSize)
   }
 }

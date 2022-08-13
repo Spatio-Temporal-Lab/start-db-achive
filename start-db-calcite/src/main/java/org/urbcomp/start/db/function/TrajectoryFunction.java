@@ -120,12 +120,12 @@ public class TrajectoryFunction {
         return mmTrajectory.toGeoJSON();
     }
 
-    @StartDBFunction("st_traj_timeintervalsegment")
-    public List<Trajectory> st_traj_timeintervalsegment(
+    @StartDBFunction("st_traj_timeIntervalSegment")
+    public List<Trajectory> st_traj_timeIntervalSegment(
         Trajectory trajectory,
-        int maxtimeintervalinsec
+        int maxTimeIntervalInSec
     ) {
-        TimeIntervalSegment trajectortsegment = new TimeIntervalSegment(maxtimeintervalinsec);
+        TimeIntervalSegment trajectortsegment = new TimeIntervalSegment(maxTimeIntervalInSec);
         List<Trajectory> subtrajectory = trajectortsegment.segment(trajectory);
         return subtrajectory;
     }

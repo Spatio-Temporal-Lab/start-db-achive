@@ -21,7 +21,7 @@ public class TrajStringToList {
      * @param traj 轨迹字符串
      * @return List<String> 轨迹段字符串列表
      */
-    public static List<String> stringtolist(String traj) {
+    public static List<String> stringToList(String traj) {
         return JSONArray.parseArray(traj, String.class);
     }
 }
