@@ -109,5 +109,4 @@ class QueryTest extends AbstractCalciteCRUDTest {
     statement.execute("drop table if exists t_point")
   }
 
-
 }
