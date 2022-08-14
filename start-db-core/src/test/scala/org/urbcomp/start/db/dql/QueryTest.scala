@@ -20,7 +20,9 @@ class QueryTest extends AbstractCalciteCRUDTest {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    statement.executeUpdate("insert into t_crud_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    statement.executeUpdate(
+      "insert into t_crud_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'), st_traj_fromGeoJSON(\'" + tGeo + "\'))"
+    )
   }
 
   test("test query") {

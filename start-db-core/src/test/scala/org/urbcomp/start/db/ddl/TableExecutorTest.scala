@@ -56,7 +56,6 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
 
   }
 
-
   test("test drop table if exists") {
     val randomNum = scala.util.Random.nextInt(100000)
     val createTableSQL = s"""CREATE TABLE xxx_%d (
@@ -102,10 +101,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
       throw new AssertionError("unexpected show create table no result");
     }
     val sql = rs.getString(2);
-    assertEquals(
-      s"CREATE TABLE $tableName (tr Trajectory, rs RoadSegment, gm Geometry)",
-      sql
-    )
+    assertEquals(s"CREATE TABLE $tableName (tr Trajectory, rs RoadSegment, gm Geometry)", sql)
     // test for create table
     val rss = stmt.executeQuery(s"describe $tableName")
     var fields = List[String]()
@@ -116,7 +112,6 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     // drop table
     stmt.executeUpdate(s"drop table if exists $tableName")
   }
-
 
   test("test truncate table") {
     val trajectory: Trajectory = ModelGenerator.generateTrajectory()
