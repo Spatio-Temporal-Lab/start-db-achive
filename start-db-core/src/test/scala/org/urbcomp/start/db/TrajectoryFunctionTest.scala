@@ -152,12 +152,11 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     resultSet.next()
     val subTrajStr = resultSet.getObject(1).toString
     val subTrajStream = TrajStringToList.stringToList(subTrajStr).asScala.toStream
-    var totalSize = 0
-    subTrajStream
+    val totalSize = subTrajStream
       .map(x => {
-        totalSize += Trajectory.fromGeoJSON(x).getGPSPointList.size()
+        Trajectory.fromGeoJSON(x).getGPSPointList.size()
       })
-      .toList
+      .sum
     assertEquals(trajectory.getGPSPointList.size, totalSize)
   }
 }
