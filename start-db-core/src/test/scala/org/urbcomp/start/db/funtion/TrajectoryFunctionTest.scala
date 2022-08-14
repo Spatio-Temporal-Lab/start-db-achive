@@ -18,6 +18,7 @@ import org.urbcomp.start.db.model.trajectory.Trajectory
 
 import scala.collection.JavaConverters.seqAsJavaList
 
+// 好像不用改
 class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
   val nameArray: Array[String] = Array[String]("int", "str", "double", "point")
   val typeArray: Array[String] = Array[String]("Integer", "String", "Double", "Point")

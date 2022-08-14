@@ -9,7 +9,7 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.query
+package org.urbcomp.start.db.dql
 
 import org.junit.Assert.{assertEquals, assertTrue}
 import org.urbcomp.start.db.AbstractCalciteCRUDTest

@@ -9,17 +9,19 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.start.db.executor
+package org.urbcomp.start.db.ddl
 
 import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
-class ExecutorScenarioTest extends AbstractCalciteFunctionTest {
+class UserExecutorTest extends AbstractCalciteFunctionTest {
 
-  test("create then insert") {
-    val randomId = scala.util.Random.nextInt(Integer.MAX_VALUE)
-    val tableName = "test_create_insert_%d".format(randomId)
+  private val randomNum = scala.util.Random.nextInt(100000)
+  private val CREATE_USER_EXAMPLE =
+    s"""CREATE USER test_user_%d IDENTIFIED BY 'password'""".format(randomNum).stripMargin
+
+  test("test create user") {
     val stmt = connect.createStatement()
-    stmt.execute(s"create table $tableName (tid integer, name string)")
-    stmt.execute(s"insert into $tableName values (1, 'tmp')")
+    stmt.executeUpdate(CREATE_USER_EXAMPLE)
   }
+
 }

@@ -30,7 +30,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
   val tGeo: String = trajectory.toGeoJSON
 
-  test("st_rn_shortestPath") {
+  test("st_rn_shortestPath and st_rn_makeRoadNetwork") {
     val statement = connect.createStatement
     statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
     val set = statement.executeQuery("select count(1) from t_road_segment_test")
@@ -41,6 +41,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
         "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
       )
     }
+    // st_rn_shortestPath
     val resultSet =
       statement.executeQuery(
         "select st_rn_shortestPath(st_rn_makeRoadNetwork(collect_list(b))," +
@@ -52,28 +53,18 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
       "{\"type\":\"Feature\",\"properties\":{\"roadSegmentIds\":[-1],\"lengthInMeter\":346582.30322217953},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[111.37939453125,54.00776876193478],[111.37939453125,54.00776876193478],[116.3671875,53.05442186546102],[116.3671875,53.05442186546102]]}}",
       resultSet.getObject(1).toString
     )
-  }
-
-  test("st_rn_makeRoadNetwork") {
-    val statement = connect.createStatement
-    statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
-    val set = statement.executeQuery("select count(1) from t_road_segment_test")
-    set.next()
-    val count = set.getObject(1)
-    if (count == 0) {
-      statement.execute(
-        "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
-      )
-    }
-    val resultSet =
+    // st_rn_makeRoadNetwork
+    val resultSet1 =
       statement.executeQuery(
         "select st_rn_makeRoadNetwork(collect_list(b)) from t_road_segment_test"
       )
-    resultSet.next()
+    resultSet1.next()
     assertEquals(
       "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",
-      resultSet.getObject(1).getClass.toString
+      resultSet1.getObject(1).getClass.toString
     )
+    // drop table
+    statement.executeUpdate("drop table if exists t_road_segment_test")
   }
 
   test("st_rs_fromGeoJSON") {

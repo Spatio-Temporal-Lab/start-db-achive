@@ -1,4 +1,4 @@
-package org.urbcomp.start.db.executor
+package org.urbcomp.start.db.dml
 
 import org.junit.Assert.assertEquals
 import org.urbcomp.start.db.AbstractCalciteCRUDTest
