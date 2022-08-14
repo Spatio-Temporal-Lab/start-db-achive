@@ -106,6 +106,8 @@ class QueryTest extends AbstractCalciteCRUDTest {
       count += 1
     }
     assertEquals(1, count)
+    statement.execute("drop table if exists t_point")
   }
-  statement.execute("drop table if exists t_point")
+
+
 }
