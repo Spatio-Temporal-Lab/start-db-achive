@@ -274,7 +274,7 @@ public class BatchUpLoader implements Closeable {
     }
 
     public static void main(String[] args) throws IOException, ParseException {
-        final BatchUpLoader loader = new BatchUpLoader();
+        // final BatchUpLoader loader = new BatchUpLoader();
         // loader.insert(); 暂时不需要用此方法读文件
     }
 }
