@@ -16,7 +16,6 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.filter.identity.FeatureIdImpl;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.util.factory.Hints;
-import org.junit.Test;
 import org.locationtech.geomesa.utils.geotools.SimpleFeatureTypes;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -226,52 +225,52 @@ public class BatchUpLoader implements Closeable {
     /**
      * 若取消对应的注释，则为插入至geomesa-hbase，否则只构建并打印geotools要素
      */
-    @Test
-    public void insert() throws ParseException, IOException {
-        // 数据量有点多，测试时插一部分
-        int n = 100;
-        try (BatchUpLoader upLoader = new BatchUpLoader()) {
-            BufferedReader reader = upLoader.readCsv(Constant.CSV_FILE);
+    // @Test
+    // public void insert() throws ParseException, IOException {
+    // // 数据量有点多，测试时插一部分
+    // int n = 100;
+    // try (BatchUpLoader upLoader = new BatchUpLoader()) {
+    // BufferedReader reader = upLoader.readCsv(Constant.CSV_FILE);
+    //
+    // String line;
+    // int i = 0;
+    // while ((line = reader.readLine()) != null) {
+    // i++;
+    // String[] split = line.split(Constant.COMMA_STR);
+    //
+    // SimpleFeature feature = upLoader.dataSetUp(
+    // split[0],
+    // split[1],
+    // split[2],
+    // split[3],
+    // split[4],
+    // split[5],
+    // split[6],
+    // split[10],
+    // split[9],
+    // split[7],
+    // split[8],
+    // split[12],
+    // split[11],
+    // split[13]
+    // );
+    //
+    // System.out.println(feature);
+    // upLoader.writeFeature(upLoader.dataStore, upLoader.sft, feature);
+    // upLoader.writeClose();
+    // if (i > n) {
+    // break;
+    // }
+    // }
+    // }
+    // }
 
-            String line;
-            int i = 0;
-            while ((line = reader.readLine()) != null) {
-                i++;
-                String[] split = line.split(Constant.COMMA_STR);
-
-                SimpleFeature feature = upLoader.dataSetUp(
-                    split[0],
-                    split[1],
-                    split[2],
-                    split[3],
-                    split[4],
-                    split[5],
-                    split[6],
-                    split[10],
-                    split[9],
-                    split[7],
-                    split[8],
-                    split[12],
-                    split[11],
-                    split[13]
-                );
-
-                System.out.println(feature);
-                upLoader.writeFeature(upLoader.dataStore, upLoader.sft, feature);
-                upLoader.writeClose();
-                if (i > n) {
-                    break;
-                }
-            }
-        }
-    }
-
-    @Test
-    public void read() throws IOException {
-        try (BatchUpLoader upLoader = new BatchUpLoader()) {
-            upLoader.readData();
-        }
-    }
+    // @Test
+    // public void read() throws IOException {
+    // // try (BatchUpLoader upLoader = new BatchUpLoader()) {
+    // // upLoader.readData();
+    // // }
+    // }
 
     public static void main(String[] args) throws IOException, ParseException {
         // final BatchUpLoader loader = new BatchUpLoader();
