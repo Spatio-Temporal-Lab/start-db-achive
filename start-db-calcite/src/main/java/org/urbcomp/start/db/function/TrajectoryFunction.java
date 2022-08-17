@@ -27,6 +27,7 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.urbcomp.start.db.algorithm.mapmatch.tihmm.TiHmmMapMatcher;
 import org.urbcomp.start.db.algorithm.shortestpath.BiDijkstraShortestPath;
+import org.urbcomp.start.db.algorithm.trajectorysegment.TimeIntervalSegment;
 import org.urbcomp.start.db.exception.AlgorithmExecuteException;
 import org.urbcomp.start.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.start.db.model.trajectory.MapMatchedTrajectory;
@@ -34,6 +35,7 @@ import org.urbcomp.start.db.model.trajectory.Trajectory;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class TrajectoryFunction {
 
@@ -116,5 +118,15 @@ public class TrajectoryFunction {
         );
         MapMatchedTrajectory mmTrajectory = mapMatcher.mapMatch(trajectory);
         return mmTrajectory.toGeoJSON();
+    }
+
+    @StartDBFunction("st_traj_timeIntervalSegment")
+    public List<Trajectory> st_traj_timeIntervalSegment(
+        Trajectory trajectory,
+        int maxTimeIntervalInSec
+    ) {
+        TimeIntervalSegment trajectortsegment = new TimeIntervalSegment(maxTimeIntervalInSec);
+        List<Trajectory> subtrajectory = trajectortsegment.segment(trajectory);
+        return subtrajectory;
     }
 }

@@ -14,8 +14,10 @@ package org.urbcomp.start.db
 import org.junit.Assert.assertEquals
 import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory
+import org.urbcomp.start.db.util.TrajStringToList
 
 import scala.collection.JavaConverters.seqAsJavaList
+import scala.collection.JavaConverters._
 
 class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
   val nameArray: Array[String] = Array[String]("int", "str", "double", "point")
@@ -141,4 +143,20 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
+  test("st_traj_timeIntervalSegment") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_timeIntervalSegment(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 120 + ")"
+      )
+    resultSet.next()
+    val subTrajStr = resultSet.getObject(1).toString
+    val subTrajStream = TrajStringToList.stringToList(subTrajStr).asScala.toStream
+    val totalSize = subTrajStream
+      .map(x => {
+        Trajectory.fromGeoJSON(x).getGPSPointList.size()
+      })
+      .sum
+    assertEquals(trajectory.getGPSPointList.size, totalSize)
+  }
 }
