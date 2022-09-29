@@ -5,6 +5,10 @@ import org.apache.flink.connector.jdbc.catalog.JdbcCatalogUtils;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
+/**
+ * https://github.com/apache/flink/blob/release-1.15.2/flink-examples/flink-examples-table/src/main/scala/org/apache/flink/table/examples/scala/basics/StreamSQLExample.scala
+ *
+ */
 public class Main {
 
     public static void main(String[] args) throws Exception {

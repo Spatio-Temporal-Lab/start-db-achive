@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>start-db-stream-template</module>
+        <module>start-db-stream-catalog</module>
     </modules>
 
     <properties>
