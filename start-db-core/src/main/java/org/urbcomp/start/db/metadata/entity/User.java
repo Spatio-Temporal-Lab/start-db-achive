@@ -29,6 +29,8 @@ public class User extends AbstractEntity {
         this.password = password;
     }
 
+    public User() {}
+
     public String getPassword() {
         return password;
     }
