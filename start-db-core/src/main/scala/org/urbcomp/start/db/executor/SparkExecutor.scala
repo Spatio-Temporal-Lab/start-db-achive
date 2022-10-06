@@ -11,36 +11,63 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.calcite.sql.{SqlDialect, SqlNode}
 import org.apache.spark.sql.SparkSession
-import org.urbcomp.start.db.util.SqlParam
+import org.urbcomp.start.db.metadata.MetadataAccessUtil
+import org.urbcomp.start.db.metadata.entity.Table
+import org.urbcomp.start.db.parser.{Constant, SqlTableDriver}
+import org.urbcomp.start.db.util.{MetadataUtil, SqlParam}
 
+import scala.collection.JavaConverters._
+import scala.collection.mutable
+
+/**
+  * @author stan
+  * @date 2022/10/5 10:27
+  */
 class SparkExecutor {
 
-  def execute(sql: SqlNode): Unit = {
-    // 获取缓存的配置信息
+  def execute(sql: String): String = {
     val param = SqlParam.CACHE.get()
+    val dbName = param.getDbName
+    val userName = param.getUserName
+    val tableMap = new mutable.HashMap[String, String]
+    // 用户的上层表名
+    val driver = new SqlTableDriver
+    val tableList = driver.apply(sql)
 
-    // TODO 获取数据
-    val geomesaParam = Map("" -> "")
+    tableList.asScala.foreach{ i =>
+      val table: Table = MetadataAccessUtil.getTable(userName, dbName, i)
+      val mapTableName: String = MetadataUtil.makeSchemaName(table.getId)
+      tableMap.put(i, mapTableName)
+    }
+
     val sparkSession: SparkSession = SparkSession
       .builder()
       .appName("start-db sql app")
       .master("local[*]")
       .getOrCreate()
 
-    // 读取相关的表数据
-    sparkSession.read
-      .format("geomesa")
-      .options(geomesaParam)
-      .option("geomesa.feature", "chicago")
-      .load()
-      .createTempView("")
+    val params = Map(Constant.HBASE_CATALOG -> Constant.CATALOG, Constant.HBASE_ZK -> Constant.ZK)
 
-    // 基于sql对读取数据进行查询
-    sparkSession.sql(sql.toSqlString(new SqlDialect(SqlDialect.EMPTY_CONTEXT)).getSql)
+    /**
+     * _1: 上层表名
+     * _2: 下层表名
+     */
+    tableMap.foreach{ i =>
+      val userTableName = i._1
+      val geomesaSftName = i._2
+      sparkSession.read
+        .format("geomesa")
+        .options(params)
+        .option("geomesa.feature", geomesaSftName)
+        .load()
+        .createTempView(userTableName)
+    }
 
-    // 写入到中间存储介质中
+    val dataFrame = sparkSession.sql(sql)
+
+    val path = "hdfs://start-db:balabal"
+    dataFrame.write.option("delimiter", "||").csv(path)
+    path
   }
-
 }
