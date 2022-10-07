@@ -12,13 +12,47 @@
 package org.urbcomp.start.db
 
 import org.junit.Assert.assertEquals
+import org.urbcomp.start.db.function.coordtransform.{
+  BD09ToGCJ02Transformer,
+  BD09ToWGS84Transformer,
+  GCJ02ToBD09Transformer,
+  GCJ02ToWGS84Transformer,
+  WGS84ToBD09Transformer,
+  WGS84ToGCJ02Transformer
+}
 import org.urbcomp.start.db.model.roadnetwork.{RoadNetwork, RoadSegment}
 import org.urbcomp.start.db.model.sample.ModelGenerator
 import org.urbcomp.start.db.model.trajectory.Trajectory
 
 class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
 
+  val transformer: WGS84ToBD09Transformer = new WGS84ToBD09Transformer()
+  val transformer1: BD09ToWGS84Transformer = new BD09ToWGS84Transformer()
+  val transformer2: GCJ02ToBD09Transformer = new GCJ02ToBD09Transformer()
+  val transformer3: BD09ToGCJ02Transformer = new BD09ToGCJ02Transformer()
+  val transformer4: WGS84ToGCJ02Transformer = new WGS84ToGCJ02Transformer()
+  val transformer5: GCJ02ToWGS84Transformer = new GCJ02ToWGS84Transformer()
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
+  val roadSegment: RoadSegment = ModelGenerator.generateRoadSegment()
+  val roadNetwork: RoadNetwork = ModelGenerator.generateRoadNetwork()
+  val wgs84tobd09Tra: Trajectory = transformer.trajectoryTransform(trajectory)
+  val bd09towgs84Tra: Trajectory = transformer1.trajectoryTransform(trajectory)
+  val gcj02tobd09Tra: Trajectory = transformer2.trajectoryTransform(trajectory)
+  val bd09togcj02Tra: Trajectory = transformer3.trajectoryTransform(trajectory)
+  val wgs84togcj02Tra: Trajectory = transformer4.trajectoryTransform(trajectory)
+  val gcj02towgs84Tra: Trajectory = transformer5.trajectoryTransform(trajectory)
+  val wgs84tobd09RS: RoadSegment = transformer.roadSegmentTransform(roadSegment)
+  val wgs84tobd09RN: RoadNetwork = transformer.roadNetworkTransform(roadNetwork)
+  val bd09towgs84RS: RoadSegment = transformer1.roadSegmentTransform(roadSegment)
+  val bd09towgs84RN: RoadNetwork = transformer1.roadNetworkTransform(roadNetwork)
+  val gcj02tobd09RS: RoadSegment = transformer2.roadSegmentTransform(roadSegment)
+  val gcj02tobd09RN: RoadNetwork = transformer2.roadNetworkTransform(roadNetwork)
+  val bd09togcj02RS: RoadSegment = transformer3.roadSegmentTransform(roadSegment)
+  val bd09togcj02RN: RoadNetwork = transformer3.roadNetworkTransform(roadNetwork)
+  val wgs84togcj02RS: RoadSegment = transformer4.roadSegmentTransform(roadSegment)
+  val wgs84togcj02RN: RoadNetwork = transformer4.roadNetworkTransform(roadNetwork)
+  val gcj02towgs84RS: RoadSegment = transformer5.roadSegmentTransform(roadSegment)
+  val gcj02towgs84RN: RoadNetwork = transformer5.roadNetworkTransform(roadNetwork)
   val tGeo: String = trajectory.toGeoJSON
   val rs: RoadSegment = ModelGenerator.generateRoadSegment()
   val rn: RoadNetwork = ModelGenerator.generateRoadNetwork()
@@ -118,14 +152,53 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
 
   test("st_BD09ToWGS84(GeometryCollection)") {
     val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_BD09ToWGS84(st_geomFromWKT(" +
-        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
-    )
+    val resultSet =
+      statement.executeQuery(
+        "select st_BD09ToWGS84(st_geomFromWKT('GEOMETRYCOLLECTION(POINT(4 6)," +
+          "LINESTRING(4 6,7 10))'))"
+      )
     resultSet.next()
     assertEquals(
-      "MULTIPOINT ((0.9935048779206697 1.9940125213262534), " +
-        "(2.9934995619203466 3.993975880501857))",
+      "GEOMETRYCOLLECTION (POINT (3.9935001497878364 5.994007326617194)," +
+        " LINESTRING (3.9935001497878364 5.994007326617194, 6.993483320081658 9.993987795057297))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_BD09ToWGS84(Trajectory)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToWGS84(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(bd09towgs84Tra, resultSet.getObject(1))
+  }
+
+  test("st_BD09ToWGS84(RoadSegment)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToWGS84(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
+    resultSet.next()
+    assertEquals(bd09towgs84RS, resultSet.getObject(1))
+  }
+
+  test("st_BD09ToWGS84(RoadNetwork)") {
+    val statement = connect.createStatement
+    statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
+    val set = statement.executeQuery("select count(1) from t_road_segment_test")
+    set.next()
+    val count = set.getObject(1)
+    if (count == 0) {
+      statement.execute(
+        "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+      )
+    }
+    val resultSet =
+      statement.executeQuery(
+        "select st_BD09ToWGS84(st_rn_makeRoadNetwork(collect_list(b))) from t_road_segment_test"
+      )
+    resultSet.next()
+    assertEquals(
+      "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",
       resultSet.getObject(1).toString
     )
   }
@@ -135,6 +208,7 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
     val resultSet = statement.executeQuery("select st_WGS84ToBD09(st_makePoint(1, 2))")
     resultSet.next()
     assertEquals("POINT (1.006495254008945 2.005983008075984)", resultSet.getObject(1).toString)
+
   }
 
   test("st_WGS84ToBD09(LineString)") {
@@ -225,15 +299,52 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
   test("st_WGS84ToBD09(GeometryCollection)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_WGS84ToBD09(st_geomFromWKT(" +
-        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+      "select st_WGS84ToBD09(st_geomFromWKT('GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(4 6,7 10))'))"
     )
     resultSet.next()
     assertEquals(
-      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 " +
-        "4.006022856419637))",
+      "GEOMETRYCOLLECTION (POINT (4.0065089999955 6.005993999993249), LINESTRING (4.0065089999955" +
+        " 6.005993999993249, 7.0065249326725745 10.006003689486944))",
       resultSet.getObject(1).toString
     )
+  }
+
+  test("st_WGS84ToBD09(Trajectory)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_WGS84ToBD09(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(wgs84tobd09Tra, resultSet.getObject(1))
+  }
+
+  test("st_WGS84ToBD09(RoadSegment)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_WGS84ToBD09(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
+    resultSet.next()
+    assertEquals(wgs84tobd09RS, resultSet.getObject(1))
+  }
+
+  test("st_WGS84ToBD09(RoadNetwork)") {
+    val statement = connect.createStatement
+    statement.execute("create table if not exists t_road_segment_test (a Integer, b RoadSegment);")
+    val set = statement.executeQuery("select count(1) from t_road_segment_test")
+    set.next()
+    val count = set.getObject(1)
+    if (count == 0) {
+      statement.execute(
+        "insert into t_road_segment_test values (2, st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))"
+      )
+    }
+    val resultSet = statement.executeQuery(
+      "select st_WGS84ToBD09(st_rn_makeRoadNetwork(collect_list(b))) from t_road_segment_test"
+    )
+    resultSet.next()
+    println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    println(wgs84tobd09RN)
+    println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    println(resultSet.getObject(1))
+    assertEquals(wgs84tobd09RN, resultSet.getObject(1))
   }
 
   test("st_GCJ02ToBD09(Point)") {
@@ -331,13 +442,41 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
   test("st_GCJ02ToBD09(GeometryCollection)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_GCJ02ToBD09(st_geomFromWKT(" +
-        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+      "select st_GCJ02ToBD09(st_geomFromWKT('GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(4 6,7 10))'))"
     )
     resultSet.next()
     assertEquals(
-      "MULTIPOINT ((1.006495254008945 2.005983008075984), (3.0064983922497763 4.006022856419637))",
+      "GEOMETRYCOLLECTION (POINT (4.0065089999955 6.005993999993249), LINESTRING (4.0065089999955 " +
+        "6.005993999993249, 7.0065249326725745 10.006003689486944))",
       resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_GCJ02ToBD09(Trajectory)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_GCJ02ToBD09(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(gcj02tobd09Tra, resultSet.getObject(1))
+  }
+
+  test("st_GCJ02ToBD09(RoadSegment)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_GCJ02ToBD09(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
+    resultSet.next()
+    assertEquals(gcj02tobd09RS, resultSet.getObject(1))
+  }
+
+  test("st_GCJ02ToBD09(RoadNetwork)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_GCJ02ToBD09(st_rn_makeRoadNetwork(collect_list(b))) from t_road_segment_test"
+    )
+    resultSet.next()
+    assertEquals(
+      "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",
+      resultSet.getObject(1).getClass.toString
     )
   }
 
@@ -434,13 +573,41 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
   test("st_BD09ToGCJ02(GeometryCollection)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_BD09ToGCJ02(st_geomFromWKT(" +
-        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+      "select st_BD09ToGCJ02(st_geomFromWKT('GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(4 6,7 10))'))"
     )
     resultSet.next()
     assertEquals(
-      "MULTIPOINT ((0.9935048779206697 1.9940125213262534), (2.9934995619203466 3.993975880501857))",
+      "GEOMETRYCOLLECTION (POINT (3.9935001497878364 5.994007326617194), LINESTRING (3.9935001497878364" +
+        " 5.994007326617194, 6.993483320081658 9.993987795057297))",
       resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_BD09ToGCJ02(Trajectory)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToGCJ02(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(bd09togcj02Tra, resultSet.getObject(1))
+  }
+
+  test("st_BD09ToGCJ02(RoadSegment)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_BD09ToGCJ02(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
+    resultSet.next()
+    assertEquals(bd09togcj02RS, resultSet.getObject(1))
+  }
+
+  test("st_BD09ToGCJ02(RoadNetwork)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_BD09ToGCJ02(st_rn_makeRoadNetwork(collect_list(b))) from t_road_segment_test"
+    )
+    resultSet.next()
+    assertEquals(
+      "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",
+      resultSet.getObject(1).getClass.toString
     )
   }
 
@@ -516,11 +683,41 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
   test("st_WGS84ToGCJ02(GeometryCollection)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_WGS84ToGCJ02(st_geomFromWKT(" +
-        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+      "select st_WGS84ToGCJ02(st_geomFromWKT('GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(4 6,7 10))'))"
     )
     resultSet.next()
-    assertEquals("MULTIPOINT ((1 2), (3 4))", resultSet.getObject(1).toString)
+    assertEquals(
+      "GEOMETRYCOLLECTION (POINT (4 6), LINESTRING (4 6, 7 10))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_WGS84ToGCJ02(Trajectory)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_WGS84ToGCJ02(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(wgs84togcj02Tra, resultSet.getObject(1))
+  }
+
+  test("st_WGS84ToGCJ02(RoadSegment)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_WGS84ToGCJ02(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
+    resultSet.next()
+    assertEquals(wgs84togcj02RS, resultSet.getObject(1))
+  }
+
+  test("st_WGS84ToGCJ02(RoadNetwork)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_WGS84ToGCJ02(st_rn_makeRoadNetwork(collect_list(b))) from t_road_segment_test"
+    )
+    resultSet.next()
+    assertEquals(
+      "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",
+      resultSet.getObject(1).getClass.toString
+    )
   }
 
   test("st_GCJ02ToWGS84(Point)") {
@@ -595,10 +792,40 @@ class CoordTransformFunctionTest extends AbstractCalciteFunctionTest {
   test("st_GCJ02ToWGS84(GeometryCollection)") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
-      "select st_GCJ02ToWGS84(st_geomFromWKT(" +
-        "'MULTIPOINT((1 2),(3 4)),LINESTRING(0 0,1 1,1 2)'))"
+      "select st_GCJ02ToWGS84(st_geomFromWKT('GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(4 6,7 10))'))"
     )
     resultSet.next()
-    assertEquals("MULTIPOINT ((1 2), (3 4))", resultSet.getObject(1).toString)
+    assertEquals(
+      "GEOMETRYCOLLECTION (POINT (4 6), LINESTRING (4 6, 7 10))",
+      resultSet.getObject(1).toString
+    )
+  }
+
+  test("st_GCJ02ToWGS84(Trajectory)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_GCJ02ToWGS84(st_traj_fromGeoJSON(\'" + tGeo + "\'))")
+    resultSet.next()
+    assertEquals(gcj02towgs84Tra, resultSet.getObject(1))
+  }
+
+  test("st_GCJ02ToWGS84(RoadSegment)") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery("select st_GCJ02ToWGS84(st_rs_fromGeoJSON(\'" + rsGeoJson + "\'))")
+    resultSet.next()
+    assertEquals(gcj02towgs84RS, resultSet.getObject(1))
+  }
+
+  test("st_GCJ02ToWGS84(RoadNetwork)") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_GCJ02ToWGS84(st_rn_makeRoadNetwork(collect_list(b))) from t_road_segment_test"
+    )
+    resultSet.next()
+    assertEquals(
+      "class org.urbcomp.start.db.model.roadnetwork.RoadNetwork",
+      resultSet.getObject(1).getClass.toString
+    )
   }
 }
