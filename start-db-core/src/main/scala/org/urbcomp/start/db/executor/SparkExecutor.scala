@@ -11,7 +11,6 @@
 
 package org.urbcomp.start.db.executor
 
-
 import org.apache.spark.sql.SparkSession
 
 import org.urbcomp.start.db.metadata.MetadataAccessUtil
@@ -37,7 +36,7 @@ class SparkExecutor {
     val driver = new SqlTableDriver
     val tableList = driver.apply(sql)
 
-    tableList.asScala.foreach{ i =>
+    tableList.asScala.foreach { i =>
       val table: Table = MetadataAccessUtil.getTable(userName, dbName, i)
       val mapTableName: String = MetadataUtil.makeSchemaName(table.getId)
       tableMap.put(i, mapTableName)
@@ -52,10 +51,10 @@ class SparkExecutor {
     val params = Map(Constant.HBASE_CATALOG -> Constant.CATALOG, Constant.HBASE_ZK -> Constant.ZK)
 
     /**
-     * _1: 上层表名
-     * _2: 下层表名
-     */
-    tableMap.foreach{ i =>
+      * _1: 上层表名
+      * _2: 下层表名
+      */
+    tableMap.foreach { i =>
       val userTableName = i._1
       val geomesaSftName = i._2
       sparkSession.read

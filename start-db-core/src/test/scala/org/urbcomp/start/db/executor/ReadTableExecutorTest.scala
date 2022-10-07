@@ -11,11 +11,6 @@
 
 package org.urbcomp.start.db.executor
 
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
-import org.locationtech.geomesa.spark.{GeoMesaSparkKryoRegistrator, SpatialRDD}
-import org.opengis.feature.simple.SimpleFeature
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
 /**
@@ -27,5 +22,15 @@ class ReadTableExecutorTest extends AbstractCalciteFunctionTest {
   test("read geomesa-hbase data") {
     val executor = new SparkExecutor
     executor.execute("select * from t_test")
+  }
+
+  test("read geomesa-hbase data2") {
+    val executor = new SparkExecutor
+    val statement = connect.createStatement()
+    statement.execute("create table if not exists t_test_2 (a Integer, b String);")
+    statement.execute("insert into t_test_2 (a, b) values (1, 'unknown');")
+    executor.execute(
+      "select idx, ride_id from t_test left join t_test_2 on t_test.idx = t_test_2.a"
+    );
   }
 }
