@@ -65,4 +65,3 @@ CREATE TABLE IF NOT EXISTS `sys_field`
 -- 插入测试用户、库、表，DDL好了后就没必要手动插入了, 密码是 start-db
 INSERT INTO sys_user(id, name, password) VALUE (1, 'root', '6ee5f4a8b6a2697f5add5ab1333968d0');
 INSERT INTO sys_database(id, user_id, name) VALUE (1, 1, 'default');
-INSERT INTO sys_table(id, db_id, name, storage_engine) VALUE (1, 1, 't_test', 'hbase');

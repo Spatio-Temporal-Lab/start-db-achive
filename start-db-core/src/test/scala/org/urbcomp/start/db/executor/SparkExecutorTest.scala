@@ -17,7 +17,7 @@ import org.urbcomp.start.db.AbstractCalciteFunctionTest
   * @author stan
   * @date 2022/10/5 10:54
   */
-class ReadTableExecutorTest extends AbstractCalciteFunctionTest {
+class SparkExecutorTest extends AbstractCalciteFunctionTest {
 
   test("read geomesa-hbase data") {
     val executor = new SparkExecutor
