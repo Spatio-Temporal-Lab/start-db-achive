@@ -16,20 +16,16 @@ import org.apache.spark.sql.SparkSession
 import org.locationtech.geomesa.spark.{GeoMesaSparkKryoRegistrator, SpatialRDD}
 import org.opengis.feature.simple.SimpleFeature
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.urbcomp.start.db.AbstractCalciteFunctionTest
 
 /**
   * @author stan
   * @date 2022/10/5 10:54
   */
-class ReadTableExecutorTest extends FunSuite with BeforeAndAfterAll {
+class ReadTableExecutorTest extends AbstractCalciteFunctionTest {
 
   test("read geomesa-hbase data") {
-    // should insert some data before running
-
-    val executor = new ReadTableExecutor
-    val spatialRDD: SpatialRDD = executor.execute(user = "root", dbName = "*", "select * from t1")
-    val features: Array[SimpleFeature] = spatialRDD.collect()
-
-    assert(features.length != 0)
+    val executor = new SparkExecutor
+    executor.execute("select * from t_test")
   }
 }

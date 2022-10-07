@@ -28,7 +28,7 @@ public class SqlVisitor<Object> extends StartDBSqlBaseVisitor<Object> {
     @Override
     public Object visitFromTableClause(StartDBSqlParser.FromTableClauseContext ctx) {
         tableList.add(ctx.getText());
-        return visitFromTableClause(ctx);
+        return null;
     }
 
     public List<String> getTableList() {

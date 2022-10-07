@@ -11,13 +11,13 @@ import org.urbcomp.start.db.parser.SqlVisitor;
  */
 public class SqlParserDemo {
 
-    @Test
-    public void getTableNameFromSql() {
-        String sql = "SELECT A FROM B;";
-        SqlVisitor<String> visitor = new SqlVisitor<>();
-        String tableName = visitor.apply(sql);
-        assert "B".equals(tableName);
-    }
+//    @Test
+//    public void getTableNameFromSql() {
+//        String sql = "SELECT A FROM B;";
+//        SqlVisitor<String> visitor = new SqlVisitor<>();
+//        String tableName = visitor.apply(sql);
+//        assert "B".equals(tableName);
+//    }
 
     @Test
     public void getMapFromMetaData(){

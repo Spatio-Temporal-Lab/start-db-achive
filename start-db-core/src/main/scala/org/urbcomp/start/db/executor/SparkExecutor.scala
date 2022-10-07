@@ -11,7 +11,9 @@
 
 package org.urbcomp.start.db.executor
 
+
 import org.apache.spark.sql.SparkSession
+
 import org.urbcomp.start.db.metadata.MetadataAccessUtil
 import org.urbcomp.start.db.metadata.entity.Table
 import org.urbcomp.start.db.parser.{Constant, SqlTableDriver}
@@ -65,7 +67,10 @@ class SparkExecutor {
     }
 
     val dataFrame = sparkSession.sql(sql)
+    // Tmp
+    dataFrame.show()
 
+    // ToDO 写入路径的约定
     val path = "hdfs://start-db:balabal"
     dataFrame.write.option("delimiter", "||").csv(path)
     path
