@@ -10,13 +10,13 @@
     <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>start-db-common</module>
-        <module>start-db-test</module>
         <module>start-db-avatica-core</module>
         <module>start-db-calcite</module>
         <module>start-db-jdbc-driver</module>
         <module>start-db-cmd</module>
         <module>start-db-core</module>
         <module>start-db-server</module>
+        <module>start-db-test</module>
     </modules>
 
     <properties>
