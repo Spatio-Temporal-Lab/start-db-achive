@@ -10,7 +10,7 @@ services:
     ports:
       - '3306:3306'
   geomesa-hbase:
-    image: jimolonely1234/geomesa-hbase:latest
+    image: spatiotemporallab/geomesa-hbase:latest
     hostname: geomesa-hbase-local
     ports:
       - '2181:2181'
