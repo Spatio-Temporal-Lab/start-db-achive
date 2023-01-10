@@ -12,14 +12,14 @@ services:
     ports:
       - '3306:3306'
   geomesa-hbase-local:
-    image: jimolonely1234/geomesa-hbase:latest
+    image: spatiotemporallab/geomesa-hbase:latest
     hostname: geomesa-hbase-local
     ports:
       - '2181:2181'
       - '16000:16000'
       - '16020:16020'
   start-db:
-    image: jimolonely1234/start-db-server:1.0.0
+    image: spatiotemporallab/start-db-server:1.0.0
 #    image: start-db-server:1.0.0
     environment:
       PORT: 8000
@@ -29,7 +29,7 @@ services:
       - mysql-local
       - geomesa-hbase-local
   ss-proxy:
-    image: jimolonely1234/ss-proxy:1.0.0
+    image: spatiotemporallab/ss-proxy:1.0.0
 #    image: ss-proxy:1.0.0
     volumes:
       - ./conf:/usr/local/ss-proxy/conf
