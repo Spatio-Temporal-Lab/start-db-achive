@@ -39,8 +39,8 @@ docker run --hostname geomesa-hbase-local \
 # upload the image to dockerhub
 
 ```shell
-docker tag geomesa-hbase jimolonely1234/geomesa-hbase
-docker push jimolonely1234/geomesa-hbase
+docker tag geomesa-hbase spatiotemporallab/geomesa-hbase
+docker push spatiotemporallab/geomesa-hbase
 ```
 
 

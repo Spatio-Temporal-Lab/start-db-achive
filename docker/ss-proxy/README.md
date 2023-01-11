@@ -34,7 +34,7 @@ docker run --add-host=start-db:192.168.0.100 -v ./conf:/usr/local/ss-proxy/conf 
 10. deploy to dockerhub
 
 ```shell
-docker tag ss-proxy:1.0.0 jimolonely1234/ss-proxy:1.0.0
-docker push jimolonely1234/ss-proxy:1.0.0
+docker tag ss-proxy:1.0.0 spatiotemporallab/ss-proxy:1.0.0
+docker push spatiotemporallab/ss-proxy:1.0.0
 ```
 
