@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.urbcomp.cupid.db.metadata.mapper.FieldMapper">
+    <select id="selectAllByFid" resultType="org.urbcomp.cupid.db.metadata.entity.Field">
+        SELECT *
+        FROM sys_field
+        WHERE table_id = #{fid} and delete_time = 0;
+    </select>
+    <select id="selectById" resultType="org.urbcomp.cupid.db.metadata.entity.Field">
+        SELECT *
+        FROM sys_field
+        WHERE id = #{id} and delete_time = 0;
+    </select>
+    <select id="selectByFidAndName" resultType="org.urbcomp.cupid.db.metadata.entity.Field">
+        SELECT *
+        FROM sys_field
+        WHERE table_id = #{fid} and name = #{name} and delete_time = 0
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.urbcomp.cupid.db.metadata.entity.Field">
+        INSERT INTO sys_field(`table_id`, `name`, `type`, `is_primary`) VALUE (#{field.tableId}, #{field.name},#{field.type},#{field.isPrimary});
+    </insert>
+    <update id="update">
+        UPDATE sys_field
+        SET name=#{field.name},
+        table_id = #{field.tableId},
+        type = #{field.type},
+        is_primary = #{field.isPrimary}
+        WHERE id = #{field.id} and delete_time = 0;
+    </update>
+    <delete id="deleteById">
+        UPDATE sys_field
+        SET delete_time = current_timestamp()
+        WHERE id = #{id};
+    </delete>
+    <delete id="deleteByFid">
+        UPDATE sys_field
+        SET delete_time = current_timestamp()
+        WHERE table_id = #{fid};
+    </delete>
+    <delete id="clean">
+        DELETE
+        FROM sys_field
+        WHERE (delete_time != 0 AND TIMESTAMPDIFF(SECOND,delete_time, current_timestamp()) > #{expiredTimeLenS})
+           OR (table_id not in (SELECT id FROM sys_table WHERE delete_time != 0))
+    </delete>
+</mapper>

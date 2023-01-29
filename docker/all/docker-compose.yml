@@ -18,9 +18,9 @@ services:
       - '2181:2181'
       - '16000:16000'
       - '16020:16020'
-  start-db:
-    image: spatiotemporallab/start-db-server:1.0.0
-#    image: start-db-server:1.0.0
+  cupid-db:
+    image: spatiotemporallab/cupid-db-server:1.0.0
+#    image: cupid-db-server:1.0.0
     environment:
       PORT: 8000
     ports:
@@ -38,4 +38,4 @@ services:
     ports:
       - '3307:3307'
     depends_on:
-      - start-db
+      - cupid-db

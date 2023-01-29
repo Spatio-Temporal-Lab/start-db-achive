@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.urbcomp.cupid.db.metadata.mapper.TableMapper">
+    <select id="selectAllByFid" resultType="org.urbcomp.cupid.db.metadata.entity.Table">
+        SELECT *
+        FROM sys_table
+        WHERE db_id = #{fid} and delete_time = 0;
+    </select>
+    <select id="selectById" resultType="org.urbcomp.cupid.db.metadata.entity.Table">
+        SELECT *
+        FROM sys_table
+        WHERE id = #{id}
+        and delete_time = 0;
+    </select>
+    <select id="selectByFidAndName" resultType="org.urbcomp.cupid.db.metadata.entity.Table">
+        SELECT *
+        FROM sys_table
+        WHERE db_id = #{fid}
+        and name = #{name}
+        and delete_time = 0
+    </select>
+    <select id="getAllUserDbTable" resultType="org.urbcomp.cupid.db.util.UserDbTable">
+        SELECT t.name as table_name, db.name as db_name, u.name as username
+        FROm sys_table as t,
+        sys_database as db,
+        sys_user as u
+        where t.db_id = db.id
+        and db.user_id = u.id
+        and t.delete_time = 0
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.urbcomp.cupid.db.metadata.entity.Table">
+        INSERT INTO sys_table(`db_id`, `name`, `storage_engine`) VALUE (#{table.dbId}, #{table.name}, #{table.storageEngine});
+    </insert>
+    <update id="update">
+        UPDATE sys_table
+        SET name=#{table.name},
+        storage_engine = #{table.storageEngine},
+        db_id = #{table.dbId}
+        WHERE id = #{table.id}
+        and delete_time = 0;
+    </update>
+    <delete id="deleteById">
+        UPDATE sys_table
+        SET delete_time = current_timestamp()
+        WHERE id = #{id};
+    </delete>
+    <delete id="deleteByFid">
+        UPDATE sys_table
+        SET delete_time = current_timestamp()
+        WHERE db_id = #{fid};
+    </delete>
+    <delete id="clean">
+        DELETE
+        FROM sys_table
+        WHERE (delete_time != 0 AND TIMESTAMPDIFF(SECOND,delete_time, current_timestamp()) > #{expiredTimeLenS})
+           OR (db_id not in (SELECT id FROM sys_database WHERE delete_time != 0))
+    </delete>
+</mapper>

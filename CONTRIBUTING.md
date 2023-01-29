@@ -1,14 +1,14 @@
-# Contributing to START-DB
+# Contributing to CUPID-DB
 
 ### Running environment setup
 
-Running environment need to be setup before build or test START-DB.
+Running environment need to be setup before build or test CUPID-DB.
 
 1. Please follow [Docker Setup](docker/local/README.md) and confirm
 2. init mysql schema
 
 ```shell
-mvn test exec:java -f start-db-test/start-db-test-embedded-mysql/pom.xml
+mvn test exec:java -f cupid-db-test/cupid-db-test-embedded-mysql/pom.xml
 ```
 
 then
@@ -21,11 +21,11 @@ run successfully.
 
 ### Importing the project into IntelliJ IDEA
 
-START-DB builds using Java 8. When importing into IntelliJ you will need to define an appropriate SDK.or more details on
+CUPID-DB builds using Java 8. When importing into IntelliJ you will need to define an appropriate SDK.or more details on
 defining an SDK in IntelliJ please refer
 to [their documentation](https://www.jetbrains.com/help/idea/sdk.html#define-sdk).
 
-You can import the START-DB project into IntelliJ IDEA via:
+You can import the CUPID-DB project into IntelliJ IDEA via:
 
 - Select **File > Open**
 - In the subsequent dialog navigate to the root `pom.xml` file
@@ -33,7 +33,7 @@ You can import the START-DB project into IntelliJ IDEA via:
 
 #### Checkstyle
 
-You can install [Checkstyle] plugin to check the START-DB code.
+You can install [Checkstyle] plugin to check the CUPID-DB code.
 
 1. Open **File > Settings> Tools > CheckStyle**
 2. Select CheckStyle version `9.3`
@@ -42,7 +42,7 @@ You can install [Checkstyle] plugin to check the START-DB code.
 
 ### Formatting
 
-START-DB code is automatically formatted with [spotless], backed by the Eclipse formatter. You can do the same in
+CUPID-DB code is automatically formatted with [spotless], backed by the Eclipse formatter. You can do the same in
 IntelliJ with the [Eclipse Code Formatter] so that you can apply the correct formatting directly in your IDE.
 
 **Java Code Style**

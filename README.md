@@ -1,7 +1,7 @@
-# start-db
+# cupid-db
 
 ## package
 
 ```shell
-mvn package -pl start-db-server -am -DskipTests -Dcheckstyle.skip
+mvn package -pl cupid-db-server -am -DskipTests -Dcheckstyle.skip
 ```

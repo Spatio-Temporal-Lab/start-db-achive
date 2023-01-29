@@ -9,15 +9,15 @@ about: Something isn't working as expected
 
 Before report a bug, make sure you have:
 
-- Searched open and closed [start-db issues](https://github.com/Spatio-Temporal-Lab/start-db/issues).
-- Read documentation: [start-db wiki](https://github.com/Spatio-Temporal-Lab/start-db/wiki).
+- Searched open and closed [cupid-db issues](https://github.com/Spatio-Temporal-Lab/cupid-db/issues).
+- Read documentation: [cupid-db wiki](https://github.com/Spatio-Temporal-Lab/cupid-db/wiki).
 
 Please pay attention on issues you submitted, because we maybe need more details.
 If no response anymore and we cannot reproduce it on current information, we will **close it**.
 
 Please answer these questions before submitting your issue. Thanks!
 
-### Which version of start-db did you use?
+### Which version of cupid-db did you use?
 
 ### Which project did you use? Which scene did you use?
 
