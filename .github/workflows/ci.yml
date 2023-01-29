@@ -50,13 +50,13 @@ jobs:
         run: echo "127.0.0.1 mysql-local" | sudo tee -a /etc/hosts
 
       - name: init mysql schema
-        run: mvn test exec:java -f start-db-test/start-db-test-embedded-mysql/pom.xml -Dcheckstyle.skip
+        run: mvn test exec:java -f cupid-db-test/cupid-db-test-embedded-mysql/pom.xml -Dcheckstyle.skip
 
       - name: set geomesa hbase host
         run: echo "127.0.0.1 geomesa-hbase-local" | sudo tee -a /etc/hosts
 
       - name: init geomesa table and data
-        run: mvn test exec:java -f start-db-test/start-db-test-geomesa-geotools/pom.xml -Dcheckstyle.skip
+        run: mvn test exec:java -f cupid-db-test/cupid-db-test-geomesa-geotools/pom.xml -Dcheckstyle.skip
 
       # Runs a set of commands using the runners shell
       - name: build and test with maven

@@ -1,28 +1,28 @@
-build start-db server docker image
+build cupid-db server docker image
 
 1. build server jar
 
 ```shell
-mvn package -pl start-db-server -am -DskipTests -Dcheckstyle.skip
+mvn package -pl cupid-db-server -am -DskipTests -Dcheckstyle.skip
 ```
 
-2. copy `start-db.jar` to current dir
+2. copy `cupid-db.jar` to current dir
    
 3. build image
 
 ```shell
-docker build -t start-db-server:1.0.0 .
+docker build -t cupid-db-server:1.0.0 .
 ```
 
 4. run image and test
 
 ```shell
-docker run --name start-db -p 8000:8000 -d start-db-server:1.0.0
+docker run --name cupid-db -p 8000:8000 -d cupid-db-server:1.0.0
 ```
 
 5. deploy to dockerhub
 
 ```shell
-docker tag start-db-server:1.0.0 spatiotemporallab/start-db-server:1.0.0
-docker push spatiotemporallab/start-db-server:1.0.0
+docker tag cupid-db-server:1.0.0 spatiotemporallab/cupid-db-server:1.0.0
+docker push spatiotemporallab/cupid-db-server:1.0.0
 ```
