@@ -48,15 +48,15 @@ public class MetadataAccessUtil {
     private final static int cleanExpiredTimeS = 14 * 24 * 3600;
 
     private final static Cache<String, User> USER_CACHE = Caffeine.newBuilder()
-            .expireAfterWrite(1, TimeUnit.HOURS)
-            .maximumSize(256)
-            .build(new CacheLoader<String, User>() {
-                @CheckForNull
-                @Override
-                public User load(@Nonnull String username) throws Exception {
-                    return getUserReal(username);
-                }
-            });
+        .expireAfterWrite(1, TimeUnit.HOURS)
+        .maximumSize(256)
+        .build(new CacheLoader<String, User>() {
+            @CheckForNull
+            @Override
+            public User load(@Nonnull String username) throws Exception {
+                return getUserReal(username);
+            }
+        });
 
     public static SqlSession getSqlSession() {
         SqlSession sqlSession = SQL_SESSION.get();
@@ -141,7 +141,7 @@ public class MetadataAccessUtil {
      */
     public static User getUserReal(String userName) {
         return noRollback(
-                v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
+            v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
         );
     }
 
@@ -152,7 +152,7 @@ public class MetadataAccessUtil {
 
     public static Database getDatabase(long userId, String dbName) {
         return noRollback(
-                v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
+            v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
         );
     }
 
@@ -198,7 +198,7 @@ public class MetadataAccessUtil {
             AccessorFactory.getFieldAccessor().deleteByFid(tableId);
             // 清理缓存
             MetadataCacheTableMap.dropTableCache(
-                    MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
             );
             return res;
         });
