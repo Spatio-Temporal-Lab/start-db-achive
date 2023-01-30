@@ -11,6 +11,9 @@
 
 package org.urbcomp.cupid.db.metadata;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.ibatis.session.SqlSession;
 import org.urbcomp.cupid.db.metadata.accessor.DatabaseAccessor;
 import org.urbcomp.cupid.db.metadata.accessor.FieldAccessor;
@@ -23,8 +26,11 @@ import org.urbcomp.cupid.db.metadata.entity.User;
 import org.urbcomp.cupid.db.util.MetadataUtil;
 import org.urbcomp.cupid.db.util.UserDbTable;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -40,6 +46,17 @@ public class MetadataAccessUtil {
      * 2 weeks
      */
     private final static int cleanExpiredTimeS = 14 * 24 * 3600;
+
+    private final static Cache<String, User> USER_CACHE = Caffeine.newBuilder()
+            .expireAfterWrite(1, TimeUnit.HOURS)
+            .maximumSize(256)
+            .build(new CacheLoader<String, User>() {
+                @CheckForNull
+                @Override
+                public User load(@Nonnull String username) throws Exception {
+                    return getUserReal(username);
+                }
+            });
 
     public static SqlSession getSqlSession() {
         SqlSession sqlSession = SQL_SESSION.get();
@@ -107,20 +124,35 @@ public class MetadataAccessUtil {
         return noRollback(v -> AccessorFactory.getFieldAccessor().insert(field));
     }
 
-    // TODO cache
+    /**
+     * query with cache
+     */
     public static User getUser(String userName) {
+        User user = USER_CACHE.getIfPresent(userName);
+        if (user == null) {
+            user = getUserReal(userName);
+            USER_CACHE.put(userName, user);
+        }
+        return user;
+    }
+
+    /**
+     * query directly from db
+     */
+    public static User getUserReal(String userName) {
         return noRollback(
-            v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
+                v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
         );
     }
 
     public static long insertUser(User user) {
+        USER_CACHE.invalidate(user.getName());
         return noRollback(v -> AccessorFactory.getUserAccessor().insert(user));
     }
 
     public static Database getDatabase(long userId, String dbName) {
         return noRollback(
-            v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
+                v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
         );
     }
 
@@ -166,7 +198,7 @@ public class MetadataAccessUtil {
             AccessorFactory.getFieldAccessor().deleteByFid(tableId);
             // 清理缓存
             MetadataCacheTableMap.dropTableCache(
-                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+                    MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
             );
             return res;
         });
