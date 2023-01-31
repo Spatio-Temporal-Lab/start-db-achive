@@ -27,7 +27,7 @@ public class DaemonManager {
 
     private final static ExecutorService POOL = Executors.newFixedThreadPool(
         1,
-        new ThreadFactoryBuilder().setNameFormat("DB-DAEMON-%i").build()
+        new ThreadFactoryBuilder().setNameFormat("DB-DAEMON-%d").build()
     );
 
     public static void start() {
