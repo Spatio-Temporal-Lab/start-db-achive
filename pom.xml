@@ -31,6 +31,7 @@
         <scala.version>2.12.8</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
         <scalatest.version>3.0.8</scalatest.version>
+        <spark.version>3.0.2</spark.version>
         <geomesa.version>3.2.2</geomesa.version>
         <hbase.version>2.2.2</hbase.version>
         <gt.version>25.5</gt.version>
@@ -322,6 +323,10 @@
         </plugins>
     </build>
     <repositories>
+        <repository>
+            <id>central-repos1</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
         <!--for geotools-->
         <repository>
             <id>osgeo-alt</id>
