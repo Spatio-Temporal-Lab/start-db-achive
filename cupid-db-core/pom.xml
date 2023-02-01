@@ -21,6 +21,12 @@
             <groupId>org.urbcomp</groupId>
             <artifactId>cupid-db-calcite</artifactId>
             <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>geomesa-spark-jts_2.12</artifactId>
+                    <groupId>org.locationtech.geomesa</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.urbcomp</groupId>
