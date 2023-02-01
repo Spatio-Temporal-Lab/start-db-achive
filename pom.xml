@@ -323,6 +323,10 @@
         </plugins>
     </build>
     <repositories>
+        <repository>
+            <id>central-repos1</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
         <!--for geotools-->
         <repository>
             <id>osgeo-alt</id>
