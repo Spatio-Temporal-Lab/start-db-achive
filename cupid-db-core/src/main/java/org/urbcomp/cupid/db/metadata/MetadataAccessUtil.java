@@ -131,6 +131,9 @@ public class MetadataAccessUtil {
         User user = USER_CACHE.getIfPresent(userName);
         if (user == null) {
             user = getUserReal(userName);
+            if (user == null) {
+                return null;
+            }
             USER_CACHE.put(userName, user);
         }
         return user;
