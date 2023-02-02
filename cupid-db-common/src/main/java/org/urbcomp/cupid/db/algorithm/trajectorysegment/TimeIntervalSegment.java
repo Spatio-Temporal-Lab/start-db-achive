@@ -30,39 +30,50 @@ public class TimeIntervalSegment implements AbstractTrajectorySegment {
      * @return List<Trajectory> 轨迹段
      */
     @Override
-    public List<Trajectory> segment(Trajectory trajectory) {
-        List<GPSPoint> gpslist = trajectory.getGPSPointList();
-        int startindex = 0;
-        List<Trajectory> subTrajectory = new ArrayList<>();
 
-        // 遍历直到时间差超过阈值（秒为单位）
-        int flag = 1;
-        for (int index = 1; index < gpslist.size(); index++) {
-            double timeInterval = (gpslist.get(index).getTime().getTime() - gpslist.get(startindex)
-                .getTime()
-                .getTime()) / 1000.0;
-            if (timeInterval > maxTimeIntervalInSec) {
-                subTrajectory.add(
-                    new Trajectory(
-                        trajectory.getTid() + "_" + flag,
-                        trajectory.getOid(),
-                        gpslist.subList(startindex, index)
-                    )
-                );
-                flag += 1;
-                startindex = index;
+    public List<Trajectory> segment(Trajectory trajectory) {
+        List<Trajectory> subTrajectory = new ArrayList<>();
+        List<GPSPoint> segment = new ArrayList<>();
+        List<GPSPoint> gpsPointList = trajectory.getGPSPointList();
+        GPSPoint lastPoint;
+        GPSPoint curPoint;
+        int flag = 0;
+        if (gpsPointList.size() != 0) {
+            segment.add(gpsPointList.get(0));
+            lastPoint = gpsPointList.get(0);
+            for (int i = 1; i < gpsPointList.size(); i++) {
+                curPoint = gpsPointList.get(i);
+                Double duration = (curPoint.getTime().getTime() - lastPoint.getTime().getTime())
+                    / 1000.0;
+                if (duration < maxTimeIntervalInSec) {
+                    segment.add(curPoint);
+                } else {
+                    if (segment.size() > 0) {
+                        Trajectory newTrajectory = new Trajectory(
+                            trajectory.getTid() + "_" + flag,
+                            trajectory.getOid(),
+                            segment
+                        );
+                        subTrajectory.add(newTrajectory);
+                        flag++;
+                    }
+                    segment = new ArrayList<>();
+                    segment.add(curPoint);
+                }
+                lastPoint = curPoint;
             }
-        }
-        // 添加最后一段轨迹
-        if (startindex < gpslist.size()) {
-            subTrajectory.add(
-                new Trajectory(
+            if (segment.size() > 0) {
+                Trajectory newTrajectory = new Trajectory(
                     trajectory.getTid() + "_" + flag,
                     trajectory.getOid(),
-                    gpslist.subList(startindex, gpslist.size())
-                )
-            );
+                    segment
+                );
+                subTrajectory.add(newTrajectory);
+            }
+
         }
+
         return subTrajectory;
     }
+
 }

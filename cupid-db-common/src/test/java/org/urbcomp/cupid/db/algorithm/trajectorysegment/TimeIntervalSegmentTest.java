@@ -28,13 +28,13 @@ public class TimeIntervalSegmentTest {
     @Before
     public void setup() {
         trajectory = ModelGenerator.generateTrajectory();
-        trajectortsegment = new TimeIntervalSegment(120);
+        trajectortsegment = new TimeIntervalSegment(2);
     }
 
     @Test
     public void TimeIntervalSegmenttest() {
         List<Trajectory> subtrajectory = trajectortsegment.segment(trajectory);
-        assertEquals(subtrajectory.size(), 3);
+        assertEquals(subtrajectory.size(), 117);
         int totalsize = 0;
         for (Trajectory traj : subtrajectory) {
             int a = traj.getGPSPointList().size();
