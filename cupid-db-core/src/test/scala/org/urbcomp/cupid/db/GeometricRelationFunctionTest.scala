@@ -11,7 +11,7 @@
 
 package org.urbcomp.cupid.db
 
-import org.junit.Assert.{assertEquals, assertNotNull, assertTrue}
+import org.junit.Assert.assertEquals
 
 /**
   * Geometry relation Function test
@@ -178,4 +178,5 @@ class GeometricRelationFunctionTest extends AbstractCalciteFunctionTest {
     resultSet.next()
     assertEquals(8L, resultSet.getObject(1))
   }
+
 }
