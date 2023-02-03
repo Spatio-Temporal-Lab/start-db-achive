@@ -27,7 +27,7 @@ public class StayPointDetection implements AbstractStayPointDetection {
      * startTime:该驻留点起始时间 endTime:该驻留点终止时间 gpsList:
     **/
     @Override
-    public List<StayGPSPointList> detection(Trajectory trajectory, Double d, Double t) {
+    public List<StayGPSPointList> detection(Trajectory trajectory, double d, double t) {
         List<StayGPSPointList> SPs = new ArrayList<>();
         List<GPSPoint> list = trajectory.getGPSPointList();
         int tr = list.size();
