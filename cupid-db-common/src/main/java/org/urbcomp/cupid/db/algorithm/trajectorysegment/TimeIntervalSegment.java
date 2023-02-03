@@ -43,7 +43,7 @@ public class TimeIntervalSegment implements AbstractTrajectorySegment {
             lastPoint = gpsPointList.get(0);
             for (int i = 1; i < gpsPointList.size(); i++) {
                 curPoint = gpsPointList.get(i);
-                Double duration = (curPoint.getTime().getTime() - lastPoint.getTime().getTime())
+                double duration = (curPoint.getTime().getTime() - lastPoint.getTime().getTime())
                     / 1000.0;
                 if (duration < maxTimeIntervalInSec) {
                     segment.add(curPoint);
