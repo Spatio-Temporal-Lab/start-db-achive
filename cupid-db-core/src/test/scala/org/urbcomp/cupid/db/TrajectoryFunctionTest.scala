@@ -159,4 +159,17 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
       .sum
     assertEquals(trajectory.getGPSPointList.size, totalSize)
   }
+
+  test("st_traj_stayPointDetection") {
+    val statement = connect.createStatement()
+    val resultSet = {
+      statement.executeQuery(
+        "select st_traj_stayPointDetection(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 50 + "," + 400 + ")"
+      )
+    }
+    resultSet.next()
+    val stayList = resultSet.getObject(1).getClass.toString
+    print(stayList)
+    assertEquals("class org.apache.calcite.avatica.util.ArrayImpl", stayList)
+  }
 }

@@ -23,8 +23,8 @@ public class StayPointDetectionTest {
 
     private static StayPointDetection stayPointDetection;
     private static Trajectory trajectory;
-    private static Double d;
-    private static Double t;
+    private static double d;
+    private static double t;
 
     @Before
     public void setup() {

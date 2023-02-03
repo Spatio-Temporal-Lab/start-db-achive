@@ -27,6 +27,8 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.urbcomp.cupid.db.algorithm.mapmatch.tihmm.TiHmmMapMatcher;
 import org.urbcomp.cupid.db.algorithm.shortestpath.BiDijkstraShortestPath;
+import org.urbcomp.cupid.db.algorithm.staypointdetection.StayGPSPointList;
+import org.urbcomp.cupid.db.algorithm.staypointdetection.StayPointDetection;
 import org.urbcomp.cupid.db.algorithm.trajectorysegment.TimeIntervalSegment;
 import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.roadnetwork.RoadNetwork;
@@ -128,5 +130,15 @@ public class TrajectoryFunction {
         TimeIntervalSegment trajectortsegment = new TimeIntervalSegment(maxTimeIntervalInSec);
         List<Trajectory> subtrajectory = trajectortsegment.segment(trajectory);
         return subtrajectory;
+    }
+
+    @CupidDBFunction("st_traj_stayPointDetection")
+    public List<StayGPSPointList> st_traj_stayPointDetection(
+        Trajectory trajectory,
+        double d,
+        double t
+    ) {
+        StayPointDetection stayPointDetection = new StayPointDetection();
+        return stayPointDetection.detection(trajectory, d, t);
     }
 }
