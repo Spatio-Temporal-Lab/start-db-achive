@@ -79,7 +79,7 @@ public class MetadataAccessorFromCaffeineCache implements IMetadataCacheCaller {
 
     @Override
     public Table getTable(String userName, String dbName, String tableName) {
-        return TABLE_CACHE.getIfPresent(buildCacheKey(userName, dbName, tableName));
+        return TABLE_CACHE.get(buildCacheKey(userName, dbName, tableName));
     }
 
     @Override
