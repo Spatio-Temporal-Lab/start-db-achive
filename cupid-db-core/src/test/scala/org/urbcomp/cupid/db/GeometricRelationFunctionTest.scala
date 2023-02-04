@@ -12,6 +12,10 @@
 package org.urbcomp.cupid.db
 
 import org.junit.Assert.assertEquals
+import org.urbcomp.cupid.db.model.sample.ModelGenerator
+import org.urbcomp.cupid.db.model.trajectory.Trajectory
+
+import scala.collection.JavaConverters.seqAsJavaList
 
 /**
   * Geometry relation Function test
@@ -20,6 +24,11 @@ import org.junit.Assert.assertEquals
   */
 // TODO test the relation between linestring and polygon
 class GeometricRelationFunctionTest extends AbstractCalciteFunctionTest {
+  val nameArray: Array[String] = Array[String]("int", "str", "double", "point")
+  val typeArray: Array[String] = Array[String]("Integer", "String", "Double", "Point")
+  val trajectory: Trajectory =
+    ModelGenerator.generateTrajectory(seqAsJavaList(nameArray), seqAsJavaList(typeArray))
+  val tGeo: String = trajectory.toGeoJSON
   test("st_equals") {
     val statement = connect.createStatement
     val resultSet = statement.executeQuery(
@@ -177,6 +186,21 @@ class GeometricRelationFunctionTest extends AbstractCalciteFunctionTest {
     assertEquals(5L, resultSet.getObject(1))
     resultSet.next()
     assertEquals(8L, resultSet.getObject(1))
+  }
+
+  test("st_traj_stayPointDetect") {
+    val statement = connect.createStatement
+    val resultSet = statement.executeQuery(
+      "select st_traj_stayPointDetect(st_traj_fromGeoJSON(\'" + tGeo + "\'),10,10)"
+    )
+    resultSet.next()
+    assertEquals("2018-10-08 23:30:21.0", resultSet.getObject(1).toString)
+    assertEquals("2018-10-08 23:30:27.0", resultSet.getObject(2).toString)
+    assertEquals(
+      "[POINT (108.99549 34.26714), POINT (108.9955 34.26707), POINT (108.99549 34.26704)]",
+      resultSet.getObject(3).toString
+    )
+
   }
 
 }

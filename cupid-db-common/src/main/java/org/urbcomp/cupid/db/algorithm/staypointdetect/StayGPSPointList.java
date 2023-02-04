@@ -9,7 +9,7 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.cupid.db.algorithm.staypointdetection;
+package org.urbcomp.cupid.db.algorithm.staypointdetect;
 
 import org.urbcomp.cupid.db.model.point.GPSPoint;
 
@@ -19,7 +19,7 @@ import java.util.List;
 public class StayGPSPointList {
     private Timestamp starTime;
     private Timestamp endTime;
-    private List<GPSPoint> MultiPoint;
+    private List<GPSPoint> multiPoint;
 
     public StayGPSPointList() {}
 
@@ -40,10 +40,10 @@ public class StayGPSPointList {
     }
 
     public List<GPSPoint> getMultiPoint() {
-        return MultiPoint;
+        return multiPoint;
     }
 
     public void setMultiPoint(List<GPSPoint> multiPoint) {
-        MultiPoint = multiPoint;
+        this.multiPoint = multiPoint;
     }
 }
