@@ -63,7 +63,10 @@ public class MetadataAccessorFromCaffeineCache implements IMetadataCacheCaller {
             @Override
             public Table load(@Nonnull String key) throws Exception {
                 final String[] items = key.split(SPLITTER);
-                return real.getTable(items[0], items[1], items[2]);
+                if (items.length >= 3) {
+                    return real.getTable(items[0], items[1], items[2]);
+                }
+                return real.getTable(Long.parseLong(items[0]), items[1]);
             }
         });
 

@@ -40,6 +40,9 @@ public class MetadataAccessorFromCaffeineCacheTest {
         final Table table = m.getTable(USERNAME, DBNAME, TABLE_NAME);
         assertEquals(TABLE_ID, table.getId());
 
+        final Table table2 = m.getTable(DB_ID, TABLE_NAME);
+        assertEquals(TABLE_ID, table2.getId());
+
         final Database database = m.getDatabase(USERNAME, DBNAME);
         assertEquals(DB_ID, database.getId());
 
