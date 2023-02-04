@@ -35,7 +35,9 @@ public class MetadataAccessUtil {
      */
     private final static int cleanExpiredTimeS = 14 * 24 * 3600;
 
-    private final static IMetadataAccessor ACCESSOR = new MetadataAccessorFromCaffeineCache(new MetadataAccessorFromDb());
+    private final static IMetadataAccessor ACCESSOR = new MetadataAccessorFromCaffeineCache(
+        new MetadataAccessorFromDb()
+    );
 
     /**
      * check if table exists

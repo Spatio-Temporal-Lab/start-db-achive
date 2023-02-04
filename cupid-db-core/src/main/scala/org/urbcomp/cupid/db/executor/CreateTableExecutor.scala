@@ -18,7 +18,10 @@ import org.urbcomp.cupid.db.executor.utils.ExecutorUtil
 import org.urbcomp.cupid.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.cupid.db.metadata.MetadataAccessUtil
 import org.urbcomp.cupid.db.metadata.entity.{Field, Table}
-import org.urbcomp.cupid.db.transformer.{RoadSegmentAndGeomesaTransformer, TrajectoryAndFeatureTransformer}
+import org.urbcomp.cupid.db.transformer.{
+  RoadSegmentAndGeomesaTransformer,
+  TrajectoryAndFeatureTransformer
+}
 import org.urbcomp.cupid.db.util.{DataTypeUtils, MetadataUtil}
 
 case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {

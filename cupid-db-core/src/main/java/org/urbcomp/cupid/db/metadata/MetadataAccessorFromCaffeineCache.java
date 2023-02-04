@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.cupid.db.metadata;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -18,44 +29,43 @@ import java.util.concurrent.TimeUnit;
  **/
 public class MetadataAccessorFromCaffeineCache implements IMetadataCacheCaller {
 
-
     private final IMetadataAccessor real;
     private final LoadingCache<String, User> USER_CACHE = Caffeine.newBuilder()
-            .expireAfterWrite(1, TimeUnit.HOURS)
-            .maximumSize(256)
-            .build(new CacheLoader<String, User>() {
-                @CheckForNull
-                @Override
-                public User load(@Nonnull String username) throws Exception {
-                    return real.getUser(username);
-                }
-            });
+        .expireAfterWrite(1, TimeUnit.HOURS)
+        .maximumSize(256)
+        .build(new CacheLoader<String, User>() {
+            @CheckForNull
+            @Override
+            public User load(@Nonnull String username) throws Exception {
+                return real.getUser(username);
+            }
+        });
 
     private final LoadingCache<String, Database> DB_CACHE = Caffeine.newBuilder()
-            .initialCapacity(16)
-            .maximumSize(256)
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build(new CacheLoader<String, Database>() {
-                @CheckForNull
-                @Override
-                public Database load(@Nonnull String key) throws Exception {
-                    final String[] items = key.split(SPLITTER);
-                    return real.getDatabase(items[0], items[1]);
-                }
-            });
+        .initialCapacity(16)
+        .maximumSize(256)
+        .expireAfterAccess(10, TimeUnit.MINUTES)
+        .build(new CacheLoader<String, Database>() {
+            @CheckForNull
+            @Override
+            public Database load(@Nonnull String key) throws Exception {
+                final String[] items = key.split(SPLITTER);
+                return real.getDatabase(items[0], items[1]);
+            }
+        });
 
     private final LoadingCache<String, Table> TABLE_CACHE = Caffeine.newBuilder()
-            .initialCapacity(16)
-            .maximumSize(256)
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build(new CacheLoader<String, Table>() {
-                @CheckForNull
-                @Override
-                public Table load(@Nonnull String key) throws Exception {
-                    final String[] items = key.split(SPLITTER);
-                    return real.getTable(items[0], items[1], items[2]);
-                }
-            });
+        .initialCapacity(16)
+        .maximumSize(256)
+        .expireAfterAccess(10, TimeUnit.MINUTES)
+        .build(new CacheLoader<String, Table>() {
+            @CheckForNull
+            @Override
+            public Table load(@Nonnull String key) throws Exception {
+                final String[] items = key.split(SPLITTER);
+                return real.getTable(items[0], items[1], items[2]);
+            }
+        });
 
     public MetadataAccessorFromCaffeineCache(IMetadataAccessor real) {
         this.real = real;

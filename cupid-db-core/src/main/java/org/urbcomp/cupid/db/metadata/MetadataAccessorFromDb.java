@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.cupid.db.metadata;
 
 import org.urbcomp.cupid.db.metadata.accessor.DatabaseAccessor;
@@ -19,7 +30,6 @@ import static org.urbcomp.cupid.db.metadata.MetadataAccessUtil.noRollback;
  * @author jimo
  **/
 public class MetadataAccessorFromDb implements IMetadataAccessor {
-
 
     @Override
     public long insertField(Field field) {
@@ -78,7 +88,7 @@ public class MetadataAccessorFromDb implements IMetadataAccessor {
             AccessorFactory.getFieldAccessor().deleteByFid(tableId);
             // 清理缓存
             MetadataCacheTableMap.dropTableCache(
-                    MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
+                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
             );
             return res;
         });
@@ -143,7 +153,7 @@ public class MetadataAccessorFromDb implements IMetadataAccessor {
     @Override
     public User getUser(String userName) {
         return noRollback(
-                v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
+            v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
         );
     }
 
