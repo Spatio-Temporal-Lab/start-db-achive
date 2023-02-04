@@ -9,7 +9,7 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.cupid.db.algorithm.staypointdetection;
+package org.urbcomp.cupid.db.algorithm.staypointdetect;
 
 import org.urbcomp.cupid.db.model.point.GPSPoint;
 import org.urbcomp.cupid.db.model.trajectory.Trajectory;
@@ -18,25 +18,27 @@ import org.urbcomp.cupid.db.util.GeoFunctions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StayPointDetection implements AbstractStayPointDetection {
+public class StayPointDetect implements IStayPointDetect {
 
     /**
      *驻留点检测
      *@param trajectory, d, t 长轨迹 空间阈值 时间阈值
      *@return List<StayGPSPointList> 驻留点表 List[startTime:Timestamp, endTime:Timestamp, gpsList:MultiPoint]
-     * startTime:该驻留点起始时间 endTime:该驻留点终止时间 gpsList:
+     * startTime:该驻留点起始时间 endTime:该驻留点终止时间 gpsList:驻留点包含的gps列表
     **/
     @Override
-    public List<StayGPSPointList> detection(Trajectory trajectory, double d, double t) {
+    public List<StayGPSPointList> detect(Trajectory trajectory, double d, double t) {
         List<StayGPSPointList> SPs = new ArrayList<>();
         List<GPSPoint> list = trajectory.getGPSPointList();
-        int tr = list.size();
+        int trLen = list.size();
         int start = 0, end = 0;
         boolean newSpFlag = true;
-        for (int i = 0; i < tr - 1;) {
+        int i = 0;
+        while (i < trLen - 1) {
             int j = i + 1;
-            for (; j < tr; j++) {
+            while (j < trLen) {
                 if (getDistance(list.get(i), list.get(j)) > d) break;
+                j++;
             }
             if (j > i + 1
                 && (list.get(j - 1).getTime().getTime() - list.get(i).getTime().getTime()) >= t) {

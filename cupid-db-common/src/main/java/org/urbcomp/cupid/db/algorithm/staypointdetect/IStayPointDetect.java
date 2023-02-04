@@ -9,12 +9,12 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.cupid.db.algorithm.staypointdetection;
+package org.urbcomp.cupid.db.algorithm.staypointdetect;
 
 import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 
 import java.util.List;
 
-public interface AbstractStayPointDetection {
-    List<StayGPSPointList> detection(Trajectory trajectory, double d, double t);
+public interface IStayPointDetect {
+    List<StayGPSPointList> detect(Trajectory trajectory, double d, double t);
 }

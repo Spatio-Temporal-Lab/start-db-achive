@@ -9,19 +9,20 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.cupid.db.algorithm.staypointdetection;
+package org.urbcomp.cupid.db.algorithm.staypointdetect;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.urbcomp.cupid.db.model.point.GPSPoint;
 import org.urbcomp.cupid.db.model.sample.ModelGenerator;
 import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 
 import java.util.List;
 
-public class StayPointDetectionTest {
+import static org.junit.Assert.assertEquals;
 
-    private static StayPointDetection stayPointDetection;
+public class StayPointDetectTest {
+
+    private static StayPointDetect stayPointDetect;
     private static Trajectory trajectory;
     private static double d;
     private static double t;
@@ -29,17 +30,15 @@ public class StayPointDetectionTest {
     @Before
     public void setup() {
         trajectory = ModelGenerator.generateTrajectory();
-        stayPointDetection = new StayPointDetection();
-        d = 50D;
-        t = 400D;
+        stayPointDetect = new StayPointDetect();
+        d = 10;
+        t = 10;
     }
 
     @Test
     public void StayPointDetectiontest() {
-        List<StayGPSPointList> SPs = stayPointDetection.detection(trajectory, d, t);
-        List<GPSPoint> list = SPs.get(0).getMultiPoint();
-        System.out.println(list.size());
-        list.forEach(gpsPoint -> System.out.println(gpsPoint.getTime().getTime()));
+        List<StayGPSPointList> SPs = stayPointDetect.detect(trajectory, d, t);
+        assertEquals(SPs.size(), 2);
     }
 
 }

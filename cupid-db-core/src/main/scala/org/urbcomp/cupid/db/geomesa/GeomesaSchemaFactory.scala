@@ -13,7 +13,7 @@ package org.urbcomp.cupid.db.geomesa
 
 import org.apache.calcite.schema.impl.TableFunctionImpl
 import org.apache.calcite.schema.{Schema, SchemaFactory, SchemaPlus}
-import org.urbcomp.cupid.db.udtf.Fibonacci
+import org.urbcomp.cupid.db.udtf.{Fibonacci, StayPoint}
 
 import java.util
 
@@ -35,6 +35,10 @@ class GeomesaSchemaFactory extends SchemaFactory {
 
   private def initTableFunction(schemaPlus: SchemaPlus): Unit = {
     schemaPlus.add("fibonacci", TableFunctionImpl.create(Fibonacci.FIBONACCI2_TABLE_METHOD))
+    schemaPlus.add(
+      "st_traj_stayPointDetect",
+      TableFunctionImpl.create(StayPoint.STAYPOINTDETECTION_TABLE_METHOD)
+    )
   }
 
 }
