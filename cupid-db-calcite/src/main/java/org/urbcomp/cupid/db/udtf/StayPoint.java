@@ -53,7 +53,7 @@ public class StayPoint {
         double.class
     );
 
-    public ScannableTable st_traj_stayPointDetect(Trajectory trajectory1, double d, double t) {
+    public ScannableTable st_traj_stayPointDetect(Trajectory trajectory, double d, double t) {
         return new ScannableTable() {
             @Override
             public RelDataType getRowType(RelDataTypeFactory typeFactory) {
@@ -125,7 +125,7 @@ public class StayPoint {
                                         detector = new StayPointDetect();
                                     }
                                     if (null == result) {
-                                        result = detector.detect(trajectory1, d, t);
+                                        result = detector.detect(trajectory, d, t);
                                     }
                                     if (count < result.size()) {
                                         current = result.get(count);
