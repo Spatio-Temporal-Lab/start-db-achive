@@ -11,26 +11,15 @@
 
 package org.urbcomp.cupid.db.metadata;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.CacheLoader;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.ibatis.session.SqlSession;
-import org.urbcomp.cupid.db.metadata.accessor.DatabaseAccessor;
-import org.urbcomp.cupid.db.metadata.accessor.FieldAccessor;
 import org.urbcomp.cupid.db.metadata.accessor.TableAccessor;
-import org.urbcomp.cupid.db.metadata.accessor.UserAccessor;
 import org.urbcomp.cupid.db.metadata.entity.Database;
 import org.urbcomp.cupid.db.metadata.entity.Field;
 import org.urbcomp.cupid.db.metadata.entity.Table;
 import org.urbcomp.cupid.db.metadata.entity.User;
-import org.urbcomp.cupid.db.util.MetadataUtil;
 import org.urbcomp.cupid.db.util.UserDbTable;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -41,31 +30,12 @@ import java.util.function.Function;
  */
 public class MetadataAccessUtil {
 
-    private final static ThreadLocal<SqlSession> SQL_SESSION = new ThreadLocal<>();
     /**
      * 2 weeks
      */
     private final static int cleanExpiredTimeS = 14 * 24 * 3600;
 
-    private final static Cache<String, User> USER_CACHE = Caffeine.newBuilder()
-        .expireAfterWrite(1, TimeUnit.HOURS)
-        .maximumSize(256)
-        .build(new CacheLoader<String, User>() {
-            @CheckForNull
-            @Override
-            public User load(@Nonnull String username) throws Exception {
-                return getUserReal(username);
-            }
-        });
-
-    public static SqlSession getSqlSession() {
-        SqlSession sqlSession = SQL_SESSION.get();
-        if (sqlSession == null) {
-            sqlSession = SqlSessionUtil.createSqlSession(true);
-            SQL_SESSION.set(sqlSession);
-        }
-        return sqlSession;
-    }
+    private final static IMetadataAccessor ACCESSOR = new MetadataAccessorFromCaffeineCache(new MetadataAccessorFromDb());
 
     /**
      * check if table exists
@@ -76,7 +46,7 @@ public class MetadataAccessUtil {
      * @return isValid
      */
     public static boolean tableVerify(String userName, String dbName, String tableName) {
-        return getTable(userName, dbName, tableName) != null;
+        return ACCESSOR.tableVerify(userName, dbName, tableName);
     }
 
     /**
@@ -88,145 +58,61 @@ public class MetadataAccessUtil {
      * @return field list
      */
     public static List<Field> getFields(String userName, String dbName, String tableName) {
-        return noRollback(v -> {
-            Table table = getTable(userName, dbName, tableName);
-            if (table == null) return null;
-            FieldAccessor fieldAccessor = AccessorFactory.getFieldAccessor();
-            List<Field> fields = fieldAccessor.selectAllByFid(table.getId());
-            fields.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
-            return fields;
-        });
+        return ACCESSOR.getFields(userName, dbName, tableName);
     }
 
     /**
      * get table from metadata
      */
     public static Table getTable(String userName, String dbName, String tableName) {
-        return noRollback(v -> {
-            final Database database = getDatabase(userName, dbName);
-            if (database == null) return null;
-            return getTable(database.getId(), tableName);
-        });
+        return ACCESSOR.getTable(userName, dbName, tableName);
     }
 
     public static Table getTable(long dbId, String tableName) {
-        return noRollback(v -> {
-            TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-            return tableAccessor.selectByFidAndName(dbId, tableName);
-        });
+        return ACCESSOR.getTable(dbId, tableName);
     }
 
     public static long insertTable(Table table) {
-        return noRollback(v -> AccessorFactory.getTableAccessor().insert(table));
+        return ACCESSOR.insertTable(table);
     }
 
     public static long insertField(Field field) {
-        return noRollback(v -> AccessorFactory.getFieldAccessor().insert(field));
+        return ACCESSOR.insertField(field);
     }
 
     /**
      * query with cache
      */
     public static User getUser(String userName) {
-        User user = USER_CACHE.getIfPresent(userName);
-        if (user == null) {
-            user = getUserReal(userName);
-            if (user == null) {
-                return null;
-            }
-            USER_CACHE.put(userName, user);
-        }
-        return user;
-    }
-
-    /**
-     * query directly from db
-     */
-    public static User getUserReal(String userName) {
-        return noRollback(
-            v -> AccessorFactory.getUserAccessor().selectByFidAndName(-1 /* not used */, userName)
-        );
+        return ACCESSOR.getUser(userName);
     }
 
     public static long insertUser(User user) {
-        USER_CACHE.invalidate(user.getName());
-        return noRollback(v -> AccessorFactory.getUserAccessor().insert(user));
-    }
-
-    public static Database getDatabase(long userId, String dbName) {
-        return noRollback(
-            v -> AccessorFactory.getDatabaseAccessor().selectByFidAndName(userId, dbName)
-        );
+        return ACCESSOR.insertUser(user);
     }
 
     public static Database getDatabase(String userName, String dbName) {
-        return noRollback(v -> {
-            UserAccessor userAccessor = AccessorFactory.getUserAccessor();
-            DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-            User user = userAccessor.selectByFidAndName(0L, userName);
-            if (user == null) return null;
-            return databaseAccessor.selectByFidAndName(user.getId(), dbName);
-        });
+        return ACCESSOR.getDatabase(userName, dbName);
     }
 
     public static long insertDatabase(Database database) {
-        return noRollback(v -> AccessorFactory.getDatabaseAccessor().insert(database));
+        return ACCESSOR.insertDatabase(database);
     }
 
     public static long dropDatabase(String userName, String dbName) {
-        return noRollback(v -> {
-            final Database db = getDatabase(userName, dbName);
-            if (db == null) {
-                return 0L;
-            }
-            final long dbId = db.getId();
-            DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-            final long res = databaseAccessor.deleteById(dbId);
-            TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-            tableAccessor.deleteByFid(dbId);
-            // 移除缓存 TODO
-            return res;
-        });
+        return ACCESSOR.dropDatabase(userName, dbName);
     }
 
     public static long dropTable(String userName, String dbName, String tableName) {
-        return noRollback(v -> {
-            final Table table = getTable(userName, dbName, tableName);
-            if (table == null) {
-                return 0L;
-            }
-            final long tableId = table.getId();
-            TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-            final long res = tableAccessor.deleteById(tableId);
-            AccessorFactory.getFieldAccessor().deleteByFid(tableId);
-            // 清理缓存
-            MetadataCacheTableMap.dropTableCache(
-                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
-            );
-            return res;
-        });
+        return ACCESSOR.dropTable(userName, dbName, tableName);
     }
 
     public static List<Database> getDatabases(String userName) {
-        return noRollback(v -> {
-            final User user = getUser(userName);
-            if (user == null) {
-                return new ArrayList<>(1);
-            }
-            DatabaseAccessor databaseAccessor = AccessorFactory.getDatabaseAccessor();
-            return databaseAccessor.selectAllByFid(user.getId());
-        });
+        return ACCESSOR.getDatabases(userName);
     }
 
     public static List<Table> getTables(String userName, String dbName) {
-        return noRollback(v -> {
-            final Database database = getDatabase(userName, dbName);
-            if (database == null) {
-                return new ArrayList<>(1);
-            }
-            TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
-            return tableAccessor.selectAllByFid(database.getId());
-        });
+        return ACCESSOR.getTables(userName, dbName);
     }
 
     public static List<UserDbTable> getUserDbTables() {
@@ -254,6 +140,17 @@ public class MetadataAccessUtil {
 
     public static int cleanIndex() {
         return noRollback(v -> AccessorFactory.getIndexAccessor().clean(cleanExpiredTimeS));
+    }
+
+    private final static ThreadLocal<SqlSession> SQL_SESSION = new ThreadLocal<>();
+
+    public static SqlSession getSqlSession() {
+        SqlSession sqlSession = SQL_SESSION.get();
+        if (sqlSession == null) {
+            sqlSession = SqlSessionUtil.createSqlSession(true);
+            SQL_SESSION.set(sqlSession);
+        }
+        return sqlSession;
     }
 
     public static <T> T noRollback(Function<Void, T> f) {
