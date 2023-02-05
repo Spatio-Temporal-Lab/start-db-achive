@@ -50,6 +50,6 @@
         DELETE
         FROM sys_index
         WHERE (delete_time != 0 AND TIMESTAMPDIFF(SECOND,delete_time, current_timestamp()) > #{expiredTimeLenS})
-           OR (table_id not in (SELECT id FROM sys_table WHERE delete_time != 0))
+           OR (table_id in (SELECT id FROM sys_table WHERE delete_time != 0))
     </delete>
 </mapper>

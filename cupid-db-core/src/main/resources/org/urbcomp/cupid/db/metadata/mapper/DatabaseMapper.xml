@@ -37,6 +37,6 @@
         DELETE
         FROM sys_database
         WHERE (delete_time != 0 AND TIMESTAMPDIFF(SECOND,delete_time, current_timestamp()) > #{expiredTimeLenS})
-        OR (user_id not in (SELECT id FROM sys_user WHERE delete_time != 0))
+        OR (user_id in (SELECT id FROM sys_user WHERE delete_time != 0))
     </delete>
 </mapper>
