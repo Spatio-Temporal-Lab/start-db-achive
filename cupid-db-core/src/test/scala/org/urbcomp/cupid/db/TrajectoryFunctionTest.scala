@@ -160,4 +160,25 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     assertEquals(trajectory.getGPSPointList.size, totalSize)
   }
 
+  test("st_traj_stayPointDetect") {
+    val statement = connect.createStatement
+    val resultSet1 = statement.executeQuery(
+      "select st_traj_stayPointDetect(st_traj_fromGeoJSON(\'" + tGeo + "\'),10,10)"
+    )
+    resultSet1.next()
+    assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject(1).toString)
+    assertEquals("2018-10-09 07:30:27.0", resultSet1.getObject(2).toString)
+    assertEquals(
+      "[POINT (108.99549 34.26714), POINT (108.9955 34.26707), POINT (108.99549 34.26704)]",
+      resultSet1.getObject(3).toString
+    )
+    resultSet1.next()
+    assertEquals("2018-10-09 07:32:51.0", resultSet1.getObject(1).toString)
+    assertEquals("2018-10-09 07:32:57.0", resultSet1.getObject(2).toString)
+    assertEquals(
+      "[POINT (108.99652 34.25826), POINT (108.99647 34.25821), POINT (108.99639 34.25818)]",
+      resultSet1.getObject(3).toString
+    )
+  }
+
 }

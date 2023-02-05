@@ -37,7 +37,7 @@ public class StayPointDetect implements IStayPointDetect {
         while (i < trLen - 1) {
             int j = i + 1;
             while (j < trLen) {
-                if (getDistance(list.get(i), list.get(j)) > d) break;
+                if (GeoFunctions.getDistanceInM(list.get(i), list.get(j)) > d) break;
                 j++;
             }
             if (j > i + 1
@@ -65,12 +65,4 @@ public class StayPointDetect implements IStayPointDetect {
         return SPs;
     }
 
-    /**
-     *计算两经纬度间距离
-     *@param x, y 两个GPSPoint
-     *@return double
-     **/
-    private double getDistance(GPSPoint x, GPSPoint y) {
-        return GeoFunctions.getDistanceInM(x.getLng(), x.getLat(), y.getLng(), y.getLat());
-    }
 }

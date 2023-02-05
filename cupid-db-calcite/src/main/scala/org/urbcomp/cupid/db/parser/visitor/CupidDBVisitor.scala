@@ -532,7 +532,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
       val nodeList = List(
         new SqlIdentifier("startTime", pos),
         new SqlIdentifier("endTime", pos),
-        new SqlIdentifier("multiPoint", pos)
+        new SqlIdentifier("gpsPoints", pos)
       ).asJava
       new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
     } else res

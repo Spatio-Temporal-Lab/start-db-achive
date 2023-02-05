@@ -130,13 +130,4 @@ public class TrajectoryFunction {
         return subtrajectory;
     }
 
-    // @CupidDBFunction("st_traj_stayPointDetect")
-    // public List<StayGPSPointList> st_traj_stayPointDetect(
-    // Trajectory trajectory,
-    // double d,
-    // double t
-    // ) {
-    // StayPointDetect stayPointDetect = new StayPointDetect();
-    // return stayPointDetect.detect(trajectory, d, t);
-    // }
 }

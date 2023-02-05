@@ -60,7 +60,7 @@ public class StayPoint {
                 return typeFactory.builder()
                     .add("startTime", SqlTypeName.TIMESTAMP)
                     .add("endTime", SqlTypeName.TIMESTAMP)
-                    .add("multiPoint", SqlTypeName.MULTIPOINT)
+                    .add("gpsPoints", SqlTypeName.MULTIPOINT)
                     .build();
             }
 
@@ -134,10 +134,10 @@ public class StayPoint {
                                     } else {
                                         return false;
                                     }
-
                                 } catch (Exception e) {
-                                    throw new RuntimeException(e);
+                                    e.printStackTrace();
                                 }
+                                return false;
                             }
 
                             /**
