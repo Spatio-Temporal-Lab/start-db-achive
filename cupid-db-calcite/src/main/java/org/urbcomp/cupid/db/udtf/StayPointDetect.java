@@ -37,16 +37,15 @@ import org.apache.calcite.schema.Statistics;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.type.SqlTypeName;
-import org.urbcomp.cupid.db.algorithm.staypointdetect.StayGPSPointList;
-import org.urbcomp.cupid.db.algorithm.staypointdetect.StayPointDetect;
+import org.urbcomp.cupid.db.algorithm.staypointdetect.StayPointDetectResult;
 import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class StayPoint {
-    public static Method STAYPOINTDETECTION_TABLE_METHOD = Types.lookupMethod(
-        StayPoint.class,
+public class StayPointDetect {
+    public static Method STAY_POINT_DETECTION_TABLE_METHOD = Types.lookupMethod(
+        StayPointDetect.class,
         "st_traj_stayPointDetect",
         Trajectory.class,
         double.class,
@@ -89,18 +88,18 @@ public class StayPoint {
                 return true;
             }
 
-            List<StayGPSPointList> result;
+            List<StayPointDetectResult> result;
             /**
              * 持有变量，防止多次进行json的解析操作
              */
-            StayPointDetect detector;
+            org.urbcomp.cupid.db.algorithm.staypointdetect.StayPointDetect detector;
 
             public Enumerable<Object[]> scan(DataContext root) {
                 return new AbstractEnumerable<Object[]>() {
                     public Enumerator<Object[]> enumerator() {
                         return new Enumerator<Object[]>() {
                             private int count = 0;
-                            private StayGPSPointList current;
+                            private StayPointDetectResult current;
 
                             /**
                              * current result
@@ -120,24 +119,20 @@ public class StayPoint {
                              * @return true or false
                              */
                             public boolean moveNext() {
-                                try {
-                                    if (detector == null) {
-                                        detector = new StayPointDetect();
-                                    }
-                                    if (null == result) {
-                                        result = detector.detect(trajectory, d, t);
-                                    }
-                                    if (count < result.size()) {
-                                        current = result.get(count);
-                                        count += 1;
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                if (detector == null) {
+                                    detector =
+                                        new org.urbcomp.cupid.db.algorithm.staypointdetect.StayPointDetect();
                                 }
-                                return false;
+                                if (null == result) {
+                                    result = detector.detect(trajectory, d, t);
+                                }
+                                if (count < result.size()) {
+                                    current = result.get(count);
+                                    count += 1;
+                                    return true;
+                                } else {
+                                    return false;
+                                }
                             }
 
                             /**

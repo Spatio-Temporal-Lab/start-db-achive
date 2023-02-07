@@ -27,8 +27,8 @@ public class StayPointDetect implements IStayPointDetect {
      * startTime:该驻留点起始时间 endTime:该驻留点终止时间 gpsList:驻留点包含的gps列表
     **/
     @Override
-    public List<StayGPSPointList> detect(Trajectory trajectory, double d, double t) {
-        List<StayGPSPointList> SPs = new ArrayList<>();
+    public List<StayPointDetectResult> detect(Trajectory trajectory, double d, double t) {
+        List<StayPointDetectResult> stayPoints = new ArrayList<>();
         List<GPSPoint> list = trajectory.getGPSPointList();
         int trLen = list.size();
         int start = 0, end = 0;
@@ -36,8 +36,8 @@ public class StayPointDetect implements IStayPointDetect {
         int i = 0;
         while (i < trLen - 1) {
             int j = i + 1;
-            while (j < trLen) {
-                if (GeoFunctions.getDistanceInM(list.get(i), list.get(j)) > d) break;
+            // find the first point that does not satisfy the conditions
+            while (j < trLen && GeoFunctions.getDistanceInM(list.get(i), list.get(j)) <= d) {
                 j++;
             }
             if (j > i + 1
@@ -49,20 +49,23 @@ public class StayPointDetect implements IStayPointDetect {
                 end = j - 1;
             }
             i++;
+            // form a new stay point
             if (!newSpFlag && i > end) {
-                StayGPSPointList res = new StayGPSPointList();
+                StayPointDetectResult res = new StayPointDetectResult();
+                res.setStarTime(list.get(start).getTime());
+                res.setEndTime(list.get(end).getTime());
+
                 List<GPSPoint> temp = new ArrayList<>();
                 for (int k = start; k <= end; k++) {
-                    if (k == start) res.setStarTime(list.get(k).getTime());
-                    if (k == end) res.setEndTime(list.get(k).getTime());
                     temp.add(list.get(k));
                 }
                 res.setMultiPoint(temp);
-                SPs.add(res);
+
+                stayPoints.add(res);
                 newSpFlag = true;
             }
         }
-        return SPs;
+        return stayPoints;
     }
 
 }

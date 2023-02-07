@@ -37,7 +37,7 @@ public class StayPointDetectTest {
 
     @Test
     public void StayPointDetectiontest() {
-        List<StayGPSPointList> SPs = stayPointDetect.detect(trajectory, d, t);
+        List<StayPointDetectResult> SPs = stayPointDetect.detect(trajectory, d, t);
         assertEquals(SPs.size(), 2);
     }
 

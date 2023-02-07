@@ -16,12 +16,12 @@ import org.urbcomp.cupid.db.model.point.GPSPoint;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class StayGPSPointList {
+public class StayPointDetectResult {
     private Timestamp starTime;
     private Timestamp endTime;
     private List<GPSPoint> multiPoint;
 
-    public StayGPSPointList() {}
+    public StayPointDetectResult() {}
 
     public Timestamp getStarTime() {
         return starTime;

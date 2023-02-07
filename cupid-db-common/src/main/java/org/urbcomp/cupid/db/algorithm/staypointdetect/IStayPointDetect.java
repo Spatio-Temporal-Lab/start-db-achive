@@ -16,5 +16,5 @@ import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 import java.util.List;
 
 public interface IStayPointDetect {
-    List<StayGPSPointList> detect(Trajectory trajectory, double d, double t);
+    List<StayPointDetectResult> detect(Trajectory trajectory, double d, double t);
 }
