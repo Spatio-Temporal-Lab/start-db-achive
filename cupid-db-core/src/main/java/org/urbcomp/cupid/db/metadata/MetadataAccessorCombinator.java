@@ -19,14 +19,17 @@ import org.urbcomp.cupid.db.metadata.entity.User;
 import java.util.List;
 
 /**
+ * used when your cache has no default value loader mechanism like caffeine cache
+ * eg, hashmap
+ *
  * @author jimo
  **/
-public class MedataAccessorCombinator implements IMetadataAccessor {
+public class MetadataAccessorCombinator implements IMetadataAccessor {
 
     private final IMetadataAccessor real;
     private final IMetadataCacheCaller cache;
 
-    public MedataAccessorCombinator(IMetadataAccessor real, IMetadataCacheCaller cache) {
+    public MetadataAccessorCombinator(IMetadataAccessor real, IMetadataCacheCaller cache) {
         this.real = real;
         this.cache = cache;
     }

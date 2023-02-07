@@ -87,7 +87,7 @@ public class MetadataAccessorFromDb implements IMetadataAccessor {
             final long res = tableAccessor.deleteById(tableId);
             AccessorFactory.getFieldAccessor().deleteByFid(tableId);
             // 清理缓存
-            MetadataCacheTableMap.dropTableCache(
+            CalciteTableCacheMap.dropTableCache(
                 MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
             );
             return res;

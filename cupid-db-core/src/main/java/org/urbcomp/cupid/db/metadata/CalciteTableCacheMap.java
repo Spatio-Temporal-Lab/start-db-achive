@@ -27,9 +27,9 @@ import java.util.concurrent.TimeUnit;
  *
  * @author jimo
  **/
-public class MetadataCacheTableMap {
+public class CalciteTableCacheMap {
 
-    private static final Logger logger = LoggerFactory.getLogger(MetadataCacheTableMap.class);
+    private static final Logger logger = LoggerFactory.getLogger(CalciteTableCacheMap.class);
 
     private static final Cache<UserDbTable, Table> tableCache = Caffeine.newBuilder()
         .initialCapacity(16)

@@ -31,7 +31,7 @@ public class MetadataAccessorFromCaffeineCache implements IMetadataCacheCaller {
 
     private final IMetadataAccessor real;
     private final LoadingCache<String, User> USER_CACHE = Caffeine.newBuilder()
-        .expireAfterWrite(1, TimeUnit.HOURS)
+        .expireAfterAccess(1, TimeUnit.HOURS)
         .maximumSize(256)
         .build(new CacheLoader<String, User>() {
             @CheckForNull

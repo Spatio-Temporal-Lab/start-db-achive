@@ -13,7 +13,7 @@ package org.urbcomp.cupid.db.geomesa
 
 import org.apache.calcite.schema.Table
 import org.apache.calcite.schema.impl.AbstractSchema
-import org.urbcomp.cupid.db.metadata.MetadataCacheTableMap
+import org.urbcomp.cupid.db.metadata.CalciteTableCacheMap
 
 /**
   * Schema of Geomesa
@@ -24,6 +24,6 @@ import org.urbcomp.cupid.db.metadata.MetadataCacheTableMap
 class GeomesaSchema extends AbstractSchema {
 
   override def getTable(name: String): Table = {
-    MetadataCacheTableMap.getTable(name)
+    CalciteTableCacheMap.getTable(name)
   }
 }
