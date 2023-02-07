@@ -27,7 +27,6 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.urbcomp.cupid.db.algorithm.mapmatch.tihmm.TiHmmMapMatcher;
 import org.urbcomp.cupid.db.algorithm.shortestpath.BiDijkstraShortestPath;
-import org.urbcomp.cupid.db.algorithm.trajectorysegment.TimeIntervalSegment;
 import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.cupid.db.model.trajectory.MapMatchedTrajectory;
@@ -35,7 +34,6 @@ import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.List;
 
 public class TrajectoryFunction {
 
@@ -120,13 +118,4 @@ public class TrajectoryFunction {
         return mmTrajectory.toGeoJSON();
     }
 
-    @CupidDBFunction("st_traj_timeIntervalSegment")
-    public List<Trajectory> st_traj_timeIntervalSegment(
-        Trajectory trajectory,
-        int maxTimeIntervalInSec
-    ) {
-        TimeIntervalSegment trajectortsegment = new TimeIntervalSegment(maxTimeIntervalInSec);
-        List<Trajectory> subtrajectory = trajectortsegment.segment(trajectory);
-        return subtrajectory;
-    }
 }

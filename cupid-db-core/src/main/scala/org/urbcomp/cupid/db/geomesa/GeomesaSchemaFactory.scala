@@ -14,6 +14,7 @@ package org.urbcomp.cupid.db.geomesa
 import org.apache.calcite.schema.impl.TableFunctionImpl
 import org.apache.calcite.schema.{Schema, SchemaFactory, SchemaPlus}
 import org.urbcomp.cupid.db.udtf.Fibonacci
+import org.urbcomp.cupid.db.udtf.TimeIntervalTrajectorySegment
 
 import java.util
 
@@ -35,5 +36,9 @@ class GeomesaSchemaFactory extends SchemaFactory {
 
   private def initTableFunction(schemaPlus: SchemaPlus): Unit = {
     schemaPlus.add("fibonacci", TableFunctionImpl.create(Fibonacci.FIBONACCI2_TABLE_METHOD))
+    schemaPlus.add(
+      "st_traj_timeIntervalSegment",
+      TableFunctionImpl.create(TimeIntervalTrajectorySegment.TIMEINTERVALSEGMENT_TABLE_METHOD)
+    )
   }
 }

@@ -22,24 +22,34 @@ import static org.junit.Assert.assertEquals;
 
 public class TimeIntervalSegmentTest {
 
-    private static TimeIntervalSegment trajectortsegment;
+    private static TimeIntervalSegment trajectorySegment;
     private static Trajectory trajectory;
 
     @Before
     public void setup() {
         trajectory = ModelGenerator.generateTrajectory();
-        trajectortsegment = new TimeIntervalSegment(2);
     }
 
     @Test
-    public void TimeIntervalSegmenttest() {
-        List<Trajectory> subtrajectory = trajectortsegment.segment(trajectory);
-        assertEquals(subtrajectory.size(), 117);
-        int totalsize = 0;
-        for (Trajectory traj : subtrajectory) {
-            int a = traj.getGPSPointList().size();
-            totalsize += a;
-        }
+    public void TimeIntervalSegmentTest() {
+        trajectorySegment = new TimeIntervalSegment(2);
+        List<Trajectory> subTrajectory = trajectorySegment.segment(trajectory);
+        assertEquals(subTrajectory.size(), 117);
+
+        int totalsize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
         assertEquals(trajectory.getGPSPointList().size(), totalsize);
+
+        trajectorySegment = new TimeIntervalSegment(10);
+        subTrajectory = trajectorySegment.segment(trajectory);
+        assertEquals(subTrajectory.size(), 2);
+        totalsize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
+        assertEquals(trajectory.getGPSPointList().size(), totalsize);
+
+        trajectorySegment = new TimeIntervalSegment(11);
+        subTrajectory = trajectorySegment.segment(trajectory);
+        assertEquals(subTrajectory.size(), 1);
+        totalsize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
+        assertEquals(trajectory.getGPSPointList().size(), totalsize);
+
     }
 }

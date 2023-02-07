@@ -147,16 +147,13 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     val statement = connect.createStatement()
     val resultSet =
       statement.executeQuery(
-        "select st_traj_timeIntervalSegment(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 120 + ")"
+        "select st_traj_timeIntervalSegment(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 2 + ")"
       )
-    resultSet.next()
-    val subTrajStr = resultSet.getObject(1).toString
-    val subTrajStream = TrajStringToList.stringToList(subTrajStr).asScala.toStream
-    val totalSize = subTrajStream
-      .map(x => {
-        Trajectory.fromGeoJSON(x).getGPSPointList.size()
-      })
-      .sum
-    assertEquals(trajectory.getGPSPointList.size, totalSize)
+    var count = 0
+    while (resultSet.next()) {
+      count = count + Trajectory.fromGeoJSON(resultSet.getObject(1).toString).getGPSPointList.size()
+    }
+    assertEquals(trajectory.getGPSPointList.size, count)
+
   }
 }
