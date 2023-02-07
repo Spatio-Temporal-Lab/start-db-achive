@@ -129,4 +129,5 @@ public class TrajectoryFunction {
         List<Trajectory> subtrajectory = trajectortsegment.segment(trajectory);
         return subtrajectory;
     }
+
 }
