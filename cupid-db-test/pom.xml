@@ -19,6 +19,7 @@
 
     <modules>
         <module>cupid-db-test-embedded-mysql</module>
+        <module>cupid-db-test-geomesa-hbase</module>
         <module>cupid-db-test-geomesa-geotools</module>
         <module>cupid-db-test-integration-test</module>
     </modules>
