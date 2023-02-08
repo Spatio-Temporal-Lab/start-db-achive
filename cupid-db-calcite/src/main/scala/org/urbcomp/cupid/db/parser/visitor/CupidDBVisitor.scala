@@ -528,8 +528,16 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
     if (ctx.ident().getText.equalsIgnoreCase("fibonacci")) {
       val nodeList = List(new SqlIdentifier("result", pos)).asJava
       new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
+
     } else if (ctx.ident().getText.equalsIgnoreCase("st_traj_timeIntervalSegment")) {
       val nodeList = List(new SqlIdentifier("subTrajectory", pos)).asJava
+      new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
+    } else if (ctx.ident().getText.equalsIgnoreCase("st_traj_stayPointDetect")) {
+      val nodeList = List(
+        new SqlIdentifier("startTime", pos),
+        new SqlIdentifier("endTime", pos),
+        new SqlIdentifier("gpsPoints", pos)
+      ).asJava
       new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
     } else res
   }
