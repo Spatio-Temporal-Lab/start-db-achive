@@ -22,6 +22,7 @@ public class HBaseInit {
     public static void main(String[] args) throws Exception {
         init();
     }
+
     public static void init() throws Exception {
         Configuration config = HBaseConfiguration.create();
         config.set("hbase.zookeeper.quorum", "localhost");
