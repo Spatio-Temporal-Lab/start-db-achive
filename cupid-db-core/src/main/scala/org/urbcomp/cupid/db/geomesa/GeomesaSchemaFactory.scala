@@ -14,7 +14,6 @@ package org.urbcomp.cupid.db.geomesa
 import org.apache.calcite.schema.impl.TableFunctionImpl
 import org.apache.calcite.schema.{Schema, SchemaFactory, SchemaPlus}
 import org.urbcomp.cupid.db.udtf.{Fibonacci, StayPointDetect}
-
 import java.util
 
 /**
