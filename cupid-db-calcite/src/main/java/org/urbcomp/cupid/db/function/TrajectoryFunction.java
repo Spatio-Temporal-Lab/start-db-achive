@@ -28,12 +28,17 @@ import org.locationtech.jts.geom.Point;
 import org.urbcomp.cupid.db.algorithm.mapmatch.tihmm.TiHmmMapMatcher;
 import org.urbcomp.cupid.db.algorithm.shortestpath.BiDijkstraShortestPath;
 import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
+import org.urbcomp.cupid.db.model.point.GPSPoint;
 import org.urbcomp.cupid.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.cupid.db.model.trajectory.MapMatchedTrajectory;
 import org.urbcomp.cupid.db.model.trajectory.Trajectory;
+import org.urbcomp.cupid.db.util.GeoFunctions;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrajectoryFunction {
 
@@ -118,4 +123,39 @@ public class TrajectoryFunction {
         return mmTrajectory.toGeoJSON();
     }
 
+    @CupidDBFunction("st_traj_noiseFilter")
+    public Trajectory st_traj_noiseFilter(Trajectory trajectory, BigDecimal speedLimitInMPerS) {
+        List<GPSPoint> gpsPoints = trajectory.getGPSPointList();
+        if (gpsPoints.size() <= 1) return new Trajectory(
+            trajectory.getTid() + "_filterNoise",
+            trajectory.getOid(),
+            gpsPoints
+        );
+
+        // Filter noise
+        List<GPSPoint> filterGPSPoints = new ArrayList<>();
+
+        GPSPoint pre = gpsPoints.get(0);
+        // We assume the first point is always correct
+        filterGPSPoints.add(pre);
+        int i = 1;
+        while (i < gpsPoints.size()) {
+            GPSPoint cur = gpsPoints.get(i);
+            if (cur.getTime().after(pre.getTime())) {
+                double distanceInM = GeoFunctions.getDistanceInM(cur, pre);
+                double timeSpanInS = (cur.getTime().getTime() - pre.getTime().getTime()) / 1000.0;
+                if (distanceInM / timeSpanInS <= speedLimitInMPerS.doubleValue()) {
+                    filterGPSPoints.add(cur);
+                    pre = cur;
+                }
+            }
+            i++;
+        }
+
+        return new Trajectory(
+            trajectory.getTid() + "_filterNoise",
+            trajectory.getOid(),
+            filterGPSPoints
+        );
+    }
 }
