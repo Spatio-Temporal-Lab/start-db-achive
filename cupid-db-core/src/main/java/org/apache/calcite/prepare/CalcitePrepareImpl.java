@@ -55,7 +55,6 @@ import org.apache.calcite.schema.Table;
 import org.apache.calcite.server.CalciteServerStatement;
 import org.apache.calcite.server.DdlExecutor;
 import org.apache.calcite.sql.*;
-import org.apache.calcite.sql.ddl.SqlCreateTable;
 import org.apache.calcite.sql.ddl.SqlDropSchema;
 import org.apache.calcite.sql.ddl.SqlDropTable;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
@@ -78,6 +77,7 @@ import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
 import org.urbcomp.cupid.db.executor.CupidDBExecutorFactory;
 import org.urbcomp.cupid.db.parser.ddl.SqlCreateDatabase;
+import org.urbcomp.cupid.db.parser.ddl.SqlCupidCreateTable;
 import org.urbcomp.cupid.db.parser.ddl.SqlTruncateTable;
 import org.urbcomp.cupid.db.parser.ddl.SqlUseDatabase;
 import org.urbcomp.cupid.db.parser.driver.CupidDBParseDriver;
@@ -695,7 +695,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
             if (sqlNode.getKind().belongsTo(SqlKind.DDL)) {
 
                 if (sqlNode instanceof SqlCreateDatabase
-                    || sqlNode instanceof SqlCreateTable
+                    || sqlNode instanceof SqlCupidCreateTable
                     || sqlNode instanceof SqlUseDatabase
                     || sqlNode instanceof SqlDropTable
                     || sqlNode instanceof SqlDropSchema

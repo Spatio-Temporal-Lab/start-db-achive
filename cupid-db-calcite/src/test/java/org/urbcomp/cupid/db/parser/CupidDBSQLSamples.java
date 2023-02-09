@@ -71,6 +71,9 @@ public class CupidDBSQLSamples {
     // Create table
     public static final String CREATE_TABLE_SAMPLE = loadSample("create-table");
 
+    // Create table with index
+    public static final String CREATE_TABLE_WITH_INDEX = loadSample("create-table-with-index");
+
     // Create user
     public static final String CREATE_USER_SAMPLE =
         "CREATE USER test_user IDENTIFIED BY 'password'";

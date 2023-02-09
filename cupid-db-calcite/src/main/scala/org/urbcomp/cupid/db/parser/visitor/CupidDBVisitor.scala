@@ -19,7 +19,13 @@ import org.apache.calcite.sql.fun.{SqlCase, SqlStdOperatorTable}
 import org.apache.calcite.sql.parser.SqlParserPos
 import org.apache.calcite.util.{DateString, TimestampString}
 import org.urbcomp.cupid.db.parser.dcl.SqlCreateUser
-import org.urbcomp.cupid.db.parser.ddl.{SqlCreateDatabase, SqlTruncateTable, SqlUseDatabase}
+import org.urbcomp.cupid.db.parser.ddl.{
+  SqlCreateDatabase,
+  SqlCupidCreateTable,
+  SqlIndexDeclaration,
+  SqlTruncateTable,
+  SqlUseDatabase
+}
 import org.urbcomp.cupid.db.parser.dql.{
   SqlShowCreateTable,
   SqlShowDatabases,
@@ -29,6 +35,7 @@ import org.urbcomp.cupid.db.parser.dql.{
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlBaseVisitor
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlParser._
 import org.urbcomp.cupid.db.parser.visitor.CupidDBVisitor._
+import org.urbcomp.cupid.db.schema.IndexType
 import org.urbcomp.cupid.db.util.{MetadataUtil, StringUtil}
 
 import java.util
@@ -558,6 +565,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
         .create_table_columns()
         .create_table_columns_item()
         .asScala
+        .filter(i => i.T_INDEX() == null)
         .map { i =>
           val fieldName = visitIdent(i.column_name().qident().ident().get(0))
           var dataType: SqlUserDefinedTypeNameSpec = null
@@ -573,12 +581,43 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
         .toList
         .asJava
     } else null
-    SqlDdlNodes.createTable(
+
+    val indexList = if (null != ctx.create_table_definition().create_table_columns()) {
+      ctx
+        .create_table_definition()
+        .create_table_columns()
+        .create_table_columns_item()
+        .asScala
+        .filter(i => i.T_INDEX() != null)
+        .map { i =>
+          var indexType: IndexType = null
+          if (i.T_SPATIAL() != null) {
+            indexType = IndexType.SPATIAL
+          } else {
+            indexType = IndexType.ATTRIBUTE
+          }
+          val columns = i
+            .key_list()
+            .qident()
+            .asScala
+            .map(i => {
+              new SqlIdentifier(i.getText, pos)
+            })
+            .toList
+            .asJava
+          new SqlIndexDeclaration(pos, indexType, columns)
+        }
+        .toList
+        .asJava
+    } else null
+
+    new SqlCupidCreateTable(
       pos,
       false,
       ifNotExists,
       tableName,
       new SqlNodeList(columnList, pos),
+      new SqlNodeList(indexList, pos),
       query
     )
   }

@@ -11,20 +11,21 @@
 
 package org.urbcomp.cupid.db.executor
 
-import org.apache.calcite.sql.ddl.{SqlColumnDeclaration, SqlCreateTable}
+import org.apache.calcite.sql.ddl.{SqlColumnDeclaration}
 import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.urbcomp.cupid.db.executor.utils.ExecutorUtil
 import org.urbcomp.cupid.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.cupid.db.metadata.MetadataAccessUtil
 import org.urbcomp.cupid.db.metadata.entity.{Field, Table}
+import org.urbcomp.cupid.db.parser.ddl.SqlCupidCreateTable
 import org.urbcomp.cupid.db.transformer.{
   RoadSegmentAndGeomesaTransformer,
   TrajectoryAndFeatureTransformer
 }
 import org.urbcomp.cupid.db.util.{DataTypeUtils, MetadataUtil}
 
-case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
+case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
     val targetTable = n.name
     val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
