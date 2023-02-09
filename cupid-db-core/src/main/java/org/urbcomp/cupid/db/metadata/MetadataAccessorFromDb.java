@@ -19,7 +19,6 @@ import org.urbcomp.cupid.db.metadata.entity.Database;
 import org.urbcomp.cupid.db.metadata.entity.Field;
 import org.urbcomp.cupid.db.metadata.entity.Table;
 import org.urbcomp.cupid.db.metadata.entity.User;
-import org.urbcomp.cupid.db.util.MetadataUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,10 +85,6 @@ public class MetadataAccessorFromDb implements IMetadataAccessor {
             TableAccessor tableAccessor = AccessorFactory.getTableAccessor();
             final long res = tableAccessor.deleteById(tableId);
             AccessorFactory.getFieldAccessor().deleteByFid(tableId);
-            // 清理缓存
-            CalciteTableCacheMap.dropTableCache(
-                MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
-            );
             return res;
         });
     }
