@@ -23,7 +23,9 @@ import org.urbcomp.cupid.db.executor.utils.ExecutorUtil
 import org.urbcomp.cupid.db.infra.{BaseExecutor, MetadataResult}
 import org.urbcomp.cupid.db.metadata.MetadataAccessUtil
 import org.urbcomp.cupid.db.parser.SqlHelper
+import org.urbcomp.cupid.db.parser.ddl.{SqlCupidCreateTable, SqlIndexDeclaration}
 import org.urbcomp.cupid.db.parser.dql.SqlShowCreateTable
+import org.urbcomp.cupid.db.schema.IndexType
 
 import java.util
 import scala.collection.JavaConverters.{asScalaBufferConverter, seqAsJavaListConverter}
@@ -53,7 +55,22 @@ case class ShowCreateTableExecutor(n: SqlShowCreateTable) extends BaseExecutor {
       .toList
       .asJava
     val sqlColumnList = new SqlNodeList(columnList, pos)
-    val sqlNode = SqlDdlNodes.createTable(pos, false, false, sqlTableName, sqlColumnList, null)
+
+    val indexes = MetadataAccessUtil.getIndexes(userName, dbName, tableName)
+    val indexList = indexes.asScala
+      .map(idx => {
+        val fields = idx.getFieldsIdList
+          .split(",")
+          .map(name => new SqlIdentifier(util.Arrays.asList(name), pos))
+          .toList
+          .asJava
+        new SqlIndexDeclaration(pos, IndexType.valueOf(idx.getIndexType), fields)
+      })
+      .toList
+      .asJava
+    val sqlIndexList = new SqlNodeList(indexList, pos)
+    val sqlNode =
+      new SqlCupidCreateTable(pos, false, false, sqlTableName, sqlColumnList, sqlIndexList, null)
 
     MetadataResult
       .buildResult(

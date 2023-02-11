@@ -18,12 +18,12 @@
         SELECT *
         FROM sys_index
         WHERE table_id = #{fid}
-        and name = #{name}
+        and index_name = #{name}
         and delete_time = 0
     </select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.urbcomp.cupid.db.metadata.entity.Table">
-        INSERT INTO sys_index(`table_id`, `name`, `index_type`, `fields_id_list`, `index_properties`) VALUE (#{index.tableId}, #{index.name}, #{index.indexType}, #{index.fieldsIdList}, #{index.indexProperties});
+        INSERT INTO sys_index(`table_id`, `index_name`, `index_type`, `fields_id_list`, `index_properties`) VALUE (#{index.tableId}, #{index.name}, #{index.indexType}, #{index.fieldsIdList}, #{index.indexProperties});
     </insert>
     <update id="update">
         UPDATE sys_index

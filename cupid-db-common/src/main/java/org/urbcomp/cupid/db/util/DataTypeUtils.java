@@ -16,7 +16,7 @@ import org.urbcomp.cupid.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +44,7 @@ public class DataTypeUtils {
         nameToClass.put("Boolean", Boolean.class);
         nameToClass.put("Binary", byte[].class);
         nameToClass.put("Timestamp", Timestamp.class);
-        nameToClass.put("Datetime", LocalDateTime.class);
+        nameToClass.put("Datetime", Date.class);
 
         nameToClass.keySet().forEach(t -> strToName.put(t.toLowerCase(), t));
         strToName.put("int", "Integer");
@@ -60,6 +60,18 @@ public class DataTypeUtils {
         String norm = normalizeType(name);
         Class<?> c = nameToClass.get(norm);
         return Geometry.class.isAssignableFrom(c);
+    }
+
+    public static boolean isPoint(String name) {
+        String norm = normalizeType(name);
+        Class<?> c = nameToClass.get(norm);
+        return Point.class.isAssignableFrom(c);
+    }
+
+    public static boolean isDate(String name) {
+        String norm = normalizeType(name);
+        Class<?> c = nameToClass.get(norm);
+        return Date.class.isAssignableFrom(c);
     }
 
     private static String normalizeType(String raw) {

@@ -11,6 +11,8 @@
 
 package org.urbcomp.cupid.db.metadata.entity;
 
+import java.sql.Timestamp;
+
 /**
  * This class is used to encapsulate the basic information of index
  *
@@ -48,11 +50,14 @@ public class Index extends AbstractEntity {
 
     public Index(
         long id,
-        String name,
         long tableId,
         String indexType,
+        String name,
         String fieldsIdList,
-        String indexProperties
+        String indexProperties,
+        Timestamp createdDate,
+        Timestamp modifiedDate,
+        long deleteTime
     ) {
         super(id, name);
         this.tableId = tableId;

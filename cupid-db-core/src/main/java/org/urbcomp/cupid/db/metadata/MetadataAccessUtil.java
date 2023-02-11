@@ -12,11 +12,9 @@
 package org.urbcomp.cupid.db.metadata;
 
 import org.apache.ibatis.session.SqlSession;
+import org.urbcomp.cupid.db.metadata.accessor.IndexAccessor;
 import org.urbcomp.cupid.db.metadata.accessor.TableAccessor;
-import org.urbcomp.cupid.db.metadata.entity.Database;
-import org.urbcomp.cupid.db.metadata.entity.Field;
-import org.urbcomp.cupid.db.metadata.entity.Table;
-import org.urbcomp.cupid.db.metadata.entity.User;
+import org.urbcomp.cupid.db.metadata.entity.*;
 import org.urbcomp.cupid.db.util.UserDbTable;
 
 import java.util.List;
@@ -64,6 +62,25 @@ public class MetadataAccessUtil {
     }
 
     /**
+     * get index list of the table
+     *
+     * @param userName  user name
+     * @param dbName    db name
+     * @param tableName table name
+     * @return field list
+     */
+    public static List<Index> getIndexes(String userName, String dbName, String tableName) {
+        return noRollback(v -> {
+            Table table = getTable(userName, dbName, tableName);
+            if (table == null) return null;
+            IndexAccessor indexAccessor = AccessorFactory.getIndexAccessor();
+            List<Index> indexes = indexAccessor.selectAllByFid(table.getId());
+            indexes.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
+            return indexes;
+        });
+    }
+
+    /**
      * get table from metadata
      */
     public static Table getTable(String userName, String dbName, String tableName) {
@@ -80,6 +97,10 @@ public class MetadataAccessUtil {
 
     public static long insertField(Field field) {
         return ACCESSOR.insertField(field);
+    }
+
+    public static long insertIndex(Index index) {
+        return noRollback(v -> AccessorFactory.getIndexAccessor().insert(index));
     }
 
     /**

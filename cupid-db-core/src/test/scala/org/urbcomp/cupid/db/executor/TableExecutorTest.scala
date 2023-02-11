@@ -47,6 +47,18 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     stmt.executeUpdate(createTableSQL)
   }
 
+  test("test create table with index") {
+    val randomNum = scala.util.Random.nextInt(100000)
+    val createTableSQL = s"""CREATE TABLE gemo_%d (
+                            |    name String,
+                            |    st Point,
+                            |    et Point,
+                            |    dtg Datetime
+                            |)""".stripMargin.format(randomNum).stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+  }
+
   test("test show tables") {
     val stmt = connect.createStatement()
     val rs = stmt.executeQuery("show tables")
@@ -146,7 +158,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     }
     val sql = rss.getString(2);
     assertEquals(
-      "CREATE TABLE test_show_create_table (tr Trajectory, rs RoadSegment, gm Geometry)",
+      "CREATE TABLE test_show_create_table (tr Trajectory, rs RoadSegment, gm Geometry, SPATIAL INDEX (gm))",
       sql
     )
   }
