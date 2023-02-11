@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.cupid.db.spark
 
 import org.apache.spark.SparkConf
@@ -6,20 +17,36 @@ import org.locationtech.geomesa.spark.GeoMesaSparkKryoRegistrator
 import org.urbcomp.cupid.db.util.{MetadataUtil, SqlParam}
 
 /**
- * debug test:
- * spark-submit  \
- * --class org.urbcomp.cupid.db.spark.CupidDriver \
- * --master yarn  \
- * --deploy-mode cluster \
- * --driver-memory 1g \
- * --executor-cores 1 \
- * --executor-memory 1g \
- * --num-executors 1 \
- * cupid-db.jar -i SqlId -s "select 1+1" -u zaiyuan -d default
- */
+  * debug test:
+  * spark-submit  \
+  * --class org.urbcomp.cupid.db.spark.CupidDriver \
+  * --master yarn  \
+  * --deploy-mode cluster \
+  * --driver-memory 1g \
+  * --executor-cores 1 \
+  * --executor-memory 1g \
+  * --num-executors 1 \
+  * cupid-db.jar -i SqlId -s "select 1+1" -u zaiyuan -d default
+  */
 object CupidDriver {
   def main(args: Array[String]): Unit = {
+    val param = Map("hbase.catalog" -> "test", "hbase.zookeepers" -> "localhost:2181")
+    val sparkSession = SparkSession
+      .builder()
+      .appName("testSpark")
+      .config("spark.sql.crossJoin.enabled", "true")
+      .master("local[*]")
+      .getOrCreate()
 
+    // Create DataFrame using the "geomesa" format
+    val dataFrame = sparkSession.read
+      .format("geomesa")
+      .options(param)
+      .option("geomesa.feature", "index-text02")
+      .load()
+    dataFrame.createOrReplaceTempView("chicago")
+
+    sparkSession.sql("select * from chicago").show()
   }
 
   def execute(param: SqlParam, sparkSession: SparkSession = null): DataFrame = {
@@ -40,13 +67,15 @@ object CupidDriver {
     spark.sql(sql)
   }
 
-  def loadTable(tableName: String, baseName: String, catalogName: String, sparkSession: SparkSession): Unit = {
+  def loadTable(
+      tableName: String,
+      baseName: String,
+      catalogName: String,
+      sparkSession: SparkSession
+  ): Unit = {
     sparkSession.read
       .format("geomesa")
-      .options(
-        Map(
-          "hbase.catalog" -> catalogName,
-          "hbase.zookeepers" -> "localhost:2181"))
+      .options(Map("hbase.catalog" -> catalogName, "hbase.zookeepers" -> "localhost:2181"))
       .option("geomesa.feature", baseName)
       .load()
       .createTempView(tableName)
@@ -69,6 +98,5 @@ object CupidDriver {
     conf.set("spark.kryoserializer.buffer", "64m")
     conf
   }
-
 
 }

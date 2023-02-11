@@ -24,13 +24,11 @@ object SparkQueryExecutor extends LazyLogging {
   }
 
   def main(args: Array[String]): Unit = {
-    val params = Map(
-      "hbase.catalog" -> "test",
-      "hbase.zookeepers" -> "localhost:2181"
-    )
+    val params = Map("hbase.catalog" -> "test", "hbase.zookeepers" -> "localhost:2181")
 //    val datastore = DataStoreFinder.getDataStore(params.asJava)
 //    println()
-    val sparkSession = SparkSession.builder()
+    val sparkSession = SparkSession
+      .builder()
       .appName("testSpark")
       .config("spark.sql.crossJoin.enabled", "true")
       .master("local[*]")
