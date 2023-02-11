@@ -39,10 +39,7 @@ import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.type.SqlTypeName;
 import org.locationtech.jts.geom.MultiPoint;
 import org.urbcomp.cupid.db.algorithm.clustering.AbstractClustering;
-import org.urbcomp.cupid.db.algorithm.staypointdetect.StayPointDetectResult;
-import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
-import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -57,15 +54,17 @@ public class DBSCANClustering {
         int.class
     );
 
-    public ScannableTable st_dbscan_clustering(List<SpatialPoint> pointList, BigDecimal distanceInM, int minPoints) {
+    public ScannableTable st_dbscan_clustering(
+        List<SpatialPoint> pointList,
+        BigDecimal distanceInM,
+        int minPoints
+    ) {
         return new ScannableTable() {
             List<MultiPoint> clusters = null;
 
             @Override
             public RelDataType getRowType(RelDataTypeFactory typeFactory) {
-                return typeFactory.builder()
-                    .add("cluster", SqlTypeName.MULTIPOINT)
-                    .build();
+                return typeFactory.builder().add("cluster", SqlTypeName.MULTIPOINT).build();
             }
 
             @Override
@@ -97,6 +96,7 @@ public class DBSCANClustering {
                 return new AbstractEnumerable<Object[]>() {
                     private int count = 0;
                     private MultiPoint current = null;
+
                     public Enumerator<Object[]> enumerator() {
                         return new Enumerator<Object[]>() {
                             /**
@@ -108,8 +108,7 @@ public class DBSCANClustering {
                                 return new Object[] {
                                     current,
                                     current.getCentroid(),
-                                    current.getBoundary()
-                                };
+                                    current.getBoundary() };
                             }
 
                             /**
@@ -119,7 +118,12 @@ public class DBSCANClustering {
                              */
                             public boolean moveNext() {
                                 if (clusters == null) {
-                                    AbstractClustering method = new org.urbcomp.cupid.db.algorithm.clustering.DBSCANClustering(pointList, distanceInM.doubleValue(), minPoints);
+                                    AbstractClustering method =
+                                        new org.urbcomp.cupid.db.algorithm.clustering.DBSCANClustering(
+                                            pointList,
+                                            distanceInM.doubleValue(),
+                                            minPoints
+                                        );
                                     clusters = method.cluster();
                                 }
                                 if (count < clusters.size()) {

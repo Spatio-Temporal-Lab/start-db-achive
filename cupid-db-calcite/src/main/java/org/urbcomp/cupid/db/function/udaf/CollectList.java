@@ -30,7 +30,6 @@ import java.util.List;
  * @date 2022-06-16 20:35:30
  */
 public class CollectList {
-
     public List<Object> init() {
         return new ArrayList<>();
     }

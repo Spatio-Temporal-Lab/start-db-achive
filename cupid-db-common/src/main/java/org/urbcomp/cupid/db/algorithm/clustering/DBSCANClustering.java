@@ -12,7 +12,6 @@
 package org.urbcomp.cupid.db.algorithm.clustering;
 
 import org.locationtech.jts.geom.MultiPoint;
-import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
 import org.urbcomp.cupid.db.util.GeoFunctions;
 import org.urbcomp.cupid.db.util.GeometryFactoryUtils;
@@ -22,13 +21,18 @@ import java.util.*;
 public class DBSCANClustering extends AbstractClustering {
     private final double distanceInM;
     private final int minPoints;
+
     public DBSCANClustering(List<SpatialPoint> pointList, double distanceInM, int minPoints) {
         super(pointList);
         this.distanceInM = distanceInM;
         this.minPoints = minPoints;
     }
 
-    public List<SpatialPoint> rangeQuery(List<SpatialPoint> pointList, SpatialPoint point, double distanceInM) {
+    public List<SpatialPoint> rangeQuery(
+        List<SpatialPoint> pointList,
+        SpatialPoint point,
+        double distanceInM
+    ) {
         List<SpatialPoint> neighbors = new ArrayList<>();
         for (SpatialPoint p : pointList)
             if (GeoFunctions.getDistanceInM(p, point) < distanceInM) {
@@ -69,7 +73,9 @@ public class DBSCANClustering extends AbstractClustering {
         for (Map.Entry<Integer, List<SpatialPoint>> entry : clusters.entrySet()) {
             List<SpatialPoint> points = entry.getValue();
             SpatialPoint[] arr = new SpatialPoint[points.size()];
-            ret.add(new MultiPoint(points.toArray(arr), GeometryFactoryUtils.defaultGeometryFactory()));
+            ret.add(
+                new MultiPoint(points.toArray(arr), GeometryFactoryUtils.defaultGeometryFactory())
+            );
         }
         return ret;
     }
