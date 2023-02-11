@@ -53,7 +53,7 @@ object CupidDriver {
   }
 
   def getSparkSession(isLocal: Boolean, enableHiveSupport: Boolean): SparkSession = {
-    val builder = SparkSession.builder().config(buildSparkConf()).appName("JUST-SPARK")
+    val builder = SparkSession.builder().config(buildSparkConf()).appName("Cupid-SPARK")
     if (isLocal) builder.master("local[*]")
     if (enableHiveSupport) builder.enableHiveSupport()
     builder.getOrCreate()
