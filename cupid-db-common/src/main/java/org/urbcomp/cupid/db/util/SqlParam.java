@@ -35,6 +35,10 @@ public class SqlParam {
      */
     private String dbName;
 
+    private boolean isLocal;
+
+    private String sql;
+
     public SqlParam() {}
 
     public SqlParam(String userName, String dbName) {
@@ -68,5 +72,21 @@ public class SqlParam {
 
     public static void removeParam(String connectionId) {
         connectionParams.remove(connectionId);
+    }
+
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(boolean local) {
+        isLocal = local;
+    }
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
     }
 }

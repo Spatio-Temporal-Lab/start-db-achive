@@ -17,6 +17,7 @@
         <module>cupid-db-cmd</module>
         <module>cupid-db-core</module>
         <module>cupid-db-server</module>
+        <module>cupid-db-spark</module>
     </modules>
 
     <properties>
