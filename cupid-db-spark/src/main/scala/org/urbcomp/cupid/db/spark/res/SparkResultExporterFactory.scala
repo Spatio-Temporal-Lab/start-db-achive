@@ -9,13 +9,19 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.cupid.db.spark
+package org.urbcomp.cupid.db.spark.res
 
-import com.typesafe.scalalogging.LazyLogging
-import org.apache.spark.sql.SparkSession
+import org.urbcomp.cupid.db.model.data.DataExportType
 
-object SparkQueryExecutor extends LazyLogging {
-  def executeLocal(sql: String, spark: SparkSession): Unit = {
-    val df = spark.sql(sql)
+/**
+  * @author jimo
+  * */
+object SparkResultExporterFactory {
+
+  def getInstance(exportType: DataExportType): ISparkResultExporter = {
+    exportType match {
+      case DataExportType.PRINT => new ShowSparkResultExporter
+      case _                    => throw new IllegalArgumentException("not support type now:" + exportType)
+    }
   }
 }

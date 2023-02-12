@@ -11,22 +11,20 @@
 
 package org.urbcomp.cupid.db.spark;
 
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
 import org.junit.Test;
-import org.urbcomp.cupid.db.util.SqlParam;
+import org.urbcomp.cupid.db.model.data.DataExportType;
+import org.urbcomp.cupid.db.util.SparkSqlParam;
 
 public class CupidDriverTest {
 
     @Test
     public void testExecute() {
-        final SqlParam param = new SqlParam("root", "test");
+        final SparkSqlParam param = new SparkSqlParam();
+        param.setUserName("root");
+        param.setDbName("default");
+        param.setSql("select * from t_test");
+        param.setExportType(DataExportType.PRINT);
         param.setLocal(true);
-        // param.setSql("select 1+1");
-        // final Dataset<Row> df = CupidDriver.execute(param, null);
-        // df.show();
-        param.setSql("select * from jimo.test");
-        final Dataset<Row> df2 = CupidDriver.execute(param, null);
-        df2.show();
+        SparkQueryExecutor.execute(param, null);
     }
 }

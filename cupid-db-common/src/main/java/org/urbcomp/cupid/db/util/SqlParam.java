@@ -11,6 +11,8 @@
 
 package org.urbcomp.cupid.db.util;
 
+import org.urbcomp.cupid.db.model.data.DataExportType;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +40,8 @@ public class SqlParam {
     private boolean isLocal;
 
     private String sql;
+
+    private DataExportType exportType;
 
     public SqlParam() {}
 
@@ -88,5 +92,13 @@ public class SqlParam {
 
     public void setSql(String sql) {
         this.sql = sql;
+    }
+
+    public DataExportType getExportType() {
+        return exportType;
+    }
+
+    public void setExportType(DataExportType exportType) {
+        this.exportType = exportType;
     }
 }

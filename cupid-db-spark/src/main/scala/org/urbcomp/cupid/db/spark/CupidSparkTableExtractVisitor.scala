@@ -12,9 +12,9 @@
 package org.urbcomp.cupid.db.spark
 
 import org.antlr.v4.runtime.{CharStream, CharStreams, CommonTokenStream}
-import org.urbcomp.cupid.db.parser.parser.{CupidDBSqlBaseVisitor, CupidDBSqlLexer, CupidDBSqlParser}
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlParser.FromTableNameClauseContext
-import org.urbcomp.cupid.db.util.SqlParam
+import org.urbcomp.cupid.db.parser.parser.{CupidDBSqlBaseVisitor, CupidDBSqlLexer, CupidDBSqlParser}
+import org.urbcomp.cupid.db.util.SparkSqlParam
 
 import java.util
 import scala.collection.JavaConverters._
@@ -27,7 +27,7 @@ class CupidSparkTableExtractVisitor extends CupidDBSqlBaseVisitor[Unit] {
   override def visitFromTableNameClause(ctx: FromTableNameClauseContext): Unit = {
     val names = ctx.tableName().ident()
     if (names.identItem().size() == 1) {
-      tableList.add(s"${SqlParam.CACHE.get().getDbName}.${names.getText}")
+      tableList.add(s"${SparkSqlParam.CACHE.get().getDbName}.${names.getText}")
     } else {
       tableList.add(s"${names.identItem(0).getText}.${names.identItem(1).getText}")
     }

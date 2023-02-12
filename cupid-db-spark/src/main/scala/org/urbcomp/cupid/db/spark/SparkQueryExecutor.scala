@@ -12,29 +12,67 @@
 package org.urbcomp.cupid.db.spark
 
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
-import org.geotools.data.DataStoreFinder
-
-import java.util
-import scala.collection.JavaConverters._
+import org.locationtech.geomesa.spark.GeoMesaSparkKryoRegistrator
+import org.urbcomp.cupid.db.metadata.MetadataAccessUtil
+import org.urbcomp.cupid.db.spark.res.SparkResultExporterFactory
+import org.urbcomp.cupid.db.util.{MetadataUtil, SparkSqlParam}
 
 object SparkQueryExecutor extends LazyLogging {
-  def executeLocal(sql: String, spark: SparkSession): Unit = {
+
+  def execute(param: SparkSqlParam, sparkSession: SparkSession = null): Unit = {
+    if (param != null) SparkSqlParam.CACHE.set(param)
+    var spark = sparkSession
+
+    if (spark == null) spark = getSparkSession(param.isLocal, enableHiveSupport = false)
+
+    val sql = param.getSql
+    CupidSparkTableExtractVisitor.getTableList(sql).foreach { i =>
+      val userName = SparkSqlParam.CACHE.get().getUserName
+      val dbName = i.split("\\.")(0)
+      val tableName = i.split("\\.")(1)
+      val catalogName = MetadataUtil.makeCatalog(userName, dbName)
+      val table = MetadataAccessUtil.getTable(userName, dbName, tableName)
+      if (table == null) throw new IllegalArgumentException("Table Not Exists: " + i)
+      val sft = MetadataUtil.makeSchemaName(table.getId)
+      loadTable(tableName, sft, catalogName, spark, param.getHbaseZookeepers)
+    }
     val df = spark.sql(sql)
+    SparkResultExporterFactory.getInstance(param.getExportType).exportData(df)
   }
 
-  def main(args: Array[String]): Unit = {
-    val params = Map("hbase.catalog" -> "test", "hbase.zookeepers" -> "localhost:2181")
-//    val datastore = DataStoreFinder.getDataStore(params.asJava)
-//    println()
-    val sparkSession = SparkSession
-      .builder()
-      .appName("testSpark")
-      .config("spark.sql.crossJoin.enabled", "true")
-      .master("local[*]")
-      .getOrCreate()
+  def loadTable(
+      tableName: String,
+      baseName: String,
+      catalogName: String,
+      sparkSession: SparkSession,
+      hbaseZookeepers: String
+  ): Unit = {
     sparkSession.read
       .format("geomesa")
-    sparkSession.sql("select 1+1").show()
+      .options(Map("hbase.catalog" -> catalogName, "hbase.zookeepers" -> hbaseZookeepers))
+      .option("geomesa.feature", baseName)
+      .load()
+      .createTempView(tableName)
   }
+
+  def getSparkSession(isLocal: Boolean, enableHiveSupport: Boolean): SparkSession = {
+    val builder = SparkSession.builder().config(buildSparkConf()).appName("Cupid-SPARK")
+    if (isLocal) builder.master("local[*]")
+    if (enableHiveSupport) builder.enableHiveSupport()
+    builder.getOrCreate()
+  }
+
+  def buildSparkConf(): SparkConf = {
+    val conf = new SparkConf()
+    conf.set("spark.sql.adaptive.enabled", "true")
+    conf.set("spark.sql.crossJoin.enabled", "true")
+    conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    conf.set("spark.kryo.registrator", classOf[GeoMesaSparkKryoRegistrator].getName)
+    conf.set("spark.kryoserializer.buffer.max", "256m")
+    conf.set("spark.kryoserializer.buffer", "64m")
+    conf
+  }
+
 }
