@@ -42,7 +42,6 @@ import org.urbcomp.cupid.db.algorithm.clustering.AbstractClustering;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
 
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.util.List;
 
 public class DBSCANClustering {
@@ -50,13 +49,13 @@ public class DBSCANClustering {
         DBSCANClustering.class,
         "st_dbscan_clustering",
         List.class,
-        BigDecimal.class,
+        double.class,
         int.class
     );
 
     public ScannableTable st_dbscan_clustering(
         List<SpatialPoint> pointList,
-        BigDecimal distanceInM,
+        double distanceInM,
         int minPoints
     ) {
         return new ScannableTable() {
@@ -64,7 +63,11 @@ public class DBSCANClustering {
 
             @Override
             public RelDataType getRowType(RelDataTypeFactory typeFactory) {
-                return typeFactory.builder().add("cluster", SqlTypeName.MULTIPOINT).build();
+                return typeFactory.builder()
+                    .add("cluster", SqlTypeName.MULTIPOINT)
+                    .add("clusterCentroid", SqlTypeName.POINT)
+                    .add("clusterBoundary", SqlTypeName.GEOMETRY)
+                    .build();
             }
 
             @Override
@@ -89,7 +92,7 @@ public class DBSCANClustering {
                 SqlNode sqlNode,
                 CalciteConnectionConfig calciteConnectionConfig
             ) {
-                return false;
+                return true;
             }
 
             public Enumerable<Object[]> scan(DataContext root) {
@@ -118,10 +121,17 @@ public class DBSCANClustering {
                              */
                             public boolean moveNext() {
                                 if (clusters == null) {
+                                    /*Object[] points = new Object[0];
+                                    try {
+                                        points = (Object[]) pointList.getArray();
+                                    } catch (Throwable ignored) {}*/
                                     AbstractClustering method =
                                         new org.urbcomp.cupid.db.algorithm.clustering.DBSCANClustering(
+                                            /*Arrays.stream(points)
+                                                .map(x -> (SpatialPoint) x)
+                                                .collect(Collectors.toList()),*/
                                             pointList,
-                                            distanceInM.doubleValue(),
+                                            distanceInM,
                                             minPoints
                                         );
                                     clusters = method.cluster();

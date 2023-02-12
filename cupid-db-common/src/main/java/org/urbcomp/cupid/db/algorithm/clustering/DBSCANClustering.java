@@ -28,11 +28,7 @@ public class DBSCANClustering extends AbstractClustering {
         this.minPoints = minPoints;
     }
 
-    public List<SpatialPoint> rangeQuery(
-        List<SpatialPoint> pointList,
-        SpatialPoint point,
-        double distanceInM
-    ) {
+    public List<SpatialPoint> rangeQuery(SpatialPoint point) {
         List<SpatialPoint> neighbors = new ArrayList<>();
         for (SpatialPoint p : pointList)
             if (GeoFunctions.getDistanceInM(p, point) < distanceInM) {
@@ -47,7 +43,7 @@ public class DBSCANClustering extends AbstractClustering {
         int clusterId = 0;
         for (SpatialPoint p : pointList) {
             if (label.containsKey(p)) continue;
-            List<SpatialPoint> neighbors = rangeQuery(pointList, p, distanceInM);
+            List<SpatialPoint> neighbors = rangeQuery(p);
             if (neighbors.size() < minPoints) {
                 label.put(p, -1); // Noise label
                 continue;
@@ -58,17 +54,18 @@ public class DBSCANClustering extends AbstractClustering {
             seedSet.remove(p);
             while (!seedSet.isEmpty()) {
                 SpatialPoint q = seedSet.iterator().next();
+                seedSet.remove(q);
                 if (label.containsKey(q) && label.get(q) == -1) label.put(q, clusterId);
                 if (label.containsKey(q)) continue;
                 label.put(q, clusterId);
-                neighbors = rangeQuery(pointList, q, distanceInM);
+                neighbors = rangeQuery(q);
                 if (neighbors.size() >= minPoints) seedSet.addAll(neighbors);
             }
         }
         HashMap<Integer, List<SpatialPoint>> clusters = new HashMap<>();
         for (int i = 1; i <= clusterId; i++)
             clusters.put(i, new ArrayList<>());
-        label.forEach((point, cluster) -> clusters.get(cluster).add(point));
+        label.forEach((point, cluster) -> { if (cluster >= 1) clusters.get(cluster).add(point); });
         List<MultiPoint> ret = new ArrayList<>();
         for (Map.Entry<Integer, List<SpatialPoint>> entry : clusters.entrySet()) {
             List<SpatialPoint> points = entry.getValue();

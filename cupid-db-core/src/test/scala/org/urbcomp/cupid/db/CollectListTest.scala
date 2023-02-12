@@ -30,14 +30,26 @@ class CollectListTest extends AbstractCalciteFunctionTest {
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
   val tGeo: String = trajectory.toGeoJSON
 
-  test("collect list test") {
+  test("collect list test1") {
     val statement = connect.createStatement()
-    statement.executeUpdate("create table list_test (points point)")
-    statement.executeUpdate("insert into table list_test values (st_makePoint(1, 2))")
-    statement.executeUpdate("insert into table list_test values (st_makePoint(3, 4))")
-    statement.executeUpdate("insert into table list_test values (st_makePoint(5.5, 6))")
+    statement.executeUpdate("create table list_test1 (points point)")
     val resultSet =
-      statement.executeQuery("select st_collect_list(points) from list_test")
+      statement.executeQuery("select st_collect_list(points) from list_test1")
+    resultSet.next()
+    System.out.println(resultSet.getObject(1).toString)
+    val collectListResult =
+      resultSet.getObject(1).asInstanceOf[org.apache.calcite.avatica.util.ArrayImpl]
+    assertTrue(collectListResult.getArray.asInstanceOf[Array[Object]].length == 0)
+  }
+
+  test("collect list test2") {
+    val statement = connect.createStatement()
+    statement.executeUpdate("create table list_test2 (points point)")
+    statement.executeUpdate("insert into table list_test2 values (st_makePoint(1, 2))")
+    statement.executeUpdate("insert into table list_test2 values (st_makePoint(3, 4))")
+    statement.executeUpdate("insert into table list_test2 values (st_makePoint(5.5, 6))")
+    val resultSet =
+      statement.executeQuery("select st_collect_list(points) from list_test2")
     resultSet.next()
     System.out.println(resultSet.getObject(1).toString)
     val collectListResult =
