@@ -11,9 +11,7 @@
 
 package org.urbcomp.cupid.db
 
-import org.junit.Assert.{assertEquals, assertTrue}
-import org.locationtech.jts.geom.Point
-import org.urbcomp.cupid.db.model.roadnetwork.RoadSegment
+import org.junit.Assert.{assertNull, assertTrue}
 import org.urbcomp.cupid.db.model.sample.ModelGenerator
 import org.urbcomp.cupid.db.model.trajectory.Trajectory
 
@@ -36,10 +34,9 @@ class CollectListTest extends AbstractCalciteFunctionTest {
     val resultSet =
       statement.executeQuery("select st_collect_list(points) from list_test1")
     resultSet.next()
-    System.out.println(resultSet.getObject(1).toString)
-    val collectListResult =
-      resultSet.getObject(1).asInstanceOf[org.apache.calcite.avatica.util.ArrayImpl]
-    assertTrue(collectListResult.getArray.asInstanceOf[Array[Object]].length == 0)
+    assertNull(resultSet.getObject(1))
+    assertTrue(!resultSet.next())
+    //assertTrue(!resultSet.next())
   }
 
   test("collect list test2") {
@@ -51,7 +48,6 @@ class CollectListTest extends AbstractCalciteFunctionTest {
     val resultSet =
       statement.executeQuery("select st_collect_list(points) from list_test2")
     resultSet.next()
-    System.out.println(resultSet.getObject(1).toString)
     val collectListResult =
       resultSet.getObject(1).asInstanceOf[org.apache.calcite.avatica.util.ArrayImpl]
     assertTrue(collectListResult.getArray.asInstanceOf[Array[Object]].length == 3)

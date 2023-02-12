@@ -38,24 +38,27 @@ import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.type.SqlTypeName;
 import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
 import org.urbcomp.cupid.db.algorithm.clustering.AbstractClustering;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DBSCANClustering {
     public static Method DBSCAN_CLUSTERING_TABLE_METHOD = Types.lookupMethod(
         DBSCANClustering.class,
         "st_dbscan_clustering",
         List.class,
-        double.class,
+        BigDecimal.class,
         int.class
     );
 
     public ScannableTable st_dbscan_clustering(
-        List<SpatialPoint> pointList,
-        double distanceInM,
+        List<Point> pointList,
+        BigDecimal distanceInM,
         int minPoints
     ) {
         return new ScannableTable() {
@@ -121,17 +124,12 @@ public class DBSCANClustering {
                              */
                             public boolean moveNext() {
                                 if (clusters == null) {
-                                    /*Object[] points = new Object[0];
-                                    try {
-                                        points = (Object[]) pointList.getArray();
-                                    } catch (Throwable ignored) {}*/
                                     AbstractClustering method =
                                         new org.urbcomp.cupid.db.algorithm.clustering.DBSCANClustering(
-                                            /*Arrays.stream(points)
-                                                .map(x -> (SpatialPoint) x)
-                                                .collect(Collectors.toList()),*/
-                                            pointList,
-                                            distanceInM,
+                                            pointList.stream()
+                                                .map(x -> new SpatialPoint(x.getCoordinate()))
+                                                .collect(Collectors.toList()),
+                                            distanceInM.doubleValue(),
                                             minPoints
                                         );
                                     clusters = method.cluster();

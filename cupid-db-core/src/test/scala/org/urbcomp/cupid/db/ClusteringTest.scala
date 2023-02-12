@@ -11,13 +11,11 @@
 
 package org.urbcomp.cupid.db
 
-import org.junit.Assert.{assertEquals, assertTrue}
-import org.locationtech.jts.geom.{MultiPoint, Point}
-import org.urbcomp.cupid.db.model.roadnetwork.RoadSegment
+import org.junit.Assert.assertEquals
 import org.urbcomp.cupid.db.model.sample.ModelGenerator
 import org.urbcomp.cupid.db.model.trajectory.Trajectory
 
-import java.util
+import scala.collection.mutable.ListBuffer
 
 /**
   * Clustering Test
@@ -47,15 +45,18 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
     )
     val resultSet =
       statement.executeQuery(
-        "select st_dbscan_clustering(st_collect_list(points), 1.6, 2) from dbscan_test1"
+        "select st_dbscan_clustering(t1, 1.6, 2) " +
+          "from " +
+          "(select st_collect_list(points) as t1 from dbscan_test1)"
       )
-    resultSet.next()
-    var count = 0
+    var results = ListBuffer[String]()
     while (resultSet.next()) {
-      System.out.println(resultSet.getObject(1).toString)
-      //count = count + MultiPoint.fromString(resultSet.getObject(1).toString).getGPSPointList.size()
+      results += resultSet.getObject(1).toString
     }
-    //assertEquals(trajectory.getGPSPointList.size, count)
+    assertEquals(results.size, 2)
+    val sortedResults = results.toList.sorted
+    assertEquals(sortedResults(0), "MULTIPOINT ((1 2), (1.00001 2.00001))")
+    assertEquals(sortedResults(1), "MULTIPOINT ((1.00003 2.00002), (1.00004 2.00003))")
   }
 
 }
