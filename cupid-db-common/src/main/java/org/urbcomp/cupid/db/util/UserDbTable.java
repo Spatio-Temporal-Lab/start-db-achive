@@ -76,4 +76,19 @@ public class UserDbTable {
     public int hashCode() {
         return Objects.hash(username, dbName, tableName);
     }
+
+    @Override
+    public String toString() {
+        return "UserDbTable{"
+            + "username='"
+            + username
+            + '\''
+            + ", dbName='"
+            + dbName
+            + '\''
+            + ", tableName='"
+            + tableName
+            + '\''
+            + '}';
+    }
 }

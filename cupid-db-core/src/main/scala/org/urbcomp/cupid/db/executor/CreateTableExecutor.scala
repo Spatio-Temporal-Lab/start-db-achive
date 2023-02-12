@@ -16,7 +16,7 @@ import org.geotools.data.DataStoreFinder
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.urbcomp.cupid.db.executor.utils.ExecutorUtil
 import org.urbcomp.cupid.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.cupid.db.metadata.{MetadataAccessUtil, MetadataCacheTableMap}
+import org.urbcomp.cupid.db.metadata.MetadataAccessUtil
 import org.urbcomp.cupid.db.metadata.entity.{Field, Table}
 import org.urbcomp.cupid.db.transformer.{
   RoadSegmentAndGeomesaTransformer,
@@ -29,8 +29,7 @@ case class CreateTableExecutor(n: SqlCreateTable) extends BaseExecutor {
     val targetTable = n.name
     val (userName, dbName, tableName) = ExecutorUtil.getUserNameDbNameAndTableName(targetTable)
 
-    val user = MetadataAccessUtil.getUser(userName)
-    val db = MetadataAccessUtil.getDatabase(user.getId, dbName)
+    val db = MetadataAccessUtil.getDatabase(userName, dbName)
     val existedTable = MetadataAccessUtil.getTable(db.getId, tableName)
     if (existedTable != null) {
       if (n.ifNotExists) {

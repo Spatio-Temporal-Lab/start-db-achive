@@ -90,7 +90,13 @@ create_table_columns :
 create_table_columns_item :
        column_name dtype dtype_attr* create_table_column_inline_cons*
      | (T_CONSTRAINT qident)? create_table_column_cons
+     | T_SPATIAL T_INDEX key_list
+     | T_ATTRIBUTE T_INDEX  key_list
      ;
+
+key_list:
+    T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P
+;
 
 column_name :
        qident
@@ -1024,6 +1030,7 @@ T_AS              : A S ;
 T_ASC             : A S C ;
 T_ASSOCIATE       : A S S O C I A T E ;
 T_AT              : A T ;
+T_ATTRIBUTE       : A T T R I B U T E;
 T_AUTO            : A U T O ;
 T_AUTO_INCREMENT  : A U T O I N C R E M E N T;
 T_AVG             : A V G ;
@@ -1311,6 +1318,7 @@ T_SUBSTRING       : S U B S T R I N G ;
 T_SUM             : S U M ;
 T_SUMMARY         : S U M M A R Y ;
 T_SYS_REFCURSOR   : S Y S '_' R E F C U R S O R ;
+T_SPATIAL         : S P A T I A L;
 T_TABLE           : T A B L E ;
 T_TILE            : T I L E ;
 T_VIEW            : V I E W ;

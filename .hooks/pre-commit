@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+echo "[git pre-commit] Checking code format ..."
+mvn spotless:apply

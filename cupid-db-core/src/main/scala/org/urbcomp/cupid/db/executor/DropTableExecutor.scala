@@ -14,8 +14,7 @@ package org.urbcomp.cupid.db.executor
 import org.apache.calcite.sql.ddl.SqlDropTable
 import org.urbcomp.cupid.db.executor.utils.ExecutorUtil
 import org.urbcomp.cupid.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.cupid.db.metadata.{MetadataAccessUtil, MetadataCacheTableMap}
-import org.urbcomp.cupid.db.util.MetadataUtil
+import org.urbcomp.cupid.db.metadata.MetadataAccessUtil
 
 case class DropTableExecutor(n: SqlDropTable) extends BaseExecutor {
   override def execute[Int](): MetadataResult[Int] = {
@@ -35,10 +34,6 @@ case class DropTableExecutor(n: SqlDropTable) extends BaseExecutor {
     val affectedRows = MetadataAccessUtil.dropTable(userName, dbName, tableName)
 
     // TODO transform start db type
-
-    MetadataCacheTableMap.dropTableCache(
-      MetadataUtil.combineUserDbTableKey(userName, dbName, tableName)
-    )
     MetadataResult.buildDDLResult(affectedRows.toInt)
   }
 }

@@ -209,6 +209,17 @@ public class CupidDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
+    public T visitKey_list(CupidDBSqlParser.Key_listContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
     public T visitColumn_name(CupidDBSqlParser.Column_nameContext ctx) {
         return visitChildren(ctx);
     }

@@ -14,10 +14,8 @@ package org.urbcomp.cupid.db
 import org.junit.Assert.assertEquals
 import org.urbcomp.cupid.db.model.sample.ModelGenerator
 import org.urbcomp.cupid.db.model.trajectory.Trajectory
-import org.urbcomp.cupid.db.util.TrajStringToList
 
 import scala.collection.JavaConverters.seqAsJavaList
-import scala.collection.JavaConverters._
 
 class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
   val nameArray: Array[String] = Array[String]("int", "str", "double", "point")
@@ -147,17 +145,14 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     val statement = connect.createStatement()
     val resultSet =
       statement.executeQuery(
-        "select st_traj_timeIntervalSegment(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 120 + ")"
+        "select st_traj_timeIntervalSegment(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 2 + ")"
       )
-    resultSet.next()
-    val subTrajStr = resultSet.getObject(1).toString
-    val subTrajStream = TrajStringToList.stringToList(subTrajStr).asScala.toStream
-    val totalSize = subTrajStream
-      .map(x => {
-        Trajectory.fromGeoJSON(x).getGPSPointList.size()
-      })
-      .sum
-    assertEquals(trajectory.getGPSPointList.size, totalSize)
+    var count = 0
+    while (resultSet.next()) {
+      count = count + Trajectory.fromGeoJSON(resultSet.getObject(1).toString).getGPSPointList.size()
+    }
+    assertEquals(trajectory.getGPSPointList.size, count)
+
   }
 
   test("st_traj_stayPointDetect") {
@@ -181,4 +176,42 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     )
   }
 
+  test("st_traj_noiseFilter_test1") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_noiseFilter(st_traj_fromGeoJSON(\'" + tGeo + "\')," + "1)"
+      )
+    resultSet.next()
+    assertEquals(
+      trajectory.getGPSPointList.subList(0, 1),
+      Trajectory.fromGeoJSON(resultSet.getObject(1).toString).getGPSPointList
+    )
+  }
+  test("st_traj_noiseFilter_test2") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_noiseFilter(st_traj_fromGeoJSON(\'" + tGeo + "\')," + "8.5)"
+      )
+    resultSet.next()
+    assertEquals(
+      "[POINT (108.99553 34.27859), POINT (108.99655 34.25891), POINT (108.99657 34.25875), POINT (108.99655 34.25857), POINT (108.99654 34.25837), POINT (108.99652 34.25826), POINT (108.99647 34.25821), POINT (108.99639 34.25818), POINT (108.99624 34.25818), POINT (108.99598 34.25819), POINT (108.99433 34.25818), POINT (108.99391 34.25818), POINT (108.99337 34.25817), POINT (108.99312 34.25817), POINT (108.99287 34.25817), POINT (108.9926 34.25816), POINT (108.99245 34.25816), POINT (108.9923 34.25816), POINT (108.99205 34.25815)]",
+      Trajectory.fromGeoJSON(resultSet.getObject(1).toString).getGPSPointList.toString
+    )
+  }
+  test("st_traj_noiseFilter_test3") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_noiseFilter(st_traj_fromGeoJSON(\'" + tGeo + "\')," + "30)"
+      )
+    resultSet.next()
+    val correctResult = trajectory.getGPSPointList
+    correctResult.remove(64)
+    assertEquals(
+      correctResult,
+      Trajectory.fromGeoJSON(resultSet.getObject(1).toString).getGPSPointList
+    )
+  }
 }

@@ -138,6 +138,13 @@ public interface CupidDBSqlVisitor<T> extends ParseTreeVisitor<T> {
     T visitCreate_table_columns_item(CupidDBSqlParser.Create_table_columns_itemContext ctx);
 
     /**
+     * Visit a parse tree produced by {@link CupidDBSqlParser#key_list}.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    T visitKey_list(CupidDBSqlParser.Key_listContext ctx);
+
+    /**
      * Visit a parse tree produced by {@link CupidDBSqlParser#column_name}.
      * @param ctx the parse tree
      * @return the visitor result

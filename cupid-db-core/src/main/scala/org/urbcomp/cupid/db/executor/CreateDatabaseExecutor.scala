@@ -23,7 +23,7 @@ case class CreateDatabaseExecutor(n: SqlCreateDatabase) extends BaseExecutor {
     val userName = param.getUserName
     val user = MetadataAccessUtil.getUser(userName)
     val dbName = n.getDatabaseName.names.get(0)
-    val existed = MetadataAccessUtil.getDatabase(user.getId, dbName)
+    val existed = MetadataAccessUtil.getDatabase(userName, dbName)
     if (existed != null) {
       if (n.isIfNotExists) {
         return MetadataResult.buildDDLResult(0)
