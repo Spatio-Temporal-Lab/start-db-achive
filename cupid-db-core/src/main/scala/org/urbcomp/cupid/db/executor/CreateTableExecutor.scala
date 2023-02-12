@@ -73,42 +73,9 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
           fieldMap.put(name, field)
         })
 
-        val indexes = getIndexes(tableId, n)
-        indexes.foreach(index => MetadataAccessUtil.insertIndex(fillIndexName(index)))
-
-        val geomesaIndexDecl = indexes
-          .map(index => {
-            val fields = index.getFieldsIdList.split(",")
-            var indexDecl = IndexType.valueOf(index.getIndexType) match {
-              case IndexType.ATTRIBUTE => "attr:"
-              case IndexType.SPATIAL => {
-                if (fields.length < 1) {
-                  throw new IllegalArgumentException(
-                    s"invalid spatial index for fields (${index.getFieldsIdList})"
-                  )
-                }
-                val gemoType = fieldMap(fields(0)).getType
-                fields.length match {
-                  case 1 =>
-                    val gemoType = fieldMap(fields(0)).getType
-                    if (DataTypeUtils.isPoint(gemoType))
-                      "z2:"
-                    else "xz2:"
-                  case 2 =>
-                    if (DataTypeUtils.isPoint(gemoType))
-                      "z3:"
-                    else "xz3:"
-                  case _ => throw new IllegalArgumentException("index type mismatch columns")
-                }
-              }
-              case _ =>
-                throw new IllegalArgumentException("unexpected index type " + index.getIndexType)
-            }
-            indexDecl += fields.mkString(":")
-            indexDecl
-          })
-          .toList
-          .mkString(",")
+        val indexes = getIndexes(tableId, fieldMap.toMap, n)
+        checkIndexNames(indexes)
+        indexes.foreach(index => MetadataAccessUtil.insertIndex(index))
 
         val params = ExecutorUtil.getDataStoreParams(userName, dbName)
         val dataStore = DataStoreFinder.getDataStore(params)
@@ -124,6 +91,11 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
         // allow mixed geometry types for support cupid-db type `Geometry`
         sft.getUserData.put("geomesa.mixed.geometries", java.lang.Boolean.TRUE)
 
+        val geomesaIndexDecl = indexes
+          .map(idx => {
+            s"${idx.getIndexType}:${idx.getFieldsIdList.split(",").mkString(":")}"
+          })
+          .mkString(",")
         sft.getUserData.put("geomesa.indices.enabled", geomesaIndexDecl)
 
         dataStore.createSchema(sft)
@@ -134,27 +106,85 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
     MetadataResult.buildDDLResult(affectedRows.toInt)
   }
 
+  private def formatName(colName: String, order: Int): String = {
+    s"$colName${if (order == 1) "" else s"_$order"}"
+  }
+
   /**
-    * generate index name
+    * Check if index names duplicate
+    * For index name not explicitly defined, use ${columnName}_${order} with minimum order satisfy name not duplicate
     */
-  private def fillIndexName(index: Index): Index = {
-    index.setName(index.getIndexType + "-" + index.getFieldsIdList)
-    index
+  private def checkIndexNames(indexes: Array[Index]): Unit = {
+    val names = collection.mutable.Set[String]()
+    indexes.foreach(idx => {
+      if (idx.getName == null) {
+        val colName = idx.getFieldsIdList.split(",")(0)
+        var order = 1
+        while (names.contains(formatName(colName, order))) {
+          order += 1
+        }
+        idx.setName(formatName(colName, order))
+      }
+      if (names.contains(idx.getName)) {
+        throw new IllegalArgumentException(s"Duplicate index name ${idx.getName}")
+      }
+      names.add(idx.getName)
+    })
+  }
+
+  private def getIndexType(
+      indexType: IndexType,
+      fields: Array[String],
+      fieldMap: Map[String, Field]
+  ): String = {
+    if (fields.length < 1) {
+      throw new IllegalArgumentException("Invalid index no fields")
+    }
+    indexType match {
+      case IndexType.ATTRIBUTE => "attr"
+      case IndexType.SPATIAL =>
+        val gemoType = fieldMap(fields.head).getType
+        fields.length match {
+          case 1 =>
+            val gemoType = fieldMap(fields.head).getType
+            if (DataTypeUtils.isPoint(gemoType))
+              "z2"
+            else "xz2"
+          case 2 =>
+            if (DataTypeUtils.isPoint(gemoType))
+              "z3"
+            else "xz3"
+          case _ => throw new IllegalArgumentException("index type mismatch columns")
+        }
+      case _ =>
+        throw new IllegalArgumentException("unexpected index type " + indexType.name())
+    }
   }
 
   /**
     * get index declaration or add default index declaration
     */
-  private def getIndexes(tableId: Long, n: SqlCupidCreateTable): Array[Index] = {
+  private def getIndexes(
+      tableId: Long,
+      fieldMap: Map[String, Field],
+      n: SqlCupidCreateTable
+  ): Array[Index] = {
     if (n.indexList != null && n.indexList.size() > 0) {
       n.indexList.asScala
         .map(i => {
           val index = i.asInstanceOf[SqlIndexDeclaration]
           val fields = index.getOperandList.asScala
             .map(op => op.asInstanceOf[SqlIdentifier].names.get(0))
-            .toList
-            .mkString(",")
-          new Index(tableId, index.indexType.name(), fields.mkString(","), "")
+            .toArray
+          val indexName: String =
+            if (index.indexName != null) index.indexName.names.get(0) else null
+          new Index(
+            tableId,
+            getIndexType(index.indexType, fields, fieldMap),
+            indexName,
+            fields.mkString(","),
+            ""
+          )
         })
         .toArray
     } else {
@@ -170,7 +200,14 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
         .orNull
 
       if (firstGemo != null) {
-        rss = rss :+ new Index(tableId, IndexType.SPATIAL.name(), firstGemo, "")
+        rss = rss :+
+          new Index(
+            tableId,
+            getIndexType(IndexType.SPATIAL, Array(firstGemo), fieldMap),
+            null,
+            firstGemo,
+            ""
+          )
         val firstDate = n.columnList.asScala
           .map(c => {
             val column = c.asInstanceOf[SqlColumnDeclaration]
@@ -180,12 +217,14 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
           .find(name => name != null)
           .orNull
         if (firstDate != null) {
-          rss = rss :+ new Index(
-            tableId,
-            IndexType.SPATIAL.name,
-            Array(firstGemo, firstDate).mkString(","),
-            ""
-          )
+          rss = rss :+
+            new Index(
+              tableId,
+              getIndexType(IndexType.SPATIAL, Array(firstGemo, firstDate), fieldMap),
+              null,
+              Array(firstGemo, firstDate).mkString(","),
+              ""
+            )
         }
       }
       rss

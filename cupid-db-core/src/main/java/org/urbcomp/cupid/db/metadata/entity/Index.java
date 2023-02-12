@@ -41,9 +41,16 @@ public class Index extends AbstractEntity {
      */
     private String indexProperties;
 
-    public Index(long tableId, String indexType, String fieldsIdList, String indexProperties) {
+    public Index(
+        long tableId,
+        String indexType,
+        String indexName,
+        String fieldsIdList,
+        String indexProperties
+    ) {
         this.tableId = tableId;
         this.indexType = indexType;
+        this.name = indexName;
         this.fieldsIdList = fieldsIdList;
         this.indexProperties = indexProperties;
     }
@@ -52,14 +59,14 @@ public class Index extends AbstractEntity {
         long id,
         long tableId,
         String indexType,
-        String name,
+        String indexName,
         String fieldsIdList,
         String indexProperties,
         Timestamp createdDate,
         Timestamp modifiedDate,
         long deleteTime
     ) {
-        super(id, name);
+        super(id, indexName);
         this.tableId = tableId;
         this.indexType = indexType;
         this.fieldsIdList = fieldsIdList;

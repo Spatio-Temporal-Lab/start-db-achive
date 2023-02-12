@@ -4,6 +4,6 @@ CREATE TABLE gemo (
     et Point,
     dtg Datetime,
     SPATIAL INDEX (st, dtg),
-    SPATIAL INDEX (et, dtg),
-    ATTRIBUTE INDEX(name, dtg)
+    SPATIAL INDEX spatial_index(et, dtg),
+    ATTRIBUTE INDEX attribute_index(name, dtg)
 )

@@ -596,6 +596,12 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
           } else {
             indexType = IndexType.ATTRIBUTE
           }
+
+          var indexName: SqlIdentifier = null
+          if (i.ident() != null) {
+            indexName = new SqlIdentifier(i.ident().getText, pos)
+          }
+
           val columns = i
             .key_list()
             .qident()
@@ -605,7 +611,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
             })
             .toList
             .asJava
-          new SqlIndexDeclaration(pos, indexType, columns)
+          new SqlIndexDeclaration(pos, indexType, indexName, columns)
         }
         .toList
         .asJava

@@ -20,6 +20,7 @@ import org.urbcomp.cupid.db.parser.dcl.SqlCreateUser
 import org.urbcomp.cupid.db.parser.ddl.{
   SqlCreateDatabase,
   SqlCupidCreateTable,
+  SqlIndexDeclaration,
   SqlTruncateTable,
   SqlUseDatabase
 }
@@ -149,6 +150,8 @@ class CupidDBVisitorTest extends FunSuite with BeforeAndAfterEach {
     val parsed = driver.parseSql(sql);
     val node = parsed.asInstanceOf[SqlCupidCreateTable]
     assertEquals(3, node.indexList.size())
+    val index1 = node.indexList.get(1).asInstanceOf[SqlIndexDeclaration]
+    assertEquals("spatial_index", index1.indexName.names.get(0))
     assertEquals(4, node.columnList.size())
   }
 

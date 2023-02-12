@@ -54,6 +54,8 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                             |    st Point,
                             |    et Point,
                             |    dtg Datetime
+                            |    SPATIAL INDEX (st, dtg),
+                            |    SPATIAL INDEX spatial_index(et, dtg),
                             |)""".stripMargin.format(randomNum).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
@@ -158,7 +160,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     }
     val sql = rss.getString(2);
     assertEquals(
-      "CREATE TABLE test_show_create_table (tr Trajectory, rs RoadSegment, gm Geometry, SPATIAL INDEX (gm))",
+      "CREATE TABLE test_show_create_table (tr Trajectory, rs RoadSegment, gm Geometry)",
       sql
     )
   }

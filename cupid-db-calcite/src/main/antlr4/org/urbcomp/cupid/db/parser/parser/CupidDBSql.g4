@@ -90,8 +90,7 @@ create_table_columns :
 create_table_columns_item :
        column_name dtype dtype_attr* create_table_column_inline_cons*
      | (T_CONSTRAINT qident)? create_table_column_cons
-     | T_SPATIAL T_INDEX key_list
-     | T_ATTRIBUTE T_INDEX  key_list
+     | (T_SPATIAL|T_ATTRIBUTE) T_INDEX ident? key_list
      ;
 
 key_list:

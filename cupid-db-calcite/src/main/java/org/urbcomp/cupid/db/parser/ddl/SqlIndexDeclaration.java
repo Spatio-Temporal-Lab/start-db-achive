@@ -37,14 +37,22 @@ public class SqlIndexDeclaration extends SqlCall {
 
     public final IndexType indexType;
 
+    public final SqlIdentifier indexName;
+
     public final List<SqlIdentifier> columns;
 
     /**
      * Creates a SqlIndexDeclaration;
      */
-    public SqlIndexDeclaration(SqlParserPos pos, IndexType indexType, List<SqlIdentifier> columns) {
+    public SqlIndexDeclaration(
+        SqlParserPos pos,
+        IndexType indexType,
+        SqlIdentifier indexName,
+        List<SqlIdentifier> columns
+    ) {
         super(pos);
         this.indexType = indexType;
+        this.indexName = indexName;
         this.columns = columns;
     }
 
@@ -71,6 +79,9 @@ public class SqlIndexDeclaration extends SqlCall {
                 throw new AssertionError("unexpected: " + indexType);
         }
         writer.keyword("INDEX");
+        if (indexName != null) {
+            indexName.unparse(writer, 0, 0);
+        }
         SqlWriter.Frame frame = writer.startList("(", ")");
         for (SqlNode c : columns) {
             writer.sep(",");
