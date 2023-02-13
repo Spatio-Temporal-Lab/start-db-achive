@@ -14,7 +14,12 @@ package org.urbcomp.cupid.db.geomesa
 import org.apache.calcite.schema.impl.{AggregateFunctionImpl, TableFunctionImpl}
 import org.apache.calcite.schema.{Schema, SchemaFactory, SchemaPlus}
 import org.urbcomp.cupid.db.function.udaf.CollectList
-import org.urbcomp.cupid.db.udtf.{Fibonacci, StayPointDetect, TimeIntervalTrajectorySegment, DBSCANClustering}
+import org.urbcomp.cupid.db.udtf.{
+  Fibonacci,
+  StayPointDetect,
+  TimeIntervalTrajectorySegment,
+  DBSCANClustering
+}
 import java.util
 
 /**
