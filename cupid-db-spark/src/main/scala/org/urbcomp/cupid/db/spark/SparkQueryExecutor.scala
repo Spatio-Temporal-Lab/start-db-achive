@@ -30,8 +30,9 @@ object SparkQueryExecutor extends LazyLogging {
     val sql = param.getSql
     CupidSparkTableExtractVisitor.getTableList(sql).foreach { i =>
       val userName = SparkSqlParam.CACHE.get().getUserName
-      val dbName = i.split("\\.")(0)
-      val tableName = i.split("\\.")(1)
+      val dbTableNames = i.split("\\.")
+      val dbName = dbTableNames(0)
+      val tableName = dbTableNames(1)
       val catalogName = MetadataUtil.makeCatalog(userName, dbName)
       val table = MetadataAccessUtil.getTable(userName, dbName, tableName)
       if (table == null) throw new IllegalArgumentException("Table Not Exists: " + i)

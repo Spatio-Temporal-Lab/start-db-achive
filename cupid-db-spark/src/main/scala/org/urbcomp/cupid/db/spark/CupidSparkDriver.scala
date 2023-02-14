@@ -11,7 +11,7 @@
 
 package org.urbcomp.cupid.db.spark
 
-import org.urbcomp.cupid.db.util.{SparkSqlParam, SqlParam}
+import org.urbcomp.cupid.db.util.SparkSqlParam
 
 /**
   * debug test:
@@ -25,7 +25,7 @@ import org.urbcomp.cupid.db.util.{SparkSqlParam, SqlParam}
   * --num-executors 1 \
   * cupid-db.jar -i SqlId -s "select 1+1" -u zaiyuan -d default
   */
-object CupidDriver {
+object CupidSparkDriver {
 
   def deserializeParam(args: Array[String]): SparkSqlParam = null /* TODO */
 

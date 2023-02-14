@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.urbcomp.cupid.db.model.data.DataExportType;
 import org.urbcomp.cupid.db.util.SparkSqlParam;
 
-public class CupidDriverTest {
+public class CupidSparkDriverTest {
 
     @Test
     public void testExecute() {
