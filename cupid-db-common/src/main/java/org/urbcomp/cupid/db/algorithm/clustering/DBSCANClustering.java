@@ -11,6 +11,7 @@
 
 package org.urbcomp.cupid.db.algorithm.clustering;
 
+import com.github.davidmoten.grumpy.core.Position;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;
@@ -18,9 +19,7 @@ import com.github.davidmoten.rtree.geometry.Point;
 import com.github.davidmoten.rtree.geometry.Rectangle;
 import org.locationtech.jts.geom.MultiPoint;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
-import org.urbcomp.cupid.db.util.GeoFunctions;
 import org.urbcomp.cupid.db.util.GeometryFactoryUtils;
-import com.github.davidmoten.grumpy.core.Position;
 import rx.Observable;
 
 import java.util.*;
@@ -58,19 +57,19 @@ public class DBSCANClustering extends AbstractClustering {
         Rectangle bounds = createBounds(from, distanceInM / 1000);
 
         return pointRTree
-            // do the first search using the bounds
-            .search(bounds)
-            // refine using the exact distance
-            .filter(entry -> {
-                Point p = entry.geometry();
-                Position position = Position.create(p.y(), p.x());
-                return from.getDistanceToKm(position) < distanceInM / 1000;
-            });
+                // do the first search using the bounds
+                .search(bounds)
+                // refine using the exact distance
+                .filter(entry -> {
+                    Point p = entry.geometry();
+                    Position position = Position.create(p.y(), p.x());
+                    return from.getDistanceToKm(position) < distanceInM / 1000;
+                });
     }
 
     private List<SpatialPoint> rangeQuery(SpatialPoint point) {
         List<Entry<SpatialPoint, Point>> list = search(
-            Geometries.point(point.getLng(), point.getLat())
+                Geometries.point(point.getLng(), point.getLat())
         ).toList().toBlocking().single();
         return list.stream().map(Entry::value).collect(Collectors.toList());
     }
@@ -103,13 +102,15 @@ public class DBSCANClustering extends AbstractClustering {
         HashMap<Integer, List<SpatialPoint>> clusters = new HashMap<>();
         for (int i = 1; i <= clusterId; i++)
             clusters.put(i, new ArrayList<>());
-        label.forEach((point, cluster) -> { if (cluster >= 1) clusters.get(cluster).add(point); });
+        label.forEach((point, cluster) -> {
+            if (cluster >= 1) clusters.get(cluster).add(point);
+        });
         List<MultiPoint> ret = new ArrayList<>();
         for (Map.Entry<Integer, List<SpatialPoint>> entry : clusters.entrySet()) {
             List<SpatialPoint> points = entry.getValue();
             SpatialPoint[] arr = new SpatialPoint[points.size()];
             ret.add(
-                new MultiPoint(points.toArray(arr), GeometryFactoryUtils.defaultGeometryFactory())
+                    new MultiPoint(points.toArray(arr), GeometryFactoryUtils.defaultGeometryFactory())
             );
         }
         return ret;
