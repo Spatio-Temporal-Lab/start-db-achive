@@ -30,6 +30,7 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
 
   test("dbscan test1") {
     val statement = connect.createStatement()
+    statement.executeUpdate("DROP TABLE IF EXISTS dbscan_test1")
     statement.executeUpdate("create table dbscan_test1 (points point)")
     statement.executeUpdate(
       "insert into table dbscan_test1 values (st_makePoint(1.000000, 2.000000))"

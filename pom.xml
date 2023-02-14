@@ -89,7 +89,6 @@
                 <version>${slf4j.version}</version>
             </dependency>
 
-
             <dependency>
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-client</artifactId>

@@ -30,17 +30,18 @@ class CollectListTest extends AbstractCalciteFunctionTest {
 
   test("collect list test1") {
     val statement = connect.createStatement()
+    statement.executeUpdate("DROP TABLE IF EXISTS list_test1")
     statement.executeUpdate("create table list_test1 (points point)")
     val resultSet =
       statement.executeQuery("select st_collect_list(points) from list_test1")
     resultSet.next()
     assertNull(resultSet.getObject(1))
     assertTrue(!resultSet.next())
-    //assertTrue(!resultSet.next())
   }
 
   test("collect list test2") {
     val statement = connect.createStatement()
+    statement.executeUpdate("DROP TABLE IF EXISTS list_test2")
     statement.executeUpdate("create table list_test2 (points point)")
     statement.executeUpdate("insert into table list_test2 values (st_makePoint(1, 2))")
     statement.executeUpdate("insert into table list_test2 values (st_makePoint(3, 4))")
