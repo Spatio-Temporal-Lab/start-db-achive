@@ -56,18 +56,16 @@ public class DBSCANClustering extends AbstractClustering {
         final Position from = Position.create(lonLat.y(), lonLat.x());
         Rectangle bounds = createBounds(from, distanceInM / 1000);
 
-        return pointRTree
-                .search(bounds)
-                .filter(entry -> {
-                    Point p = entry.geometry();
-                    Position position = Position.create(p.y(), p.x());
-                    return from.getDistanceToKm(position) < distanceInM / 1000;
-                });
+        return pointRTree.search(bounds).filter(entry -> {
+            Point p = entry.geometry();
+            Position position = Position.create(p.y(), p.x());
+            return from.getDistanceToKm(position) < distanceInM / 1000;
+        });
     }
 
     private List<SpatialPoint> rangeQuery(SpatialPoint point) {
         List<Entry<SpatialPoint, Point>> list = search(
-                Geometries.point(point.getLng(), point.getLat())
+            Geometries.point(point.getLng(), point.getLat())
         ).toList().toBlocking().single();
         return list.stream().map(Entry::value).collect(Collectors.toList());
     }
@@ -101,15 +99,13 @@ public class DBSCANClustering extends AbstractClustering {
         HashMap<Integer, List<SpatialPoint>> clusters = new HashMap<>();
         for (int i = 1; i <= clusterId; i++)
             clusters.put(i, new ArrayList<>());
-        label.forEach((point, cluster) -> {
-            if (cluster >= 1) clusters.get(cluster).add(point);
-        });
+        label.forEach((point, cluster) -> { if (cluster >= 1) clusters.get(cluster).add(point); });
         List<MultiPoint> ret = new ArrayList<>();
         for (Map.Entry<Integer, List<SpatialPoint>> entry : clusters.entrySet()) {
             List<SpatialPoint> points = entry.getValue();
             SpatialPoint[] arr = new SpatialPoint[points.size()];
             ret.add(
-                    new MultiPoint(points.toArray(arr), GeometryFactoryUtils.defaultGeometryFactory())
+                new MultiPoint(points.toArray(arr), GeometryFactoryUtils.defaultGeometryFactory())
             );
         }
         return ret;
