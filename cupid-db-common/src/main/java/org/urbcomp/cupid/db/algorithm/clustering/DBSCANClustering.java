@@ -57,9 +57,7 @@ public class DBSCANClustering extends AbstractClustering {
         Rectangle bounds = createBounds(from, distanceInM / 1000);
 
         return pointRTree
-                // do the first search using the bounds
                 .search(bounds)
-                // refine using the exact distance
                 .filter(entry -> {
                     Point p = entry.geometry();
                     Position position = Position.create(p.y(), p.x());
@@ -82,7 +80,8 @@ public class DBSCANClustering extends AbstractClustering {
             if (label.containsKey(p)) continue;
             List<SpatialPoint> neighbors = rangeQuery(p);
             if (neighbors.size() < minPoints) {
-                label.put(p, -1); // Noise label
+                // Noise label
+                label.put(p, -1);
                 continue;
             }
             clusterId++;
