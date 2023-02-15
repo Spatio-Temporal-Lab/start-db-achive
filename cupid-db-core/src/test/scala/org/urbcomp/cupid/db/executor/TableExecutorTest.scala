@@ -16,12 +16,18 @@ import org.urbcomp.cupid.db.AbstractCalciteFunctionTest
 import org.urbcomp.cupid.db.model.sample.ModelGenerator
 import org.urbcomp.cupid.db.model.trajectory.Trajectory
 
+import java.util.UUID
 import scala.collection.mutable.ArrayBuffer
 
 class TableExecutorTest extends AbstractCalciteFunctionTest {
+
+  private def generateUniqueId(): String = {
+    UUID.randomUUID().toString.replace("-", "_");
+  }
+
   test("test create table") {
-    val randomNum = scala.util.Random.nextInt(100000)
-    val createTableSQL = s"""CREATE TABLE start_db_table_test_%d (
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE start_db_table_test_%s (
                                   |    idx Integer,
                                   |    ride_id String,
                                   |    started_at Timestamp,
@@ -42,21 +48,21 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                                   |    mp MultiPoint,
                                   |    gc GeometryCollection,
                                   |    int_val int
-                                  |);""".format(randomNum).stripMargin
+                                  |);""".format(uniqueId).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
   }
 
   test("test create table with index") {
-    val randomNum = scala.util.Random.nextInt(100000)
-    val createTableSQL = s"""CREATE TABLE gemo_%d (
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE gemo_%s (
                             |    name String,
                             |    st Point,
                             |    et Point,
                             |    dtg Datetime
                             |    SPATIAL INDEX (st, dtg),
                             |    SPATIAL INDEX spatial_index(et, dtg),
-                            |)""".stripMargin.format(randomNum).stripMargin
+                            |)""".stripMargin.format(uniqueId).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
   }
@@ -69,13 +75,13 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
   }
 
   test("test drop table") {
-    val randomNum = scala.util.Random.nextInt(100000)
-    val createTableSQL = s"""CREATE TABLE xxx_%d (
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE xxx_%s (
                             |    idx Integer,
                             |    ride_id String,
                             |    x1 String,
                             |    x2 String
-                            |);""".format(randomNum).stripMargin
+                            |);""".format(uniqueId).stripMargin
     val stmt = connect.createStatement()
 
     val rs1 = stmt.executeQuery("show tables")
@@ -86,7 +92,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
 
     stmt.executeUpdate(createTableSQL)
 
-    val dropTableSQL = s"""DROP TABLE xxx_%d;""".format(randomNum).stripMargin
+    val dropTableSQL = s"""DROP TABLE xxx_%s;""".format(uniqueId).stripMargin
     stmt.executeUpdate(dropTableSQL)
 
     val rs2 = stmt.executeQuery("show tables")
@@ -99,13 +105,13 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
   }
 
   test("test drop table if exists") {
-    val randomNum = scala.util.Random.nextInt(100000)
-    val createTableSQL = s"""CREATE TABLE xxx_%d (
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE xxx_%s (
                             |    idx Integer,
                             |    ride_id String,
                             |    x1 String,
                             |    x2 String
-                            |);""".format(randomNum).stripMargin
+                            |);""".format(uniqueId).stripMargin
     val stmt = connect.createStatement()
 
     val rs1 = stmt.executeQuery("show tables")
@@ -116,7 +122,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
 
     stmt.executeUpdate(createTableSQL)
 
-    val dropTableSQL = s"""DROP TABLE IF EXISTS xxx_%d;""".format(randomNum).stripMargin
+    val dropTableSQL = s"""DROP TABLE IF EXISTS xxx_%s;""".format(uniqueId).stripMargin
     stmt.executeUpdate(dropTableSQL)
 
     val rs2 = stmt.executeQuery("show tables")
@@ -129,7 +135,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
   }
 
   test("test describe table") {
-    val tableName = "test_describe_table_" + scala.util.Random.nextInt(Integer.MAX_VALUE)
+    val tableName = "test_describe_table_" + generateUniqueId()
     val createTableSQL = s"""CREATE TABLE $tableName (
                             |    tr Trajectory,
                             |    rs RoadSegment,
@@ -168,8 +174,8 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
   test("test truncate table") {
     val trajectory: Trajectory = ModelGenerator.generateTrajectory()
     val tGeo: String = trajectory.toGeoJSON
-    val randomNum = scala.util.Random.nextInt(100000)
-    val tableName = "xxx_" + randomNum
+    val uniqueId = generateUniqueId()
+    val tableName = "xxx_" + uniqueId
 
     val createTableSQL = s"""CREATE TABLE %s (
                             |    idx Integer,
@@ -180,7 +186,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     stmt.execute(
       "INSERT INTO " + tableName + " (idx, traj) values " + "(1, st_traj_fromGeoJSON(\'" + tGeo + "\'))"
     )
-    val selectSQL = s"""SELECT * FROM xxx_%d;""".format(randomNum)
+    val selectSQL = s"""SELECT * FROM xxx_%s;""".format(uniqueId)
     val result1 = stmt.executeQuery(selectSQL)
     var resultSize1 = 0
     while (result1.next()) {
@@ -188,7 +194,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     }
     assertEquals(resultSize1, 1)
 
-    val truncateTableSQL = s"""TRUNCATE TABLE xxx_%d;""".format(randomNum)
+    val truncateTableSQL = s"""TRUNCATE TABLE xxx_%s;""".format(uniqueId)
     stmt.executeUpdate(truncateTableSQL)
     stmt.execute(
       "INSERT INTO " + tableName + " (idx, traj) values " + "(1, st_traj_fromGeoJSON(\'" + tGeo + "\'))"

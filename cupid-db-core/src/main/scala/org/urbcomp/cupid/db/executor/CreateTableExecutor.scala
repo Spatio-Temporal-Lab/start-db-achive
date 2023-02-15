@@ -69,7 +69,7 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
             sfb.add(name, classType)
           }
           val field = new Field(0, tableId, name, dataType, 0);
-          MetadataAccessUtil.insertField(new Field(0, tableId, name, dataType, 0))
+          MetadataAccessUtil.insertField(field)
           fieldMap.put(name, field)
         })
 
@@ -143,15 +143,15 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
     indexType match {
       case IndexType.ATTRIBUTE => "attr"
       case IndexType.SPATIAL =>
-        val gemoType = fieldMap(fields.head).getType
+        val geoType = fieldMap(fields.head).getType
         fields.length match {
           case 1 =>
-            val gemoType = fieldMap(fields.head).getType
-            if (DataTypeUtils.isPoint(gemoType))
+            val geoType = fieldMap(fields.head).getType
+            if (DataTypeUtils.isPoint(geoType))
               "z2"
             else "xz2"
           case 2 =>
-            if (DataTypeUtils.isPoint(gemoType))
+            if (DataTypeUtils.isPoint(geoType))
               "z3"
             else "xz3"
           case _ => throw new IllegalArgumentException("index type mismatch columns")
@@ -190,7 +190,7 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
     } else {
       // add default index if no index explicitly defined
       var rss = Array[Index]()
-      val firstGemo = n.columnList.asScala
+      val firstGeo = n.columnList.asScala
         .map(c => {
           val column = c.asInstanceOf[SqlColumnDeclaration]
           val dataType = column.dataType.getTypeName.names.get(0)
@@ -199,13 +199,13 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
         .find(name => name != null)
         .orNull
 
-      if (firstGemo != null) {
+      if (firstGeo != null) {
         rss = rss :+
           new Index(
             tableId,
-            getIndexType(IndexType.SPATIAL, Array(firstGemo), fieldMap),
+            getIndexType(IndexType.SPATIAL, Array(firstGeo), fieldMap),
             null,
-            firstGemo,
+            firstGeo,
             ""
           )
         val firstDate = n.columnList.asScala
@@ -220,9 +220,9 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
           rss = rss :+
             new Index(
               tableId,
-              getIndexType(IndexType.SPATIAL, Array(firstGemo, firstDate), fieldMap),
+              getIndexType(IndexType.SPATIAL, Array(firstGeo, firstDate), fieldMap),
               null,
-              Array(firstGemo, firstDate).mkString(","),
+              Array(firstGeo, firstDate).mkString(","),
               ""
             )
         }

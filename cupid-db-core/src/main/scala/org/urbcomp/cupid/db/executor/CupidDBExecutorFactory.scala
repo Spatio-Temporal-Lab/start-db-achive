@@ -12,7 +12,7 @@
 package org.urbcomp.cupid.db.executor
 
 import org.apache.calcite.sql._
-import org.apache.calcite.sql.ddl.{SqlCreateTable, SqlDropSchema, SqlDropTable}
+import org.apache.calcite.sql.ddl.{SqlDropSchema, SqlDropTable}
 import org.urbcomp.cupid.db.infra.{BaseExecutor, BaseExecutorFactory}
 import org.urbcomp.cupid.db.parser.dcl.SqlCreateUser
 import org.urbcomp.cupid.db.parser.ddl.{
