@@ -32,9 +32,6 @@ public class DBSCANClustering extends AbstractClustering {
 
     public DBSCANClustering(List<SpatialPoint> pointList, double distanceInM, int minPoints) {
         super(pointList);
-        this.pointRTree = RTree.star().create();
-        for (SpatialPoint p : pointList)
-            this.pointRTree = this.pointRTree.add(p, Geometries.point(p.getLng(), p.getLat()));
         this.distanceInM = distanceInM;
         this.minPoints = minPoints;
     }
@@ -72,6 +69,11 @@ public class DBSCANClustering extends AbstractClustering {
 
     @Override
     public List<MultiPoint> cluster() {
+        if (pointRTree == null) {
+            pointRTree = RTree.star().create();
+            for (SpatialPoint p : pointList)
+                pointRTree = pointRTree.add(p, Geometries.point(p.getLng(), p.getLat()));
+        }
         HashMap<SpatialPoint, Integer> label = new HashMap<>();
         int clusterId = 0;
         for (SpatialPoint p : pointList) {

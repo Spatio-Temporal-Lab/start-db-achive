@@ -15,10 +15,8 @@ import org.junit.Assert.{assertNull, assertTrue}
 import org.urbcomp.cupid.db.model.sample.ModelGenerator
 import org.urbcomp.cupid.db.model.trajectory.Trajectory
 
-import java.util
-
 /**
-  * CollectList Test
+  * Collect List Test
   *
   * @author Hang Wu
   * @date 2023-02-11
