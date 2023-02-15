@@ -18,11 +18,11 @@ import org.urbcomp.cupid.db.model.trajectory.Trajectory
 import scala.collection.mutable.ListBuffer
 
 /**
-  * Clustering Test
-  *
-  * @author Hang Wu
-  * @date 2023-02-11
-  */
+ * Clustering Test
+ *
+ * @author Hang Wu
+ * @date 2023-02-11
+ */
 class ClusteringTest extends AbstractCalciteFunctionTest {
 
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
@@ -48,7 +48,7 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
       statement.executeQuery(
         "select st_dbscan_clustering(t1, 1.6, 2) " +
           "from " +
-          "(select st_collect_list(points) as t1 from dbscan_test1)"
+          "(select collect_list(points) as t1 from dbscan_test1)"
       )
     var results = ListBuffer[String]()
     while (resultSet.next()) {
