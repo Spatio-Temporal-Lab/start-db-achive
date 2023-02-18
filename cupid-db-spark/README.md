@@ -26,7 +26,7 @@ docker exec -it spark-dev-spark-master-1 bash
 
 ```shell
 spark-submit  \
---class org.urbcomp.cupid.db.spark.CupidDriver \
+--class org.urbcomp.cupid.db.spark.CupidSparkDriver \
 --master spark://spark-master:7077  \
 --deploy-mode client \
 --driver-memory 1g \
