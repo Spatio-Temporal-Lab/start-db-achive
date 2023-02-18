@@ -7,9 +7,10 @@ livy依赖于spark和hadoop环境。
 
 要构建livy镜像的文件结构
 ```shell
-apache-livy-0.7.1-incubating-bin.tar.gz
+apache-livy-0.8.0-incubating-SNAPSHOT-bin.tar.gz
 Dockerfile
 livy.conf
+log4j.properties
 spark-3.0.2-bin-hadoop3.2.tgz
 ```
 构建
@@ -50,7 +51,17 @@ Caused by: java.lang.ClassNotFoundException: scala.Function0$class
 
 打包可参考：[https://stackoverflow.com/questions/67085984/how-to-rebuild-apache-livy-with-scala-2-12](https://stackoverflow.com/questions/67085984/how-to-rebuild-apache-livy-with-scala-2-12)
 
+注释掉几个无用但会失败的模块
+```shell
+    <!--<module>coverage</module>-->
+    <!--<module>examples</module>-->
+    <!--<module>python-api</module>-->
+    <!--<module>integration-test</module>-->
+```
+
 ```shell
 mvn clean package -B -V -e -Pspark-3.0 -DskipTests -DskipITs -Dmaven.javadoc.skip=true
 ```
+
+打包完在 assembly/target/apache-livy-0.8.0-incubating-SNAPSHOT-bin.zip
 

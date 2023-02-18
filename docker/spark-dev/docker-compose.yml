@@ -51,3 +51,5 @@ services:
     image: livy:0.7.1
     ports:
       - "8998:8998"
+    volumes:
+    - ./apps:/opt/spark-apps
