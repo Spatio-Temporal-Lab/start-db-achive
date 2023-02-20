@@ -18,6 +18,7 @@
         <module>cupid-db-core</module>
         <module>cupid-db-server</module>
         <module>cupid-db-spark</module>
+        <module>cupid-db-store</module>
     </modules>
 
     <properties>
@@ -56,6 +57,7 @@
         <org.jgrapht.version>1.4.0</org.jgrapht.version>
         <rtree.version>0.10</rtree.version>
         <fastjson.version>2.0.6</fastjson.version>
+        <geomesa.version>3.4.1</geomesa.version>
     </properties>
 
     <dependencyManagement>
