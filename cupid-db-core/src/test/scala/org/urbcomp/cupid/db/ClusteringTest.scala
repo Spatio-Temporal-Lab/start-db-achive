@@ -17,11 +17,11 @@ import org.urbcomp.cupid.db.model.trajectory.Trajectory
 import scala.collection.mutable.ListBuffer
 
 /**
- * Clustering Test
- *
- * @author Hang Wu
- * @date 2023-02-11
- */
+  * Clustering Test
+  *
+  * @author Hang Wu
+  * @date 2023-02-11
+  */
 class ClusteringTest extends AbstractCalciteFunctionTest {
 
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()

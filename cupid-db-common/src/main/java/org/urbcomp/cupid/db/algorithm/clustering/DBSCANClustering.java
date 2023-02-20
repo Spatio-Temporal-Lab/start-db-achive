@@ -42,7 +42,12 @@ public class DBSCANClustering extends AbstractClustering {
         // performance you require you wouldn't have to be this accurate because
         // accuracy is enforced later
         Envelope envelope = GeoFunctions.getExtendedBBox(point, distanceInM * 1000);
-        return Geometries.rectangle(envelope.getMinX(), envelope.getMinY(), envelope.getMaxX(), envelope.getMaxY());
+        return Geometries.rectangle(
+                envelope.getMinX(),
+                envelope.getMinY(),
+                envelope.getMaxX(),
+                envelope.getMaxY()
+        );
     }
 
     private Observable<Entry<SpatialPoint, Point>> search(SpatialPoint point) {
@@ -93,13 +98,15 @@ public class DBSCANClustering extends AbstractClustering {
         HashMap<Integer, List<SpatialPoint>> clusters = new HashMap<>();
         for (int i = 1; i <= clusterId; i++)
             clusters.put(i, new ArrayList<>());
-        label.forEach((point, cluster) -> { if (cluster >= 1) clusters.get(cluster).add(point); });
+        label.forEach((point, cluster) -> {
+            if (cluster >= 1) clusters.get(cluster).add(point);
+        });
         List<MultiPoint> ret = new ArrayList<>();
         for (Map.Entry<Integer, List<SpatialPoint>> entry : clusters.entrySet()) {
             List<SpatialPoint> points = entry.getValue();
             SpatialPoint[] arr = new SpatialPoint[points.size()];
             ret.add(
-                new MultiPoint(points.toArray(arr), GeometryFactoryUtils.defaultGeometryFactory())
+                    new MultiPoint(points.toArray(arr), GeometryFactoryUtils.defaultGeometryFactory())
             );
         }
         return ret;
