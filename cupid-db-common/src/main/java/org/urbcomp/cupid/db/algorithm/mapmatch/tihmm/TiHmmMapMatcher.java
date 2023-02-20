@@ -15,19 +15,20 @@ import org.urbcomp.cupid.db.algorithm.mapmatch.tihmm.inner.HmmProbabilities;
 import org.urbcomp.cupid.db.algorithm.mapmatch.tihmm.inner.SequenceState;
 import org.urbcomp.cupid.db.algorithm.mapmatch.tihmm.inner.TiViterbi;
 import org.urbcomp.cupid.db.algorithm.mapmatch.tihmm.inner.TimeStep;
-import org.urbcomp.cupid.db.algorithm.shortestpath.AbstractShortestPath;
+import org.urbcomp.cupid.db.algorithm.shortestpath.AbstractManyToManyShortestPath;
 import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.point.CandidatePoint;
 import org.urbcomp.cupid.db.model.point.GPSPoint;
 import org.urbcomp.cupid.db.model.point.MapMatchedPoint;
 import org.urbcomp.cupid.db.model.roadnetwork.Path;
 import org.urbcomp.cupid.db.model.roadnetwork.RoadNetwork;
+import org.urbcomp.cupid.db.model.roadnetwork.RoadNode;
+import org.urbcomp.cupid.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.cupid.db.model.trajectory.MapMatchedTrajectory;
 import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 import org.urbcomp.cupid.db.util.GeoFunctions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class TiHmmMapMatcher {
     /**
@@ -44,9 +45,9 @@ public class TiHmmMapMatcher {
      */
     protected final RoadNetwork roadNetwork;
 
-    protected final AbstractShortestPath pathAlgo;
+    protected final AbstractManyToManyShortestPath pathAlgo;
 
-    public TiHmmMapMatcher(RoadNetwork roadNetwork, AbstractShortestPath pathAlgo) {
+    public TiHmmMapMatcher(RoadNetwork roadNetwork, AbstractManyToManyShortestPath pathAlgo) {
         this.roadNetwork = roadNetwork;
         this.pathAlgo = pathAlgo;
     }
@@ -58,8 +59,10 @@ public class TiHmmMapMatcher {
      * @return map match后的轨迹
      */
     public MapMatchedTrajectory mapMatch(Trajectory traj) throws AlgorithmExecuteException {
-        List<SequenceState> seq = this.computeViterbiSequence(traj.getGPSPointList());
-        assert traj.getGPSPointList().size() == seq.size();
+
+        Trajectory newTraj = ptFilter(traj);
+        List<SequenceState> seq = this.computeViterbiSequence(newTraj.getGPSPointList());
+        assert newTraj.getGPSPointList().size() == seq.size();
         List<MapMatchedPoint> mapMatchedPointList = new ArrayList<>(seq.size());
         for (SequenceState ss : seq) {
             CandidatePoint candiPt = null;
@@ -179,9 +182,26 @@ public class TiHmmMapMatcher {
             prevTimeStep.getObservation(),
             timeStep.getObservation()
         );
+
+        Set<CandidatePoint> startPoints = new HashSet<>(prevTimeStep.getCandidates());
+        Set<CandidatePoint> endPoints = new HashSet<>(timeStep.getCandidates());
+        Map<RoadNode, Map<RoadNode, Path>> paths = pathAlgo.findShortestPath(
+            startPoints,
+            endPoints
+        );
+
         for (CandidatePoint preCandiPt : prevTimeStep.getCandidates()) {
+            RoadSegment startRoadSegment = roadNetwork.getRoadSegmentById(
+                preCandiPt.getRoadSegmentId()
+            );
             for (CandidatePoint curCandiPt : timeStep.getCandidates()) {
-                Path path = pathAlgo.findShortestPath(preCandiPt, curCandiPt);
+                RoadSegment endRoadSegment = roadNetwork.getRoadSegmentById(
+                    curCandiPt.getRoadSegmentId()
+                );
+                Path subPath = paths.get(startRoadSegment.getEndNode())
+                    .get(endRoadSegment.getStartNode());
+                Path path = pathAlgo.getCompletePath(preCandiPt, curCandiPt, subPath);
+
                 if (path.getLengthInMeter() != Double.MAX_VALUE) {
                     timeStep.addTransitionLogProbability(
                         preCandiPt,
@@ -191,5 +211,27 @@ public class TiHmmMapMatcher {
                 }
             }
         }
+    }
+
+    protected Trajectory ptFilter(Trajectory traj) {
+        List<GPSPoint> gpsPointList = traj.getGPSPointList();
+        List<GPSPoint> newGPSPointList = new ArrayList<>();
+        ;
+
+        GPSPoint lastPt = gpsPointList.get(0);
+        newGPSPointList.add(lastPt);
+        int i = 1;
+        while (i < gpsPointList.size()) {
+            GPSPoint curPt = gpsPointList.get(i);
+            double linearDist = GeoFunctions.getDistanceInM(lastPt, curPt);
+            if (linearDist > measurementErrorSigma) {
+                newGPSPointList.add(curPt);
+                lastPt = curPt;
+            }
+            i++;
+        }
+
+        Trajectory newTraj = new Trajectory(traj.getTid(), traj.getOid());
+        return newTraj.setPointList(newGPSPointList);
     }
 }

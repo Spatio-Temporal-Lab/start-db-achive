@@ -113,7 +113,7 @@ public class TiViterbi {
             double maxLogProbability = Double.NEGATIVE_INFINITY;
             CandidatePoint maxPreState = null;
             for (CandidatePoint preState : prevCandidates) {
-                final double logProbability = message.get(preState) + transitionLogProbability(
+                final double logProbability = message.get(preState) * transitionLogProbability(
                     preState,
                     curState,
                     transitionLogProbabilities
@@ -124,7 +124,7 @@ public class TiViterbi {
                 }
             }
             result.getNewMessage()
-                .put(curState, (maxLogProbability + emissionLogProbabilities.get(curState)));
+                .put(curState, (maxLogProbability * emissionLogProbabilities.get(curState)));
             // Note that max_prev_state == None if there is no transition with non-zero probability.
             // In this case cur_state has zero probability and will not be part of the most likely
             // sequence,

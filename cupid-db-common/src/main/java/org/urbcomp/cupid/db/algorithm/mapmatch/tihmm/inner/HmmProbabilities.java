@@ -41,7 +41,7 @@ public class HmmProbabilities {
      * @return 概率p
      */
     public double emissionLogProbability(double distance) {
-        return logNormalDistribution(this.sigma, distance);
+        return NormalDistribution(this.sigma, distance);
     }
 
     /**
@@ -51,7 +51,12 @@ public class HmmProbabilities {
      */
     public double transitionLogProbability(double routeLength, double linearDistance) {
         double transitionMetric = Math.abs(linearDistance - routeLength);
-        return logExponentialDistribution(this.beta, transitionMetric);
+        if (transitionMetric > 500) {
+            return 0;
+        } else {
+            return ExponentialDistribution(this.beta, transitionMetric);
+        }
+
     }
 
     /**
@@ -64,6 +69,10 @@ public class HmmProbabilities {
         return Math.log(1.0 / (Math.sqrt(2.0 * Math.PI) * sigma)) + (-0.5 * Math.pow(x / sigma, 2));
     }
 
+    private static double NormalDistribution(double sigma, double x) {
+        return (1.0 / (Math.sqrt(2.0 * Math.PI) * sigma)) * Math.exp(-0.5 * Math.pow(x / sigma, 2));
+    }
+
     /**
      * 数学方程， 指数分布
      * @param beta 指数分布参数
@@ -72,5 +81,10 @@ public class HmmProbabilities {
      */
     private static double logExponentialDistribution(double beta, double x) {
         return Math.log(1.0 / beta) - (x / beta);
+    }
+
+    private static double ExponentialDistribution(double beta, double x) {
+        return (1.0 / beta) * Math.exp(-x / beta);
+
     }
 }

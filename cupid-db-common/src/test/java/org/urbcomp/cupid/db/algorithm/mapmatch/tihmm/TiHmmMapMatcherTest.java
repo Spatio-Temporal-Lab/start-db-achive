@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.urbcomp.cupid.db.algorithm.mapmatch.routerecover.ShortestPathPathRecover;
 import org.urbcomp.cupid.db.algorithm.shortestpath.BiDijkstraShortestPath;
+import org.urbcomp.cupid.db.algorithm.shortestpath.ManyToManyShortestPath;
 import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.point.GPSPoint;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
@@ -41,15 +42,16 @@ public class TiHmmMapMatcherTest {
     public void setUp() {
         trajectory = ModelGenerator.generateTrajectory();
         RoadNetwork roadNetwork = ModelGenerator.generateRoadNetwork();
-        mapMatcher = new TiHmmMapMatcher(roadNetwork, new BiDijkstraShortestPath(roadNetwork));
+        mapMatcher = new TiHmmMapMatcher(roadNetwork, new ManyToManyShortestPath(roadNetwork));
         recover = new ShortestPathPathRecover(roadNetwork, new BiDijkstraShortestPath(roadNetwork));
     }
 
     @Test
     public void matchTrajToMapMatchedTraj() throws AlgorithmExecuteException,
         JsonProcessingException {
-        MapMatchedTrajectory mmTrajectory = mapMatcher.mapMatch(trajectory);
-        assertEquals(trajectory.getGPSPointList().size(), mmTrajectory.getMmPtList().size());
+        Trajectory newTraj = mapMatcher.ptFilter(trajectory);
+        MapMatchedTrajectory mmTrajectory = mapMatcher.mapMatch(newTraj);
+        assertEquals(newTraj.getGPSPointList().size(), mmTrajectory.getMmPtList().size());
         List<PathOfTrajectory> pTrajectories = recover.recover(mmTrajectory);
 
         System.out.println("原始轨迹\n" + TransformCoordsToWGS84(trajectory).toGeoJSON());
