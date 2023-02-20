@@ -11,14 +11,15 @@
 
 package org.urbcomp.cupid.db.algorithm.clustering;
 
-import com.github.davidmoten.grumpy.core.Position;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Point;
 import com.github.davidmoten.rtree.geometry.Rectangle;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.MultiPoint;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
+import org.urbcomp.cupid.db.util.GeoFunctions;
 import org.urbcomp.cupid.db.util.GeometryFactoryUtils;
 import rx.Observable;
 
@@ -36,34 +37,25 @@ public class DBSCANClustering extends AbstractClustering {
         this.minPoints = minPoints;
     }
 
-    private static Rectangle createBounds(final Position from, final double distanceKm) {
+    private Rectangle createBounds(final SpatialPoint point) {
         // this calculates a pretty accurate bounding box. Depending on the
         // performance you require you wouldn't have to be this accurate because
         // accuracy is enforced later
-        Position north = from.predict(distanceKm, 0);
-        Position south = from.predict(distanceKm, 180);
-        Position east = from.predict(distanceKm, 90);
-        Position west = from.predict(distanceKm, 270);
-        return Geometries.rectangle(west.getLon(), south.getLat(), east.getLon(), north.getLat());
+        Envelope envelope = GeoFunctions.getExtendedBBox(point, distanceInM * 1000);
+        return Geometries.rectangle(envelope.getMinX(), envelope.getMinY(), envelope.getMaxX(), envelope.getMaxY());
     }
 
-    private Observable<Entry<SpatialPoint, Point>> search(Point lonLat) {
+    private Observable<Entry<SpatialPoint, Point>> search(SpatialPoint point) {
         // First we need to calculate an enclosing lat long rectangle for this
         // distance then we refine on the exact distance
-        final Position from = Position.create(lonLat.y(), lonLat.x());
-        Rectangle bounds = createBounds(from, distanceInM / 1000);
-
-        return pointRTree.search(bounds).filter(entry -> {
+        return pointRTree.search(createBounds(point)).filter(entry -> {
             Point p = entry.geometry();
-            Position position = Position.create(p.y(), p.x());
-            return from.getDistanceToKm(position) < distanceInM / 1000;
+            return GeoFunctions.getDistanceInM(point, new SpatialPoint(p.x(), p.y())) < distanceInM;
         });
     }
 
     private List<SpatialPoint> rangeQuery(SpatialPoint point) {
-        List<Entry<SpatialPoint, Point>> list = search(
-            Geometries.point(point.getLng(), point.getLat())
-        ).toList().toBlocking().single();
+        List<Entry<SpatialPoint, Point>> list = search(point).toList().toBlocking().single();
         return list.stream().map(Entry::value).collect(Collectors.toList());
     }
 

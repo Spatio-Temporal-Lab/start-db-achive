@@ -14,7 +14,6 @@ package org.urbcomp.cupid.db
 import org.junit.Assert.assertEquals
 import org.urbcomp.cupid.db.model.sample.ModelGenerator
 import org.urbcomp.cupid.db.model.trajectory.Trajectory
-
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -56,8 +55,8 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
     }
     assertEquals(results.size, 2)
     val sortedResults = results.toList.sorted
-    assertEquals(sortedResults(0), "MULTIPOINT ((1 2), (1.00001 2.00001))")
-    assertEquals(sortedResults(1), "MULTIPOINT ((1.00003 2.00002), (1.00004 2.00003))")
+    assertEquals("MULTIPOINT ((1 2), (1.00001 2.00001))", sortedResults(0))
+    assertEquals("MULTIPOINT ((1.00003 2.00002), (1.00004 2.00003))", sortedResults(1))
   }
 
 }
