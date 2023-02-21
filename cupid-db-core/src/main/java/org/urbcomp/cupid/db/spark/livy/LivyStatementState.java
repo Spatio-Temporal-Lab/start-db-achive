@@ -11,16 +11,21 @@
 
 package org.urbcomp.cupid.db.spark.livy;
 
-import com.esotericsoftware.kryo.io.Output;
-import lombok.Data;
-
 /**
  * @author jimo
  **/
-@Data
-public class LivyStatementResult {
-    private int id;
-    private double progress;
-    private String state;
-    private Output output;
+public enum LivyStatementState {
+
+    WAITING("waiting"),
+    RUNNING("running"),
+    AVAILABLE("available"),
+    ERROR("error"),
+    CANCELLING("cancelling"),
+    CANCELLED("cancelled");
+
+    private String value;
+
+    LivyStatementState(String value) {
+        this.value = value;
+    }
 }

@@ -12,6 +12,7 @@
 package org.urbcomp.cupid.db.spark.livy;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.Builder;
 import lombok.Data;
 import org.urbcomp.cupid.db.util.JacksonUtil;
 
@@ -19,6 +20,7 @@ import org.urbcomp.cupid.db.util.JacksonUtil;
  * @author jimo
  **/
 @Data
+@Builder
 public class LivyStatementParam {
     private String kind;
     private String code;

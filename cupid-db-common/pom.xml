@@ -62,9 +62,14 @@
             <version>${fastjson.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.davidmoten</groupId>
             <artifactId>grumpy-core</artifactId>
-            <version>${grumpy.version}</version> 
+            <version>${grumpy.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

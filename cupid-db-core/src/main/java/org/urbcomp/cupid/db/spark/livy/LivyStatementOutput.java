@@ -11,16 +11,15 @@
 
 package org.urbcomp.cupid.db.spark.livy;
 
-import com.esotericsoftware.kryo.io.Output;
 import lombok.Data;
 
 /**
  * @author jimo
  **/
 @Data
-public class LivyStatementResult {
-    private int id;
-    private double progress;
-    private String state;
-    private Output output;
+public class LivyStatementOutput {
+
+    private String status;
+    private int execution_count;
+    private String data;
 }

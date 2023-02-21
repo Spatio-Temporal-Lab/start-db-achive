@@ -11,25 +11,168 @@
 
 package org.urbcomp.cupid.db.spark.livy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.urbcomp.cupid.db.spark.ISparkSubmitter;
 import org.urbcomp.cupid.db.util.SparkSqlParam;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 维持至少有一个livy session运行
  *
  * @author jimo
  **/
+@Slf4j
 public class LivySubmitter implements ISparkSubmitter {
+
+    private int sessionId;
+    private final String DEFAULT_KIND = "spark";
+    private final String SPLITTER = "_";
+    /**
+     * 每次轮询的间隔时长
+     */
+    private final int sleepMs;
+    /**
+     * 最大同步等待时长
+     */
+    private final int maxWaitTimeMs;
+
+    /**
+     * 控制在session更新或不可用时，执行语句必须等待
+     */
+    private final ReentrantReadWriteLock sessionLock = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock.ReadLock sessionReadLock = sessionLock.readLock();
+    private final ReentrantReadWriteLock.WriteLock sessionWriteLock = sessionLock.writeLock();
+
+    public LivySubmitter() {
+        this.sleepMs = 300;
+        this.maxWaitTimeMs = 120 * 1000;
+
+        ExecutorService pool = Executors.newSingleThreadExecutor();
+        pool.execute(new CheckSessionTask());
+    }
+
+    private class CheckSessionTask implements Runnable {
+
+        @Override
+        public void run() {
+            while (true) {
+                final LivySessionResult session = LivyRestApi.getSession(sessionId);
+                final LivySessionState state = LivySessionState.valueOf(session.getState());
+                if (!state.ok()) {
+                    // 先锁住，然后重新选择或创建一个session
+                    sessionWriteLock.lock();
+                    try {
+                        boolean chosen = false;
+                        final List<LivySessionResult> sessions = LivyRestApi.getSessions();
+                        for (LivySessionResult s : sessions) {
+                            final LivySessionState theState = LivySessionState.valueOf(
+                                s.getState()
+                            );
+                            if (theState.ok()) {
+                                sessionId = s.getId();
+                                chosen = true;
+                                break;
+                            }
+                        }
+                        if (!chosen) {
+                            // TODO
+                            final LivySessionResult res = LivyRestApi.createSession(
+                                LivySessionParam.builder()
+                                    .kind(DEFAULT_KIND)
+                                    .driverCores(1)
+                                    .driverMemory("1G")
+                                    .numExecutors(1)
+                                    .executorCores(1)
+                                    .executorMemory("1G")
+                                    .jars(Arrays.asList("", ""))
+                                    .build()
+                            );
+                            waitSessionOk(res.getId());
+                            sessionId = res.getId();
+                        }
+                    } finally {
+                        sessionWriteLock.unlock();
+                    }
+                }
+                try {
+                    int intervalS = 60;
+                    TimeUnit.SECONDS.sleep(intervalS);
+                } catch (InterruptedException e) {
+                    log.warn("check session interrupt", e);
+                    break;
+                }
+            }
+        }
+
+        private void waitSessionOk(int id) {
+
+        }
+    }
+
+    private String buildSqlId(int statementId) {
+        return System.currentTimeMillis() + SPLITTER + statementId;
+    }
+
+    private int extractStatementId(String sqlId) {
+        final String[] items = sqlId.split(SPLITTER);
+        if (items.length == 2) {
+            return Integer.parseInt(items[1]);
+        }
+        throw new IllegalArgumentException("InValid SqlId:" + sqlId);
+    }
 
     @Override
     public String submit(SparkSqlParam param) {
-        return null;
+        sessionReadLock.lock();
+        try {
+            String code = ""; // TODO
+            final LivyStatementResult res = LivyRestApi.executeStatement(
+                sessionId,
+                LivyStatementParam.builder().kind(DEFAULT_KIND).code(code).build()
+            );
+            return buildSqlId(res.getId());
+        } finally {
+            sessionReadLock.unlock();
+        }
     }
 
     @Override
     public void waitToFinish(String id) throws TimeoutException {
+        final int statementId = extractStatementId(id);
 
+        int attemptTime = 0;
+        try {
+            while (attemptTime < maxWaitTimeMs) {
+                sessionReadLock.lock();
+                final LivyStatementResult res;
+                try {
+                    res = LivyRestApi.getStatement(sessionId, statementId);
+                } finally {
+                    sessionReadLock.unlock();
+                }
+                final LivyStatementState state = LivyStatementState.valueOf(res.getState());
+                switch (state) {
+                    case AVAILABLE:
+                        return;
+                    case ERROR:
+                    case CANCELLING:
+                    case CANCELLED:
+                        throw new RuntimeException("Execute Failed: " + res);
+                    default:
+                }
+                attemptTime += sleepMs;
+                TimeUnit.MILLISECONDS.sleep(sleepMs);
+            }
+            throw new TimeoutException("Exceed maxWaitTime:" + maxWaitTimeMs);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

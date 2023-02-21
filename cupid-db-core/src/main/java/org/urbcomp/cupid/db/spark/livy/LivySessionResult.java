@@ -20,4 +20,6 @@ import lombok.Data;
 public class LivySessionResult {
 
     private int id;
+
+    private String state;
 }

@@ -17,6 +17,7 @@ import org.urbcomp.cupid.db.util.HTTPUtil;
 import org.urbcomp.cupid.db.util.JacksonUtil;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author jimo
@@ -24,6 +25,35 @@ import java.io.IOException;
 @Slf4j
 public class LivyRestApi {
     private static final String livyUrl = DynamicConfig.getLivyUrl();
+
+    public static List<LivySessionResult> getSessions() {
+        try {
+            final String s = HTTPUtil.get(livyUrl + "/sessions?from=0&size=10");
+            final LivySessionsResult res = JacksonUtil.MAPPER.readValue(
+                s,
+                LivySessionsResult.class
+            );
+            if (res != null) {
+                return res.getSessions();
+            }
+        } catch (IOException e) {
+            log.error("get livy sessions failed", e);
+        }
+        throw new RuntimeException("get sessions failed");
+    }
+
+    public static LivySessionResult getSession(int sessionId) {
+        try {
+            final String s = HTTPUtil.get(livyUrl + "/sessions/" + sessionId);
+            final LivySessionResult res = JacksonUtil.MAPPER.readValue(s, LivySessionResult.class);
+            if (res != null) {
+                return res;
+            }
+        } catch (IOException e) {
+            log.error("get livy sessions failed", e);
+        }
+        throw new RuntimeException("get sessions failed");
+    }
 
     public static LivySessionResult createSession(LivySessionParam param) {
         try {

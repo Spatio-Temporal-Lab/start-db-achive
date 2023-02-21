@@ -12,6 +12,7 @@
 package org.urbcomp.cupid.db.spark.livy;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.Builder;
 import lombok.Data;
 import org.urbcomp.cupid.db.util.JacksonUtil;
 
@@ -23,6 +24,7 @@ import java.util.List;
  * @author jimo
  **/
 @Data
+@Builder
 public class LivySessionParam {
     private String kind;
     private String name;
