@@ -69,7 +69,6 @@ public class HmmProbabilities {
         return Math.log(1.0 / (Math.sqrt(2.0 * Math.PI) * sigma)) + (-0.5 * Math.pow(x / sigma, 2));
     }
 
-
     /**
      * 数学方程， 指数分布
      * @param beta 指数分布参数
@@ -79,6 +78,4 @@ public class HmmProbabilities {
     private static double logExponentialDistribution(double beta, double x) {
         return Math.log(1.0 / beta) - (x / beta);
     }
-
-
 }
