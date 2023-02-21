@@ -56,6 +56,7 @@
         <jackson-jts-dt.version>2.5.1.2</jackson-jts-dt.version>
         <org.jgrapht.version>1.4.0</org.jgrapht.version>
         <rtree.version>0.10</rtree.version>
+        <grumpy.version>0.4.7</grumpy.version>
         <fastjson.version>2.0.6</fastjson.version>
     </properties>
 
@@ -90,7 +91,6 @@
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.apache.hbase</groupId>

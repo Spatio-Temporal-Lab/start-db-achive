@@ -61,5 +61,10 @@
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.davidmoten</groupId>
+            <artifactId>grumpy-core</artifactId>
+            <version>${grumpy.version}</version> 
+        </dependency>
     </dependencies>
 </project>
