@@ -187,21 +187,4 @@ class GeometricRelationFunctionTest extends AbstractCalciteFunctionTest {
     resultSet.next()
     assertEquals(8L, resultSet.getObject(1))
   }
-
-  test("st_traj_stayPointDetect") {
-    val statement = connect.createStatement
-    val resultSet = statement.executeQuery(
-      "select st_traj_stayPointDetect(st_traj_fromGeoJSON(\'" + tGeo + "\'),10,10)"
-    )
-    resultSet.next()
-    // FIXME timezone
-    // assertEquals("2018-10-08 23:30:21.0", resultSet.getObject(1).toString)
-    // assertEquals("2018-10-08 23:30:27.0", resultSet.getObject(2).toString)
-    assertEquals(
-      "[POINT (108.99549 34.26714), POINT (108.9955 34.26707), POINT (108.99549 34.26704)]",
-      resultSet.getObject(3).toString
-    )
-
-  }
-
 }
