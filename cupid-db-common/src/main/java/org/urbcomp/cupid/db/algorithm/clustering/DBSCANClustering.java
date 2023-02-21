@@ -96,9 +96,7 @@ public class DBSCANClustering extends AbstractClustering {
         HashMap<Integer, List<SpatialPoint>> clusters = new HashMap<>();
         for (int i = 1; i <= clusterId; i++)
             clusters.put(i, new ArrayList<>());
-        label.forEach((point, cluster) -> {
-            if (cluster >= 1) clusters.get(cluster).add(point);
-        });
+        label.forEach((point, cluster) -> { if (cluster >= 1) clusters.get(cluster).add(point); });
         List<MultiPoint> ret = new ArrayList<>();
         for (Map.Entry<Integer, List<SpatialPoint>> entry : clusters.entrySet()) {
             List<SpatialPoint> points = entry.getValue();

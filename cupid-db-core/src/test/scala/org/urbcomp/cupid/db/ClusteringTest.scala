@@ -17,11 +17,11 @@ import org.urbcomp.cupid.db.model.trajectory.Trajectory
 import scala.collection.mutable.ListBuffer
 
 /**
- * Clustering Test
- *
- * @author Hang Wu
- * @date 2023-02-11
- */
+  * Clustering Test
+  *
+  * @author Hang Wu
+  * @date 2023-02-11
+  */
 class ClusteringTest extends AbstractCalciteFunctionTest {
 
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
@@ -55,8 +55,12 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
     }
     assertEquals(results.size, 2)
     val sortedResults = results.toList.sorted
-    assert(sortedResults(0) == "MULTIPOINT ((1 2), (1.00001 2.00001))" || sortedResults(0) == "MULTIPOINT ((1.00001 2.00001), (1 2))")
-    assert(sortedResults(1) == "MULTIPOINT ((1.00003 2.00002), (1.00004 2.00003))" || sortedResults(1) == "MULTIPOINT ((1.00004 2.00003), (1.00003 2.00002))")
+    assert(
+      sortedResults(0) == "MULTIPOINT ((1 2), (1.00001 2.00001))" || sortedResults(0) == "MULTIPOINT ((1.00001 2.00001), (1 2))"
+    )
+    assert(
+      sortedResults(1) == "MULTIPOINT ((1.00003 2.00002), (1.00004 2.00003))" || sortedResults(1) == "MULTIPOINT ((1.00004 2.00003), (1.00003 2.00002))"
+    )
   }
 
 }
