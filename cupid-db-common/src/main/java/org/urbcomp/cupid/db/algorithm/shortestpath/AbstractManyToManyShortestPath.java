@@ -14,7 +14,6 @@ package org.urbcomp.cupid.db.algorithm.shortestpath;
 import com.github.davidmoten.guavamini.Lists;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.ManyToManyShortestPathsAlgorithm;
-import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.point.CandidatePoint;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
 import org.urbcomp.cupid.db.model.roadnetwork.*;
@@ -37,22 +36,17 @@ public class AbstractManyToManyShortestPath {
     public Map<RoadNode, Map<RoadNode, Path>> findShortestPath(
         Set<CandidatePoint> startPoints,
         Set<CandidatePoint> endPoints
-    ) throws AlgorithmExecuteException {
+    ) {
 
         Set<RoadNode> startNodes = new HashSet<>();
         Set<RoadNode> endNodes = new HashSet<>();
-        Iterator iterStart = startPoints.iterator();
-        Iterator iterEnd = endPoints.iterator();
-
-        while (iterStart.hasNext()) {
-            CandidatePoint startPt = (CandidatePoint) iterStart.next();
+        for (CandidatePoint startPt : startPoints) {
             RoadSegment startRoadSegment = roadNetwork.getRoadSegmentById(
                 startPt.getRoadSegmentId()
             );
             startNodes.add(startRoadSegment.getEndNode());
         }
-        while (iterEnd.hasNext()) {
-            CandidatePoint endPt = (CandidatePoint) iterEnd.next();
+        for (CandidatePoint endPt : endPoints) {
             RoadSegment endRoadSegment = roadNetwork.getRoadSegmentById(endPt.getRoadSegmentId());
             endNodes.add(endRoadSegment.getStartNode());
         }
@@ -65,19 +59,13 @@ public class AbstractManyToManyShortestPath {
     ) {
         ManyToManyShortestPathsAlgorithm.ManyToManyShortestPaths<RoadNode, RoadSegment> paths = algo
             .getManyToManyPaths(startNodes, endNodes);
+        Map<RoadNode, Map<RoadNode, Path>> results = new HashMap<>();
 
-        Iterator iterStart = startNodes.iterator();
-
-        Map<RoadNode, Map<RoadNode, Path>> Paths = new HashMap();
-        while (iterStart.hasNext()) {
-            RoadNode startNode = (RoadNode) iterStart.next();
-            Map<RoadNode, Path> tmpMap = new HashMap();
-            Iterator iterEnd = endNodes.iterator();
-            while (iterEnd.hasNext()) {
-                RoadNode endNode = (RoadNode) iterEnd.next();
+        for (RoadNode startNode : startNodes) {
+            Map<RoadNode, Path> tmpMap = new HashMap<>();
+            for (RoadNode endNode : endNodes) {
                 GraphPath<RoadNode, RoadSegment> shortestPath = paths.getPath(startNode, endNode);
                 if (shortestPath.getLength() == 0) {
-                    shortestPath.getLength();
                     tmpMap.put(
                         endNode,
                         new Path(Double.MAX_VALUE, new ArrayList<>(), new ArrayList<>())
@@ -95,9 +83,9 @@ public class AbstractManyToManyShortestPath {
 
                 }
             }
-            Paths.put(startNode, tmpMap);
+            results.put(startNode, tmpMap);
         }
-        return Paths;
+        return results;
 
     }
 

@@ -60,9 +60,8 @@ public class TiHmmMapMatcher {
      */
     public MapMatchedTrajectory mapMatch(Trajectory traj) throws AlgorithmExecuteException {
 
-        Trajectory newTraj = ptFilter(traj);
-        List<SequenceState> seq = this.computeViterbiSequence(newTraj.getGPSPointList());
-        assert newTraj.getGPSPointList().size() == seq.size();
+        List<SequenceState> seq = this.computeViterbiSequence(traj.getGPSPointList());
+        assert traj.getGPSPointList().size() == seq.size();
         List<MapMatchedPoint> mapMatchedPointList = new ArrayList<>(seq.size());
         for (SequenceState ss : seq) {
             CandidatePoint candiPt = null;
@@ -213,25 +212,4 @@ public class TiHmmMapMatcher {
         }
     }
 
-    protected Trajectory ptFilter(Trajectory traj) {
-        List<GPSPoint> gpsPointList = traj.getGPSPointList();
-        List<GPSPoint> newGPSPointList = new ArrayList<>();
-        ;
-
-        GPSPoint lastPt = gpsPointList.get(0);
-        newGPSPointList.add(lastPt);
-        int i = 1;
-        while (i < gpsPointList.size()) {
-            GPSPoint curPt = gpsPointList.get(i);
-            double linearDist = GeoFunctions.getDistanceInM(lastPt, curPt);
-            if (linearDist > measurementErrorSigma) {
-                newGPSPointList.add(curPt);
-                lastPt = curPt;
-            }
-            i++;
-        }
-
-        Trajectory newTraj = new Trajectory(traj.getTid(), traj.getOid());
-        return newTraj.setPointList(newGPSPointList);
-    }
 }
