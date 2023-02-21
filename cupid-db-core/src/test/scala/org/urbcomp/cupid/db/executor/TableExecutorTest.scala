@@ -67,6 +67,21 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     stmt.executeUpdate(createTableSQL)
   }
 
+  test("test create table with attribute secondary temporal/Z2/Z3 index") {
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE gemo_%s (
+                            |    name String,
+                            |    st Point,
+                            |    et Point,
+                            |    dtg Datetime,
+                            |    ATTRIBUTE INDEX attribute_temporal_index(name, dtg),
+                            |    ATTRIBUTE INDEX attribute_z2_index(name, st),
+                            |    ATTRIBUTE INDEX attribute_z3_index(name, st, dtg)
+                            |)""".stripMargin.format(uniqueId).stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+  }
+
   test("test create then insert") {
     val randomId = scala.util.Random.nextInt(Integer.MAX_VALUE)
     val tableName = "test_create_insert_%d".format(randomId)
