@@ -30,6 +30,7 @@ abstract class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterA
   override protected def beforeAll(): Unit = {
     SqlParam.CACHE.set(new SqlParam("root", "default"))
     connect = CalciteHelper.createConnection()
+    // System.setProperty("user.timezone", "UTC")
   }
 
   override protected def afterAll(): Unit = {
