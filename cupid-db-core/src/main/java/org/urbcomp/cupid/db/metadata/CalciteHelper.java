@@ -49,6 +49,7 @@ public class CalciteHelper {
         final Properties p = new Properties();
         p.put(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), "false");
         p.put(CalciteConnectionProperty.MODEL.camelName(), "inline:" + modelJson());
+        p.put(CalciteConnectionProperty.TIME_ZONE.camelName(), "UTC");
         return DriverManager.getConnection("jdbc:calcite:fun=spatial", p);
     }
 }

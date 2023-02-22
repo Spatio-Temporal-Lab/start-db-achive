@@ -163,6 +163,7 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
     resultSet1.next()
     // FIXME timezone
     assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject(1).toString)
+    assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject("startTime").toString)
     assertEquals("2018-10-09 07:30:27.0", resultSet1.getObject(2).toString)
     assertEquals(
       "[POINT (108.99549 34.26714), POINT (108.9955 34.26707), POINT (108.99549 34.26704)]",
