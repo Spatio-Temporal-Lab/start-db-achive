@@ -1,10 +1,13 @@
-/***********************************************************************
- * Copyright (c) 2013-2023 Commonwealth Computer Research, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Apache License, Version 2.0
- * which accompanies this distribution and is available at
- * http://www.opensource.org/licenses/apache2.0.php.
- ***********************************************************************/
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
 
 package org.cupid.db.geomesa.storage
 
@@ -12,7 +15,7 @@ import org.locationtech.geomesa.index.metadata.GeoMesaMetadata
 
 class InMemoryMetadata[T] extends GeoMesaMetadata[T] {
 
-  import scala.collection.mutable.{ Map => mMap }
+  import scala.collection.mutable.{Map => mMap}
 
   private val schemas = mMap.empty[String, mMap[String, T]]
 
@@ -37,12 +40,13 @@ class InMemoryMetadata[T] extends GeoMesaMetadata[T] {
     schemas.get(typeName).flatMap(_.get(key))
   }
 
-  override def scan(typeName: String, prefix: String, cache: Boolean): Seq[(String, T)] = synchronized {
-    schemas.get(typeName) match {
-      case None => Seq.empty
-      case Some(m) => m.filterKeys(_.startsWith(prefix)).toSeq
+  override def scan(typeName: String, prefix: String, cache: Boolean): Seq[(String, T)] =
+    synchronized {
+      schemas.get(typeName) match {
+        case None    => Seq.empty
+        case Some(m) => m.filterKeys(_.startsWith(prefix)).toSeq
+      }
     }
-  }
 
   override def delete(typeName: String): Unit = synchronized {
     schemas.remove(typeName)
@@ -55,8 +59,7 @@ class InMemoryMetadata[T] extends GeoMesaMetadata[T] {
   override def close(): Unit = {}
 
   /**
-   * table cache should be cleared up when catalog is deleted in database
-   */
+    * table cache should be cleared up when catalog is deleted in database
+    */
   override def resetCache(): Unit = {}
 }
-

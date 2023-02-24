@@ -1,10 +1,13 @@
-/***********************************************************************
- * Copyright (c) 2013-2023 Commonwealth Computer Research, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Apache License, Version 2.0
- * which accompanies this distribution and is available at
- * http://www.opensource.org/licenses/apache2.0.php.
- ***********************************************************************/
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
 
 package org.cupid.db.geomesa.storage
 
@@ -14,14 +17,24 @@ import org.locationtech.geomesa.features.kryo.KryoFeatureSerializer
 import org.locationtech.geomesa.features.{ScalaSimpleFeature, SimpleFeatureSerializer}
 import org.locationtech.geomesa.filter.factory.FastFilterFactory
 import org.cupid.db.geomesa.storage.TestGeoMesaDataStore._
-import org.locationtech.geomesa.index.api.IndexAdapter.{BaseIndexWriter, IndexWriter, RequiredVisibilityWriter}
+import org.locationtech.geomesa.index.api.IndexAdapter.{
+  BaseIndexWriter,
+  IndexWriter,
+  RequiredVisibilityWriter
+}
 import org.locationtech.geomesa.index.api.QueryPlan.{FeatureReducer, ResultsToFeatures}
 import org.locationtech.geomesa.index.api.WritableFeature.FeatureWrapper
 import org.locationtech.geomesa.index.api.{WritableFeature, _}
 import org.locationtech.geomesa.index.geotools.GeoMesaDataStore
-import org.locationtech.geomesa.index.geotools.GeoMesaDataStoreFactory.{DataStoreQueryConfig, GeoMesaDataStoreConfig}
+import org.locationtech.geomesa.index.geotools.GeoMesaDataStoreFactory.{
+  DataStoreQueryConfig,
+  GeoMesaDataStoreConfig
+}
 import org.locationtech.geomesa.index.metadata.GeoMesaMetadata
-import org.locationtech.geomesa.index.planning.LocalQueryRunner.{ArrowDictionaryHook, LocalTransformReducer}
+import org.locationtech.geomesa.index.planning.LocalQueryRunner.{
+  ArrowDictionaryHook,
+  LocalTransformReducer
+}
 import org.locationtech.geomesa.index.stats.MetadataBackedStats.WritableStat
 import org.locationtech.geomesa.index.stats._
 import org.locationtech.geomesa.index.utils.Reprojection.QueryReferenceSystems
@@ -35,7 +48,8 @@ import org.opengis.filter.Filter
 import scala.collection.SortedSet
 
 class TestGeoMesaDataStore(looseBBox: Boolean)
-  extends GeoMesaDataStore[TestGeoMesaDataStore](TestConfig(looseBBox)) with LocalLocking {
+    extends GeoMesaDataStore[TestGeoMesaDataStore](TestConfig(looseBBox))
+    with LocalLocking {
 
   override val metadata: GeoMesaMetadata[String] = new InMemoryMetadata[String]
 
@@ -43,7 +57,11 @@ class TestGeoMesaDataStore(looseBBox: Boolean)
 
   override val stats: GeoMesaStats = new TestStats(this, new InMemoryMetadata[Stat]())
 
-  override def getQueryPlan(query: Query, index: Option[String], explainer: Explainer): Seq[TestQueryPlan] =
+  override def getQueryPlan(
+      query: Query,
+      index: Option[String],
+      explainer: Explainer
+  ): Seq[TestQueryPlan] =
     super.getQueryPlan(query, index, explainer).asInstanceOf[Seq[TestQueryPlan]]
 }
 
@@ -55,15 +73,18 @@ object TestGeoMesaDataStore {
     import org.locationtech.geomesa.utils.geotools.RichSimpleFeatureType.RichSimpleFeatureType
 
     private val ordering = new Ordering[SingleRowKeyValue[_]] {
-      override def compare(x: SingleRowKeyValue[_], y: SingleRowKeyValue[_]): Int = ByteOrdering.compare(x.row, y.row)
+      override def compare(x: SingleRowKeyValue[_], y: SingleRowKeyValue[_]): Int =
+        ByteOrdering.compare(x.row, y.row)
     }
 
-    private val tables = scala.collection.mutable.Map.empty[String, scala.collection.mutable.SortedSet[SingleRowKeyValue[_]]]
+    private val tables = scala.collection.mutable.Map
+      .empty[String, scala.collection.mutable.SortedSet[SingleRowKeyValue[_]]]
 
     override def createTable(
-                              index: GeoMesaFeatureIndex[_, _],
-                              partition: Option[String],
-                              splits: => Seq[Array[Byte]]): Unit = {
+        index: GeoMesaFeatureIndex[_, _],
+        partition: Option[String],
+        splits: => Seq[Array[Byte]]
+    ): Unit = {
       val table = index.configureTableName(partition) // writes table name to metadata
       if (!tables.contains(table)) {
         tables.put(table, scala.collection.mutable.SortedSet.empty[SingleRowKeyValue[_]](ordering))
@@ -92,25 +113,50 @@ object TestGeoMesaDataStore {
         case SingleRowByteRange(row)  => TestRange(row, ByteArrays.rowFollowingRow(row))
         case BoundedByteRange(lo, hi) => TestRange(lo, hi)
       }
-      val opts = if (strategy.index.serializedWithId) { SerializationOptions.none } else { SerializationOptions.withoutId }
+      val opts = if (strategy.index.serializedWithId) {
+        SerializationOptions.none
+      } else {
+        SerializationOptions.withoutId
+      }
       val serializer = KryoFeatureSerializer(strategy.index.sft, opts)
       val ecql = strategy.ecql.map(FastFilterFactory.optimize(strategy.index.sft, _))
       val transform = strategy.hints.getTransform
       val reducer = {
         val arrowHook = Some(ArrowDictionaryHook(ds.stats, strategy.filter.filter))
-        Some(new LocalTransformReducer(strategy.index.sft, ecql, None, transform, strategy.hints, arrowHook))
+        Some(
+          new LocalTransformReducer(
+            strategy.index.sft,
+            ecql,
+            None,
+            transform,
+            strategy.hints,
+            arrowHook
+          )
+        )
       }
       val maxFeatures = strategy.hints.getMaxFeatures
       val sort = strategy.hints.getSortFields
       val project = strategy.hints.getProjection
 
-      TestQueryPlan(strategy.filter, tables, strategy.index.sft, serializer, ranges, reducer, ecql, sort, maxFeatures, project)
+      TestQueryPlan(
+        strategy.filter,
+        tables,
+        strategy.index.sft,
+        serializer,
+        ranges,
+        reducer,
+        ecql,
+        sort,
+        maxFeatures,
+        project
+      )
     }
 
     override def createWriter(
-                               sft: SimpleFeatureType,
-                               indices: Seq[GeoMesaFeatureIndex[_, _]],
-                               partition: Option[String]): IndexWriter = {
+        sft: SimpleFeatureType,
+        indices: Seq[GeoMesaFeatureIndex[_, _]],
+        partition: Option[String]
+    ): IndexWriter = {
       val tables = indices.map(i => this.tables(i.getTableNames(partition).head))
       val wrapper = WritableFeature.wrapper(sft, groups)
       if (sft.isVisibilityRequired) {
@@ -124,21 +170,22 @@ object TestGeoMesaDataStore {
   }
 
   case class TestQueryPlan(
-                            filter: FilterStrategy,
-                            tables: scala.collection.Map[String, SortedSet[SingleRowKeyValue[_]]],
-                            sft: SimpleFeatureType,
-                            serializer: SimpleFeatureSerializer,
-                            ranges: Seq[TestRange],
-                            reducer: Option[FeatureReducer],
-                            ecql: Option[Filter],
-                            sort: Option[Seq[(String, Boolean)]],
-                            maxFeatures: Option[Int],
-                            projection: Option[QueryReferenceSystems]
-                          ) extends QueryPlan[TestGeoMesaDataStore] {
+      filter: FilterStrategy,
+      tables: scala.collection.Map[String, SortedSet[SingleRowKeyValue[_]]],
+      sft: SimpleFeatureType,
+      serializer: SimpleFeatureSerializer,
+      ranges: Seq[TestRange],
+      reducer: Option[FeatureReducer],
+      ecql: Option[Filter],
+      sort: Option[Seq[(String, Boolean)]],
+      maxFeatures: Option[Int],
+      projection: Option[QueryReferenceSystems]
+  ) extends QueryPlan[TestGeoMesaDataStore] {
 
     override type Results = SimpleFeature
 
-    override val resultsToFeatures: ResultsToFeatures[SimpleFeature] = ResultsToFeatures.identity(sft)
+    override val resultsToFeatures: ResultsToFeatures[SimpleFeature] =
+      ResultsToFeatures.identity(sft)
 
     override def scan(ds: TestGeoMesaDataStore): CloseableIterator[SimpleFeature] = {
       def contained(range: TestRange, row: Array[Byte]): Boolean =
@@ -162,10 +209,17 @@ object TestGeoMesaDataStore {
     }
 
     override def explain(explainer: Explainer, prefix: String): Unit = {
-      explainer(s"ranges (${ranges.length}): ${ranges.take(5).map(r =>
-        s"[${r.start.map(ByteArrays.toHex).mkString(";")}::" +
-          s"${r.end.map(ByteArrays.toHex).mkString(";")})").mkString(",")}")
-      explainer(s"ecql: ${ecql.map(org.locationtech.geomesa.filter.filterToString).getOrElse("INCLUDE")}")
+      explainer(s"ranges (${ranges.length}): ${ranges
+        .take(5)
+        .map(
+          r =>
+            s"[${r.start.map(ByteArrays.toHex).mkString(";")}::" +
+              s"${r.end.map(ByteArrays.toHex).mkString(";")})"
+        )
+        .mkString(",")}")
+      explainer(
+        s"ecql: ${ecql.map(org.locationtech.geomesa.filter.filterToString).getOrElse("INCLUDE")}"
+      )
     }
   }
 
@@ -174,18 +228,22 @@ object TestGeoMesaDataStore {
   }
 
   class TestIndexWriter(
-                         indices: Seq[GeoMesaFeatureIndex[_, _]],
-                         wrapper: FeatureWrapper[WritableFeature],
-                         tables: Seq[scala.collection.mutable.SortedSet[SingleRowKeyValue[_]]]
-                       ) extends BaseIndexWriter[WritableFeature](indices, wrapper) {
+      indices: Seq[GeoMesaFeatureIndex[_, _]],
+      wrapper: FeatureWrapper[WritableFeature],
+      tables: Seq[scala.collection.mutable.SortedSet[SingleRowKeyValue[_]]]
+  ) extends BaseIndexWriter[WritableFeature](indices, wrapper) {
 
     private var i = 0
 
-    override protected def write(feature: WritableFeature, values: Array[RowKeyValue[_]], update: Boolean): Unit = {
+    override protected def write(
+        feature: WritableFeature,
+        values: Array[RowKeyValue[_]],
+        update: Boolean
+    ): Unit = {
       i = 0
       values.foreach {
         case kv: SingleRowKeyValue[_] => tables(i).add(kv); i += 1
-        case kv: MultiRowKeyValue[_] => kv.split.foreach(tables(i).add); i += 1
+        case kv: MultiRowKeyValue[_]  => kv.split.foreach(tables(i).add); i += 1
       }
     }
 
@@ -193,7 +251,7 @@ object TestGeoMesaDataStore {
       i = 0
       values.foreach {
         case kv: SingleRowKeyValue[_] => tables(i).remove(kv); i += 1
-        case kv: MultiRowKeyValue[_] => kv.split.foreach(tables(i).remove); i += 1
+        case kv: MultiRowKeyValue[_]  => kv.split.foreach(tables(i).remove); i += 1
       }
     }
 
@@ -215,15 +273,20 @@ object TestGeoMesaDataStore {
   }
 
   class TestStats(ds: TestGeoMesaDataStore, metadata: GeoMesaMetadata[Stat])
-    extends MetadataBackedStats(ds, metadata) {
+      extends MetadataBackedStats(ds, metadata) {
     override protected def write(typeName: String, stats: Seq[WritableStat]): Unit = {
       synchronized {
-        stats.foreach { case WritableStat(key, stat, merge) =>
-          if (merge) {
-            metadata.insert(typeName, key, metadata.read(typeName, key, cache = false).map(_ + stat).getOrElse(stat))
-          } else {
-            metadata.insert(typeName, key, stat)
-          }
+        stats.foreach {
+          case WritableStat(key, stat, merge) =>
+            if (merge) {
+              metadata.insert(
+                typeName,
+                key,
+                metadata.read(typeName, key, cache = false).map(_ + stat).getOrElse(stat)
+              )
+            } else {
+              metadata.insert(typeName, key, stat)
+            }
         }
       }
     }

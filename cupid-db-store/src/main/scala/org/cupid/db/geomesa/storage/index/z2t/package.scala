@@ -20,33 +20,35 @@ import java.time.ZonedDateTime
 package object z2t {
 
   /**
-   * Index key for z2t values
-   *
-   * @param bin date epoch
-   * @param z z2t value within the epoch
-   */
+    * Index key for z2t values
+    *
+    * @param bin date epoch
+    * @param z z2t value within the epoch
+    */
   case class Z2TIndexKey(bin: Short, z: Long) extends Ordered[Z2TIndexKey] {
     override def compare(that: Z2TIndexKey): Int = {
       val b = Ordering.Short.compare(bin, that.bin)
-      if (b != 0) { b } else {
+      if (b != 0) {
+        b
+      } else {
         Ordering.Long.compare(z, that.z)
       }
     }
   }
 
   /**
-   * Index values extracted from a filter for z2t queries
-   *
-   * @param sfc               specific curve being used
-   * @param geometries        extracted geometries
-   * @param spatialBounds     the spatial bounds from the extracted geometries, as bounding boxes
-   * @param intervals         extracted dates
-   * @param temporalBounds    the temporal bounds from the extracted dates, as time units (depending on the sfc),
-   *                          keyed by epoch
-   * @param temporalUnbounded unbounded temporal epochs, i.e. all time values are covered. will be either
-   *                          `(0, t)`, `(t, Short.MaxValue)` or `(0, Short.MaxValue)` for upper, lower,
-   *                          and unbounded queries, respectively
-   */
+    * Index values extracted from a filter for z2t queries
+    *
+    * @param sfc               specific curve being used
+    * @param geometries        extracted geometries
+    * @param spatialBounds     the spatial bounds from the extracted geometries, as bounding boxes
+    * @param intervals         extracted dates
+    * @param temporalBounds    the temporal bounds from the extracted dates, as time units (depending on the sfc),
+    *                          keyed by epoch
+    * @param temporalUnbounded unbounded temporal epochs, i.e. all time values are covered. will be either
+    *                          `(0, t)`, `(t, Short.MaxValue)` or `(0, Short.MaxValue)` for upper, lower,
+    *                          and unbounded queries, respectively
+    */
   case class Z2TIndexValues(
       SFC: Z2TSFC,
       geometries: FilterValues[Geometry],
@@ -54,6 +56,7 @@ package object z2t {
       intervals: FilterValues[Bounds[ZonedDateTime]],
       temporalBounds: Map[Short, Seq[(Long, Long)]],
       temporalUnbounded: Seq[(Short, Short)]
-  ) extends TemporalIndexValues with SpatialIndexValues
+  ) extends TemporalIndexValues
+      with SpatialIndexValues
 
 }

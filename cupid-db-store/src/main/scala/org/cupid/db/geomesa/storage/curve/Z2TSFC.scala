@@ -11,17 +11,27 @@
 
 package org.cupid.db.geomesa.storage.curve
 
-import org.locationtech.geomesa.curve.NormalizedDimension.{NormalizedLat, NormalizedLon, NormalizedTime}
-import org.locationtech.geomesa.curve.{BinnedTime, NormalizedDimension, SpaceFillingCurve, SpaceTimeFillingCurve, TimePeriod}
+import org.locationtech.geomesa.curve.NormalizedDimension.{
+  NormalizedLat,
+  NormalizedLon,
+  NormalizedTime
+}
+import org.locationtech.geomesa.curve.{
+  BinnedTime,
+  NormalizedDimension,
+  SpaceFillingCurve,
+  SpaceTimeFillingCurve,
+  TimePeriod
+}
 import org.locationtech.geomesa.curve.TimePeriod.TimePeriod
 import org.locationtech.sfcurve.IndexRange
 import org.locationtech.sfcurve.zorder.ZRange
 
 /**
- * Z2T space filling curve
- *
- * @param precision bits used per dimension - note all precisions must sum to less than 64
- */
+  * Z2T space filling curve
+  *
+  * @param precision bits used per dimension - note all precisions must sum to less than 64
+  */
 class Z2TSFC(precision: Int = 21) extends SpaceFillingCurve {
 
   val lon: NormalizedDimension = NormalizedLon(precision)
@@ -29,8 +39,10 @@ class Z2TSFC(precision: Int = 21) extends SpaceFillingCurve {
 
   override def index(x: Double, y: Double, lenient: Boolean = false): Long = {
     try {
-      require(x >= lon.min && x <= lon.max && y >= lat.min && y <= lat.max,
-        s"Value(s) out of bounds ([${lon.min},${lon.max}], [${lat.min},${lat.max}]): $x, $y")
+      require(
+        x >= lon.min && x <= lon.max && y >= lat.min && y <= lat.max,
+        s"Value(s) out of bounds ([${lon.min},${lon.max}], [${lat.min},${lat.max}]): $x, $y"
+      )
       Z2T(lon.normalize(x), lat.normalize(y)).z
     } catch {
       case _: IllegalArgumentException if lenient => lenientIndex(x, y)
@@ -38,8 +50,20 @@ class Z2TSFC(precision: Int = 21) extends SpaceFillingCurve {
   }
 
   protected def lenientIndex(x: Double, y: Double): Long = {
-    val bx = if (x < lon.min) { lon.min } else if (x > lon.max) { lon.max } else { x }
-    val by = if (y < lat.min) { lat.min } else if (y > lat.max) { lat.max } else { y }
+    val bx = if (x < lon.min) {
+      lon.min
+    } else if (x > lon.max) {
+      lon.max
+    } else {
+      x
+    }
+    val by = if (y < lat.min) {
+      lat.min
+    } else if (y > lat.max) {
+      lat.max
+    } else {
+      y
+    }
     Z2T(lon.normalize(bx), lat.normalize(by)).z
   }
 
@@ -48,10 +72,14 @@ class Z2TSFC(precision: Int = 21) extends SpaceFillingCurve {
     (lon.denormalize(x), lat.denormalize(y))
   }
 
-  override def ranges(xy: Seq[(Double, Double, Double, Double)],
-                      precision: Int,
-                      maxRanges: Option[Int]): Seq[IndexRange] = {
-    val zbounds = xy.map { case (xmin, ymin, xmax, ymax) => ZRange(index(xmin, ymin), index(xmax, ymax)) }
+  override def ranges(
+      xy: Seq[(Double, Double, Double, Double)],
+      precision: Int,
+      maxRanges: Option[Int]
+  ): Seq[IndexRange] = {
+    val zbounds = xy.map {
+      case (xmin, ymin, xmax, ymax) => ZRange(index(xmin, ymin), index(xmax, ymax))
+    }
     Z2T.zranges(zbounds.toArray, precision, maxRanges)
   }
 }
