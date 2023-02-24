@@ -57,6 +57,7 @@
         <org.jgrapht.version>1.4.0</org.jgrapht.version>
         <rtree.version>0.10</rtree.version>
         <fastjson.version>2.0.6</fastjson.version>
+        <specs2.version>4.9.2</specs2.version>
     </properties>
 
     <dependencyManagement>
