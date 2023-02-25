@@ -23,6 +23,5 @@ public enum LivyStatementState {
     cancelling("cancelling"),
     cancelled("cancelled");
 
-    LivyStatementState(String value) {
-    }
+    LivyStatementState(String value) {}
 }

@@ -83,7 +83,7 @@ public class LivySubmitter implements ISparkSubmitter {
                         final List<LivySessionResult> sessions = restApi.getSessions();
                         for (LivySessionResult s : sessions) {
                             final LivySessionState theState = LivySessionState.valueOf(
-                                    s.getState()
+                                s.getState()
                             );
                             if (theState.ok()) {
                                 sessionId = s.getId();
@@ -94,15 +94,15 @@ public class LivySubmitter implements ISparkSubmitter {
                         if (!chosen) {
                             // TODO
                             final LivySessionResult res = restApi.createSession(
-                                    LivySessionParam.builder()
-                                            .kind(DEFAULT_KIND)
-                                            .driverCores(1)
-                                            .driverMemory("1G")
-                                            .numExecutors(1)
-                                            .executorCores(1)
-                                            .executorMemory("1G")
-                                            .jars(Arrays.asList("", ""))
-                                            .build()
+                                LivySessionParam.builder()
+                                    .kind(DEFAULT_KIND)
+                                    .driverCores(1)
+                                    .driverMemory("1G")
+                                    .numExecutors(1)
+                                    .executorCores(1)
+                                    .executorMemory("1G")
+                                    .jars(Arrays.asList("", ""))
+                                    .build()
                             );
                             waitSessionOk(res.getId());
                             sessionId = res.getId();
@@ -139,8 +139,8 @@ public class LivySubmitter implements ISparkSubmitter {
         try {
             String code = ""; // TODO
             final LivyStatementResult res = restApi.executeStatement(
-                    sessionId,
-                    LivyStatementParam.builder().kind(DEFAULT_KIND).code(code).build()
+                sessionId,
+                LivyStatementParam.builder().kind(DEFAULT_KIND).code(code).build()
             );
             return buildSqlId(res.getId());
         } finally {

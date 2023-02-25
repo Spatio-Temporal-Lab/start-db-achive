@@ -26,8 +26,7 @@ public enum LivySessionState {
     killed("killed"),
     success("success");
 
-    LivySessionState(String value) {
-    }
+    LivySessionState(String value) {}
 
     public boolean ok() {
         return this == idle || this == busy;
