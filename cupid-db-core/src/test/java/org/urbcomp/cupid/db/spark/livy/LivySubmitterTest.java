@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.cupid.db.spark.livy;
 
 import org.junit.Test;
@@ -22,19 +33,18 @@ public class LivySubmitterTest {
     public void test() throws TimeoutException, InterruptedException {
         LivySubmitter submitter = new LivySubmitter(livyRestApi, false);
         final int sessionId = 0;
-        doReturn(LivySessionResult.builder().id(sessionId).state("idle").build()).when(livyRestApi).getSession(anyInt());
+        doReturn(LivySessionResult.builder().id(sessionId).state("idle").build()).when(livyRestApi)
+            .getSession(anyInt());
 
         final int statementId = 1;
-        doReturn(LivyStatementResult.builder()
-                .id(statementId)
-                .state("available")
-                .build()).when(livyRestApi).executeStatement(anyInt(), any(LivyStatementParam.class));
+        doReturn(LivyStatementResult.builder().id(statementId).state("available").build()).when(
+            livyRestApi
+        ).executeStatement(anyInt(), any(LivyStatementParam.class));
         final String sqlId = submitter.submit(new SparkSqlParam());
 
-        doReturn(LivyStatementResult.builder()
-                .id(statementId)
-                .state("available")
-                .build()).when(livyRestApi).getStatement(sessionId, statementId);
+        doReturn(LivyStatementResult.builder().id(statementId).state("available").build()).when(
+            livyRestApi
+        ).getStatement(sessionId, statementId);
         submitter.waitToFinish(sqlId);
     }
 }
