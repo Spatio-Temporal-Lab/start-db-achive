@@ -16,16 +16,13 @@ package org.urbcomp.cupid.db.spark.livy;
  **/
 public enum LivyStatementState {
 
-    WAITING("waiting"),
-    RUNNING("running"),
-    AVAILABLE("available"),
-    ERROR("error"),
-    CANCELLING("cancelling"),
-    CANCELLED("cancelled");
-
-    private String value;
+    waiting("waiting"),
+    running("running"),
+    available("available"),
+    error("error"),
+    cancelling("cancelling"),
+    cancelled("cancelled");
 
     LivyStatementState(String value) {
-        this.value = value;
     }
 }

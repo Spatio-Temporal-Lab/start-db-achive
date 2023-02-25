@@ -24,14 +24,14 @@ import java.util.List;
  **/
 @Slf4j
 public class LivyRestApi {
-    private static final String livyUrl = DynamicConfig.getLivyUrl();
+    private final String livyUrl = DynamicConfig.getLivyUrl();
 
-    public static List<LivySessionResult> getSessions() {
+    public List<LivySessionResult> getSessions() {
         try {
             final String s = HTTPUtil.get(livyUrl + "/sessions?from=0&size=10");
             final LivySessionsResult res = JacksonUtil.MAPPER.readValue(
-                s,
-                LivySessionsResult.class
+                    s,
+                    LivySessionsResult.class
             );
             if (res != null) {
                 return res.getSessions();
@@ -42,7 +42,7 @@ public class LivyRestApi {
         throw new RuntimeException("get sessions failed");
     }
 
-    public static LivySessionResult getSession(int sessionId) {
+    public LivySessionResult getSession(int sessionId) {
         try {
             final String s = HTTPUtil.get(livyUrl + "/sessions/" + sessionId);
             final LivySessionResult res = JacksonUtil.MAPPER.readValue(s, LivySessionResult.class);
@@ -55,7 +55,7 @@ public class LivyRestApi {
         throw new RuntimeException("get sessions failed");
     }
 
-    public static LivySessionResult createSession(LivySessionParam param) {
+    public LivySessionResult createSession(LivySessionParam param) {
         try {
             final String s = HTTPUtil.post(livyUrl + "/sessions", param.toJsonBody());
             final LivySessionResult res = JacksonUtil.MAPPER.readValue(s, LivySessionResult.class);
@@ -68,15 +68,15 @@ public class LivyRestApi {
         throw new RuntimeException("create session failed");
     }
 
-    public static LivyStatementResult executeStatement(int sessionId, LivyStatementParam param) {
+    public LivyStatementResult executeStatement(int sessionId, LivyStatementParam param) {
         try {
             final String s = HTTPUtil.post(
-                livyUrl + "/" + sessionId + "/statements",
-                param.toJsonBody()
+                    livyUrl + "/" + sessionId + "/statements",
+                    param.toJsonBody()
             );
             final LivyStatementResult res = JacksonUtil.MAPPER.readValue(
-                s,
-                LivyStatementResult.class
+                    s,
+                    LivyStatementResult.class
             );
             if (res != null) {
                 return res;
@@ -87,14 +87,14 @@ public class LivyRestApi {
         throw new RuntimeException("create statement failed");
     }
 
-    public static LivyStatementResult getStatement(int sessionId, int statementId) {
+    public LivyStatementResult getStatement(int sessionId, int statementId) {
         try {
             final String s = HTTPUtil.get(
-                String.format("%s/sessions/%s/statements/%s", livyUrl, sessionId, statementId)
+                    String.format("%s/sessions/%s/statements/%s", livyUrl, sessionId, statementId)
             );
             final LivyStatementResult res = JacksonUtil.MAPPER.readValue(
-                s,
-                LivyStatementResult.class
+                    s,
+                    LivyStatementResult.class
             );
             if (res != null) {
                 return res;

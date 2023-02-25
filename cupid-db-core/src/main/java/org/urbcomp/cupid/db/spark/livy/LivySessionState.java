@@ -16,23 +16,20 @@ package org.urbcomp.cupid.db.spark.livy;
  **/
 public enum LivySessionState {
 
-    NOT_STARTED("not_started"),
-    STARTING("starting"),
-    IDLE("idle"),
-    BUSY("busy"),
-    SHUTTING_DOWN("shutting_down"),
-    ERROR("error"),
-    DEAD("dead"),
-    KILLED("killed"),
-    SUCCESS("success");
-
-    private String value;
+    not_started("not_started"),
+    starting("starting"),
+    idle("idle"),
+    busy("busy"),
+    shutting_down("shutting_down"),
+    error("error"),
+    dead("dead"),
+    killed("killed"),
+    success("success");
 
     LivySessionState(String value) {
-        this.value = value;
     }
 
     public boolean ok() {
-        return this == IDLE || this == BUSY;
+        return this == idle || this == busy;
     }
 }
