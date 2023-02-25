@@ -45,7 +45,7 @@ class Z3IndexTest extends Specification with LazyLogging {
               s"$i",
               s"name$i",
               "track1",
-              s"2022-12-30T0$i:00:00.000Z",
+              s"2020-12-07T0$i:00:00.000Z",
               s"POINT(4$i 60)"
             )
           } ++ (10 until 20).map { i =>

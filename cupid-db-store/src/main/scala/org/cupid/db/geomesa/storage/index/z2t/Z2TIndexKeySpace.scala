@@ -14,7 +14,7 @@ package org.cupid.db.geomesa.storage.index.z2t
 import com.typesafe.scalalogging.LazyLogging
 import org.cupid.db.geomesa.storage.curve.Z2TSFC
 import org.geotools.util.factory.Hints
-import org.locationtech.geomesa.curve.BinnedTime.{DateToBinnedTime, TimeToBin, TimeToBinnedTime}
+import org.locationtech.geomesa.curve.BinnedTime.{DateToBinnedTime, TimeToBin}
 import org.locationtech.geomesa.curve.BinnedTime
 import org.locationtech.geomesa.filter.FilterValues
 import org.locationtech.geomesa.index.api.IndexKeySpace.IndexKeySpaceFactory
@@ -43,7 +43,6 @@ import org.opengis.feature.simple.SimpleFeatureType
 import org.locationtech.jts.geom.{Geometry, Point}
 import org.locationtech.sfcurve.IndexRange
 import org.opengis.filter.Filter
-
 import java.util.Date
 import scala.util.control.NonFatal
 
@@ -68,7 +67,7 @@ class Z2TIndexKeySpace(
       sft.getDescriptor(dtgField).getType.getBinding.getSimpleName
   )
 
-  protected val sfc: Z2TSFC = Z2TSFC(sft.getZ3Interval)
+  protected val sfc: Z2TSFC = Z2TSFC
 
   protected val geomIndex: Int = sft.indexOf(geomField)
   protected val dtgIndex: Int = sft.indexOf(dtgField)
@@ -107,7 +106,7 @@ class Z2TIndexKeySpace(
       sfc.index(geom.getX, geom.getY, lenient)
     } catch {
       case NonFatal(e) =>
-        throw new IllegalArgumentException(s"Invalid z value from geometry/time: $geom,$dtg", e)
+        throw new IllegalArgumentException(s"Invalid z value from geometry: $geom", e)
     }
     val shard = sharding(writable)
 
@@ -144,6 +143,9 @@ class Z2TIndexKeySpace(
       }
     }
 
+    // since we don't apply a temporal filter, we pass handleExclusiveBounds to
+    // make sure we exclude the non-inclusive endpoints of a during filter.
+    // note that this isn't completely accurate, as we only index down to the second
     val intervals = extractIntervals(filter, dtgField, handleExclusiveBounds = true)
 
     explain(s"Geometries: $geometries")
@@ -161,36 +163,10 @@ class Z2TIndexKeySpace(
       geometries.values.flatMap(GeometryUtils.bounds(_, multiplier, bits))
     }
 
-    val minTime = sfc.time.min.toLong
-    val maxTime = sfc.time.max.toLong
-
     // calculate map of weeks to time intervals in that week
     val timesByBin =
       scala.collection.mutable.Map.empty[Short, Seq[(Long, Long)]].withDefaultValue(Seq.empty)
     val unboundedBins = Seq.newBuilder[(Short, Short)]
-
-    // note: intervals shouldn't have any overlaps
-    intervals.foreach { interval =>
-      val (lower, upper) = boundsToDates(interval.bounds)
-      val BinnedTime(lb, lt) = dateToIndex(lower)
-      val BinnedTime(ub, ut) = dateToIndex(upper)
-
-      if (interval.isBoundedBothSides) {
-        if (lb == ub) {
-          timesByBin(lb) ++= Seq((lt, ut))
-        } else {
-          timesByBin(lb) ++= Seq((lt, maxTime))
-          timesByBin(ub) ++= Seq((minTime, ut))
-          Range.inclusive(lb + 1, ub - 1).foreach(b => timesByBin(b.toShort) = sfc.wholePeriod)
-        }
-      } else if (interval.lower.value.isDefined) {
-        timesByBin(lb) ++= Seq((lt, maxTime))
-        unboundedBins += (((lb + 1).toShort, Short.MaxValue))
-      } else if (interval.upper.value.isDefined) {
-        timesByBin(ub) ++= Seq((minTime, ut))
-        unboundedBins += ((0, (ub - 1).toShort))
-      }
-    }
 
     Z2TIndexValues(sfc, geometries, xy, intervals, timesByBin.toMap, unboundedBins.result())
   }
@@ -208,19 +184,7 @@ class Z2TIndexKeySpace(
       } else { t.toInt / timesByBin.size } / multiplier)
     }
 
-    def toZRanges(t: Seq[(Long, Long)]): Seq[IndexRange] = z2t.ranges(xy, t, 64, target)
-
-    lazy val wholePeriodRanges = toZRanges(z2t.wholePeriod)
-
-    val bounded = timesByBin.iterator.flatMap {
-      case (bin, times) =>
-        val zs = if (times.eq(z2t.wholePeriod)) {
-          wholePeriodRanges
-        } else {
-          toZRanges(times)
-        }
-        zs.map(range => BoundedRange(Z2TIndexKey(bin, range.lower), Z2TIndexKey(bin, range.upper)))
-    }
+    //def toZRanges(t: Seq[(Long, Long)]): Seq[IndexRange] = z2t.ranges(xy, t, 64, target)
 
     val unbounded = unboundedBins.iterator.map {
       case (0, Short.MaxValue)     => UnboundedRange(Z2TIndexKey(0, 0L))
@@ -231,7 +195,7 @@ class Z2TIndexKeySpace(
         UnboundedRange(Z2TIndexKey(0, 0L))
     }
 
-    bounded ++ unbounded
+    unbounded
   }
 
   override def getRangeBytes(

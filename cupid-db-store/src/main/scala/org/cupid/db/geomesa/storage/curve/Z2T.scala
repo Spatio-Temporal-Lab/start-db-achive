@@ -16,23 +16,20 @@ import org.locationtech.sfcurve.zorder.{ZN, ZRange}
 class Z2T(val z: Long) extends AnyVal {
   import Z2T._
 
-  def <(other: Z2T) = z < other.z
-  def >(other: Z2T) = z > other.z
-
-  def <=(other: Z2T) = z <= other.z
-  def >=(other: Z2T) = z >= other.z
-
+  def <(other: Z2T): Boolean = z < other.z
+  def >(other: Z2T): Boolean = z > other.z
+  def <=(other: Z2T): Boolean = z <= other.z
+  def >=(other: Z2T): Boolean = z >= other.z
   def +(offset: Long) = new Z2T(z + offset)
   def -(offset: Long) = new Z2T(z - offset)
-
-  def ==(other: Z2T) = other.z == z
+  def ==(other: Z2T): Boolean = other.z == z
 
   def decode: (Int, Int) = (combine(z), combine(z >> 1))
 
-  def dim(i: Int) = Z2T.combine(z >> i)
+  def dim(i: Int): Int = Z2T.combine(z >> i)
 
-  def d0 = dim(0)
-  def d1 = dim(1)
+  def d0: Int = dim(0)
+  def d1: Int = dim(1)
 
   def mid(p: Z2T): Z2T = {
     val (x, y) = decode

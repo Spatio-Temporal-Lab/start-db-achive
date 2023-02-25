@@ -11,19 +11,8 @@
 
 package org.cupid.db.geomesa.storage.curve
 
-import org.locationtech.geomesa.curve.NormalizedDimension.{
-  NormalizedLat,
-  NormalizedLon,
-  NormalizedTime
-}
-import org.locationtech.geomesa.curve.{
-  BinnedTime,
-  NormalizedDimension,
-  SpaceFillingCurve,
-  SpaceTimeFillingCurve,
-  TimePeriod
-}
-import org.locationtech.geomesa.curve.TimePeriod.TimePeriod
+import org.locationtech.geomesa.curve.NormalizedDimension.{NormalizedLat, NormalizedLon}
+import org.locationtech.geomesa.curve.{NormalizedDimension, SpaceFillingCurve}
 import org.locationtech.sfcurve.IndexRange
 import org.locationtech.sfcurve.zorder.ZRange
 
