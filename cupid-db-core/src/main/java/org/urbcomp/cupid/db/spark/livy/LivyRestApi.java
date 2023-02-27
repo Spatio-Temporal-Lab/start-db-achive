@@ -57,7 +57,7 @@ public class LivyRestApi {
 
     public LivySessionResult createSession(LivySessionParam param) {
         try {
-            final String s = HTTPUtil.post(livyUrl + "/sessions", param.toJsonBody());
+            final String s = HTTPUtil.post(livyUrl + "/sessions/", param.toJsonBody());
             final LivySessionResult res = JacksonUtil.MAPPER.readValue(s, LivySessionResult.class);
             if (res != null) {
                 return res;
@@ -71,7 +71,7 @@ public class LivyRestApi {
     public LivyStatementResult executeStatement(int sessionId, LivyStatementParam param) {
         try {
             final String s = HTTPUtil.post(
-                livyUrl + "/" + sessionId + "/statements",
+                livyUrl + "/sessions/" + sessionId + "/statements",
                 param.toJsonBody()
             );
             final LivyStatementResult res = JacksonUtil.MAPPER.readValue(

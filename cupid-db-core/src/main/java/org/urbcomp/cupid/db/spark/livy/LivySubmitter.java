@@ -12,10 +12,10 @@
 package org.urbcomp.cupid.db.spark.livy;
 
 import lombok.extern.slf4j.Slf4j;
+import org.urbcomp.cupid.db.config.DynamicConfig;
 import org.urbcomp.cupid.db.spark.ISparkSubmitter;
 import org.urbcomp.cupid.db.util.SparkSqlParam;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,11 +57,12 @@ public class LivySubmitter implements ISparkSubmitter {
     }
 
     public LivySubmitter(LivyRestApi restApi, boolean checkSession) {
-        this.sleepMs = 300;
+        this.sleepMs = 3000;
         this.maxWaitTimeMs = 120 * 1000;
         this.restApi = restApi;
 
         if (checkSession) {
+            createNewSession();
             ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
             pool.scheduleAtFixedRate(new CheckSessionTask(), 0, 3, TimeUnit.SECONDS);
         }
@@ -71,16 +72,23 @@ public class LivySubmitter implements ISparkSubmitter {
 
         @Override
         public void run() {
-            System.out.println("执行：" + sessionId + "," + restApi);
+            log.info("Check Livy Session Start, current sessionId={}", sessionId);
+            LivySessionState state = LivySessionState.not_started;
             try {
                 final LivySessionResult session = restApi.getSession(sessionId);
-                final LivySessionState state = LivySessionState.valueOf(session.getState());
+                state = LivySessionState.valueOf(session.getState());
+            } catch (RuntimeException e) {
+                log.warn("Session Not Exists:{}", e.getMessage());
+            }
+            try {
+                log.info("Check Livy Session current sessionId={}, state={}", sessionId, state);
                 if (!state.ok()) {
                     // 先锁住，然后重新选择或创建一个session
                     sessionWriteLock.lock();
                     try {
                         boolean chosen = false;
                         final List<LivySessionResult> sessions = restApi.getSessions();
+                        log.info("Check Livy Session get Sessions={}", sessions);
                         for (LivySessionResult s : sessions) {
                             final LivySessionState theState = LivySessionState.valueOf(
                                 s.getState()
@@ -92,20 +100,7 @@ public class LivySubmitter implements ISparkSubmitter {
                             }
                         }
                         if (!chosen) {
-                            // TODO
-                            final LivySessionResult res = restApi.createSession(
-                                LivySessionParam.builder()
-                                    .kind(DEFAULT_KIND)
-                                    .driverCores(1)
-                                    .driverMemory("1G")
-                                    .numExecutors(1)
-                                    .executorCores(1)
-                                    .executorMemory("1G")
-                                    .jars(Arrays.asList("", ""))
-                                    .build()
-                            );
-                            waitSessionOk(res.getId());
-                            sessionId = res.getId();
+                            createNewSession();
                         }
                     } finally {
                         sessionWriteLock.unlock();
@@ -114,11 +109,44 @@ public class LivySubmitter implements ISparkSubmitter {
             } catch (Exception e) {
                 log.warn("Check Livy Session Error", e);
             }
+            log.info("Check Livy Session Finished, current sessionId={}", sessionId);
         }
 
-        private void waitSessionOk(int id) {
+    }
 
+    private void createNewSession() {
+        final LivySessionParam param = LivySessionParam.builder()
+            .kind(DEFAULT_KIND)
+            .driverCores(DynamicConfig.getSparkDriverCores())
+            .driverMemory(DynamicConfig.getSparkDriverMemory())
+            .numExecutors(DynamicConfig.getSparkNumExecutors())
+            .executorCores(DynamicConfig.getSparkExecutorCores())
+            .executorMemory(DynamicConfig.getSparkExecutorMemory())
+            // .jars(DynamicConfig.getDbSparkJars())
+            .build();
+        log.info("Check Livy Session create new Session,param={}", param);
+        final LivySessionResult res = restApi.createSession(param);
+        waitSessionOk(res.getId());
+        sessionId = res.getId();
+    }
+
+    private void waitSessionOk(int id) {
+        int attemptTime = 0;
+        while (attemptTime < maxWaitTimeMs) {
+            final LivySessionResult res = restApi.getSession(id);
+            final LivySessionState state = LivySessionState.valueOf(res.getState());
+            if (state.ok()) {
+                return;
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(sleepMs);
+            } catch (InterruptedException e) {
+                log.warn("Wait Interrupted", e);
+            }
+            attemptTime += sleepMs;
+            log.info("Check Livy Session wait session={} ready, current state={}", id, state);
         }
+        log.warn("Check Livy Session wait session exceed maxWaitTimeMs={}", maxWaitTimeMs);
     }
 
     private String buildSqlId(int statementId) {
@@ -137,7 +165,7 @@ public class LivySubmitter implements ISparkSubmitter {
     public String submit(SparkSqlParam param) {
         sessionReadLock.lock();
         try {
-            String code = ""; // TODO
+            String code = buildCode(param);
             final LivyStatementResult res = restApi.executeStatement(
                 sessionId,
                 LivyStatementParam.builder().kind(DEFAULT_KIND).code(code).build()
@@ -146,6 +174,13 @@ public class LivySubmitter implements ISparkSubmitter {
         } finally {
             sessionReadLock.unlock();
         }
+    }
+
+    /**
+     * TODO 调用 CupidSparkDriver的main方法，需要序列化参数
+     */
+    private String buildCode(SparkSqlParam param) {
+        return param.getSql();
     }
 
     @Override

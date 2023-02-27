@@ -9,23 +9,18 @@
  * General Public License for more details.
  */
 
-package org.urbcomp.cupid.db.spark.livy;
+package org.urbcomp.cupid.db.spark.reader;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.urbcomp.cupid.db.infra.MetadataResult;
+import org.urbcomp.cupid.db.spark.ISparkDataRead;
 
 /**
  * @author jimo
  **/
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class LivySessionResult {
+public class SparkDataReadDummy implements ISparkDataRead {
 
-    private int id;
-
-    private String state;
+    @Override
+    public <T> MetadataResult<T> read(String sqlId) {
+        return MetadataResult.buildDDLResult(0);
+    }
 }

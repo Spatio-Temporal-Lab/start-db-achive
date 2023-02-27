@@ -29,6 +29,7 @@ public class SparkExecutor {
         final ISparkSubmitter submitter = ISparkSubmitter.getInstance();
         final String sqlId = submitter.submit(param);
         if (param.isAsync()) {
+            // TODO 记录执行任务到缓存队列
             return MetadataResult.buildDDLResult(0);
         }
         // wait result

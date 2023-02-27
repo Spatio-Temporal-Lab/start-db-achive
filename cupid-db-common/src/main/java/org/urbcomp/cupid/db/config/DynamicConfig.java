@@ -11,6 +11,10 @@
 
 package org.urbcomp.cupid.db.config;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
 /**
  * global dynamic config
  *
@@ -18,8 +22,41 @@ package org.urbcomp.cupid.db.config;
  **/
 public class DynamicConfig {
 
-    public static String getLivyUrl() {
-        return null;
+    public static final String DB_SPARK_JARS = "livy.spark.db.jars";
+
+    private final static Properties properties = new Properties();
+
+    public static void updateProperties(String key, String value) {
+        properties.put(key, value);
     }
 
+    public static String getLivyUrl() {
+        return properties.getProperty("livy.url", "http://localhost:8998");
+    }
+
+    public static int getSparkDriverCores() {
+        return Integer.parseInt(properties.getProperty("livy.spark.driverCores", "1"));
+    }
+
+    public static String getSparkDriverMemory() {
+        return properties.getProperty("livy.spark.driverMemory", "1G");
+    }
+
+    public static int getSparkNumExecutors() {
+        return Integer.parseInt(properties.getProperty("livy.spark.numExecutors", "1"));
+    }
+
+    public static int getSparkExecutorCores() {
+        return Integer.parseInt(properties.getProperty("livy.spark.executorCores", "1"));
+    }
+
+    public static String getSparkExecutorMemory() {
+        return properties.getProperty("livy.spark.executorMemory", "1G");
+    }
+
+    public static List<String> getDbSparkJars() {
+        final String jar = properties.getProperty(DB_SPARK_JARS, "/opt/cupid-db-spark-shaded.jar");
+        final String[] jars = jar.split(",");
+        return Arrays.asList(jars);
+    }
 }

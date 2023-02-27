@@ -12,7 +12,6 @@
 package org.urbcomp.cupid.db.util;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -32,15 +31,21 @@ public class HTTPUtil {
 
     public static String post(String url, String body) {
         HttpPost httpPost = new HttpPost(url);
+        httpPost.setHeader("Accept", "application/json");
+        httpPost.setHeader("Content-type", "application/json");
         httpPost.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
         final CloseableHttpClient httpClient = getClient();
         CloseableHttpResponse response;
         try {
             response = httpClient.execute(httpPost);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != HttpStatus.SC_OK) {
+            if (statusCode > 300) {
+                final String msg = EntityUtils.toString(
+                    response.getEntity(),
+                    StandardCharsets.UTF_8
+                );
                 httpPost.abort();
-                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+                throw new RuntimeException("http request failed: " + statusCode + ",msg=" + msg);
             }
             HttpEntity entity = response.getEntity();
             String result = null;
