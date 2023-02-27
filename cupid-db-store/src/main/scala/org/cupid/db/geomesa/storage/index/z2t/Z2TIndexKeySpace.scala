@@ -49,9 +49,7 @@ class Z2TIndexKeySpace(
     val sft: SimpleFeatureType,
     val sharding: ShardStrategy,
     geomField: String,
-    dtgField: String
-) extends IndexKeySpace[Z2TIndexValues, Z2TIndexKey]
-    with LazyLogging {
+    dtgField: String) extends IndexKeySpace[Z2TIndexValues, Z2TIndexKey] with LazyLogging {
 
   import org.locationtech.geomesa.utils.geotools.RichSimpleFeatureType.RichSimpleFeatureType
 
@@ -78,9 +76,7 @@ class Z2TIndexKeySpace(
 
   override val attributes: Seq[String] = Seq(geomField, dtgField)
 
-  override val indexKeyByteLength: Right[(Array[Byte], Int, Int) => Int, Int] = Right(
-    10 + sharding.length
-  )
+  override val indexKeyByteLength: Right[(Array[Byte], Int, Int) => Int, Int] = Right( 10 + sharding.length )
 
   override val sharing: Array[Byte] = Array.empty
 
