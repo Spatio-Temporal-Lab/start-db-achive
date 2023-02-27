@@ -39,20 +39,8 @@ class Z2TSFC(precision: Int = 21) extends SpaceFillingCurve {
   }
 
   protected def lenientIndex(x: Double, y: Double): Long = {
-    val bx = if (x < lon.min) {
-      lon.min
-    } else if (x > lon.max) {
-      lon.max
-    } else {
-      x
-    }
-    val by = if (y < lat.min) {
-      lat.min
-    } else if (y > lat.max) {
-      lat.max
-    } else {
-      y
-    }
+    val bx = if (x < lon.min) { lon.min } else if (x > lon.max) { lon.max } else { x }
+    val by = if (y < lat.min) { lat.min } else if (y > lat.max) { lat.max } else { y }
     Z2T(lon.normalize(bx), lat.normalize(by)).z
   }
 

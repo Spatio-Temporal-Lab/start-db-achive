@@ -41,7 +41,6 @@ import org.locationtech.geomesa.utils.geotools.{GeometryUtils, WholeWorldPolygon
 import org.locationtech.geomesa.utils.index.ByteArrays
 import org.opengis.feature.simple.SimpleFeatureType
 import org.locationtech.jts.geom.{Geometry, Point}
-import org.locationtech.sfcurve.IndexRange
 import org.opengis.filter.Filter
 import java.util.Date
 import scala.util.control.NonFatal
@@ -85,29 +84,19 @@ class Z2TIndexKeySpace(
 
   override val sharing: Array[Byte] = Array.empty
 
-  override def toIndexKey(
-      writable: WritableFeature,
-      tier: Array[Byte],
-      id: Array[Byte],
-      lenient: Boolean
-  ): RowKeyValue[Z2TIndexKey] = {
+  override def toIndexKey(writable: WritableFeature,
+                          tier: Array[Byte],
+                          id: Array[Byte],
+                          lenient: Boolean): RowKeyValue[Z2TIndexKey] = {
     val geom = writable.getAttribute[Point](geomIndex)
     if (geom == null) {
       throw new IllegalArgumentException(s"Null geometry in feature ${writable.feature.getID}")
     }
     val dtg = writable.getAttribute[Date](dtgIndex)
-    val time = if (dtg == null) {
-      0
-    } else {
-      dtg.getTime
-    }
+    val time = if (dtg == null) { 0 } else { dtg.getTime }
     val b = timeToIndex(time)
-    val z = try {
-      sfc.index(geom.getX, geom.getY, lenient)
-    } catch {
-      case NonFatal(e) =>
-        throw new IllegalArgumentException(s"Invalid z value from geometry: $geom", e)
-    }
+    val z = try { sfc.index(geom.getX, geom.getY, lenient) } catch {
+      case NonFatal(e) => throw new IllegalArgumentException(s"Invalid z value from geometry: $geom", e) }
     val shard = sharding(writable)
 
     // create the byte array - allocate a single array up front to contain everything

@@ -31,7 +31,7 @@ class Z3IndexTest extends Specification with LazyLogging {
       foreach(Seq("z3:geom:dtg", "z3:6:geom:dtg")) { indices =>
         val spec =
           "name:String,track:String,dtg:Date,*geom:Point:srid=4326;" +
-            s"geomesa.z3.interval=week,geomesa.indices.enabled=$indices"
+            s"geomesa.z3.interval=year,geomesa.indices.enabled=$indices"
 
         val sft = SimpleFeatureTypes.createType("test", spec)
 
@@ -40,41 +40,13 @@ class Z3IndexTest extends Specification with LazyLogging {
         // note: 2020 was a leap year
         val features =
           (0 until 10).map { i =>
-            ScalaSimpleFeature.create(
-              sft,
-              s"$i",
-              s"name$i",
-              "track1",
-              s"2020-12-07T0$i:00:00.000Z",
-              s"POINT(4$i 60)"
-            )
+            ScalaSimpleFeature.create(sft, s"$i", s"name$i", "track1", s"2020-12-07T0$i:00:00.000Z", s"POINT(4$i 60)")
           } ++ (10 until 20).map { i =>
-            ScalaSimpleFeature.create(
-              sft,
-              s"$i",
-              s"name$i",
-              "track2",
-              s"2020-12-${i}T$i:00:00.000Z",
-              s"POINT(4${i - 10} 60)"
-            )
+            ScalaSimpleFeature.create(sft, s"$i", s"name$i", "track2", s"2020-12-${i}T$i:00:00.000Z", s"POINT(4${i - 10} 60)")
           } ++ (20 until 30).map { i =>
-            ScalaSimpleFeature.create(
-              sft,
-              s"$i",
-              s"name$i",
-              "track3",
-              s"2020-12-${i}T${i - 10}:00:00.000Z",
-              s"POINT(6${i - 20} 60)"
-            )
+            ScalaSimpleFeature.create(sft, s"$i", s"name$i", "track3", s"2020-12-${i}T${i-10}:00:00.000Z", s"POINT(6${i - 20} 60)")
           } ++ (30 until 32).map { i =>
-            ScalaSimpleFeature.create(
-              sft,
-              s"$i",
-              s"name$i",
-              "track4",
-              s"2020-12-${i}T${i - 10}:00:00.000Z",
-              s"POINT(${i - 20} 60)"
-            )
+            ScalaSimpleFeature.create(sft, s"$i", s"name$i", "track4", s"2020-12-${i}T${i-10}:00:00.000Z", s"POINT(${i - 20} 60)")
           }
 
         ds.createSchema(sft)
@@ -82,21 +54,15 @@ class Z3IndexTest extends Specification with LazyLogging {
           features.foreach(FeatureUtils.write(writer, _, useProvidedFid = true))
         }
 
-        val filter = ECQL.toFilter(
-          "bbox(geom,0,55,70,65) AND dtg during 2020-12-01T00:00:00.000Z/2020-12-31T23:59:59.999Z"
-        )
+        val filter = ECQL.toFilter("bbox(geom,0,55,70,65) AND dtg during 2020-12-01T00:00:00.000Z/2020-12-31T23:59:59.999Z")
 
         SelfClosingIterator(ds.getFeatureReader(new Query("test", filter), Transaction.AUTO_COMMIT)).toList must
           containTheSameElementsAs(features)
 
-        val lastDayFilter = ECQL.toFilter(
-          "bbox(geom,9,59,12,61) AND dtg during 2020-12-31T00:00:00.000Z/2020-12-31T23:59:59.999Z"
-        )
+        val lastDayFilter = ECQL.toFilter("bbox(geom,9,59,12,61) AND dtg during 2020-12-31T00:00:00.000Z/2020-12-31T23:59:59.999Z")
 
         val lastDayResults =
-          SelfClosingIterator(
-            ds.getFeatureReader(new Query("test", lastDayFilter), Transaction.AUTO_COMMIT)
-          ).toList
+          SelfClosingIterator(ds.getFeatureReader(new Query("test", lastDayFilter), Transaction.AUTO_COMMIT)).toList
 
         lastDayResults mustEqual Seq(features.last)
       }
