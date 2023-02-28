@@ -41,6 +41,8 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Point;
 import org.urbcomp.cupid.db.algorithm.clustering.AbstractClustering;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
+import org.urbcomp.cupid.db.util.LogUtil;
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -123,6 +125,7 @@ public class DBSCANClustering {
                              * @return true or false
                              */
                             public boolean moveNext() {
+                                Logger logger = LogUtil.getLogger();
                                 if (clusters == null) {
                                     AbstractClustering method =
                                         new org.urbcomp.cupid.db.algorithm.clustering.DBSCANClustering(
@@ -133,6 +136,7 @@ public class DBSCANClustering {
                                             minPoints
                                         );
                                     clusters = method.cluster();
+                                    logger.info("dbscan clustering finished");
                                 }
                                 if (count < clusters.size()) {
                                     current = clusters.get(count);
