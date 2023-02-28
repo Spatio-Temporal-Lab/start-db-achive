@@ -11,9 +11,12 @@
 
 package org.urbcomp.cupid.db.spark.livy;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.urbcomp.cupid.db.config.DynamicConfig;
 import org.urbcomp.cupid.db.spark.ISparkSubmitter;
+import org.urbcomp.cupid.db.util.Base64Util;
+import org.urbcomp.cupid.db.util.JacksonUtil;
 import org.urbcomp.cupid.db.util.SparkSqlParam;
 
 import java.util.List;
@@ -177,10 +180,20 @@ public class LivySubmitter implements ISparkSubmitter {
     }
 
     /**
-     * TODO 调用 CupidSparkDriver的main方法，需要序列化参数
+     * 调用 CupidSparkDriver的main方法，需要序列化参数
      */
     private String buildCode(SparkSqlParam param) {
-        return param.getSql();
+        try {
+            final String encodeParam = Base64Util.encode(
+                JacksonUtil.MAPPER.writeValueAsString(param)
+            );
+            return String.format(
+                "org.urbcomp.cupid.db.spark.CupidSparkDriver.main(Array(\"%s\"))",
+                encodeParam
+            );
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
