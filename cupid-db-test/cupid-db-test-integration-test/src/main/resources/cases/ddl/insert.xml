@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <testCase>
-    <caee>
+    <case>
         <!--   insert init   -->
         <sql type="update">drop table if exists insert_table;</sql>
         <sql type="update">
@@ -50,7 +50,7 @@
         </sql>
         <sql type="query">select * from insert_table;</sql>
         <assertion expected="insert_000.xml"/>
-    </caee>
+    </case>
 
     <case>
         <!--   int   -->
