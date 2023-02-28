@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
  **/
 public class LogUtil {
     static Logger log = Logger.getLogger("mylog");
+
     public static Logger getLogger() {
         return log;
     }
