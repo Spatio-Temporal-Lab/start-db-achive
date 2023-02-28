@@ -14,8 +14,10 @@ package org.urbcomp.cupid.db.util;
 import org.apache.log4j.Logger;
 
 /**
- * @author jimo
- **/
+ * Log Util
+ *
+ * @author Hang Wu
+ */
 public class LogUtil {
     static Logger log = Logger.getLogger("mylog");
 
