@@ -39,8 +39,8 @@ public class HTTPUtil {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode > 300) {
                 final String msg = EntityUtils.toString(
-                        response.getEntity(),
-                        StandardCharsets.UTF_8
+                    response.getEntity(),
+                    StandardCharsets.UTF_8
                 );
                 httpPost.abort();
                 throw new RuntimeException("http request failed: " + statusCode + ",msg=" + msg);
@@ -80,9 +80,9 @@ public class HTTPUtil {
 
     private static CloseableHttpClient getClient() {
         RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(60000)
-                .setSocketTimeout(15000)
-                .build();
+            .setConnectTimeout(60000)
+            .setSocketTimeout(15000)
+            .build();
         return HttpClientBuilder.create().setDefaultRequestConfig(config).build();
     }
 }
