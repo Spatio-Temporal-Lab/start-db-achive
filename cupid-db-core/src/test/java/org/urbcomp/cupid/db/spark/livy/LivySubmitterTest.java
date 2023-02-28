@@ -33,9 +33,6 @@ public class LivySubmitterTest {
     public void test() throws TimeoutException, InterruptedException {
         LivySubmitter submitter = new LivySubmitter(livyRestApi, false);
         final int sessionId = 0;
-        doReturn(LivySessionResult.builder().id(sessionId).state("idle").build()).when(livyRestApi)
-            .getSession(anyInt());
-
         final int statementId = 1;
         doReturn(LivyStatementResult.builder().id(statementId).state("available").build()).when(
             livyRestApi
