@@ -54,6 +54,9 @@ public class DynamicConfig {
         return properties.getProperty("livy.spark.executorMemory", "1G");
     }
 
+    /**
+     * 这个jar包要放在Livy Server能够访问的地方，如果是本地，就要放在Livy Server机器上
+     */
     public static List<String> getDbSparkJars() {
         final String jar = properties.getProperty(DB_SPARK_JARS, "/opt/cupid-db-spark-shaded.jar");
         final String[] jars = jar.split(",");

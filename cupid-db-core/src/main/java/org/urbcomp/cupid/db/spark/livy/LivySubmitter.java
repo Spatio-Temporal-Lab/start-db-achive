@@ -122,7 +122,7 @@ public class LivySubmitter implements ISparkSubmitter {
             .numExecutors(DynamicConfig.getSparkNumExecutors())
             .executorCores(DynamicConfig.getSparkExecutorCores())
             .executorMemory(DynamicConfig.getSparkExecutorMemory())
-            // .jars(DynamicConfig.getDbSparkJars())
+             .jars(DynamicConfig.getDbSparkJars())
             .build();
         log.info("Check Livy Session create new Session,param={}", param);
         final LivySessionResult res = restApi.createSession(param);

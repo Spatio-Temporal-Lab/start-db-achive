@@ -34,15 +34,13 @@ public class HTTPUtil {
         httpPost.setHeader("Accept", "application/json");
         httpPost.setHeader("Content-type", "application/json");
         httpPost.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
-        final CloseableHttpClient httpClient = getClient();
-        CloseableHttpResponse response;
-        try {
-            response = httpClient.execute(httpPost);
+        try (CloseableHttpClient httpClient = getClient()) {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode > 300) {
                 final String msg = EntityUtils.toString(
-                    response.getEntity(),
-                    StandardCharsets.UTF_8
+                        response.getEntity(),
+                        StandardCharsets.UTF_8
                 );
                 httpPost.abort();
                 throw new RuntimeException("http request failed: " + statusCode + ",msg=" + msg);
@@ -56,14 +54,11 @@ public class HTTPUtil {
             return result;
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            closeClient(httpClient);
         }
     }
 
     public static String get(String url) {
-        final CloseableHttpClient httpClient = getClient();
-        try {
+        try (final CloseableHttpClient httpClient = getClient()) {
             HttpGet httpGet = new HttpGet(url);
             CloseableHttpResponse response = httpClient.execute(httpGet);
             int statusCode = response.getStatusLine().getStatusCode();
@@ -80,26 +75,14 @@ public class HTTPUtil {
             return result;
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            closeClient(httpClient);
         }
     }
 
     private static CloseableHttpClient getClient() {
         RequestConfig config = RequestConfig.custom()
-            .setConnectTimeout(60000)
-            .setSocketTimeout(15000)
-            .build();
+                .setConnectTimeout(60000)
+                .setSocketTimeout(15000)
+                .build();
         return HttpClientBuilder.create().setDefaultRequestConfig(config).build();
-    }
-
-    private static void closeClient(CloseableHttpClient httpClient) {
-        if (httpClient != null) {
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 }
