@@ -22,6 +22,7 @@
 
 package org.urbcomp.cupid.db.udtf;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.DataContext;
 import org.apache.calcite.config.CalciteConnectionConfig;
 import org.apache.calcite.linq4j.AbstractEnumerable;
@@ -49,6 +50,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class DBSCANClustering {
     public static Method DBSCAN_CLUSTERING_TABLE_METHOD = Types.lookupMethod(
         DBSCANClustering.class,
@@ -125,7 +127,6 @@ public class DBSCANClustering {
                              * @return true or false
                              */
                             public boolean moveNext() {
-                                Logger logger = LogUtil.getLogger();
                                 if (clusters == null) {
                                     AbstractClustering method =
                                         new org.urbcomp.cupid.db.algorithm.clustering.DBSCANClustering(
@@ -136,7 +137,7 @@ public class DBSCANClustering {
                                             minPoints
                                         );
                                     clusters = method.cluster();
-                                    logger.info("dbscan clustering finished");
+                                    log.info("dbscan clustering finished");
                                 }
                                 if (count < clusters.size()) {
                                     current = clusters.get(count);
