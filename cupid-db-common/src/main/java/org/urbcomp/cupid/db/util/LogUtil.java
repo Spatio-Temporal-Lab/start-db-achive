@@ -11,7 +11,8 @@
 
 package org.urbcomp.cupid.db.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Log Util
@@ -19,7 +20,7 @@ import org.apache.log4j.Logger;
  * @author Hang Wu
  */
 public class LogUtil {
-    static Logger log = Logger.getLogger("mylog");
+    private static final Logger log = LoggerFactory.getLogger(LogUtil.class);
 
     public static Logger getLogger() {
         return log;

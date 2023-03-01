@@ -70,7 +70,7 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
       )
       logger.info("Passed")
     } catch {
-      case _: Exception => logger.debug(sortedResults)
+      case _: Exception => logger.debug(sortedResults.toString)
     }
   }
 
