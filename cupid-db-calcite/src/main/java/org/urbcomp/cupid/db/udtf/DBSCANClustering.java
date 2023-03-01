@@ -42,8 +42,6 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Point;
 import org.urbcomp.cupid.db.algorithm.clustering.AbstractClustering;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
-import org.urbcomp.cupid.db.util.LogUtil;
-import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;

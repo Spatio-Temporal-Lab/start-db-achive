@@ -23,7 +23,6 @@ import scala.collection.mutable.ListBuffer
   * @author Hang Wu
   * @date 2023-02-11
   */
-
 class ClusteringTest extends AbstractCalciteFunctionTest {
 
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
