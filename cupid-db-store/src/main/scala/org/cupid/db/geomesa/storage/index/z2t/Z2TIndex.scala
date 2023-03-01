@@ -46,9 +46,7 @@ object Z2TIndex extends ConfiguredIndex {
   override def defaults(sft: SimpleFeatureType): Seq[Seq[String]] = {
     if (sft.isPoints && sft.getDtgField.isDefined) {
       Seq(Seq(sft.getGeomField, sft.getDtgField.get))
-    } else {
-      Seq.empty
-    }
+    } else { Seq.empty }
   }
 
 }

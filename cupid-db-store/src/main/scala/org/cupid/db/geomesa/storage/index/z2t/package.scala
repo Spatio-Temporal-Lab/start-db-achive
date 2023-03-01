@@ -50,7 +50,7 @@ package object z2t {
       geometries: FilterValues[Geometry],
       spatialBounds: Seq[(Double, Double, Double, Double)],
       intervals: FilterValues[Bounds[ZonedDateTime]],
-      temporalBounds: Map[Short, Seq[(Long, Long)]],
+      temporalBounds: Seq[Short],
       temporalUnbounded: Seq[(Short, Short)]
   ) extends TemporalIndexValues
       with SpatialIndexValues

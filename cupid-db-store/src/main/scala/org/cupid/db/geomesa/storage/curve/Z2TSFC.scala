@@ -17,10 +17,10 @@ import org.locationtech.sfcurve.IndexRange
 import org.locationtech.sfcurve.zorder.ZRange
 
 /**
-  * Z2T space filling curve
-  *
-  * @param precision bits used per dimension - note all precisions must sum to less than 64
-  */
+ * Z2T space filling curve
+ *
+ * @param precision bits used per dimension - note all precisions must sum to less than 64
+ */
 class Z2TSFC(precision: Int = 21) extends SpaceFillingCurve {
 
   val lon: NormalizedDimension = NormalizedLon(precision)
@@ -49,11 +49,9 @@ class Z2TSFC(precision: Int = 21) extends SpaceFillingCurve {
     (lon.denormalize(x), lat.denormalize(y))
   }
 
-  override def ranges(
-      xy: Seq[(Double, Double, Double, Double)],
-      precision: Int,
-      maxRanges: Option[Int]
-  ): Seq[IndexRange] = {
+  override def ranges(xy: Seq[(Double, Double, Double, Double)],
+                      precision: Int,
+                      maxRanges: Option[Int]): Seq[IndexRange] = {
     val zbounds = xy.map {
       case (xmin, ymin, xmax, ymax) => ZRange(index(xmin, ymin), index(xmax, ymax))
     }
