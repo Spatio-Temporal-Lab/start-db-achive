@@ -89,8 +89,7 @@ object Z2T extends ZN {
   override def overlaps(range: ZRange, value: ZRange): Boolean = {
     def overlaps(a1: Int, a2: Int, b1: Int, b2: Int) = math.max(a1, b1) <= math.min(a2, b2)
     overlaps(Z2T(range.min).d0, Z2T(range.max).d0, Z2T(value.min).d0, Z2T(value.max).d0) &&
-      overlaps(Z2T(range.min).d1, Z2T(range.max).d1, Z2T(value.min).d1, Z2T(value.max).d1)
+    overlaps(Z2T(range.min).d1, Z2T(range.max).d1, Z2T(value.min).d1, Z2T(value.max).d1)
   }
 
 }
-
