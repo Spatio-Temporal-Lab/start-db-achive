@@ -25,7 +25,9 @@ import rx.Observable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DBSCANClustering extends AbstractClustering {
     private final double distanceInM;
     private final int minPoints;
@@ -64,6 +66,7 @@ public class DBSCANClustering extends AbstractClustering {
 
     @Override
     public List<MultiPoint> cluster() {
+        log.warn("enter cluster");
         if (pointRTree == null) {
             pointRTree = RTree.star().create();
             for (SpatialPoint p : pointList)
