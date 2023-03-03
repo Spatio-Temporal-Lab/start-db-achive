@@ -11,7 +11,7 @@
 
 package org.urbcomp.cupid.db.spark
 
-import org.urbcomp.cupid.db.util.SparkSqlParam
+import org.urbcomp.cupid.db.util.{Base64Util, JacksonUtil, SparkSqlParam}
 
 /**
   * debug test:
@@ -23,11 +23,16 @@ import org.urbcomp.cupid.db.util.SparkSqlParam
   * --executor-cores 1 \
   * --executor-memory 1g \
   * --num-executors 1 \
-  * cupid-db.jar -i SqlId -s "select 1+1" -u zaiyuan -d default
+  * cupid-db.jar base64Serialized_SparkSqlParam
   */
 object CupidSparkDriver {
 
-  def deserializeParam(args: Array[String]): SparkSqlParam = null /* TODO */
+  def deserializeParam(args: Array[String]): SparkSqlParam = {
+    if (args.length < 1)
+      throw new RuntimeException("Invalid args:" + args.mkString("Array(", ", ", ")"))
+    val encodeParam = args(0)
+    JacksonUtil.MAPPER.readValue(Base64Util.decode(encodeParam), classOf[SparkSqlParam])
+  }
 
   def main(args: Array[String]): Unit = {
     val sqlParam = deserializeParam(args)

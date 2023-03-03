@@ -161,7 +161,6 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
       "select st_traj_stayPointDetect(st_traj_fromGeoJSON(\'" + tGeo + "\'),10,10)"
     )
     resultSet1.next()
-    // FIXME timezone
     assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject(1).toString)
     assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject("startTime").toString)
     assertEquals("2018-10-09 07:30:27.0", resultSet1.getObject(2).toString)
@@ -170,7 +169,6 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
       resultSet1.getObject(3).toString
     )
     resultSet1.next()
-    // FIXME timezone
     assertEquals("2018-10-09 07:32:51.0", resultSet1.getObject(1).toString)
     assertEquals("2018-10-09 07:32:57.0", resultSet1.getObject(2).toString)
     assertEquals(

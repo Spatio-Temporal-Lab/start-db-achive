@@ -51,7 +51,12 @@ public class HmmProbabilities {
      */
     public double transitionLogProbability(double routeLength, double linearDistance) {
         double transitionMetric = Math.abs(linearDistance - routeLength);
-        return logExponentialDistribution(this.beta, transitionMetric);
+        if (transitionMetric > 500) {
+            return Double.NEGATIVE_INFINITY;
+        } else {
+            return logExponentialDistribution(this.beta, transitionMetric);
+        }
+
     }
 
     /**
