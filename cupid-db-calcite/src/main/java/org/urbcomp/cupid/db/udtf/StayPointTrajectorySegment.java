@@ -44,12 +44,12 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class StayPointTrajectorySegment {
-    public static Method TIMEINTERVALSEGMENT_TABLE_METHOD = Types.lookupMethod(
+    public static Method STAYPOINTSEGMENT_TABLE_METHOD = Types.lookupMethod(
         StayPointTrajectorySegment.class,
         "st_traj_stayPointSegment",
         Trajectory.class,
-        int.class
-
+        double.class,
+        double.class
     );
 
     public ScannableTable st_traj_stayPointSegment(

@@ -47,7 +47,7 @@ class GeomesaSchemaFactory extends SchemaFactory {
     )
     schemaPlus.add(
       "st_traj_stayPointSegment",
-      TableFunctionImpl.create(StayPointTrajectorySegment.TIMEINTERVALSEGMENT_TABLE_METHOD)
+      TableFunctionImpl.create(StayPointTrajectorySegment.STAYPOINTSEGMENT_TABLE_METHOD)
     )
     schemaPlus.add(
       "st_traj_stayPointDetect",
