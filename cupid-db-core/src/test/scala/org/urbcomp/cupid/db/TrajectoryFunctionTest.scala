@@ -155,12 +155,27 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
 
   }
 
+  test("st_traj_stayPointSegment") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_stayPointSegment(st_traj_fromGeoJSON(\'" + tGeo + "\')," + 10 + "," + 10 + ")"
+      )
+    var count = 0
+    while (resultSet.next()) {
+      count = count + Trajectory.fromGeoJSON(resultSet.getObject(1).toString).getGPSPointList.size()
+    }
+    assertEquals(trajectory.getGPSPointList.size - 12, count)
+
+  }
+
   test("st_traj_stayPointDetect") {
     val statement = connect.createStatement
     val resultSet1 = statement.executeQuery(
       "select st_traj_stayPointDetect(st_traj_fromGeoJSON(\'" + tGeo + "\'),10,10)"
     )
     resultSet1.next()
+    // FIXME timezone
     assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject(1).toString)
     assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject("startTime").toString)
     assertEquals("2018-10-09 07:30:27.0", resultSet1.getObject(2).toString)
@@ -169,6 +184,7 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
       resultSet1.getObject(3).toString
     )
     resultSet1.next()
+    // FIXME timezone
     assertEquals("2018-10-09 07:32:51.0", resultSet1.getObject(1).toString)
     assertEquals("2018-10-09 07:32:57.0", resultSet1.getObject(2).toString)
     assertEquals(
