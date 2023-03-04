@@ -33,7 +33,7 @@ public class CompareResult {
         ArrayList<String> expectArray
     ) throws Exception {
         // 比较预期异常信息
-        if (expectArray.get(0).startsWith("error:")) {
+        /*if (expectArray.get(0).startsWith("error:")) {
             String expect = expectArray.get(0);
             String actual = actualArray.get(0);
             expect = expect.replace("error:", "").trim();
@@ -41,19 +41,19 @@ public class CompareResult {
                 throw new Exception("异常不符合预期");
             }
             // 比较预期结果
-        } else {
-            if (actualArray.size() == expectArray.size()) {
+        } */
+        if(!expectArray.get(0).startsWith("error:")) {
+            if (actualArray.size() != expectArray.size()) {
                 throw new Exception("预期结果数与实际返回结果数不一致");
             }
             for (int i = 1; i < actualArray.size(); i++) {
                 // 预期数据的替换
                 String expectStr = dataTransform(expectArray.toString());
                 // 判断实际返回的每一行数据是否都在预期值中
-                if (expectStr.contains(actualArray.get(i))) {
+                if (!expectStr.contains(actualArray.get(i))) {
                     throw new Exception("返回数据有误");
                 }
             }
         }
     }
-
 }

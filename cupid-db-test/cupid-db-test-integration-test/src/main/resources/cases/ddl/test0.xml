@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<testcase>
+
+    <xml>test0.xml</xml>
+
+    <case><!--  求普通对数，num > 0  log(base: Double, num: Double): Double  -->
+        <sql type="query">select log(?, ?);</sql>
+        <assertion>[2][2]</assertion>
+        <assertion>[2][4]</assertion>
+        <assertion>[0][2]</assertion>  底数可以为0
+        <assertion error="输入不能为0">[2][0]</assertion>
+        <assertion error="输入不能为负">[2][-2]</assertion>
+    </case>
+
+    <case><!--  绝对值  abs(num: Double): Double  -->
+        <sql type="query">select abs(?);</sql>  返回值类型不为double
+        <assertion>[-100]</assertion>
+        <assertion>[0]</assertion>
+        <assertion>[100.123]</assertion>
+        <assertion error="输入不能为空">[null]</assertion>
+    </case>
+</testcase>

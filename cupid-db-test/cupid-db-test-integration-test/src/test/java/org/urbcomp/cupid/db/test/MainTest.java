@@ -37,6 +37,19 @@ public class MainTest {
 
     @Test
     @Ignore
+    public void testdrop()throws Exception{
+        try (Connection connection = getConnect();
+             Statement statement = connection.createStatement();)
+        {
+            statement.executeUpdate("create database if not exists testdrop");
+            statement.executeUpdate("drop database testdrop");
+        }catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Test
+    @Ignore
     public void testAutoWriteExpect() throws Exception {
         String xmlPath = Objects.requireNonNull(
             MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
@@ -77,7 +90,7 @@ public class MainTest {
     public void singleSQLCaseTest() throws Exception {
         // 执行单个xml测试用例文件
         String xmlResource = Objects.requireNonNull(
-            RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
+            RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/test0.xml")
         ).getPath();
         log.info("xmlResource:" + xmlResource);
         runSingleCase(xmlResource);
@@ -93,5 +106,4 @@ public class MainTest {
             runSingleCase(sqlCaseXML);
         }
     }
-
 }

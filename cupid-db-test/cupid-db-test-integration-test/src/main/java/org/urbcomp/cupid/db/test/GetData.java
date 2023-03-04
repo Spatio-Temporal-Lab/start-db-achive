@@ -86,39 +86,44 @@ public class GetData {
      * @param filePath sql用例的文件路径
      * @return 预期内容
      * */
-    public static ArrayList<String> getExpectDataArray(String expectData, String filePath)
+    public static ArrayList<String> getExpectDataArray(String expectData, String filePath, int count)
         throws Exception {
+        // 获取储存预期数据的xml文件路径
         File parentFile = new File(filePath).getParentFile();
         String expectedPath = parentFile.getPath()
             + File.separator
             + "expected"
             + File.separator
             + expectData;
+
         StringBuilder expectValue = new StringBuilder();
         ArrayList<String> expectedArray = new ArrayList<>();
+
         // 获取根标签
         SAXReader saxReader = new SAXReader();
         Document document = saxReader.read(expectedPath);
         Element rootElement = document.getRootElement();
-        // 获取表头信息 metadata标签
-        List<Element> metaElements = rootElement.elements("metadata");
-        for (Element metaElement : metaElements) {
-            String filedName = metaElement.attributeValue("name");
-            expectValue.append(filedName).append("\t");
-        }
+
+        // 获取当前执行sql的标签
+        List<Element> sqlElements = rootElement.elements();
+        Element sqlElement = sqlElements.get(count);
+
+        // 获取column标签的内容
+        Element columnElement = sqlElement.element("column");
+        String filedName = columnElement.attributeValue("name");
+        String filedType = columnElement.attributeValue("type");
+        expectValue.append(filedName).append("\t");
         expectedArray.add(expectValue.toString());
         expectValue.setLength(0);
-        for (Element metaElement : metaElements) {
-            String filedType = metaElement.attributeValue("type");
-            expectValue.append(filedType).append("\t");
-        }
+        expectValue.append(filedType).append("\t");
         expectedArray.add(expectValue.toString());
         expectValue.setLength(0);
+
         // 获取row标签的内容
-        List<Element> rowElements = rootElement.elements("row");
+        List<Element> rowElements = sqlElement.elements("row");
         for (Element rowElement : rowElements) {
             String rowText = rowElement.getText();
-            expectedArray.add(rowText);
+            expectedArray.add(rowText+"\t");
         }
         return expectedArray;
     }
