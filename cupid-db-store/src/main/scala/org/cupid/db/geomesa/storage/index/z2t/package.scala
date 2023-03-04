@@ -28,7 +28,11 @@ package object z2t {
   case class Z2TIndexKey(bin: Short, z: Long) extends Ordered[Z2TIndexKey] {
     override def compare(that: Z2TIndexKey): Int = {
       val b = Ordering.Short.compare(bin, that.bin)
-      if (b != 0) { b } else { Ordering.Long.compare(z, that.z) }
+      if (b != 0) {
+        b
+      } else {
+        Ordering.Long.compare(z, that.z)
+      }
     }
   }
 

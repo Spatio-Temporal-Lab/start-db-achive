@@ -18,7 +18,20 @@ import org.locationtech.geomesa.curve.BinnedTime.{DateToBin, DateToBinnedTime, T
 import org.locationtech.geomesa.curve.BinnedTime
 import org.locationtech.geomesa.filter.FilterValues
 import org.locationtech.geomesa.index.api.IndexKeySpace.IndexKeySpaceFactory
-import org.locationtech.geomesa.index.api.{BoundedByteRange, BoundedRange, ByteRange, IndexKeySpace, LowerBoundedRange, RowKeyValue, ScanRange, ShardStrategy, SingleRowKeyValue, UnboundedRange, UpperBoundedRange, WritableFeature}
+import org.locationtech.geomesa.index.api.{
+  BoundedByteRange,
+  BoundedRange,
+  ByteRange,
+  IndexKeySpace,
+  LowerBoundedRange,
+  RowKeyValue,
+  ScanRange,
+  ShardStrategy,
+  SingleRowKeyValue,
+  UnboundedRange,
+  UpperBoundedRange,
+  WritableFeature
+}
 import org.locationtech.geomesa.index.api.ShardStrategy.{NoShardStrategy, ZShardStrategy}
 import org.locationtech.geomesa.index.conf.QueryHints.LOOSE_BBOX
 import org.locationtech.geomesa.index.conf.QueryProperties
@@ -37,7 +50,9 @@ class Z2TIndexKeySpace(
     val sft: SimpleFeatureType,
     val sharding: ShardStrategy,
     geomField: String,
-    dtgField: String) extends IndexKeySpace[Z2TIndexValues, Z2TIndexKey] with LazyLogging {
+    dtgField: String
+) extends IndexKeySpace[Z2TIndexValues, Z2TIndexKey]
+    with LazyLogging {
 
   import org.locationtech.geomesa.utils.geotools.RichSimpleFeatureType.RichSimpleFeatureType
 
@@ -64,23 +79,35 @@ class Z2TIndexKeySpace(
 
   override val attributes: Seq[String] = Seq(geomField, dtgField)
 
-  override val indexKeyByteLength: Right[(Array[Byte], Int, Int) => Int, Int] = Right( 10 + sharding.length )
+  override val indexKeyByteLength: Right[(Array[Byte], Int, Int) => Int, Int] = Right(
+    10 + sharding.length
+  )
 
   override val sharing: Array[Byte] = Array.empty
 
-  override def toIndexKey(writable: WritableFeature,
-                          tier: Array[Byte],
-                          id: Array[Byte],
-                          lenient: Boolean): RowKeyValue[Z2TIndexKey] = {
+  override def toIndexKey(
+      writable: WritableFeature,
+      tier: Array[Byte],
+      id: Array[Byte],
+      lenient: Boolean
+  ): RowKeyValue[Z2TIndexKey] = {
     val geom = writable.getAttribute[Point](geomIndex)
     if (geom == null) {
       throw new IllegalArgumentException(s"Null geometry in feature ${writable.feature.getID}")
     }
     val dtg = writable.getAttribute[Date](dtgIndex)
-    val time = if (dtg == null) { 0 } else { dtg.getTime }
+    val time = if (dtg == null) {
+      0
+    } else {
+      dtg.getTime
+    }
     val b = timeToIndex(time)
-    val z = try { sfc.index(geom.getX, geom.getY, lenient) } catch {
-      case NonFatal(e) => throw new IllegalArgumentException(s"Invalid z value from geometry: $geom", e) }
+    val z = try {
+      sfc.index(geom.getX, geom.getY, lenient)
+    } catch {
+      case NonFatal(e) =>
+        throw new IllegalArgumentException(s"Invalid z value from geometry: $geom", e)
+    }
     val shard = sharding(writable)
 
     // create the byte array - allocate a single array up front to contain everything
@@ -109,7 +136,11 @@ class Z2TIndexKeySpace(
 
     val geometries: FilterValues[Geometry] = {
       val extracted = extractGeometries(filter, geomField, intersect = true) // intersect since we have points
-      if (extracted.nonEmpty) { extracted } else { FilterValues(Seq(WholeWorldPolygon)) }
+      if (extracted.nonEmpty) {
+        extracted
+      } else {
+        FilterValues(Seq(WholeWorldPolygon))
+      }
     }
 
     // since we don't apply a temporal filter, we pass handleExclusiveBounds to
@@ -141,8 +172,8 @@ class Z2TIndexKeySpace(
       val lb = dateToIndex(lower)
       val ub = dateToIndex(upper)
 
-      if(interval.isBoundedBothSides) {
-        if(lb == ub) {
+      if (interval.isBoundedBothSides) {
+        if (lb == ub) {
           timesByBin += lb.toShort
         } else {
           Range.inclusive(lb + 1, ub - 1).foreach(b => timesByBin += b.toShort)
@@ -159,20 +190,26 @@ class Z2TIndexKeySpace(
     Z2TIndexValues(sfc, geometries, xy, intervals, timesByBin.result(), unboundedBins.result())
   }
 
-  override def getRanges(values: Z2TIndexValues, multiplier: Int): Iterator[ScanRange[Z2TIndexKey]] = {
+  override def getRanges(
+      values: Z2TIndexValues,
+      multiplier: Int
+  ): Iterator[ScanRange[Z2TIndexKey]] = {
     val Z2TIndexValues(z2t, _, xy, _, timesByBin, unboundedBins) = values
 
     // note: `target` will always be Some, as ScanRangesTarget has a default value
     val target = QueryProperties.ScanRangesTarget.option.map { t =>
-      math.max(1, if (timesByBin.isEmpty) { t.toInt } else { t.toInt / timesByBin.size } / multiplier)
+      math.max(1, if (timesByBin.isEmpty) {
+        t.toInt
+      } else { t.toInt / timesByBin.size } / multiplier)
     }
 
     //def toZRanges(t: Seq[(Long, Long)]): Seq[IndexRange] = z2t.ranges(xy, t, 64, target)
     def toZRanges(): Seq[IndexRange] = z2t.ranges(xy, 64, target)
 
-    val bounded = timesByBin.iterator.flatMap { case bin =>
-      val zs = toZRanges()
-      zs.map(range => BoundedRange(Z2TIndexKey(bin, range.lower), Z2TIndexKey(bin, range.upper)))
+    val bounded = timesByBin.iterator.flatMap {
+      case bin =>
+        val zs = toZRanges()
+        zs.map(range => BoundedRange(Z2TIndexKey(bin, range.lower), Z2TIndexKey(bin, range.upper)))
     }
 
     val unbounded = unboundedBins.iterator.map {
@@ -187,18 +224,26 @@ class Z2TIndexKeySpace(
     bounded ++ unbounded
   }
 
-  override def getRangeBytes(ranges: Iterator[ScanRange[Z2TIndexKey]], tier: Boolean): Iterator[ByteRange] = {
+  override def getRangeBytes(
+      ranges: Iterator[ScanRange[Z2TIndexKey]],
+      tier: Boolean
+  ): Iterator[ByteRange] = {
     if (sharding.length == 0) {
       ranges.map {
         case BoundedRange(lo, hi) =>
-          BoundedByteRange(ByteArrays.toBytes(lo.bin, lo.z), ByteArrays.toBytesFollowingPrefix(hi.bin, hi.z))
+          BoundedByteRange(
+            ByteArrays.toBytes(lo.bin, lo.z),
+            ByteArrays.toBytesFollowingPrefix(hi.bin, hi.z)
+          )
 
         case LowerBoundedRange(lo) =>
           BoundedByteRange(ByteArrays.toBytes(lo.bin, lo.z), ByteRange.UnboundedUpperRange)
 
         case UpperBoundedRange(hi) =>
           BoundedByteRange(
-            ByteRange.UnboundedLowerRange, ByteArrays.toBytesFollowingPrefix(hi.bin, hi.z))
+            ByteRange.UnboundedLowerRange,
+            ByteArrays.toBytesFollowingPrefix(hi.bin, hi.z)
+          )
 
         case UnboundedRange(_) =>
           BoundedByteRange(ByteRange.UnboundedLowerRange, ByteRange.UnboundedUpperRange)
@@ -211,17 +256,23 @@ class Z2TIndexKeySpace(
         case BoundedRange(lo, hi) =>
           val lower = ByteArrays.toBytes(lo.bin, lo.z)
           val upper = ByteArrays.toBytesFollowingPrefix(hi.bin, hi.z)
-          sharding.shards.map(p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper)))
+          sharding.shards.map(
+            p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper))
+          )
 
         case LowerBoundedRange(lo) =>
           val lower = ByteArrays.toBytes(lo.bin, lo.z)
           val upper = ByteRange.UnboundedUpperRange
-          sharding.shards.map(p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper)))
+          sharding.shards.map(
+            p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper))
+          )
 
         case UpperBoundedRange(hi) =>
           val lower = ByteRange.UnboundedLowerRange
           val upper = ByteArrays.toBytesFollowingPrefix(hi.bin, hi.z)
-          sharding.shards.map(p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper)))
+          sharding.shards.map(
+            p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper))
+          )
 
         case UnboundedRange(_) =>
           Seq(BoundedByteRange(ByteRange.UnboundedLowerRange, ByteRange.UnboundedUpperRange))
@@ -232,9 +283,11 @@ class Z2TIndexKeySpace(
     }
   }
 
-  override def useFullFilter(values: Option[Z2TIndexValues],
-                             config: Option[GeoMesaDataStoreConfig],
-                             hints: Hints): Boolean = {
+  override def useFullFilter(
+      values: Option[Z2TIndexValues],
+      config: Option[GeoMesaDataStoreConfig],
+      hints: Hints
+  ): Boolean = {
     // if the user has requested strict bounding boxes, we apply the full filter
     // if we have a complicated geometry predicate, we need to pass it through to be evaluated
     // if we have unbounded dates, we need to pass them through as we don't have z-values for all periods
@@ -243,9 +296,10 @@ class Z2TIndexKeySpace(
     // don't need to apply the filter on top of it. this may cause some minor errors at extremely
     // fine resolutions, but the performance is worth it
     val looseBBox =
-    Option(hints.get(LOOSE_BBOX)).map(Boolean.unbox).getOrElse(config.forall(_.queries.looseBBox))
+      Option(hints.get(LOOSE_BBOX)).map(Boolean.unbox).getOrElse(config.forall(_.queries.looseBBox))
     def unboundedDates: Boolean = values.exists(_.temporalUnbounded.nonEmpty)
-    def complexGeoms: Boolean = values.exists(_.geometries.values.exists(g => !GeometryUtils.isRectangular(g)))
+    def complexGeoms: Boolean =
+      values.exists(_.geometries.values.exists(g => !GeometryUtils.isRectangular(g)))
 
     !looseBBox || unboundedDates || complexGeoms
   }
@@ -258,10 +312,16 @@ object Z2TIndexKeySpace extends IndexKeySpaceFactory[Z2TIndexValues, Z2TIndexKey
       classOf[Point].isAssignableFrom(sft.getDescriptor(attributes.head).getType.getBinding) &&
       classOf[Date].isAssignableFrom(sft.getDescriptor(attributes.last).getType.getBinding)
 
-  override def apply(sft: SimpleFeatureType,
-                     attributes: Seq[String],
-                     tier: Boolean): Z2TIndexKeySpace = {
-    val shards = if (tier) { NoShardStrategy } else { ZShardStrategy(sft) }
+  override def apply(
+      sft: SimpleFeatureType,
+      attributes: Seq[String],
+      tier: Boolean
+  ): Z2TIndexKeySpace = {
+    val shards = if (tier) {
+      NoShardStrategy
+    } else {
+      ZShardStrategy(sft)
+    }
     new Z2TIndexKeySpace(sft, shards, attributes.head, attributes.last)
   }
 }

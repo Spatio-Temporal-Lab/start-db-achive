@@ -25,7 +25,11 @@ class CustomFeatureIndexFactory extends GeoMesaFeatureIndexFactory {
   override def indices(sft: SimpleFeatureType, hint: Option[String]): Seq[IndexId] = {
     hint match {
       case None => available.flatMap(i => i.defaults(sft).map(IndexId(i.name, i.version, _)))
-      case Some(h) => fromId(h).orElse(fromName(sft, h)).orElse(fromNameAndAttributes(sft, h)).getOrElse(Seq.empty)
+      case Some(h) =>
+        fromId(h)
+          .orElse(fromName(sft, h))
+          .orElse(fromNameAndAttributes(sft, h))
+          .getOrElse(Seq.empty)
     }
   }
 
@@ -37,7 +41,8 @@ class CustomFeatureIndexFactory extends GeoMesaFeatureIndexFactory {
   override def create[T, U](
       ds: GeoMesaDataStore[_],
       sft: SimpleFeatureType,
-      index: IndexId): Option[GeoMesaFeatureIndex[T, U]] = {
+      index: IndexId
+  ): Option[GeoMesaFeatureIndex[T, U]] = {
 
     lazy val Seq(geom3, dtg) = index.attributes
     lazy val Seq(geom2) = index.attributes
@@ -57,14 +62,22 @@ class CustomFeatureIndexFactory extends GeoMesaFeatureIndexFactory {
       val defaults = i.defaults(sft).collect {
         case attributes if i.supports(sft, attributes) => IndexId(i.name, i.version, attributes)
       }
-      if (defaults.isEmpty) { None } else { Some(defaults) }
+      if (defaults.isEmpty) {
+        None
+      } else {
+        Some(defaults)
+      }
     }
   }
 
   private def fromNameAndAttributes(sft: SimpleFeatureType, hint: String): Option[Seq[IndexId]] = {
     val Array(name, attributes @ _*) = hint.split(":")
     available.find(i => name.equalsIgnoreCase(i.name)).flatMap { i =>
-      if (i.supports(sft, attributes)) { Some(Seq(IndexId(i.name, i.version, attributes))) } else { None }
+      if (i.supports(sft, attributes)) {
+        Some(Seq(IndexId(i.name, i.version, attributes)))
+      } else {
+        None
+      }
     }
   }
 
