@@ -173,6 +173,11 @@
                 <version>${lombok.version}</version>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-epsg-hsql</artifactId>
+                <version>${gt.version}</version>
+            </dependency>
 
             <!-- Test  -->
             <dependency>
@@ -211,12 +216,6 @@
                 <groupId>org.specs2</groupId>
                 <artifactId>specs2-mock_${scala.binary.version}</artifactId>
                 <version>${specs2.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-epsg-hsql</artifactId>
-                <version>${gt.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
