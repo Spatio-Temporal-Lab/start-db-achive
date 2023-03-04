@@ -19,6 +19,10 @@ public class SparkSqlParam extends SqlParam {
     public static final ThreadLocal<SparkSqlParam> CACHE = new ThreadLocal<>();
 
     private String hbaseZookeepers;
+    /**
+     * 是否异步执行
+     */
+    private boolean async;
 
     public String getHbaseZookeepers() {
         return hbaseZookeepers;
@@ -26,5 +30,13 @@ public class SparkSqlParam extends SqlParam {
 
     public void setHbaseZookeepers(String hbaseZookeepers) {
         this.hbaseZookeepers = hbaseZookeepers;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 }

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.urbcomp.cupid.db.algorithm.mapmatch.tihmm.TiHmmMapMatcher;
-import org.urbcomp.cupid.db.algorithm.shortestpath.BiDijkstraShortestPath;
+import org.urbcomp.cupid.db.algorithm.shortestpath.ManyToManyShortestPath;
 import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.point.GPSPoint;
 import org.urbcomp.cupid.db.model.roadnetwork.RoadNetwork;
@@ -117,7 +117,7 @@ public class TrajectoryFunction {
         throws AlgorithmExecuteException, JsonProcessingException {
         TiHmmMapMatcher mapMatcher = new TiHmmMapMatcher(
             roadNetwork,
-            new BiDijkstraShortestPath(roadNetwork)
+            new ManyToManyShortestPath(roadNetwork)
         );
         MapMatchedTrajectory mmTrajectory = mapMatcher.mapMatch(trajectory);
         return mmTrajectory.toGeoJSON();

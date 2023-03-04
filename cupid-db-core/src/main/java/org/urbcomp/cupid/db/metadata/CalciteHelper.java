@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.TimeZone;
 
 /**
  * about model.json
@@ -49,6 +50,8 @@ public class CalciteHelper {
         final Properties p = new Properties();
         p.put(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), "false");
         p.put(CalciteConnectionProperty.MODEL.camelName(), "inline:" + modelJson());
+        p.put(CalciteConnectionProperty.TIME_ZONE.camelName(), "UTC");
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         return DriverManager.getConnection("jdbc:calcite:fun=spatial", p);
     }
 }

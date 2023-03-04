@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.urbcomp.cupid.db.algorithm.mapmatch.routerecover.ShortestPathPathRecover;
 import org.urbcomp.cupid.db.algorithm.shortestpath.BiDijkstraShortestPath;
+import org.urbcomp.cupid.db.algorithm.shortestpath.ManyToManyShortestPath;
 import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.point.GPSPoint;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
@@ -41,7 +42,7 @@ public class TiHmmMapMatcherTest {
     public void setUp() {
         trajectory = ModelGenerator.generateTrajectory();
         RoadNetwork roadNetwork = ModelGenerator.generateRoadNetwork();
-        mapMatcher = new TiHmmMapMatcher(roadNetwork, new BiDijkstraShortestPath(roadNetwork));
+        mapMatcher = new TiHmmMapMatcher(roadNetwork, new ManyToManyShortestPath(roadNetwork));
         recover = new ShortestPathPathRecover(roadNetwork, new BiDijkstraShortestPath(roadNetwork));
     }
 

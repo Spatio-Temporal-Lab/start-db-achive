@@ -12,10 +12,12 @@
 package org.urbcomp.cupid.db
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.slf4j.Logger
 import org.urbcomp.cupid.db.metadata.CalciteHelper
-import org.urbcomp.cupid.db.util.SqlParam
+import org.urbcomp.cupid.db.util.{LogUtil, SqlParam}
 
 import java.sql.Connection
+import java.util.TimeZone
 
 /**
   * Test for Calcite and Geomesa
@@ -24,8 +26,9 @@ import java.sql.Connection
   * @since 0.1.0
   */
 abstract class AbstractCalciteFunctionTest extends FunSuite with BeforeAndAfterAll {
-
   var connect: Connection = _
+  TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+  val log: Logger = LogUtil.getLogger
 
   override protected def beforeAll(): Unit = {
     SqlParam.CACHE.set(new SqlParam("root", "default"))

@@ -22,7 +22,7 @@ import scala.collection.mutable.ArrayBuffer
 class TableExecutorTest extends AbstractCalciteFunctionTest {
 
   private def generateUniqueId(): String = {
-    UUID.randomUUID().toString.replace("-", "_");
+    UUID.randomUUID().toString.replace("-", "_")
   }
 
   test("test create table") {
@@ -65,6 +65,29 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                             |)""".stripMargin.format(uniqueId).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
+  }
+
+  test("test create table with attribute secondary temporal/Z2/Z3 index") {
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE gemo_%s (
+                            |    name String,
+                            |    st Point,
+                            |    et Point,
+                            |    dtg Datetime,
+                            |    ATTRIBUTE INDEX attribute_temporal_index(name, dtg),
+                            |    ATTRIBUTE INDEX attribute_z2_index(name, st),
+                            |    ATTRIBUTE INDEX attribute_z3_index(name, st, dtg)
+                            |)""".stripMargin.format(uniqueId).stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+  }
+
+  test("test create then insert") {
+    val randomId = scala.util.Random.nextInt(Integer.MAX_VALUE)
+    val tableName = "test_create_insert_%d".format(randomId)
+    val stmt = connect.createStatement()
+    stmt.execute("create table %s (tid integer, name string)".format(tableName))
+    stmt.execute("insert into %s values (1, 'tmp')".format(tableName))
   }
 
   test("test show tables") {
@@ -143,7 +166,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                             |);""".stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
-    val rss = stmt.executeQuery(s"describe $tableName")
+    val rss = stmt.executeQuery("describe %s".format(tableName))
     var fields = List[String]()
     while (rss.next()) {
       fields = fields :+ s"${rss.getString(1)}:${rss.getString(2)}:${rss.getString(3)}"
@@ -160,11 +183,11 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                             |);""".stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
-    val rss = stmt.executeQuery(s"show create table $tableName")
+    val rss = stmt.executeQuery("show create table %s".format(tableName))
     if (!rss.next()) {
-      throw new AssertionError("unexpected show create table no result");
+      throw new AssertionError("unexpected show create table no result")
     }
-    val sql = rss.getString(2);
+    val sql = rss.getString(2)
     assertEquals(
       "CREATE TABLE test_show_create_table (tr Trajectory, rs RoadSegment, gm Geometry)",
       sql
