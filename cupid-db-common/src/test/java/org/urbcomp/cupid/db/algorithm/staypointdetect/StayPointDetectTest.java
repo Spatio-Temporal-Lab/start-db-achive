@@ -29,7 +29,7 @@ public class StayPointDetectTest {
 
     @Before
     public void setup() {
-        trajectory = ModelGenerator.generateTrajectory();
+        trajectory = ModelGenerator.generateTrajectory("./data/stayPointSegmentationTraj.txt");
         stayPointDetect = new StayPointDetect();
         d = 10;
         t = 10;

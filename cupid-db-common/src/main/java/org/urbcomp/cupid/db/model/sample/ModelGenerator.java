@@ -33,32 +33,7 @@ import java.util.stream.Collectors;
 
 public class ModelGenerator {
     public static Trajectory generateTrajectory() {
-        try (
-            InputStream in = ModelGenerator.class.getClassLoader()
-                .getResourceAsStream("data/traj.txt");
-            BufferedReader br = new BufferedReader(
-                new InputStreamReader(Objects.requireNonNull(in))
-            )
-        ) {
-            String trajStr = br.readLine();
-            String correctStr = trajStr.replaceFirst("\\[", "[\"").replaceFirst(",", "\",");
-            List<String> result = JSON.parseArray(correctStr, String.class);
-            String oid = result.get(0);
-            List<String> pointsStrList = JSON.parseArray(result.get(1), String.class);
-            List<GPSPoint> pointsList = pointsStrList.stream()
-                .map(o -> JSON.parseArray(o, String.class))
-                .map(
-                    o -> new GPSPoint(
-                        Timestamp.valueOf(o.get(0)),
-                        Double.parseDouble(o.get(1)),
-                        Double.parseDouble(o.get(2))
-                    )
-                )
-                .collect(Collectors.toList());
-            return new Trajectory(oid + pointsList.get(0).getTime(), oid, pointsList);
-        } catch (IOException e) {
-            throw new RuntimeException("Generate trajectory error: " + e.getMessage());
-        }
+        return generateTrajectory("data/traj.txt");
     }
 
     public static Trajectory generateTrajectory(String trajFile) {
