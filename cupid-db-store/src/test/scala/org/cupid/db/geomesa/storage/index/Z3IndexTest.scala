@@ -86,8 +86,10 @@ class Z3IndexTest extends Specification with LazyLogging {
           "bbox(geom,0,55,70,65) AND dtg during 2020-12-01T00:00:00.000Z/2020-12-31T23:59:59.999Z"
         )
 
-        SelfClosingIterator(ds.getFeatureReader(new Query("test", filter), Transaction.AUTO_COMMIT)).toList must
-          containTheSameElementsAs(features)
+        val filterReault = SelfClosingIterator(
+          ds.getFeatureReader(new Query("test", filter), Transaction.AUTO_COMMIT)
+        ).toList
+        filterReault must containTheSameElementsAs(features)
 
         val lastDayFilter = ECQL.toFilter(
           "bbox(geom,9,59,12,61) AND dtg during 2020-12-31T00:00:00.000Z/2020-12-31T23:59:59.999Z"

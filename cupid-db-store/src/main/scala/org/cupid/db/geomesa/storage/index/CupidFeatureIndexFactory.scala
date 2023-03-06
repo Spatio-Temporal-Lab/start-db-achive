@@ -18,7 +18,7 @@ import org.locationtech.geomesa.utils.conf.IndexId
 import org.opengis.feature.simple.SimpleFeatureType
 import scala.util.Try
 
-class CustomFeatureIndexFactory extends GeoMesaFeatureIndexFactory {
+class CupidFeatureIndexFactory extends GeoMesaFeatureIndexFactory {
 
   private val available = Seq(Z2TIndex)
 

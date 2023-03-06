@@ -31,13 +31,12 @@ class Z2TIndexTest extends Specification with LazyLogging {
       foreach(Seq("z2t:geom:dtg")) { indices =>
         val spec =
           "name:String,track:String,dtg:Date,*geom:Point:srid=4326;" +
-            s"geomesa.z2t.interval=year,geomesa.indices.enabled=$indices"
+            s"geomesa.z3.interval=year,geomesa.indices.enabled=$indices"
 
         val sft = SimpleFeatureTypes.createType("test", spec)
 
         val ds = new TestGeoMesaDataStore(true) // loose bbox
 
-        // note: 2020 was a leap year
         val features =
           (0 until 10).map { i =>
             ScalaSimpleFeature.create(
@@ -89,7 +88,7 @@ class Z2TIndexTest extends Specification with LazyLogging {
         val filterReault = SelfClosingIterator(
           ds.getFeatureReader(new Query("test", filter), Transaction.AUTO_COMMIT)
         ).toList
-        filterReault must not be empty
+        filterReault must containTheSameElementsAs(features)
 
         val lastDayFilter = ECQL.toFilter(
           "bbox(geom,9,59,12,61) AND dtg during 2022-12-31T00:00:00.000Z/2022-12-31T23:59:59.999Z"
@@ -99,7 +98,6 @@ class Z2TIndexTest extends Specification with LazyLogging {
           SelfClosingIterator(
             ds.getFeatureReader(new Query("test", lastDayFilter), Transaction.AUTO_COMMIT)
           ).toList
-
         lastDayResults must not be empty
       }
     }

@@ -21,7 +21,7 @@ import org.locationtech.sfcurve.zorder.ZRange
   *
   * @param precision bits used per dimension - note all precisions must sum to less than 64
   */
-class Z2TSFC(precision: Int = 21) extends SpaceFillingCurve {
+class Z2TSFC(precision: Int) extends SpaceFillingCurve {
 
   val lon: NormalizedDimension = NormalizedLon(precision)
   val lat: NormalizedDimension = NormalizedLat(precision)
