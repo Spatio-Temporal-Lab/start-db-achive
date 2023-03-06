@@ -176,6 +176,8 @@ class Z2TIndexKeySpace(
         if (lb == ub) {
           timesByBin += lb.toShort
         } else {
+          timesByBin += lb.toShort
+          timesByBin += ub.toShort
           Range.inclusive(lb + 1, ub - 1).foreach(b => timesByBin += b.toShort)
         }
       } else if (interval.lower.value.isDefined) {
