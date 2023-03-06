@@ -95,8 +95,8 @@ class Z2TIndexTest extends Specification with LazyLogging {
         )
 
         val lastDayResults = SelfClosingIterator(
-            ds.getFeatureReader(new Query("test", lastDayFilter), Transaction.AUTO_COMMIT)
-          ).toList
+          ds.getFeatureReader(new Query("test", lastDayFilter), Transaction.AUTO_COMMIT)
+        ).toList
         lastDayResults must not be empty
       }
     }
