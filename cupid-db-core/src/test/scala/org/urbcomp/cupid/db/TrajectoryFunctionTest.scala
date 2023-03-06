@@ -171,7 +171,7 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
       seg += 1
     }
     assertEquals(seg, 3)
-    assertEquals(trajectory.getGPSPointList.size - 12, count)
+    assertEquals(trajectory.getGPSPointList.size - 8, count)
 
   }
 

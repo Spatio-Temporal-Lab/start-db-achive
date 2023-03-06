@@ -37,7 +37,7 @@ public class StayPointSegmentTest {
         List<Trajectory> subTrajectory = trajectorySegment.segment(trajectory);
         int totalSize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
         assertEquals(subTrajectory.size(), 3);
-        assertEquals(trajectory.getGPSPointList().size() - 12, totalSize); // 12 stay points
+        assertEquals(trajectory.getGPSPointList().size() - 8, totalSize); // 8 stay points
 
     }
 }
