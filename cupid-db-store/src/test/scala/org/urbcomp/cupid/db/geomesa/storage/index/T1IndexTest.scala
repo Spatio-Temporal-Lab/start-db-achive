@@ -26,7 +26,7 @@ import org.specs2.runner.JUnitRunner
 class T1IndexTest extends Specification with LazyLogging {
 
   "T1Index" should {
-    "index and query yearly epochs correctly" in {
+    "index and query epochs correctly" in {
       foreach(Seq("t1:dtg")) { indices =>
         val spec = "name:String,track:String,dtg:Date;" + s"geomesa.indices.enabled=$indices"
 

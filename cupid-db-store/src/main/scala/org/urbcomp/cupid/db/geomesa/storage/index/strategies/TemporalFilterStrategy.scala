@@ -18,7 +18,6 @@ import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.filter.Filter
 
 trait TemporalFilterStrategy[T, U] extends GeoMesaFeatureIndex[T, U] {
-  // attributes are assumed to be a geometry field and a date field
   lazy private val Seq(dtg) = attributes
 
   override def getFilterStrategy(

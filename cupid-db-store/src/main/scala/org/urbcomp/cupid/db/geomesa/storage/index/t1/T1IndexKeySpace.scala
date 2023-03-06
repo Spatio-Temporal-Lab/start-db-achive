@@ -67,7 +67,6 @@ class T1IndexKeySpace(val sft: SimpleFeatureType, dtgField: String)
       id: Array[Byte],
       lenient: Boolean
   ): RowKeyValue[Long] = {
-    // note: only used as a tiered keyspace so tier and id will be empty
     val dtg = writable.getAttribute[Date](dtgIndex)
     val time = if (dtg == null) {
       Long.MinValue
