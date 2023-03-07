@@ -15,12 +15,14 @@ import org.apache.calcite.schema.impl.{AggregateFunctionImpl, TableFunctionImpl}
 import org.apache.calcite.schema.{Schema, SchemaFactory, SchemaPlus}
 import org.urbcomp.cupid.db.function.udaf.CollectList
 import org.urbcomp.cupid.db.udtf.{
+  DBSCANClustering,
   Fibonacci,
+  KMeansClustering,
   StayPointDetect,
-  TimeIntervalTrajectorySegment,
   StayPointTrajectorySegment,
-  DBSCANClustering
+  TimeIntervalTrajectorySegment
 }
+
 import java.util
 
 /**
@@ -58,6 +60,10 @@ class GeomesaSchemaFactory extends SchemaFactory {
       TableFunctionImpl.create(DBSCANClustering.DBSCAN_CLUSTERING_TABLE_METHOD)
     )
     schemaPlus.add("st_collect_list", AggregateFunctionImpl.create(classOf[CollectList]))
+    schemaPlus.add(
+      "st_kmeans_clustering",
+      TableFunctionImpl.create(KMeansClustering.KMEANS_CLUSTERING_TABLE_METHOD)
+    )
   }
 
 }

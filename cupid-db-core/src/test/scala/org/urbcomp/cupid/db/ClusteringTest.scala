@@ -29,7 +29,6 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
   val tGeo: String = trajectory.toGeoJSON
 
   test("dbscan test1") {
-    log.debug("Start")
     val statement = connect.createStatement()
     statement.executeUpdate("DROP TABLE IF EXISTS dbscan_test1")
     statement.executeUpdate("create table dbscan_test1 (points point)")
@@ -45,7 +44,6 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
     statement.executeUpdate(
       "insert into table dbscan_test1 values (st_makePoint(1.000040, 2.000030))"
     )
-    log.info("Insert points finished")
     val resultSet =
       statement.executeQuery(
         "select st_dbscan_clustering(t1, 1.6, 2) " +
@@ -56,20 +54,50 @@ class ClusteringTest extends AbstractCalciteFunctionTest {
     while (resultSet.next()) {
       results += resultSet.getObject(1).toString
     }
-    log.debug("Fetch result finished")
     assertEquals(results.size, 2)
     val sortedResults = results.toList.sorted
-    try {
-      assert(
-        sortedResults(0) == "MULTIPOINT ((1 2), (1.00001 2.00001))" || sortedResults(0) == "MULTIPOINT ((1.00001 2.00001), (1 2))"
+    assert(
+      sortedResults(0) == "MULTIPOINT ((1 2), (1.00001 2.00001))" || sortedResults(0) == "MULTIPOINT ((1.00001 2.00001), (1 2))"
+    )
+    assert(
+      sortedResults(1) == "MULTIPOINT ((1.00003 2.00002), (1.00004 2.00003))" || sortedResults(1) == "MULTIPOINT ((1.00004 2.00003), (1.00003 2.00002))"
+    )
+  }
+
+  test("kmeans") {
+    val statement = connect.createStatement()
+    statement.executeUpdate("DROP TABLE IF EXISTS kmeans_test1")
+    statement.executeUpdate("create table kmeans_test1 (points point)")
+    statement.executeUpdate(
+      "insert into table kmeans_test1 values (st_makePoint(1.000000, 2.000000))"
+    )
+    statement.executeUpdate(
+      "insert into table kmeans_test1 values (st_makePoint(1.000010, 2.000010))"
+    )
+    statement.executeUpdate(
+      "insert into table kmeans_test1 values (st_makePoint(1.000030, 2.000020))"
+    )
+    statement.executeUpdate(
+      "insert into table kmeans_test1 values (st_makePoint(1.000040, 2.000030))"
+    )
+    val resultSet =
+      statement.executeQuery(
+        "select st_kmeans_clustering(t1, 2) " +
+          "from " +
+          "(select collect_list(points) as t1 from kmeans_test1)"
       )
-      assert(
-        sortedResults(1) == "MULTIPOINT ((1.00003 2.00002), (1.00004 2.00003))" || sortedResults(1) == "MULTIPOINT ((1.00004 2.00003), (1.00003 2.00002))"
-      )
-      log.info("Passed")
-    } catch {
-      case _: Exception => log.debug(sortedResults.toString)
+    val results = ListBuffer[String]()
+    while (resultSet.next()) {
+      results += resultSet.getObject(1).toString
     }
+    assertEquals(results.size, 2)
+    val sortedResults = results.toList.sorted
+    assert(
+      sortedResults(0) == "MULTIPOINT ((1 2), (1.00001 2.00001))" || sortedResults(0) == "MULTIPOINT ((1.00001 2.00001), (1 2))"
+    )
+    assert(
+      sortedResults(1) == "MULTIPOINT ((1.00003 2.00002), (1.00004 2.00003))" || sortedResults(1) == "MULTIPOINT ((1.00004 2.00003), (1.00003 2.00002))"
+    )
   }
 
 }
