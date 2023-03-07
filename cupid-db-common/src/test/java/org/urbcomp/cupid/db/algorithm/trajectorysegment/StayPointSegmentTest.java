@@ -36,8 +36,6 @@ public class StayPointSegmentTest {
         List<Trajectory> subTrajectory = trajectorySegment.segment(trajectory);
         int totalSize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
         assertEquals(subTrajectory.size(), 3);
-        System.out.println(trajectory.getGPSPointList().size() - 8);
-        System.out.println(totalSize);
         assertEquals(trajectory.getGPSPointList().size() - 8, totalSize); // 8 gps points belong to
                                                                           // stay points
 
