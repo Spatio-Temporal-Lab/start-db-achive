@@ -31,7 +31,7 @@ public class TimeIntervalSegmentTest {
     }
 
     @Test
-    public void TimeIntervalSegmentTest() {
+    public void timeIntervalSegmentTest() {
         trajectorySegment = new TimeIntervalSegment(2);
         List<Trajectory> subTrajectory = trajectorySegment.segment(trajectory);
         assertEquals(subTrajectory.size(), 117);

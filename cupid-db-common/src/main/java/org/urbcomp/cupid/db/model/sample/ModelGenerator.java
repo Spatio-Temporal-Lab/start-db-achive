@@ -33,9 +33,12 @@ import java.util.stream.Collectors;
 
 public class ModelGenerator {
     public static Trajectory generateTrajectory() {
+        return generateTrajectory("data/traj.txt");
+    }
+
+    public static Trajectory generateTrajectory(String trajFile) {
         try (
-            InputStream in = ModelGenerator.class.getClassLoader()
-                .getResourceAsStream("data/traj.txt");
+            InputStream in = ModelGenerator.class.getClassLoader().getResourceAsStream(trajFile);
             BufferedReader br = new BufferedReader(
                 new InputStreamReader(Objects.requireNonNull(in))
             )

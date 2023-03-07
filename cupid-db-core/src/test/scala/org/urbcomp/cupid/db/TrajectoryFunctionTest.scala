@@ -155,24 +155,46 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
 
   }
 
+  test("st_traj_stayPointSegment") {
+    val statement = connect.createStatement()
+    val trajectorySeg: Trajectory =
+      ModelGenerator.generateTrajectory("./data/stayPointSegmentationTraj.txt")
+    val tGeoSeg: String = trajectorySeg.toGeoJSON
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_stayPointSegment(st_traj_fromGeoJSON(\'" + tGeoSeg + "\')," + 10 + "," + 10 + ")"
+      )
+    var count = 0
+    var seg = 0
+    while (resultSet.next()) {
+      count = count + Trajectory.fromGeoJSON(resultSet.getObject(1).toString).getGPSPointList.size()
+      seg += 1
+    }
+    assertEquals(seg, 3)
+    assertEquals(trajectory.getGPSPointList.size - 8, count)
+
+  }
+
   test("st_traj_stayPointDetect") {
-    val statement = connect.createStatement
+    val statement = connect.createStatement()
+    val trajectoryStp: Trajectory =
+      ModelGenerator.generateTrajectory("./data/stayPointSegmentationTraj.txt")
+    val tGeoStp: String = trajectoryStp.toGeoJSON
     val resultSet1 = statement.executeQuery(
-      "select st_traj_stayPointDetect(st_traj_fromGeoJSON(\'" + tGeo + "\'),10,10)"
+      "select st_traj_stayPointDetect(st_traj_fromGeoJSON(\'" + tGeoStp + "\'),10,10)"
     )
     resultSet1.next()
-    assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject(1).toString)
-    assertEquals("2018-10-09 07:30:21.0", resultSet1.getObject("startTime").toString)
-    assertEquals("2018-10-09 07:30:27.0", resultSet1.getObject(2).toString)
+    assertEquals("2018-10-09 07:28:24.0", resultSet1.getObject(1).toString)
+    assertEquals("2018-10-09 07:28:39.0", resultSet1.getObject(2).toString)
     assertEquals(
-      "[POINT (108.99549 34.26714), POINT (108.9955 34.26707), POINT (108.99549 34.26704)]",
+      "[POINT (108.99552 34.27822), POINT (108.99552 34.27822), POINT (108.99552 34.27822), POINT (108.99552 34.27822), POINT (108.99552 34.27822), POINT (108.99552 34.27822)]",
       resultSet1.getObject(3).toString
     )
     resultSet1.next()
-    assertEquals("2018-10-09 07:32:51.0", resultSet1.getObject(1).toString)
-    assertEquals("2018-10-09 07:32:57.0", resultSet1.getObject(2).toString)
+    assertEquals("2018-10-09 07:30:01.0", resultSet1.getObject(1).toString)
+    assertEquals("2018-10-09 07:30:15.0", resultSet1.getObject(2).toString)
     assertEquals(
-      "[POINT (108.99652 34.25826), POINT (108.99647 34.25821), POINT (108.99639 34.25818)]",
+      "[POINT (108.99546 34.26891), POINT (108.99546 34.26891), POINT (108.99546 34.26891), POINT (108.99546 34.26891), POINT (108.99546 34.26891), POINT (108.99546 34.26891)]",
       resultSet1.getObject(3).toString
     )
   }
