@@ -15,12 +15,12 @@ package t1
 import org.geotools.util.factory.Hints
 import org.locationtech.geomesa.filter.{Bounds, FilterHelper, FilterValues}
 import org.locationtech.geomesa.index.api.IndexKeySpace.IndexKeySpaceFactory
-import org.locationtech.geomesa.index.api.ShardStrategy.NoShardStrategy
 import org.locationtech.geomesa.index.api.{
   BoundedByteRange,
   BoundedRange,
   ByteRange,
   IndexKeySpace,
+  LowerBoundedRange,
   RowKeyValue,
   ScanRange,
   ShardStrategy,
@@ -29,6 +29,7 @@ import org.locationtech.geomesa.index.api.{
   SingleRowRange,
   UnboundedByteRange,
   UnboundedRange,
+  UpperBoundedRange,
   WritableFeature
 }
 import org.locationtech.geomesa.index.geotools.GeoMesaDataStoreFactory.GeoMesaDataStoreConfig
@@ -36,11 +37,12 @@ import org.locationtech.geomesa.index.utils.Explainer
 import org.locationtech.geomesa.utils.index.ByteArrays
 import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.filter.Filter
+import org.urbcomp.cupid.db.geomesa.storage.index.CupidShardStrategy.T1ShardStrategy
 
 import java.time.ZonedDateTime
 import java.util.Date
 
-class T1IndexKeySpace(val sft: SimpleFeatureType, dtgField: String)
+class T1IndexKeySpace(val sft: SimpleFeatureType, val sharding: ShardStrategy, dtgField: String)
     extends IndexKeySpace[FilterValues[Bounds[ZonedDateTime]], Long] {
 
   import T1IndexKeySpace.{Empty, MaxUpperBound, MinLowerBound}
@@ -55,11 +57,11 @@ class T1IndexKeySpace(val sft: SimpleFeatureType, dtgField: String)
 
   override val attributes: Seq[String] = Seq(dtgField)
 
+  override val indexKeyByteLength: Right[(Array[Byte], Int, Int) => Int, Int] = Right(
+    8 + sharding.length
+  )
+
   override val sharing: Array[Byte] = Empty
-
-  override val sharding: ShardStrategy = NoShardStrategy
-
-  override val indexKeyByteLength: Right[(Array[Byte], Int, Int) => Int, Int] = Right(8)
 
   override def toIndexKey(
       writable: WritableFeature,
@@ -74,10 +76,18 @@ class T1IndexKeySpace(val sft: SimpleFeatureType, dtgField: String)
       dtg.getTime
     }
 
-    val bytes = Array.ofDim[Byte](8 + id.length)
-    ByteArrays.writeOrderedLong(time, bytes, 0);
-    System.arraycopy(id, 0, bytes, 8, id.length)
-    SingleRowKeyValue(bytes, Empty, Empty, time, tier, id, writable.values)
+    val shard = sharding(writable)
+    val bytes = Array.ofDim[Byte](shard.length + 8 + id.length)
+
+    if (shard.isEmpty) {
+      ByteArrays.writeLong(time, bytes, 0);
+      System.arraycopy(id, 0, bytes, 8, id.length)
+    } else {
+      bytes(0) = shard.head
+      ByteArrays.writeLong(time, bytes, 1);
+      System.arraycopy(id, 0, bytes, 9, id.length)
+    }
+    SingleRowKeyValue(bytes, Empty, shard, time, tier, id, writable.values)
   }
 
   override def getIndexValues(
@@ -125,23 +135,52 @@ class T1IndexKeySpace(val sft: SimpleFeatureType, dtgField: String)
       ranges: Iterator[ScanRange[Long]],
       tier: Boolean
   ): Iterator[ByteRange] = {
-    ranges.map {
-      case BoundedRange(lo, hi) =>
-        BoundedByteRange(ByteArrays.toOrderedBytes(lo), ByteArrays.toOrderedBytes(hi))
-
-      case SingleRowRange(row) =>
-        val ordered = ByteArrays.toOrderedBytes(row)
-        if (tier) {
-          SingleRowByteRange(ordered)
-        } else {
-          BoundedByteRange(ordered, ByteArrays.rowFollowingPrefix(ordered))
-        }
-
-      case UnboundedRange(_) =>
-        val max = ByteArrays.rowFollowingPrefix(ByteArrays.toOrderedBytes(MaxUpperBound))
-        UnboundedByteRange(ByteArrays.toOrderedBytes(MinLowerBound), max)
-
-      case r => throw new IllegalArgumentException(s"Unexpected range type $r")
+    if (sharding.length == 0) {
+      ranges.map {
+        case BoundedRange(lo, hi) =>
+          BoundedByteRange(ByteArrays.toBytes(lo), ByteArrays.toBytesFollowingPrefix(hi))
+        case SingleRowRange(row) =>
+          BoundedByteRange(ByteArrays.toBytes(row), ByteArrays.toBytesFollowingPrefix(row))
+        case LowerBoundedRange(lo) =>
+          BoundedByteRange(ByteArrays.toBytes(lo), ByteRange.UnboundedUpperRange)
+        case UpperBoundedRange(hi) =>
+          BoundedByteRange(ByteRange.UnboundedLowerRange, ByteArrays.toBytesFollowingPrefix(hi))
+        case UnboundedRange(_) =>
+          BoundedByteRange(ByteRange.UnboundedLowerRange, ByteRange.UnboundedUpperRange)
+        case r =>
+          throw new IllegalArgumentException(s"Unexpected range type $r")
+      }
+    } else {
+      ranges.flatMap {
+        case BoundedRange(lo, hi) =>
+          val lower = ByteArrays.toBytes(lo)
+          val upper = ByteArrays.toBytesFollowingPrefix(hi)
+          sharding.shards.map(
+            p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper))
+          )
+        case SingleRowRange(row) =>
+          val lower = ByteArrays.toBytes(row)
+          val upper = ByteArrays.toBytesFollowingPrefix(row)
+          sharding.shards.map(
+            p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper))
+          )
+        case LowerBoundedRange(lo) =>
+          val lower = ByteArrays.toBytes(lo)
+          val upper = ByteRange.UnboundedUpperRange
+          sharding.shards.map(
+            p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper))
+          )
+        case UpperBoundedRange(hi) =>
+          val lower = ByteRange.UnboundedLowerRange
+          val upper = ByteArrays.toBytesFollowingPrefix(hi)
+          sharding.shards.map(
+            p => BoundedByteRange(ByteArrays.concat(p, lower), ByteArrays.concat(p, upper))
+          )
+        case UnboundedRange(_) =>
+          Seq(BoundedByteRange(ByteRange.UnboundedLowerRange, ByteRange.UnboundedUpperRange))
+        case r =>
+          throw new IllegalArgumentException(s"Unexpected range type $r")
+      }
     }
   }
 
@@ -168,6 +207,7 @@ object T1IndexKeySpace extends IndexKeySpaceFactory[FilterValues[Bounds[ZonedDat
       sft: SimpleFeatureType,
       attributes: Seq[String],
       tier: Boolean
-  ): T1IndexKeySpace =
-    new T1IndexKeySpace(sft, attributes.head)
+  ): T1IndexKeySpace = {
+    new T1IndexKeySpace(sft, T1ShardStrategy(sft), attributes.head)
+  }
 }

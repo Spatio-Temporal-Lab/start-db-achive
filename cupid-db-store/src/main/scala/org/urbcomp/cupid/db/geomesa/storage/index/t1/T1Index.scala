@@ -18,6 +18,7 @@ import org.locationtech.geomesa.index.geotools.GeoMesaDataStore
 import org.locationtech.geomesa.index.index.ConfiguredIndex
 import org.locationtech.geomesa.utils.index.IndexMode.IndexMode
 import org.opengis.feature.simple.SimpleFeatureType
+import org.urbcomp.cupid.db.geomesa.storage.index.CupidShardStrategy.T1ShardStrategy
 import org.urbcomp.cupid.db.geomesa.storage.index.strategies.TemporalFilterStrategy
 
 import java.time.ZonedDateTime
@@ -41,7 +42,7 @@ class T1Index protected (
   def this(ds: GeoMesaDataStore[_], sft: SimpleFeatureType, dtgField: String, mode: IndexMode) =
     this(ds, sft, T1Index.version, dtgField, mode)
 
-  override val keySpace: T1IndexKeySpace = new T1IndexKeySpace(sft, dtg)
+  override val keySpace: T1IndexKeySpace = new T1IndexKeySpace(sft, T1ShardStrategy(sft), dtg)
 
   override val tieredKeySpace: Option[IndexKeySpace[_, _]] = None
 }

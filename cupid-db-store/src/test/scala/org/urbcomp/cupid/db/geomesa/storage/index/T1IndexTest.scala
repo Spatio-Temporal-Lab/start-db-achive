@@ -27,12 +27,12 @@ class T1IndexTest extends Specification with LazyLogging {
 
   "T1Index" should {
     "index and query epochs correctly" in {
-      foreach(Seq("t1:dtg")) { indices =>
+      foreach(Seq("t1:dtg", "t1:1:dtg")) { indices =>
         val spec = "name:String,track:String,dtg:Date;" + s"geomesa.indices.enabled=$indices"
 
         val sft = SimpleFeatureTypes.createType("test", spec)
 
-        val ds = new TestGeoMesaDataStore(true) // loose bbox
+        val ds = new TestGeoMesaDataStore(true)
 
         // note: 2020 was a leap year
         val features =
