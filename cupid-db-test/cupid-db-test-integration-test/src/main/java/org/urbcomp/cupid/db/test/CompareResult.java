@@ -28,32 +28,32 @@ public class CompareResult {
      * @param actualArray 实际返回内容
      * @param expectArray 预期返回内容
      * */
-    public static void compareArrayData(
+    public static void compareResult(
         ArrayList<String> actualArray,
         ArrayList<String> expectArray
     ) throws Exception {
-        // 比较预期异常信息
-        /*if (expectArray.get(0).startsWith("error:")) {
-            String expect = expectArray.get(0);
-            String actual = actualArray.get(0);
-            expect = expect.replace("error:", "").trim();
-            if (actual.contains(expect)) {
-                throw new Exception("异常不符合预期");
+        if (actualArray.size() != expectArray.size()) {
+            throw new Exception("预期结果数与实际返回结果数不一致");
+        }
+        for (int i = 1; i < actualArray.size(); i++) {
+            if (!actualArray.get(i).equals(expectArray.get(i))) {
+                throw new Exception("返回数据有误");
             }
-            // 比较预期结果
-        } */
-        if(!expectArray.get(0).startsWith("error:")) {
-            if (actualArray.size() != expectArray.size()) {
-                throw new Exception("预期结果数与实际返回结果数不一致");
-            }
-            for (int i = 1; i < actualArray.size(); i++) {
-                // 预期数据的替换
-                String expectStr = dataTransform(expectArray.toString());
-                // 判断实际返回的每一行数据是否都在预期值中
-                if (!expectStr.contains(actualArray.get(i))) {
-                    throw new Exception("返回数据有误");
-                }
-            }
+        }
+    }
+
+    /**
+     * 比较实际异常与预期异常
+     *
+     * @param actualArray 实际异常
+     * @param expectArray 预期异常
+     * */
+    public static void compareException(
+    ArrayList<String> actualArray,
+    ArrayList<String> expectArray
+    ) throws Exception  {
+        if (!actualArray.get(0).contains(expectArray.get(0))) {
+            throw new Exception("异常不符合预期");
         }
     }
 }

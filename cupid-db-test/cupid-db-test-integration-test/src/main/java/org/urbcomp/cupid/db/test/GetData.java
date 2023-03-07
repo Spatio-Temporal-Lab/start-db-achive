@@ -84,10 +84,14 @@ public class GetData {
      *
      * @param expectData 预期字符串
      * @param filePath sql用例的文件路径
+     * @param resultID 预期数据的ID
      * @return 预期内容
      * */
-    public static ArrayList<String> getExpectDataArray(String expectData, String filePath, int count)
-        throws Exception {
+    public static ArrayList<String> getExpectDataArray(
+        String expectData,
+        String filePath,
+        String resultID
+    ) throws Exception {
         // 获取储存预期数据的xml文件路径
         File parentFile = new File(filePath).getParentFile();
         String expectedPath = parentFile.getPath()
@@ -104,27 +108,32 @@ public class GetData {
         Document document = saxReader.read(expectedPath);
         Element rootElement = document.getRootElement();
 
-        // 获取当前执行sql的标签
-        List<Element> sqlElements = rootElement.elements();
-        Element sqlElement = sqlElements.get(count);
+        // 根据resultID获取当前执行sql的预期结果标签
+        List<Element> resultElements = rootElement.elements();
+        int id = Integer.valueOf(resultID);
+        if(id - 1 > resultElements.size() || id < 1)
+            throw new Exception("resultID不对");
+        Element resultElement = resultElements.get(id - 1);
 
         // 获取column标签的内容
-        Element columnElement = sqlElement.element("column");
-        String filedName = columnElement.attributeValue("name");
-        String filedType = columnElement.attributeValue("type");
-        expectValue.append(filedName).append("\t");
-        expectedArray.add(expectValue.toString());
-        expectValue.setLength(0);
-        expectValue.append(filedType).append("\t");
-        expectedArray.add(expectValue.toString());
-        expectValue.setLength(0);
-
-        // 获取row标签的内容
-        List<Element> rowElements = sqlElement.elements("row");
-        for (Element rowElement : rowElements) {
-            String rowText = rowElement.getText();
-            expectedArray.add(rowText+"\t");
+        List<Element> columnElements = resultElement.elements();
+        for(Element columnElement : columnElements) {
+            String filedName = columnElement.attributeValue("name");
+            String filedType = columnElement.attributeValue("type");
+            expectValue.append(filedName).append("\t");
+            expectedArray.add(expectValue.toString());
+            expectValue.setLength(0);
+            expectValue.append(filedType).append("\t");
+            expectedArray.add(expectValue.toString());
+            expectValue.setLength(0);
+            // 获取row标签的内容
+            List<Element> rowElements = columnElement.elements("row");
+            for (Element rowElement : rowElements) {
+                String rowText = rowElement.getText();
+                expectedArray.add(rowText + "\t");
+            }
         }
+
         return expectedArray;
     }
 

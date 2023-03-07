@@ -37,13 +37,14 @@ public class MainTest {
 
     @Test
     @Ignore
-    public void testdrop()throws Exception{
-        try (Connection connection = getConnect();
-             Statement statement = connection.createStatement();)
-        {
+    public void testdrop() throws Exception {
+        try (
+            Connection connection = getConnect();
+            Statement statement = connection.createStatement()
+        ) {
             statement.executeUpdate("create database if not exists testdrop");
             statement.executeUpdate("drop database testdrop");
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
@@ -90,7 +91,7 @@ public class MainTest {
     public void singleSQLCaseTest() throws Exception {
         // 执行单个xml测试用例文件
         String xmlResource = Objects.requireNonNull(
-            RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/test0.xml")
+            RunSingleSQLCase.class.getClassLoader().getResource("cases/udf/math.xml")
         ).getPath();
         log.info("xmlResource:" + xmlResource);
         runSingleCase(xmlResource);
