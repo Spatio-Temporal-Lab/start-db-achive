@@ -22,7 +22,7 @@ import java.util.List;
 public class StayPointSegment implements AbstractTrajectorySegment {
     private final double maxStayTimeInSecond;
     private final double maxDistInMeter;
-    private static StayPointDetect stayPointDetect = new StayPointDetect();
+    private final StayPointDetect stayPointDetect = new StayPointDetect();
 
     public StayPointSegment(double maxStayTimeInSecond, double maxDistInMeter) {
         this.maxStayTimeInSecond = maxStayTimeInSecond;

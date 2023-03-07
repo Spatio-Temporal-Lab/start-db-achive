@@ -42,7 +42,7 @@ public class StayPointDetect implements IStayPointDetect {
             }
             if (j > i + 1
                 && ((list.get(j - 1).getTime().getTime() - list.get(i).getTime().getTime()))
-                    / 1000 >= t) {
+                    / 1000.0 >= t) {
                 if (newSpFlag) {
                     start = i;
                     newSpFlag = false;

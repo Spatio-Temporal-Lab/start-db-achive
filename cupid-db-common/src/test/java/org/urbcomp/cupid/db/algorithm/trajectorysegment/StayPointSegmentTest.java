@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 
 public class StayPointSegmentTest {
 
-    private static StayPointSegment trajectorySegment;
     private static Trajectory trajectory;
 
     @Before
@@ -32,12 +31,13 @@ public class StayPointSegmentTest {
     }
 
     @Test
-    public void StayPointSegmentTest() {
-        trajectorySegment = new StayPointSegment(10, 10);
+    public void stayPointSegmentTest() {
+        StayPointSegment trajectorySegment = new StayPointSegment(10, 10);
         List<Trajectory> subTrajectory = trajectorySegment.segment(trajectory);
         int totalSize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
         assertEquals(subTrajectory.size(), 3);
-        assertEquals(trajectory.getGPSPointList().size() - 8, totalSize); // 8 stay points
+        assertEquals(trajectory.getGPSPointList().size() - 8, totalSize); // 8 gps points belong to
+                                                                          // stay points
 
     }
 }
