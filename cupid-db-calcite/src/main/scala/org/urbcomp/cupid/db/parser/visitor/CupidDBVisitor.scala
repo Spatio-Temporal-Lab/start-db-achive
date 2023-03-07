@@ -550,7 +550,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
       ).asJava
       new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
     } else if (ctx.ident().getText.equalsIgnoreCase("st_dbscan_clustering")
-    || ctx.ident().getText.equalsIgnoreCase("st_kmeans_clustering")) {
+               || ctx.ident().getText.equalsIgnoreCase("st_kmeans_clustering")) {
       val nodeList = List(
         new SqlIdentifier("cluster", pos),
         new SqlIdentifier("clusterCentroid", pos),
