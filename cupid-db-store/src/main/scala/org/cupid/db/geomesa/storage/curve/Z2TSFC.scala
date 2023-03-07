@@ -14,7 +14,7 @@ package org.cupid.db.geomesa.storage.curve
 import org.locationtech.geomesa.curve.NormalizedDimension.{NormalizedLat, NormalizedLon}
 import org.locationtech.geomesa.curve.{NormalizedDimension, SpaceFillingCurve}
 import org.locationtech.sfcurve.IndexRange
-import org.locationtech.sfcurve.zorder.ZRange
+import org.locationtech.sfcurve.zorder.{Z2, ZRange}
 
 /**
   * Z2T space filling curve
@@ -32,7 +32,7 @@ class Z2TSFC(precision: Int) extends SpaceFillingCurve {
         x >= lon.min && x <= lon.max && y >= lat.min && y <= lat.max,
         s"Value(s) out of bounds ([${lon.min},${lon.max}], [${lat.min},${lat.max}]): $x, $y"
       )
-      Z2T(lon.normalize(x), lat.normalize(y)).z
+      Z2(lon.normalize(x), lat.normalize(y)).z
     } catch {
       case _: IllegalArgumentException if lenient => lenientIndex(x, y)
     }
@@ -53,11 +53,11 @@ class Z2TSFC(precision: Int) extends SpaceFillingCurve {
     } else {
       y
     }
-    Z2T(lon.normalize(bx), lat.normalize(by)).z
+    Z2(lon.normalize(bx), lat.normalize(by)).z
   }
 
   override def invert(z: Long): (Double, Double) = {
-    val (x, y) = Z2T(z).decode
+    val (x, y) = Z2(z).decode
     (lon.denormalize(x), lat.denormalize(y))
   }
 
@@ -69,7 +69,7 @@ class Z2TSFC(precision: Int) extends SpaceFillingCurve {
     val zbounds = xy.map {
       case (xmin, ymin, xmax, ymax) => ZRange(index(xmin, ymin), index(xmax, ymax))
     }
-    Z2T.zranges(zbounds.toArray, precision, maxRanges)
+    Z2.zranges(zbounds.toArray, precision, maxRanges)
   }
 }
 

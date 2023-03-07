@@ -12,6 +12,7 @@
 package org.cupid.db.geomesa.storage.index
 
 import org.cupid.db.geomesa.storage.curve.Z2TSFC
+import org.locationtech.geomesa.curve.XZ3SFC
 import org.locationtech.geomesa.filter.{Bounds, FilterValues}
 import org.locationtech.geomesa.index.index.{SpatialIndexValues, TemporalIndexValues}
 import org.locationtech.jts.geom.Geometry
@@ -51,6 +52,29 @@ package object z2t {
     */
   case class Z2TIndexValues(
       SFC: Z2TSFC,
+      geometries: FilterValues[Geometry],
+      spatialBounds: Seq[(Double, Double, Double, Double)],
+      intervals: FilterValues[Bounds[ZonedDateTime]],
+      temporalBounds: Seq[Short],
+      temporalUnbounded: Seq[(Short, Short)]
+  ) extends TemporalIndexValues
+      with SpatialIndexValues
+
+  /**
+    * Index values extracted from a filter for xz2t queries
+    *
+    * @param sfc specific curve being used
+    * @param geometries extracted geometries
+    * @param spatialBounds the spatial bounds from the extracted geometries, as bounding boxes
+    * @param intervals extracted dates
+    * @param temporalBounds the temporal bounds from the extracted dates, as time units (depending on the sfc),
+    *                       keyed by epoch
+    * @param temporalUnbounded unbounded temporal epochs, i.e. all time values are covered. will be either
+    *                          `(0, t)`, `(t, Short.MaxValue)` or `(0, Short.MaxValue)` for upper, lower,
+    *                          and unbounded queries, respectively
+    */
+  case class XZ2TIndexValues(
+      sfc: XZ3SFC,
       geometries: FilterValues[Geometry],
       spatialBounds: Seq[(Double, Double, Double, Double)],
       intervals: FilterValues[Bounds[ZonedDateTime]],
