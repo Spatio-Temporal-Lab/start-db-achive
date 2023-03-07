@@ -17,14 +17,8 @@ import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
 import org.scalatest.{BeforeAndAfterEach, FunSuite}
 import org.urbcomp.cupid.db.parser.CupidDBSQLSamples
 import org.urbcomp.cupid.db.parser.dcl.SqlCreateUser
-import org.urbcomp.cupid.db.parser.ddl.{
-  SqlCreateDatabase,
-  SqlCupidCreateTable,
-  SqlIndexDeclaration,
-  SqlTruncateTable,
-  SqlUseDatabase
-}
-import org.urbcomp.cupid.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowTables}
+import org.urbcomp.cupid.db.parser.ddl.{SqlCreateDatabase, SqlCupidCreateTable, SqlIndexDeclaration, SqlTruncateTable, SqlUseDatabase}
+import org.urbcomp.cupid.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowIndex, SqlShowTables}
 import org.urbcomp.cupid.db.parser.driver.CupidDBParseDriver
 import org.urbcomp.cupid.db.util.{MetadataUtil, SqlParam}
 
@@ -67,6 +61,11 @@ class CupidDBVisitorTest extends FunSuite with BeforeAndAfterEach {
     assertTrue(parsed.isInstanceOf[SqlShowTables])
     val node = parsed.asInstanceOf[SqlShowTables];
     assertEquals(MetadataUtil.combineUserDbKey(testUser, testDatabase), node.fullDatabaseName())
+  }
+
+  test("convert show index to SqlNode") {
+    val parsed = driver.parseSql(CupidDBSQLSamples.SHOW_INDEX)
+    assertTrue(parsed.isInstanceOf[SqlShowIndex])
   }
 
   test("convert create dababase statement to SqlNode") {

@@ -38,6 +38,9 @@ public class CupidDBSQLSamples {
     // Show tables
     public static final String SHOW_TABLES = "SHOW TABLES";
 
+    // Show index
+    public static final String SHOW_INDEX = "SHOW INDEX FROM table_name";
+
     // Describe
     public static final String DESCRIBE_TABLE_SAMPLE = "DESCRIBE table_name";
 
