@@ -50,7 +50,7 @@ public class TimeIntervalSegment implements AbstractTrajectorySegment {
                 } else {
                     if (segment.size() > 0) {
                         Trajectory newTrajectory = new Trajectory(
-                            trajectory.getTid() + "_" + flag,
+                            trajectory.getTid() + "_timeInterval_" + flag,
                             trajectory.getOid(),
                             segment
                         );
@@ -64,7 +64,7 @@ public class TimeIntervalSegment implements AbstractTrajectorySegment {
             }
             if (segment.size() > 0) {
                 Trajectory newTrajectory = new Trajectory(
-                    trajectory.getTid() + "_" + flag,
+                    trajectory.getTid() + "_timeInterval_" + flag,
                     trajectory.getOid(),
                     segment
                 );
