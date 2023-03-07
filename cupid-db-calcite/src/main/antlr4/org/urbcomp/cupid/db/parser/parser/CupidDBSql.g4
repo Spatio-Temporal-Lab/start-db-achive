@@ -27,6 +27,7 @@ stmt :
      | showTablesStmt
      | showCreateTableStmt
      | showStatusStmt
+     | showIndexStmt
      | insertStmt
      | updateStmt
      | deleteStmt
@@ -68,6 +69,10 @@ showCreateTableStmt :
 
 showStatusStmt :
        T_SHOW T_STATUS
+     ;
+
+showIndexStmt :
+       T_SHOW T_INDEX T_FROM tableName (T_FROM dbName=L_ID)?
      ;
 
 createTableStmt :
