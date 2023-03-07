@@ -17,8 +17,19 @@ import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
 import org.scalatest.{BeforeAndAfterEach, FunSuite}
 import org.urbcomp.cupid.db.parser.CupidDBSQLSamples
 import org.urbcomp.cupid.db.parser.dcl.SqlCreateUser
-import org.urbcomp.cupid.db.parser.ddl.{SqlCreateDatabase, SqlCupidCreateTable, SqlIndexDeclaration, SqlTruncateTable, SqlUseDatabase}
-import org.urbcomp.cupid.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowIndex, SqlShowTables}
+import org.urbcomp.cupid.db.parser.ddl.{
+  SqlCreateDatabase,
+  SqlCupidCreateTable,
+  SqlIndexDeclaration,
+  SqlTruncateTable,
+  SqlUseDatabase
+}
+import org.urbcomp.cupid.db.parser.dql.{
+  SqlShowCreateTable,
+  SqlShowDatabases,
+  SqlShowIndex,
+  SqlShowTables
+}
 import org.urbcomp.cupid.db.parser.driver.CupidDBParseDriver
 import org.urbcomp.cupid.db.util.{MetadataUtil, SqlParam}
 
