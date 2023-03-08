@@ -16,7 +16,6 @@
  */
 package org.urbcomp.cupid.db.test;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -43,9 +42,9 @@ public class RunSingleSQLCase {
         Connection conn;
         try {
             conn = DriverManager.getConnection(
-                    "jdbc:cupid-db:url=http://127.0.0.1:8000",
-                    "root",
-                    "cupid-db"
+                "jdbc:cupid-db:url=http://127.0.0.1:8000",
+                "root",
+                "cupid-db"
             );
         } catch (Exception e) {
             throw new Exception("cupid-db 创建connect失败");
@@ -108,18 +107,20 @@ public class RunSingleSQLCase {
 
                             // 不需要拼接参数时
                             if (!initSql.contains("?")) {
-                                if(sqlType.equals("query") && elements.get(i + 1).attributeValue("resultID") != null){
-                                    String resultID = elements.get(i + 1).attributeValue("resultID");
+                                if (sqlType.equals("query")
+                                    && elements.get(i + 1).attributeValue("resultID") != null) {
+                                    String resultID = elements.get(i + 1)
+                                        .attributeValue("resultID");
                                     log.info("开始执行sql:" + initSql + " resultID: " + resultID);
-                                }
-                                else {
+                                } else {
                                     log.info("开始执行sql:" + initSql);
                                 }
                                 // 替换sql中的文本内容然后执行sql, 获取返回值
                                 initSql = dataTransform(initSql);
                                 actualArray = executeSql(stmt, initSql, sqlType);
                                 System.out.println("实际返回值： " + actualArray);
-                                if(i + 1 >= elements.size() || elements.get(i + 1).getName().equals("sql")){
+                                if (i + 1 >= elements.size()
+                                    || elements.get(i + 1).getName().equals("sql")) {
                                     log.info("sql执行完成");
                                 }
                                 // 比较预期异常信息在assertion标签中执行
@@ -136,12 +137,12 @@ public class RunSingleSQLCase {
                                         && actualArray.size() != 0) {
                                     throw new Exception("sql执行出现非预期错误" + initSql);
                                 }
-                            }
-                            // 有预期结果时, 与实际返回值进行比较
-                            if (expectArray.size() != 0) {
+                                }
+                                // 有预期结果时, 与实际返回值进行比较
+                                if (expectArray.size() != 0) {
                                 System.out.println("预期返回值： " + expectArray);
                                 compareArrayData(actualArray, expectArray);
-                            }*/
+                                }*/
                             }
                         }
                         // 如果当前是arguments标签
@@ -149,7 +150,8 @@ public class RunSingleSQLCase {
                             String params = element.getText();
                             String resultID = element.attributeValue("resultID");
                             String error = element.attributeValue("error");
-                            if(resultID == null && error == null || resultID != null && error != null){
+                            if (resultID == null && error == null
+                                || resultID != null && error != null) {
                                 throw new Exception("参数标签格式不对");
                             }
 
@@ -165,18 +167,17 @@ public class RunSingleSQLCase {
                             }
 
                             // 有预期结果获取并加入预期数据中,然后与实际数据进行比较
-                            if(resultID != null){
+                            if (resultID != null) {
                                 expectArray = getExpectDataArray(xmlName, xmlPath, resultID);
                                 System.out.println("预期返回值： " + expectArray);
                                 compareResult(actualArray, expectArray);
                             }
 
                             // 如果有预期异常加入预期数据中，然后与实际数据进行比较
-                            else{
-                                if(!error.contains("Exception")){
+                            else {
+                                if (!error.contains("Exception")) {
                                     throw new Exception("预期异常内容不对");
-                                }
-                                else{
+                                } else {
                                     expectArray.add(error);
                                     System.out.println("预期异常： " + expectArray);
                                     compareException(actualArray, expectArray);

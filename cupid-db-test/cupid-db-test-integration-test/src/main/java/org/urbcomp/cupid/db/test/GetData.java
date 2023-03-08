@@ -111,13 +111,12 @@ public class GetData {
         // 根据resultID获取当前执行sql的预期结果标签
         List<Element> resultElements = rootElement.elements();
         int id = Integer.valueOf(resultID);
-        if(id - 1 > resultElements.size() || id < 1)
-            throw new Exception("resultID不对");
+        if (id - 1 > resultElements.size() || id < 1) throw new Exception("resultID不对");
         Element resultElement = resultElements.get(id - 1);
 
         // 获取column标签的内容
         List<Element> columnElements = resultElement.elements();
-        for(Element columnElement : columnElements) {
+        for (Element columnElement : columnElements) {
             String filedName = columnElement.attributeValue("name");
             String filedType = columnElement.attributeValue("type");
             expectValue.append(filedName).append("\t");

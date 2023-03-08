@@ -36,7 +36,6 @@ public class GetCasePathByXML {
         String casePath = Objects.requireNonNull(
             GetCasePathByXML.class.getClassLoader().getResource("cases")
         ).getPath();
-        System.out.println(casePath);
         String[] foldList = new File(casePath).list();
         ArrayList<String> caseFileList = new ArrayList<>();
         if (foldList != null) {

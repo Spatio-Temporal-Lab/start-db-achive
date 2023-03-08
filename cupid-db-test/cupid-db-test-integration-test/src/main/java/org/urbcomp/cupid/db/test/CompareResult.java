@@ -18,8 +18,6 @@ package org.urbcomp.cupid.db.test;
 
 import java.util.ArrayList;
 
-import static org.urbcomp.cupid.db.test.GetData.dataTransform;
-
 public class CompareResult {
 
     /**
@@ -28,10 +26,8 @@ public class CompareResult {
      * @param actualArray 实际返回内容
      * @param expectArray 预期返回内容
      * */
-    public static void compareResult(
-        ArrayList<String> actualArray,
-        ArrayList<String> expectArray
-    ) throws Exception {
+    public static void compareResult(ArrayList<String> actualArray, ArrayList<String> expectArray)
+        throws Exception {
         if (actualArray.size() != expectArray.size()) {
             throw new Exception("预期结果数与实际返回结果数不一致");
         }
@@ -49,9 +45,9 @@ public class CompareResult {
      * @param expectArray 预期异常
      * */
     public static void compareException(
-    ArrayList<String> actualArray,
-    ArrayList<String> expectArray
-    ) throws Exception  {
+        ArrayList<String> actualArray,
+        ArrayList<String> expectArray
+    ) throws Exception {
         if (!actualArray.get(0).contains(expectArray.get(0))) {
             throw new Exception("异常不符合预期");
         }
