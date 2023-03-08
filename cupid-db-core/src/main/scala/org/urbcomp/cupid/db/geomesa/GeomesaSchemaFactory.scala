@@ -17,8 +17,9 @@ import org.urbcomp.cupid.db.function.udaf.CollectList
 import org.urbcomp.cupid.db.udtf.{
   DBSCANClustering,
   Fibonacci,
-  HybridTrajectorySegment,
+  KMeansClustering,
   StayPointDetect,
+  HybridTrajectorySegment,
   StayPointTrajectorySegment,
   TimeIntervalTrajectorySegment
 }

@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HybridSegment implements AbstractTrajectorySegment {
-    private final double maxStayTimeInSecond;
-    private final double maxDistInMeter;
-    private final double maxTimeIntervalInSecond;
     private final StayPointSegment stayPointSegment;
     private final TimeIntervalSegment timeIntervalSegment;
 
@@ -28,9 +25,6 @@ public class HybridSegment implements AbstractTrajectorySegment {
         double maxDistInMeter,
         double maxTimeIntervalInSecond
     ) {
-        this.maxStayTimeInSecond = maxStayTimeInSecond;
-        this.maxDistInMeter = maxDistInMeter;
-        this.maxTimeIntervalInSecond = maxTimeIntervalInSecond;
         this.stayPointSegment = new StayPointSegment(maxStayTimeInSecond, maxDistInMeter);
         this.timeIntervalSegment = new TimeIntervalSegment(maxTimeIntervalInSecond);
 
@@ -44,9 +38,7 @@ public class HybridSegment implements AbstractTrajectorySegment {
             List<Trajectory> timeIntervalSegmentResult = timeIntervalSegment.segment(
                 stayPointTrajectory
             );
-            if (timeIntervalSegmentResult.size() > 0) {
                 result.addAll(timeIntervalSegmentResult);
-            }
         }
         return result;
 
