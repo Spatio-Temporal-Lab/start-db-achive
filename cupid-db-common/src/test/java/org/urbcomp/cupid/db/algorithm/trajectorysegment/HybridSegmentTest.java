@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class StayPointSegmentTest {
+public class HybridSegmentTest {
 
     private static Trajectory trajectory;
 
@@ -31,12 +31,30 @@ public class StayPointSegmentTest {
     }
 
     @Test
-    public void stayPointSegmentTest() {
-        StayPointSegment trajectorySegment = new StayPointSegment(10, 10);
+    public void hybridSegmentTest() {
+        HybridSegment trajectorySegment = new HybridSegment(10, 10, 10);
         List<Trajectory> subTrajectory = trajectorySegment.segment(trajectory);
         int totalSize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
-        assertEquals(subTrajectory.size(), 3);
+        assertEquals(subTrajectory.size(), 5);
         // 8 gps points belong to stay points
+        assertEquals(trajectory.getGPSPointList().size() - 8, totalSize);
+
+        trajectorySegment = new HybridSegment(10, 10, 11);
+        subTrajectory = trajectorySegment.segment(trajectory);
+        totalSize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
+        assertEquals(subTrajectory.size(), 4);
+        assertEquals(trajectory.getGPSPointList().size() - 8, totalSize);
+
+        trajectorySegment = new HybridSegment(10, 10, 15);
+        subTrajectory = trajectorySegment.segment(trajectory);
+        totalSize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
+        assertEquals(subTrajectory.size(), 4);
+        assertEquals(trajectory.getGPSPointList().size() - 8, totalSize);
+
+        trajectorySegment = new HybridSegment(10, 10, 16);
+        subTrajectory = trajectorySegment.segment(trajectory);
+        totalSize = subTrajectory.stream().mapToInt(o -> o.getGPSPointList().size()).sum();
+        assertEquals(subTrajectory.size(), 3);
         assertEquals(trajectory.getGPSPointList().size() - 8, totalSize);
 
     }

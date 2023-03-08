@@ -48,7 +48,7 @@ public class StayPointSegment implements AbstractTrajectorySegment {
                 GPSPoint point = pts.get(curIndex);
                 if (point.getTime() == stayPoints.get(stayPointIndex).getStarTime()) {
                     Trajectory subTrajectory = new Trajectory(
-                        trajectory.getTid() + result.size(),
+                        trajectory.getTid() + "_stayPoint_" + result.size(),
                         trajectory.getOid(),
                         new ArrayList<>(pts.subList(startIndex, curIndex + 1))
                     );
@@ -60,7 +60,7 @@ public class StayPointSegment implements AbstractTrajectorySegment {
                     stayPointIndex++;
                     if (stayPointIndex == stayPoints.size() && stayPointIndex < pts.size() - 1) {
                         Trajectory subTrajectory = new Trajectory(
-                            trajectory.getTid() + result.size(),
+                            trajectory.getTid() + "_stayPoint_" + result.size(),
                             trajectory.getOid(),
                             new ArrayList<>(pts.subList(startIndex, pts.size()))
                         );

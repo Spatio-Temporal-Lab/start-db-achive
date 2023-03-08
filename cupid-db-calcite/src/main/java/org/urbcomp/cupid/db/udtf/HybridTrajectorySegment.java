@@ -37,24 +37,27 @@ import org.apache.calcite.schema.Statistics;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.type.SqlTypeName;
-import org.urbcomp.cupid.db.algorithm.trajectorysegment.TimeIntervalSegment;
+import org.urbcomp.cupid.db.algorithm.trajectorysegment.HybridSegment;
 import org.urbcomp.cupid.db.model.trajectory.Trajectory;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class TimeIntervalTrajectorySegment {
-    public static Method TIMEINTERVALSEGMENT_TABLE_METHOD = Types.lookupMethod(
-        TimeIntervalTrajectorySegment.class,
-        "st_traj_timeIntervalSegment",
+public class HybridTrajectorySegment {
+    public static Method HYBRID_SEGMENT_TABLE_METHOD = Types.lookupMethod(
+        HybridTrajectorySegment.class,
+        "st_traj_hybridSegment",
         Trajectory.class,
+        double.class,
+        double.class,
         double.class
-
     );
 
-    public ScannableTable st_traj_timeIntervalSegment(
+    public ScannableTable st_traj_hybridSegment(
         Trajectory trajectory,
-        double maxTimeIntervalInSec
+        double maxStayTimeInSecond,
+        double maxDistInMeter,
+        double maxTimeIntervalInSecond
     ) {
         return new ScannableTable() {
 
@@ -109,21 +112,20 @@ public class TimeIntervalTrajectorySegment {
                             @Override
                             public boolean moveNext() {
                                 if (subTrajectory == null) {
-                                    TimeIntervalSegment trajectorySegment = new TimeIntervalSegment(
-                                        maxTimeIntervalInSec
+                                    HybridSegment trajectorySegment = new HybridSegment(
+                                        maxStayTimeInSecond,
+                                        maxDistInMeter,
+                                        maxTimeIntervalInSecond
                                     );
                                     subTrajectory = trajectorySegment.segment(trajectory);
                                 }
                                 if (count < subTrajectory.size()) {
-
                                     current = subTrajectory.get(count);
-
                                     count++;
                                     return true;
                                 } else {
                                     return false;
                                 }
-
                             }
 
                             @Override

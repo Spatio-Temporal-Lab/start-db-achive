@@ -171,8 +171,27 @@ class TrajectoryFunctionTest extends AbstractCalciteFunctionTest {
       seg += 1
     }
     assertEquals(seg, 3)
-    assertEquals(trajectory.getGPSPointList.size - 8, count)
+    assertEquals(trajectorySeg.getGPSPointList.size - 8, count)
 
+  }
+
+  test("st_traj_hybridSegment") {
+    val statement = connect.createStatement()
+    val trajectorySeg: Trajectory =
+      ModelGenerator.generateTrajectory("./data/stayPointSegmentationTraj.txt")
+    val tGeoSeg: String = trajectorySeg.toGeoJSON
+    val resultSet =
+      statement.executeQuery(
+        "select st_traj_hybridSegment(st_traj_fromGeoJSON(\'" + tGeoSeg + "\')," + 10 + "," + 10 + "," + 10 + ")"
+      )
+    var count = 0
+    var seg = 0
+    while (resultSet.next()) {
+      count = count + Trajectory.fromGeoJSON(resultSet.getObject(1).toString).getGPSPointList.size()
+      seg += 1
+    }
+    assertEquals(seg, 5)
+    assertEquals(trajectorySeg.getGPSPointList.size - 8, count)
   }
 
   test("st_traj_stayPointDetect") {
