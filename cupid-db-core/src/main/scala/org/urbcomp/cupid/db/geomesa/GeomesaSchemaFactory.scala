@@ -65,6 +65,10 @@ class GeomesaSchemaFactory extends SchemaFactory {
       TableFunctionImpl.create(DBSCANClustering.DBSCAN_CLUSTERING_TABLE_METHOD)
     )
     schemaPlus.add("st_collect_list", AggregateFunctionImpl.create(classOf[CollectList]))
+    schemaPlus.add(
+      "st_kmeans_clustering",
+      TableFunctionImpl.create(KMeansClustering.KMEANS_CLUSTERING_TABLE_METHOD)
+    )
   }
 
 }
