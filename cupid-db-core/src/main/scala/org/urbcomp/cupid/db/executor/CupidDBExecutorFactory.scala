@@ -15,8 +15,19 @@ import org.apache.calcite.sql._
 import org.apache.calcite.sql.ddl.{SqlDropSchema, SqlDropTable}
 import org.urbcomp.cupid.db.infra.{BaseExecutor, BaseExecutorFactory}
 import org.urbcomp.cupid.db.parser.dcl.SqlCreateUser
-import org.urbcomp.cupid.db.parser.ddl.{SqlCreateDatabase, SqlCupidCreateTable, SqlTruncateTable, SqlUseDatabase}
-import org.urbcomp.cupid.db.parser.dql.{SqlShowCreateTable, SqlShowDatabases, SqlShowIndex, SqlShowStatus, SqlShowTables}
+import org.urbcomp.cupid.db.parser.ddl.{
+  SqlCreateDatabase,
+  SqlCupidCreateTable,
+  SqlTruncateTable,
+  SqlUseDatabase
+}
+import org.urbcomp.cupid.db.parser.dql.{
+  SqlShowCreateTable,
+  SqlShowDatabases,
+  SqlShowIndex,
+  SqlShowStatus,
+  SqlShowTables
+}
 
 class CupidDBExecutorFactory extends BaseExecutorFactory {
   override def convertExecutor(node: SqlNode): BaseExecutor = node match {

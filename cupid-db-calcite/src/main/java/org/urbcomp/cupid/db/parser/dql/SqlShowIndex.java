@@ -34,8 +34,8 @@ public class SqlShowIndex extends SqlCall {
     public final SqlIdentifier tableName;
 
     public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
-            "SHOW INDEX",
-            SqlKind.OTHER
+        "SHOW INDEX",
+        SqlKind.OTHER
     );
 
     public SqlShowIndex(SqlParserPos pos, SqlIdentifier tableName) {
