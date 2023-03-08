@@ -113,7 +113,7 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     rs.next()
     assertEquals(rs.getString(1), "gemo_%s".format(uniqueId))
     assertEquals(rs.getString(2), "st")
-    assertEquals(rs.getString(2), "z2")
+    assertEquals(rs.getString(3), "z2")
   }
 
   test("test drop table") {
