@@ -38,7 +38,7 @@ public class HybridSegment implements AbstractTrajectorySegment {
             List<Trajectory> timeIntervalSegmentResult = timeIntervalSegment.segment(
                 stayPointTrajectory
             );
-                result.addAll(timeIntervalSegmentResult);
+            result.addAll(timeIntervalSegmentResult);
         }
         return result;
 
