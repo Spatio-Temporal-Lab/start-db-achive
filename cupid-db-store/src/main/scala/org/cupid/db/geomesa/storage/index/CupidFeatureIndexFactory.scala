@@ -46,7 +46,6 @@ class CupidFeatureIndexFactory extends GeoMesaFeatureIndexFactory {
 
     lazy val Seq(geom3, dtg) = index.attributes
     lazy val Seq(geom2) = index.attributes
-    lazy val Seq(attribute, secondary @ _*) = index.attributes
 
     val idx = (index.name, index.version) match {
 

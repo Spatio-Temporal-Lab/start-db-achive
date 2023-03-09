@@ -178,17 +178,17 @@ class XZ2TIndexKeySpace(
 
       if (interval.isBoundedBothSides) {
         if (lb == ub) {
-          timesByBin += lb.toShort
+          timesByBin += lb
         } else {
-          timesByBin += lb.toShort
-          timesByBin += ub.toShort
+          timesByBin += lb
+          timesByBin += ub
           Range.inclusive(lb + 1, ub - 1).foreach(b => timesByBin += b.toShort)
         }
       } else if (interval.lower.value.isDefined) {
-        timesByBin += lb.toShort
+        timesByBin += lb
         unboundedBins += (((lb + 1).toShort, Short.MaxValue))
       } else if (interval.upper.value.isDefined) {
-        timesByBin += ub.toShort
+        timesByBin += ub
         unboundedBins += ((0, (ub - 1).toShort))
       }
 
