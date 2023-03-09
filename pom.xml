@@ -58,6 +58,7 @@
         <rtree.version>0.10</rtree.version>
         <grumpy.version>0.4.7</grumpy.version>
         <fastjson.version>2.0.6</fastjson.version>
+        <specs2.version>4.9.2</specs2.version>
         <httpclient.version>4.5.14</httpclient.version>
         <mockito.version>3.12.4</mockito.version>
     </properties>
