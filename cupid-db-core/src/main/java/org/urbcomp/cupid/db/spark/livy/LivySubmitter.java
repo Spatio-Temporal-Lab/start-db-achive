@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.urbcomp.cupid.db.config.DynamicConfig;
 import org.urbcomp.cupid.db.spark.ISparkSubmitter;
+import org.urbcomp.cupid.db.spark.SubmitResult;
 import org.urbcomp.cupid.db.util.Base64Util;
 import org.urbcomp.cupid.db.util.JacksonUtil;
 import org.urbcomp.cupid.db.util.SparkSqlParam;
@@ -25,6 +26,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static org.apache.hadoop.net.NetUtils.getHostname;
 
 /**
  * 维持至少有一个livy session运行
@@ -48,6 +51,8 @@ public class LivySubmitter implements ISparkSubmitter {
 
     private final LivyRestApi restApi;
 
+    private final String hostname;
+
     /**
      * 控制在session更新或不可用时，执行语句必须等待
      */
@@ -63,6 +68,7 @@ public class LivySubmitter implements ISparkSubmitter {
         this.sleepMs = 3000;
         this.maxWaitTimeMs = 120 * 1000;
         this.restApi = restApi;
+        this.hostname = getHostname();
 
         if (checkSession) {
             createNewSession();
@@ -94,7 +100,7 @@ public class LivySubmitter implements ISparkSubmitter {
                         log.info("Check Livy Session get Sessions={}", sessions);
                         for (LivySessionResult s : sessions) {
                             final LivySessionState theState = LivySessionState.valueOf(
-                                s.getState()
+                                    s.getState()
                             );
                             if (theState.ok()) {
                                 sessionId = s.getId();
@@ -119,14 +125,14 @@ public class LivySubmitter implements ISparkSubmitter {
 
     private void createNewSession() {
         final LivySessionParam param = LivySessionParam.builder()
-            .kind(DEFAULT_KIND)
-            .driverCores(DynamicConfig.getSparkDriverCores())
-            .driverMemory(DynamicConfig.getSparkDriverMemory())
-            .numExecutors(DynamicConfig.getSparkNumExecutors())
-            .executorCores(DynamicConfig.getSparkExecutorCores())
-            .executorMemory(DynamicConfig.getSparkExecutorMemory())
-            .jars(DynamicConfig.getDbSparkJars())
-            .build();
+                .kind(DEFAULT_KIND)
+                .driverCores(DynamicConfig.getSparkDriverCores())
+                .driverMemory(DynamicConfig.getSparkDriverMemory())
+                .numExecutors(DynamicConfig.getSparkNumExecutors())
+                .executorCores(DynamicConfig.getSparkExecutorCores())
+                .executorMemory(DynamicConfig.getSparkExecutorMemory())
+                .jars(DynamicConfig.getDbSparkJars())
+                .build();
         log.info("Check Livy Session create new Session,param={}", param);
         final LivySessionResult res = restApi.createSession(param);
         waitSessionOk(res.getId());
@@ -152,28 +158,22 @@ public class LivySubmitter implements ISparkSubmitter {
         log.warn("Check Livy Session wait session exceed maxWaitTimeMs={}", maxWaitTimeMs);
     }
 
-    private String buildSqlId(int statementId) {
-        return System.currentTimeMillis() + SPLITTER + statementId;
-    }
-
-    private int extractStatementId(String sqlId) {
-        final String[] items = sqlId.split(SPLITTER);
-        if (items.length == 2) {
-            return Integer.parseInt(items[1]);
-        }
-        throw new IllegalArgumentException("InValid SqlId:" + sqlId);
+    private String buildSqlId() {
+        return System.nanoTime() + SPLITTER + hostname;
     }
 
     @Override
-    public String submit(SparkSqlParam param) {
+    public SubmitResult submit(SparkSqlParam param) {
         sessionReadLock.lock();
         try {
+            final String sqlId = buildSqlId();
+            param.setSqlId(sqlId);
             String code = buildCode(param);
             final LivyStatementResult res = restApi.executeStatement(
-                sessionId,
-                LivyStatementParam.builder().kind(DEFAULT_KIND).code(code).build()
+                    sessionId,
+                    LivyStatementParam.builder().kind(DEFAULT_KIND).code(code).build()
             );
-            return buildSqlId(res.getId());
+            return SubmitResult.builder().execId(res.getId()).sqlId(sqlId).build();
         } finally {
             sessionReadLock.unlock();
         }
@@ -185,11 +185,11 @@ public class LivySubmitter implements ISparkSubmitter {
     private String buildCode(SparkSqlParam param) {
         try {
             final String encodeParam = Base64Util.encode(
-                JacksonUtil.MAPPER.writeValueAsString(param)
+                    JacksonUtil.MAPPER.writeValueAsString(param)
             );
             return String.format(
-                "org.urbcomp.cupid.db.spark.CupidSparkDriver.main(Array(\"%s\"))",
-                encodeParam
+                    "org.urbcomp.cupid.db.spark.CupidSparkDriver.main(Array(\"%s\"))",
+                    encodeParam
             );
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -197,8 +197,8 @@ public class LivySubmitter implements ISparkSubmitter {
     }
 
     @Override
-    public void waitToFinish(String id) throws TimeoutException {
-        final int statementId = extractStatementId(id);
+    public void waitToFinish(SubmitResult submitResult) throws TimeoutException {
+        final int statementId = submitResult.getExecId();
 
         int attemptTime = 0;
         try {

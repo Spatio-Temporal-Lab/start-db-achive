@@ -30,12 +30,10 @@ public interface ISparkSubmitter {
      *
      * @return sqlId
      */
-    String submit(SparkSqlParam param);
+    SubmitResult submit(SparkSqlParam param);
 
     /**
      * 同步等待执行完成
-     *
-     * @param id sql id
      */
-    void waitToFinish(String id) throws TimeoutException;
+    void waitToFinish(SubmitResult res) throws TimeoutException;
 }

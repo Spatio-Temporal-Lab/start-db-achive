@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.urbcomp.cupid.db.spark.SubmitResult;
 import org.urbcomp.cupid.db.util.SparkSqlParam;
 
 import java.util.concurrent.TimeoutException;
@@ -37,11 +38,11 @@ public class LivySubmitterTest {
         doReturn(LivyStatementResult.builder().id(statementId).state("available").build()).when(
             livyRestApi
         ).executeStatement(anyInt(), any(LivyStatementParam.class));
-        final String sqlId = submitter.submit(new SparkSqlParam());
+        final SubmitResult submitResult = submitter.submit(new SparkSqlParam());
 
         doReturn(LivyStatementResult.builder().id(statementId).state("available").build()).when(
             livyRestApi
         ).getStatement(sessionId, statementId);
-        submitter.waitToFinish(sqlId);
+        submitter.waitToFinish(submitResult);
     }
 }

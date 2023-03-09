@@ -27,17 +27,17 @@ public class SparkExecutor {
      */
     public <T> MetadataResult<T> execute(SparkSqlParam param) {
         final ISparkSubmitter submitter = ISparkSubmitter.getInstance();
-        final String sqlId = submitter.submit(param);
+        final SubmitResult res = submitter.submit(param);
         if (param.isAsync()) {
             // TODO 记录执行任务到缓存队列
             return MetadataResult.buildDDLResult(0);
         }
         // wait result
         try {
-            submitter.waitToFinish(sqlId);
+            submitter.waitToFinish(res);
         } catch (TimeoutException e) {
             throw new RuntimeException("sync wait timeout", e);
         }
-        return ISparkDataRead.getReader(param.getExportType()).read(sqlId);
+        return ISparkDataRead.getReader(param.getExportType()).read(res.getSqlId());
     }
 }

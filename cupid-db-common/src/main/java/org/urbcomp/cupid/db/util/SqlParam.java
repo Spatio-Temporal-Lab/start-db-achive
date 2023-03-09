@@ -43,6 +43,8 @@ public class SqlParam {
 
     private DataExportType exportType;
 
+    private String sqlId;
+
     public SqlParam() {}
 
     public SqlParam(String userName, String dbName) {
@@ -100,5 +102,13 @@ public class SqlParam {
 
     public void setExportType(DataExportType exportType) {
         this.exportType = exportType;
+    }
+
+    public String getSqlId() {
+        return sqlId;
+    }
+
+    public void setSqlId(String sqlId) {
+        this.sqlId = sqlId;
     }
 }
