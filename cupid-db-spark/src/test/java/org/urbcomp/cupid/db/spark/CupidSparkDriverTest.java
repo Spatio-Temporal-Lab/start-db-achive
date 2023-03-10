@@ -11,6 +11,7 @@
 
 package org.urbcomp.cupid.db.spark;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.urbcomp.cupid.db.model.data.DataExportType;
 import org.urbcomp.cupid.db.util.SparkSqlParam;
@@ -25,6 +26,19 @@ public class CupidSparkDriverTest {
         param.setSql("select * from t_test");
         param.setExportType(DataExportType.PRINT);
         param.setLocal(true);
+        SparkQueryExecutor.execute(param, null);
+    }
+
+    @Test
+    @Ignore // 本地要起HDFS来测试
+    public void testExport2Hdfs() {
+        final SparkSqlParam param = new SparkSqlParam();
+        param.setUserName("root");
+        param.setDbName("default");
+        param.setSql("select 1+1");
+        param.setExportType(DataExportType.HDFS);
+        param.setLocal(true);
+        param.setSqlId("testSqlId");
         SparkQueryExecutor.execute(param, null);
     }
 }

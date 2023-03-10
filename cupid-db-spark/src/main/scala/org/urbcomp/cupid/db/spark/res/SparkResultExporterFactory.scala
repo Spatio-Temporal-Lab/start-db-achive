@@ -21,6 +21,7 @@ object SparkResultExporterFactory {
   def getInstance(exportType: DataExportType): ISparkResultExporter = {
     exportType match {
       case DataExportType.PRINT => new ShowSparkResultExporter
+      case DataExportType.HDFS  => new SparkResult2HdfsExporter
       case _                    => throw new IllegalArgumentException("not support type now:" + exportType)
     }
   }

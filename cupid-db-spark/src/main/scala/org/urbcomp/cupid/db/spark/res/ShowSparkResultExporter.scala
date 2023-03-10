@@ -15,7 +15,7 @@ import org.apache.spark.sql.DataFrame
 
 class ShowSparkResultExporter extends ISparkResultExporter {
 
-  override def exportData(data: DataFrame): Unit = {
+  override def exportData(sqlId: String, data: DataFrame): Unit = {
     data.show()
   }
 }

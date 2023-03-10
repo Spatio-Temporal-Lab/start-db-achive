@@ -62,4 +62,12 @@ public class DynamicConfig {
         final String[] jars = jar.split(",");
         return Arrays.asList(jars);
     }
+
+    public static String getHdfsPath() {
+        return properties.getProperty("hdfs.path", "hdfs://localhost:9000");
+    }
+
+    public static String getSparkHdfsResultPath() {
+        return getHdfsPath() + properties.getProperty("hdfs.spark.res-dir", "/result/");
+    }
 }
