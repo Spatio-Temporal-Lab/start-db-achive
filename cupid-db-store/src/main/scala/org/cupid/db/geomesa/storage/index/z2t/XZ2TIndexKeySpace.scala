@@ -71,7 +71,9 @@ class XZ2TIndexKeySpace(
 
   protected val sfc = XZ2TSFC(sft.getXZPrecision)
 
+  // Used to convert the time of type Long to type Short, and is used to generate the time period in the index
   protected val timeToIndex: TimeToBin = BinnedTime.timeToBin(sft.getZ3Interval)
+  // used to convert the ZonedDateTime into Short type, and is used to obtain the time period list of the query time interval during query
   private val dateToIndex: DateToBin = BinnedTime.dateToBin(sft.getZ3Interval)
 
   private val boundsToDates = BinnedTime.boundsToIndexableDates(sft.getZ3Interval)
