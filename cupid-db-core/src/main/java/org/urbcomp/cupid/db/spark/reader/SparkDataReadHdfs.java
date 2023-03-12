@@ -51,15 +51,16 @@ public class SparkDataReadHdfs implements ISparkDataRead {
             List<Object[]> data = readData(fs, dataPathDir, fields);
 
             return (MetadataResult<T>) MetadataResult.buildResult(
-                    fields.stream().map(DataTypeField::getName).toArray(String[]::new),
-                    data
+                fields.stream().map(DataTypeField::getName).toArray(String[]::new),
+                data
             );
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<Object[]> readData(FileSystem fs, String dataPathDir, List<DataTypeField> fields) throws IOException {
+    private List<Object[]> readData(FileSystem fs, String dataPathDir, List<DataTypeField> fields)
+        throws IOException {
         final List<String> dataLines = readHdfsFile(fs, dataPathDir);
         List<Object[]> data = new ArrayList<>(Math.max(1, dataLines.size()));
 
@@ -92,9 +93,8 @@ public class SparkDataReadHdfs implements ISparkDataRead {
             throw new RuntimeException("Schema is empty: " + schemaPathDir);
         }
         final String schemaJson = fieldLine.get(0);
-        return JacksonUtil.MAPPER.readValue(schemaJson,
-                new TypeReference<List<DataTypeField>>() {
-                });
+        return JacksonUtil.MAPPER.readValue(schemaJson, new TypeReference<List<DataTypeField>>() {
+        });
     }
 
     private List<String> readHdfsFile(FileSystem fs, String pathDir) throws IOException {

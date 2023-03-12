@@ -17,8 +17,8 @@ import org.urbcomp.cupid.db.datatype.DataTypeField
 import org.urbcomp.cupid.db.util.JacksonUtil
 
 /**
- * @author jimo
- * */
+  * @author jimo
+  * */
 class SparkResult2HdfsExporter extends ISparkResultExporter {
 
   override def exportData(sqlId: String, data: DataFrame): Unit = {
