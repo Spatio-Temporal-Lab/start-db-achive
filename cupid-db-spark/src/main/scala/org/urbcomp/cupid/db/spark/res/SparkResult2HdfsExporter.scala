@@ -13,21 +13,24 @@ package org.urbcomp.cupid.db.spark.res
 
 import org.apache.spark.sql.{DataFrame, SaveMode}
 import org.urbcomp.cupid.db.config.DynamicConfig
+import org.urbcomp.cupid.db.datatype.DataTypeField
+import org.urbcomp.cupid.db.util.JacksonUtil
 
 /**
-  * @author jimo
-  * */
+ * @author jimo
+ * */
 class SparkResult2HdfsExporter extends ISparkResultExporter {
 
   override def exportData(sqlId: String, data: DataFrame): Unit = {
 
     val hdfsPath = DynamicConfig.getSparkHdfsResultPath
-    val schemaJson = data.schema.json
 
+    val typeFields = data.schema.fields.map(s =>
+      new DataTypeField(s.name, s.dataType.simpleString, s.nullable))
+    val fieldJson = JacksonUtil.MAPPER.writeValueAsString(typeFields)
     import data.sparkSession.implicits._
-    val schemaDf = data.sqlContext.sparkContext.parallelize(List(schemaJson))
+    val schemaDf = List(fieldJson).toDF()
     schemaDf
-      .toDF()
       .coalesce(1)
       .write
       .mode(SaveMode.Overwrite)
