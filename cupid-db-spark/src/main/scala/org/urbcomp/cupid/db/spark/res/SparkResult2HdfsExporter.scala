@@ -17,16 +17,16 @@ import org.urbcomp.cupid.db.datatype.DataTypeField
 import org.urbcomp.cupid.db.util.JacksonUtil
 
 /**
- * @author jimo
- * */
+  * @author jimo
+  * */
 class SparkResult2HdfsExporter extends ISparkResultExporter {
 
   override def exportData(sqlId: String, data: DataFrame): Unit = {
 
     val hdfsPath = DynamicConfig.getSparkHdfsResultPath
 
-    val typeFields = data.schema.fields.map(s =>
-      new DataTypeField(s.name, s.dataType.simpleString, s.nullable))
+    val typeFields =
+      data.schema.fields.map(s => new DataTypeField(s.name, s.dataType.simpleString, s.nullable))
     val fieldJson = JacksonUtil.MAPPER.writeValueAsString(typeFields)
     import data.sparkSession.implicits._
     val schemaDf = List(fieldJson).toDF()
