@@ -22,6 +22,7 @@ public class DataConvertFactory {
     public static Object convert(String val, DataTypeField type) {
         switch (type.getType()) {
             case "integer":
+            case "int":
                 return Integer.parseInt(val);
             case "string":
             default:
