@@ -67,7 +67,23 @@ public class DynamicConfig {
         return properties.getProperty("hdfs.path", "hdfs://localhost:9000");
     }
 
+    public static String getHdfsDataSplitter() {
+        return properties.getProperty("hdfs.data.splitter", "\001");
+    }
+
+    public static String getHadoopUser() {
+        return properties.getProperty("hadoop.user", "hadoop");
+    }
+
     public static String getSparkHdfsResultPath() {
         return getHdfsPath() + properties.getProperty("hdfs.spark.res-dir", "/result/");
+    }
+
+    public static String getResultSchemaName(String sqlId) {
+        return sqlId + "_schema";
+    }
+
+    public static String getResultDataName(String sqlId) {
+        return sqlId + "_data";
     }
 }

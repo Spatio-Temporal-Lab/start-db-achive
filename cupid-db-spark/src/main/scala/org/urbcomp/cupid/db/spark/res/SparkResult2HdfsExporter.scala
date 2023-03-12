@@ -17,8 +17,8 @@ import org.urbcomp.cupid.db.datatype.DataTypeField
 import org.urbcomp.cupid.db.util.JacksonUtil
 
 /**
-  * @author jimo
-  * */
+ * @author jimo
+ * */
 class SparkResult2HdfsExporter extends ISparkResultExporter {
 
   override def exportData(sqlId: String, data: DataFrame): Unit = {
@@ -34,14 +34,14 @@ class SparkResult2HdfsExporter extends ISparkResultExporter {
       .coalesce(1)
       .write
       .mode(SaveMode.Overwrite)
-      .text(hdfsPath + buildSchemaName(sqlId))
+      .text(hdfsPath + DynamicConfig.getResultSchemaName(sqlId))
 
     data
       .coalesce(1)
       .write
       .mode(SaveMode.Overwrite)
       .option("header", value = false)
-      .option("sep", "\001")
-      .csv(hdfsPath + buildDataName(sqlId))
+      .option("sep", DynamicConfig.getHdfsDataSplitter)
+      .csv(hdfsPath + DynamicConfig.getResultDataName(sqlId))
   }
 }

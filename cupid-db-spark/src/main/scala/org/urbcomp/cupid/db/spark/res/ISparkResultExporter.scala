@@ -21,12 +21,4 @@ import org.apache.spark.sql.DataFrame
 trait ISparkResultExporter {
 
   def exportData(sqlId: String, data: DataFrame): Unit
-
-  def buildSchemaName(sqlId: String): String = {
-    sqlId + "_schema"
-  }
-
-  def buildDataName(sqlId: String): String = {
-    sqlId + "_data"
-  }
 }
