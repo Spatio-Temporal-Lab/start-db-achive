@@ -97,6 +97,25 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     assertNotNull(rs.getString(1))
   }
 
+  test("test show index") {
+    val uniqueId = generateUniqueId()
+    val createTableSQL =
+      s"""CREATE TABLE gemo_%s (
+         |    name String,
+         |    st Point,
+         |    et Point,
+         |    dtg Datetime,
+         |    SPATIAL INDEX spatial_index(et, dtg)
+         |)""".stripMargin.format(uniqueId).stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+    val rs = stmt.executeQuery("""show index from gemo_%s""".format(uniqueId))
+    rs.next()
+    assertEquals(rs.getString(1), "gemo_%s".format(uniqueId))
+    assertEquals(rs.getString(2), "et,dtg")
+    assertEquals(rs.getString(3), "z3")
+  }
+
   test("test drop table") {
     val uniqueId = generateUniqueId()
     val createTableSQL = s"""CREATE TABLE xxx_%s (

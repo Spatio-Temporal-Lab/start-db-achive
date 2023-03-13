@@ -154,6 +154,17 @@ public class CupidDBSqlBaseVisitor<T> extends AbstractParseTreeVisitor<T>
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
+    public T visitShowIndexStmt(CupidDBSqlParser.ShowIndexStmtContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
     public T visitCreateTableStmt(CupidDBSqlParser.CreateTableStmtContext ctx) {
         return visitChildren(ctx);
     }
