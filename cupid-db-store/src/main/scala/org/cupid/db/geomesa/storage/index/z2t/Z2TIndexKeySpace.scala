@@ -14,7 +14,7 @@ package org.cupid.db.geomesa.storage.index.z2t
 import com.typesafe.scalalogging.LazyLogging
 import org.cupid.db.geomesa.storage.curve.Z2TSFC
 import org.geotools.util.factory.Hints
-import org.locationtech.geomesa.curve.BinnedTime.{DateToBin, DateToBinnedTime, TimeToBin}
+import org.locationtech.geomesa.curve.BinnedTime.{DateToBin, TimeToBin}
 import org.locationtech.geomesa.curve.BinnedTime
 import org.locationtech.geomesa.filter.FilterValues
 import org.locationtech.geomesa.index.api.IndexKeySpace.IndexKeySpaceFactory
@@ -33,7 +33,6 @@ import org.locationtech.geomesa.index.api.{
   WritableFeature
 }
 import org.locationtech.geomesa.index.api.ShardStrategy.{NoShardStrategy, ZShardStrategy}
-import org.locationtech.geomesa.index.conf.QueryHints.LOOSE_BBOX
 import org.locationtech.geomesa.index.conf.QueryProperties
 import org.locationtech.geomesa.index.geotools.GeoMesaDataStoreFactory.GeoMesaDataStoreConfig
 import org.locationtech.geomesa.index.utils.Explainer
