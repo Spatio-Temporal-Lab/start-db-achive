@@ -31,7 +31,7 @@ class Z2TIndexTest extends Specification with LazyLogging {
       foreach(Seq("z2t:geom:dtg")) { indices =>
         val spec =
           "name:String,track:String,dtg:Date,*geom:Point:srid=4326;" +
-            s"geomesa.z3.interval=year,geomesa.indices.enabled=$indices"
+            s"geomesa.z3.interval=month,geomesa.indices.enabled=$indices"
 
         val sft = SimpleFeatureTypes.createType("test", spec)
 

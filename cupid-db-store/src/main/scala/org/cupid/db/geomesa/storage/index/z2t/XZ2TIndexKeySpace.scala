@@ -292,7 +292,7 @@ class XZ2TIndexKeySpace(
     }
   }
 
-  // always apply the full filter to xz queries
+  // always apply the full filter to xz2t queries
   override def useFullFilter(
       values: Option[XZ2TIndexValues],
       config: Option[GeoMesaDataStoreConfig],

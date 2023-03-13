@@ -287,26 +287,12 @@ class Z2TIndexKeySpace(
     }
   }
 
+  // always apply the full filter to z2t queries
   override def useFullFilter(
       values: Option[Z2TIndexValues],
       config: Option[GeoMesaDataStoreConfig],
       hints: Hints
-  ): Boolean = {
-    // if the user has requested strict bounding boxes, we apply the full filter
-    // if we have a complicated geometry predicate, we need to pass it through to be evaluated
-    // if we have unbounded dates, we need to pass them through as we don't have z-values for all periods
-
-    // if the spatial predicate is rectangular (e.g. a bbox), the index is fine enough that we
-    // don't need to apply the filter on top of it. this may cause some minor errors at extremely
-    // fine resolutions, but the performance is worth it
-    val looseBBox =
-      Option(hints.get(LOOSE_BBOX)).map(Boolean.unbox).getOrElse(config.forall(_.queries.looseBBox))
-    def unboundedDates: Boolean = values.exists(_.temporalUnbounded.nonEmpty)
-    def complexGeoms: Boolean =
-      values.exists(_.geometries.values.exists(g => !GeometryUtils.isRectangular(g)))
-
-    !looseBBox || unboundedDates || complexGeoms
-  }
+  ): Boolean = true
 }
 
 object Z2TIndexKeySpace extends IndexKeySpaceFactory[Z2TIndexValues, Z2TIndexKey] {
