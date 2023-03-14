@@ -11,8 +11,7 @@
 
 package org.cupid.db.geomesa.storage.index
 
-import org.cupid.db.geomesa.storage.curve.Z2TSFC
-import org.locationtech.geomesa.curve.XZ3SFC
+import org.cupid.db.geomesa.storage.curve.{XZ2TSFC, Z2TSFC}
 import org.locationtech.geomesa.filter.{Bounds, FilterValues}
 import org.locationtech.geomesa.index.index.{SpatialIndexValues, TemporalIndexValues}
 import org.locationtech.jts.geom.Geometry
@@ -74,7 +73,7 @@ package object z2t {
     *                          and unbounded queries, respectively
     */
   case class XZ2TIndexValues(
-      sfc: XZ3SFC,
+      sfc: XZ2TSFC,
       geometries: FilterValues[Geometry],
       spatialBounds: Seq[(Double, Double, Double, Double)],
       intervals: FilterValues[Bounds[ZonedDateTime]],

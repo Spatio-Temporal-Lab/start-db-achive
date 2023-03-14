@@ -24,19 +24,20 @@ import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class Z2TIndexTest extends Specification with LazyLogging {
+class XZ2TIndexTest extends Specification with LazyLogging {
 
-  "Z2TIndex" should {
+  "XZ2TIndex" should {
     "index and query yearly epochs correctly" in {
-      foreach(Seq("z2t:geom:dtg")) { indices =>
+      foreach(Seq("xz2t:geom:dtg")) { indices =>
         val spec =
-          "name:String,track:String,dtg:Date,*geom:Point:srid=4326;" +
+          "name:String,track:String,dtg:Date,*geom:LineString:srid=4326;" +
             s"geomesa.z3.interval=month,geomesa.indices.enabled=$indices"
 
         val sft = SimpleFeatureTypes.createType("test", spec)
 
-        val ds = new TestGeoMesaDataStore(true) // loose bbox
+        val ds = new TestGeoMesaDataStore(false) // requires strict bbox...
 
+        // note: 2020 was a leap year
         val features =
           (0 until 10).map { i =>
             ScalaSimpleFeature.create(
@@ -44,8 +45,8 @@ class Z2TIndexTest extends Specification with LazyLogging {
               s"$i",
               s"name$i",
               "track1",
-              s"2022-12-07T0$i:00:00.000Z",
-              s"POINT(4$i 60)"
+              s"2020-12-07T0$i:00:00.000Z",
+              s"LINESTRING(4$i 60, 4$i 61)"
             )
           } ++ (10 until 20).map { i =>
             ScalaSimpleFeature.create(
@@ -53,8 +54,8 @@ class Z2TIndexTest extends Specification with LazyLogging {
               s"$i",
               s"name$i",
               "track2",
-              s"2022-12-${i}T$i:00:00.000Z",
-              s"POINT(4${i - 10} 60)"
+              s"2020-12-${i}T$i:00:00.000Z",
+              s"LINESTRING(4${i - 10} 60, 4${i - 10} 61)"
             )
           } ++ (20 until 30).map { i =>
             ScalaSimpleFeature.create(
@@ -62,8 +63,8 @@ class Z2TIndexTest extends Specification with LazyLogging {
               s"$i",
               s"name$i",
               "track3",
-              s"2022-12-${i}T${i - 10}:00:00.000Z",
-              s"POINT(6${i - 20} 60)"
+              s"2020-12-${i}T${i - 10}:00:00.000Z",
+              s"LINESTRING(6${i - 20} 60, 6${i - 20} 61)"
             )
           } ++ (30 until 32).map { i =>
             ScalaSimpleFeature.create(
@@ -71,8 +72,8 @@ class Z2TIndexTest extends Specification with LazyLogging {
               s"$i",
               s"name$i",
               "track4",
-              s"2022-12-${i}T${i - 10}:00:00.000Z",
-              s"POINT(${i - 20} 60)"
+              s"2020-12-${i}T${i - 10}:00:00.000Z",
+              s"LINESTRING(${i - 20} 60, ${i - 20} 61)"
             )
           }
 
@@ -82,7 +83,7 @@ class Z2TIndexTest extends Specification with LazyLogging {
         }
 
         val filter = ECQL.toFilter(
-          "bbox(geom,0,55,70,65) AND dtg during 2022-12-01T00:00:00.000Z/2022-12-31T23:59:59.999Z"
+          "bbox(geom,0,55,70,65) AND dtg during 2020-12-01T00:00:00.000Z/2020-12-31T23:59:59.999Z"
         )
 
         val filterReault = SelfClosingIterator(
@@ -91,14 +92,17 @@ class Z2TIndexTest extends Specification with LazyLogging {
         filterReault must containTheSameElementsAs(features)
 
         val lastDayFilter = ECQL.toFilter(
-          "bbox(geom,9,59,12,61) AND dtg during 2022-12-31T00:00:00.000Z/2022-12-31T23:59:59.999Z"
+          "bbox(geom,9,59,12,61) AND dtg during 2020-12-31T00:00:00.000Z/2020-12-31T23:59:59.999Z"
         )
 
-        val lastDayResults = SelfClosingIterator(
-          ds.getFeatureReader(new Query("test", lastDayFilter), Transaction.AUTO_COMMIT)
-        ).toList
+        val lastDayResults =
+          SelfClosingIterator(
+            ds.getFeatureReader(new Query("test", lastDayFilter), Transaction.AUTO_COMMIT)
+          ).toList
+
         lastDayResults mustEqual Seq(features.last)
       }
     }
   }
+
 }
