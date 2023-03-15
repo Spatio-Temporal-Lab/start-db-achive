@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.Ignore;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -79,7 +79,7 @@ public class MainTest {
             Statement stat = conn.createStatement();
             ResultSet result = stat.executeQuery("select * from t_test order by idx;")
         ) {
-            ArrayList<String> resultArray = getResultArray(result);
+            List<String> resultArray = getResultArray(result);
             for (String s : resultArray) {
                 log.info(s);
             }
@@ -101,7 +101,7 @@ public class MainTest {
     @Ignore
     public void allSQLCaseTest() throws Exception {
         // 执行所有测试用例文件
-        ArrayList<String> sqlCaseXMLs = getSqlCaseXMLs();
+        List<String> sqlCaseXMLs = getSqlCaseXMLs();
         for (String sqlCaseXML : sqlCaseXMLs) {
             log.info("执行文件:" + sqlCaseXML);
             runSingleCase(sqlCaseXML);

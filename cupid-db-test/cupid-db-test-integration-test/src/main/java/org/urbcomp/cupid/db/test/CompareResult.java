@@ -16,7 +16,7 @@
  */
 package org.urbcomp.cupid.db.test;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CompareResult {
 
@@ -24,15 +24,15 @@ public class CompareResult {
      * 比较字符串数组格式的实际实际结果与预期结果
      *
      * @param actualArray 实际返回内容
-     * @param expectArray 预期返回内容
+     * @param expectedArray 预期返回内容
      * */
-    public static void compareResult(ArrayList<String> actualArray, ArrayList<String> expectArray)
+    public static void compareResult(List<String> actualArray, List<String> expectedArray)
         throws Exception {
-        if (actualArray.size() != expectArray.size()) {
+        if (actualArray.size() != expectedArray.size()) {
             throw new Exception("预期结果数与实际返回结果数不一致");
         }
-        for (int i = 1; i < actualArray.size(); i++) {
-            if (!actualArray.get(i).equals(expectArray.get(i))) {
+        for (int i = 0; i < actualArray.size(); i++) {
+            if (!actualArray.get(i).equals(expectedArray.get(i))) {
                 throw new Exception("返回数据有误");
             }
         }
@@ -42,13 +42,11 @@ public class CompareResult {
      * 比较实际异常与预期异常
      *
      * @param actualArray 实际异常
-     * @param expectArray 预期异常
+     * @param expectedArray 预期异常
      * */
-    public static void compareException(
-        ArrayList<String> actualArray,
-        ArrayList<String> expectArray
-    ) throws Exception {
-        if (!actualArray.get(0).contains(expectArray.get(0))) {
+    public static void compareException(List<String> actualArray, List<String> expectedArray)
+        throws Exception {
+        if (!actualArray.get(0).contains(expectedArray.get(0))) {
             throw new Exception("异常不符合预期");
         }
     }

@@ -28,9 +28,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,13 +81,13 @@ public class GetData {
     /**
      *以字符串数组的格式返回预期数据
      *
-     * @param expectData 预期字符串
+     * @param expectedData 预期字符串
      * @param filePath sql用例的文件路径
      * @param resultID 预期数据的ID
      * @return 预期内容
      * */
-    public static ArrayList<String> getExpectDataArray(
-        String expectData,
+    public static List<String> getexpectedDataArray(
+        String expectedData,
         String filePath,
         String resultID
     ) throws Exception {
@@ -98,10 +97,10 @@ public class GetData {
             + File.separator
             + "expected"
             + File.separator
-            + expectData;
+            + expectedData;
 
-        StringBuilder expectValue = new StringBuilder();
-        ArrayList<String> expectedArray = new ArrayList<>();
+        StringBuilder expectedValue = new StringBuilder();
+        List<String> expectedArray = new ArrayList<>();
 
         // 获取根标签
         SAXReader saxReader = new SAXReader();
@@ -110,21 +109,23 @@ public class GetData {
 
         // 根据resultID获取当前执行sql的预期结果标签
         List<Element> resultElements = rootElement.elements();
-        int id = Integer.valueOf(resultID);
-        if (id - 1 > resultElements.size() || id < 1) throw new Exception("resultID不对");
-        Element resultElement = resultElements.get(id - 1);
-
-        // 获取column标签的内容
+        Element resultElement = resultElements.get(0);
+        for (Element Element : resultElements) {
+            if (Element.attributeValue("id").equals(resultID)) {
+                resultElement = Element;
+                break;
+            }
+        }
         List<Element> columnElements = resultElement.elements();
         for (Element columnElement : columnElements) {
             String filedName = columnElement.attributeValue("name");
             String filedType = columnElement.attributeValue("type");
-            expectValue.append(filedName).append("\t");
-            expectedArray.add(expectValue.toString());
-            expectValue.setLength(0);
-            expectValue.append(filedType).append("\t");
-            expectedArray.add(expectValue.toString());
-            expectValue.setLength(0);
+            expectedValue.append(filedName).append("\t");
+            expectedArray.add(expectedValue.toString());
+            expectedValue.setLength(0);
+            expectedValue.append(filedType).append("\t");
+            expectedArray.add(expectedValue.toString());
+            expectedValue.setLength(0);
             // 获取row标签的内容
             List<Element> rowElements = columnElement.elements("row");
             for (Element rowElement : rowElements) {
@@ -159,12 +160,12 @@ public class GetData {
      * @param result 执行sql返回的result
      * @return 字符串数组
      * */
-    public static ArrayList<String> getResultArray(ResultSet result) throws SQLException {
+    public static List<String> getResultArray(ResultSet result) throws SQLException {
         // 获取返回数据的列数
         int columnCount = result.getMetaData().getColumnCount();
         // 将表头信息和表头的类型拼接为字符串
         StringBuilder resultStr = new StringBuilder();
-        ArrayList<String> resultArray = new ArrayList<>();
+        List<String> resultArray = new ArrayList<>();
         // 拼接表头
         for (int i = 1; i <= columnCount; i++) {
             resultStr.append(result.getMetaData().getColumnName(i)).append("\t");

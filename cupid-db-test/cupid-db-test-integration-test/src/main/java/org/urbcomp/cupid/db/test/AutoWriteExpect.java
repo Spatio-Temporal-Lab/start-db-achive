@@ -29,7 +29,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 
@@ -55,6 +54,7 @@ public class AutoWriteExpect {
         Element rootElement = document.getRootElement();
         // 获取根标签下的所有case标签列表
         List<Element> caseElements = rootElement.elements();
+        // 每次执行sql都需要重新创建 Statement
         try (Connection connect = getConnect(); Statement stmt = connect.createStatement()) {
             for (Element caseElement : caseElements) {
                 // 获取case标签下的所有子标签列表
@@ -62,10 +62,8 @@ public class AutoWriteExpect {
 
                 String initSql = "";
                 String sqlType = "";
-                ArrayList<String> actualArray;
-                for (int i = 0; i < elements.size(); i++) {
-                    // 每次执行sql都需要重新创建 Statement
-                    Element element = elements.get(i);
+                List<String> actualArray;
+                for (Element element : elements) {
                     String elementName = element.getName();
 
                     if (elementName.equals("sql")) {
@@ -74,7 +72,7 @@ public class AutoWriteExpect {
                     } else if (elementName.equals("assertion")) {
                         // 将执行结果存到预期文件中, 不包含预期异常
                         String params = element.getText();
-                        String expectFileName = element.attributeValue("expected");
+                        String expectedFileName = element.attributeValue("expected");
                         // 有参数的话就重新拼接sql, 根据type来执行sql, 获取返回值
                         String sql;
                         if (params != null) {
@@ -88,9 +86,9 @@ public class AutoWriteExpect {
                         actualArray = executeSql(stmt, sqlType, sql);
 
                         // 预期值为文件名的时候再将结果保存为文件
-                        if (expectFileName != null && !expectFileName.startsWith("error")) {
-                            String expectFilePath = xmlPath + File.separator + expectFileName;
-                            try (FileWriter out = new FileWriter(expectFilePath)) {
+                        if (expectedFileName != null && !expectedFileName.startsWith("error")) {
+                            String expectedFilePath = xmlPath + File.separator + expectedFileName;
+                            try (FileWriter out = new FileWriter(expectedFilePath)) {
                                 createDocument(actualArray).write(out);
 
                                 // 转成字符串
@@ -113,7 +111,7 @@ public class AutoWriteExpect {
      * @param actualArray 预期结果的字符串数组
      * @return 预期结果对应的文档
      * */
-    private static Document createDocument(ArrayList<String> actualArray) {
+    private static Document createDocument(List<String> actualArray) {
         Document writeDoc = DocumentHelper.createDocument();
         // 编辑文档内容
         // 创建元素的根节点

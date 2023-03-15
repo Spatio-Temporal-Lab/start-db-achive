@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,15 +57,7 @@ public class RunSingleSQLCase {
      * @param xmlPath xml文件路径
      */
     public static void runSingleCase(String xmlPath) throws Exception {
-        START_TIME = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat("MMdd_HHmmss");
         try (Connection connect = getConnect()) {
-            /* 创建测试数据库并use
-            DBNAME = String.format("td_%s", ft.format(START_TIME));
-            try (Statement statement = connect.createStatement()) {
-                statement.executeUpdate("create database if not exists " + DBNAME);
-                statement.executeUpdate("use " + DBNAME);
-            }*/
             SAXReader saxReader = new SAXReader();
             Document document = saxReader.read(xmlPath);
             Element rootElement = document.getRootElement();
@@ -90,7 +81,7 @@ public class RunSingleSQLCase {
                 }
                 String initSql = "";
                 String sqlType = "";
-                ArrayList<String> actualArray = new ArrayList<>();
+                List<String> actualArray = new ArrayList<>();
 
                 // 遍历单个case标签内的子标签列表
                 for (int i = 0; i < elements.size(); i++) {
@@ -98,7 +89,7 @@ public class RunSingleSQLCase {
                     try (Statement stmt = connect.createStatement()) {
                         Element element = elements.get(i);
                         String elementName = element.getName();
-                        ArrayList<String> expectArray = new ArrayList<>();
+                        List<String> expectedArray = new ArrayList<>();
 
                         // 如果当前是sql标签
                         if (elementName.equals("sql")) {
@@ -123,26 +114,6 @@ public class RunSingleSQLCase {
                                     || elements.get(i + 1).getName().equals("sql")) {
                                     log.info("sql执行完成");
                                 }
-                                // 比较预期异常信息在assertion标签中执行
-                                // 下一个标签不是assertion标签时，如果type是query，从指定xml中获取预期结果，
-                                // 如果type是update，没有返回值，不需要执行操作
-                                /*
-                                if (i + 1 < elements.size()) {
-                                    haveError = elements.get(i + 1).getName().equals("error");
-                                }
-                                if (sqlType.equals("query") && !haveError) {
-                                    expectArray = getExpectDataArray(xmlName, xmlPath, count++);
-                                } else if (sqlType.equals("update")
-                                        && !haveError
-                                        && actualArray.size() != 0) {
-                                    throw new Exception("sql执行出现非预期错误" + initSql);
-                                }
-                                }
-                                // 有预期结果时, 与实际返回值进行比较
-                                if (expectArray.size() != 0) {
-                                System.out.println("预期返回值： " + expectArray);
-                                compareArrayData(actualArray, expectArray);
-                                }*/
                             }
                         }
                         // 如果当前是arguments标签
@@ -168,9 +139,9 @@ public class RunSingleSQLCase {
 
                             // 有预期结果获取并加入预期数据中,然后与实际数据进行比较
                             if (resultID != null) {
-                                expectArray = getExpectDataArray(xmlName, xmlPath, resultID);
-                                System.out.println("预期返回值： " + expectArray);
-                                compareResult(actualArray, expectArray);
+                                expectedArray = getexpectedDataArray(xmlName, xmlPath, resultID);
+                                System.out.println("预期返回值： " + expectedArray);
+                                compareResult(actualArray, expectedArray);
                             }
 
                             // 如果有预期异常加入预期数据中，然后与实际数据进行比较
@@ -178,9 +149,9 @@ public class RunSingleSQLCase {
                                 if (!error.contains("Exception")) {
                                     throw new Exception("预期异常内容不对");
                                 } else {
-                                    expectArray.add(error);
-                                    System.out.println("预期异常： " + expectArray);
-                                    compareException(actualArray, expectArray);
+                                    expectedArray.add(error);
+                                    System.out.println("预期异常： " + expectedArray);
+                                    compareException(actualArray, expectedArray);
                                 }
                             }
                             log.info("sql执行完成");
@@ -188,9 +159,6 @@ public class RunSingleSQLCase {
                     }
                 }
             }
-            /*try (Statement statement = connect.createStatement()) {
-                statement.executeUpdate("drop database if exists " + DBNAME);
-            }*/
         } catch (Exception e) {
             if (ERROR_STOP) {
                 throw new Exception(e.getMessage());
@@ -206,8 +174,8 @@ public class RunSingleSQLCase {
      * @param sqlType sql的类型
      * @return sql执行后得到的返回值
      */
-    public static ArrayList<String> executeSql(Statement stmt, String sql, String sqlType) {
-        ArrayList<String> actualValue = new ArrayList<>();
+    public static List<String> executeSql(Statement stmt, String sql, String sqlType) {
+        List<String> actualValue = new ArrayList<>();
         try {
             switch (sqlType) {
                 case "update":
