@@ -45,8 +45,6 @@ import org.locationtech.geomesa.utils.index.ByteArrays
 import org.locationtech.geomesa.utils.stats.Stat
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.opengis.filter.Filter
-import java.time.ZonedDateTime
-import java.util.Date
 import scala.collection.SortedSet
 
 class TestGeoMesaDataStore(looseBBox: Boolean)
@@ -184,9 +182,6 @@ object TestGeoMesaDataStore {
       projection: Option[QueryReferenceSystems]
   ) extends QueryPlan[TestGeoMesaDataStore] {
 
-    private var queryBeginTime: Date = _
-    private var queryEndTime: Date = _
-
     override type Results = SimpleFeature
 
     override val resultsToFeatures: ResultsToFeatures[SimpleFeature] =
@@ -210,18 +205,7 @@ object TestGeoMesaDataStore {
           }
         }
       }
-
       matches.iterator
-    }
-
-    private def getZonedDateTime(t: Option[ZonedDateTime]): ZonedDateTime = t match {
-      case Some(t) => t
-      case None    => throw new NoSuchElementException(s"Expected zonedDateTime value but got empty")
-    }
-
-    private def getFilterValue(s: Option[Filter]): Filter = s match {
-      case Some(s) => s
-      case None    => throw new NoSuchElementException(s"Expected filter value but got empty")
     }
 
     override def explain(explainer: Explainer, prefix: String): Unit = {
