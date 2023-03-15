@@ -69,4 +69,17 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
     }
     assertFalse(databasesAfter.contains(databaseName))
   }
+
+  test("test create then select database") {
+    val stmt = connect.createStatement()
+    val databaseName = "test_%d".format(scala.util.Random.nextInt(100000))
+    stmt.executeUpdate("CREATE DATABASE %s".format(databaseName))
+    val rs = stmt.executeQuery("SELECT DATABASE()")
+    var databases = List[String]()
+    while (rs.next()) {
+      databases = databases :+ rs.getString(1)
+    }
+    assertTrue(databases.contains(databaseName))
+
+  }
 }

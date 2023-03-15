@@ -14,7 +14,7 @@ import org.apache.calcite.sql._
 import org.apache.calcite.sql.ddl.{SqlDropSchema, SqlDropTable}
 import org.apache.calcite.sql.parser.SqlParser
 import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
-import org.scalatest.{BeforeAndAfterEach, FunSuite}
+import org.scalatest.{BeforeAndAfterEach, FunSuite, nodurations}
 import org.urbcomp.cupid.db.parser.CupidDBSQLSamples
 import org.urbcomp.cupid.db.parser.dcl.SqlCreateUser
 import org.urbcomp.cupid.db.parser.ddl.{
@@ -25,6 +25,7 @@ import org.urbcomp.cupid.db.parser.ddl.{
   SqlUseDatabase
 }
 import org.urbcomp.cupid.db.parser.dql.{
+  SqlSelectDataBase,
   SqlShowCreateTable,
   SqlShowDatabases,
   SqlShowIndex,
@@ -163,6 +164,12 @@ class CupidDBVisitorTest extends FunSuite with BeforeAndAfterEach {
     val index1 = node.indexList.get(1).asInstanceOf[SqlIndexDeclaration]
     assertEquals("spatial_index", index1.indexName.names.get(0))
     assertEquals(4, node.columnList.size())
+  }
+  test("convert select database() to SqlNode") {
+    val sql = CupidDBSQLSamples.SELECT_DATABASE
+    val parsed = driver.parseSql(sql)
+    assertTrue(parsed.isInstanceOf[SqlSelectDataBase])
+
   }
 
 }

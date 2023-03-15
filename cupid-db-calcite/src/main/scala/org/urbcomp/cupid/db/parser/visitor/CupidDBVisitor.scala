@@ -27,11 +27,12 @@ import org.urbcomp.cupid.db.parser.ddl.{
   SqlUseDatabase
 }
 import org.urbcomp.cupid.db.parser.dql.{
+  SqlSelectDataBase,
   SqlShowCreateTable,
   SqlShowDatabases,
+  SqlShowIndex,
   SqlShowStatus,
-  SqlShowTables,
-  SqlShowIndex
+  SqlShowTables
 }
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlBaseVisitor
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlParser._
@@ -55,6 +56,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
   override def visitProgram(ctx: ProgramContext): SqlNode = visitStmt(ctx.stmt())
 
   override def visitStmt(ctx: StmtContext): SqlNode = ctx.getChild(0) match {
+    //    case c: SelectDataBaseStmtContext => visitSelectDataBaseStmt(c)
     case c: SelectStmtContext          => visitSelectStmt(c)
     case c: CreateTableStmtContext     => visitCreateTableStmt(c)
     case c: ShowTablesStmtContext      => visitShowTablesStmt(c)
@@ -82,6 +84,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
   override def visitSelectStmt(ctx: SelectStmtContext): SqlNode = {
     // TODO 暂时不考虑cte情况
     visitFullselectStmt(ctx.fullselectStmt())
+
   }
 
   def transfer(item: FullselectSetClauseContext): SqlOperator = {
@@ -112,6 +115,8 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
         Array(visitFullselectStmtItem(stmItem.head), visitFullselectStmtItem(stmItem(1))),
         pos
       )
+    } else if ("SELECTDATABASE()".equalsIgnoreCase(ctx.getText)) {
+      return new SqlSelectDataBase(pos)
     } else visitFullselectStmtItem(stmItem.head)
   }
 
@@ -123,6 +128,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
       case null => null // TODO 可能需要处理嵌套的事情
       case _    => visitSubselectStmt(ctx.subselectStmt())
     }
+
   }
 
   override def visitSubselectStmt(ctx: SubselectStmtContext): SqlNode = {
@@ -165,6 +171,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
     if (null != orderBy || null != fetch) {
       new SqlOrderBy(pos, query, orderBy, offset, fetch)
     } else query
+
   }
 
   def visitOverFunction(ctx: ExprFuncOverClauseContext, aggBasicCall: SqlBasicCall): SqlNode = {
