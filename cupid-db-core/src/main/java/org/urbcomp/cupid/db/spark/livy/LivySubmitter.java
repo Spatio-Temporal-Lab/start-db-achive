@@ -1,20 +1,26 @@
-/*
- * Copyright 2022 ST-Lab
+/* 
+ * Copyright (C) 2022  ST-Lab
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the
- * GNU General Public License version 3 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- */
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.urbcomp.cupid.db.spark.livy;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.urbcomp.cupid.db.config.DynamicConfig;
 import org.urbcomp.cupid.db.spark.ISparkSubmitter;
+import org.urbcomp.cupid.db.spark.SubmitResult;
 import org.urbcomp.cupid.db.util.Base64Util;
 import org.urbcomp.cupid.db.util.JacksonUtil;
 import org.urbcomp.cupid.db.util.SparkSqlParam;
@@ -25,6 +31,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static org.apache.hadoop.net.NetUtils.getHostname;
 
 /**
  * 维持至少有一个livy session运行
@@ -48,6 +56,8 @@ public class LivySubmitter implements ISparkSubmitter {
 
     private final LivyRestApi restApi;
 
+    private final String hostname;
+
     /**
      * 控制在session更新或不可用时，执行语句必须等待
      */
@@ -63,6 +73,7 @@ public class LivySubmitter implements ISparkSubmitter {
         this.sleepMs = 3000;
         this.maxWaitTimeMs = 120 * 1000;
         this.restApi = restApi;
+        this.hostname = getHostname();
 
         if (checkSession) {
             createNewSession();
@@ -152,28 +163,22 @@ public class LivySubmitter implements ISparkSubmitter {
         log.warn("Check Livy Session wait session exceed maxWaitTimeMs={}", maxWaitTimeMs);
     }
 
-    private String buildSqlId(int statementId) {
-        return System.currentTimeMillis() + SPLITTER + statementId;
-    }
-
-    private int extractStatementId(String sqlId) {
-        final String[] items = sqlId.split(SPLITTER);
-        if (items.length == 2) {
-            return Integer.parseInt(items[1]);
-        }
-        throw new IllegalArgumentException("InValid SqlId:" + sqlId);
+    private String buildSqlId() {
+        return System.nanoTime() + SPLITTER + hostname;
     }
 
     @Override
-    public String submit(SparkSqlParam param) {
+    public SubmitResult submit(SparkSqlParam param) {
         sessionReadLock.lock();
         try {
+            final String sqlId = buildSqlId();
+            param.setSqlId(sqlId);
             String code = buildCode(param);
             final LivyStatementResult res = restApi.executeStatement(
                 sessionId,
                 LivyStatementParam.builder().kind(DEFAULT_KIND).code(code).build()
             );
-            return buildSqlId(res.getId());
+            return SubmitResult.builder().execId(res.getId()).sqlId(sqlId).build();
         } finally {
             sessionReadLock.unlock();
         }
@@ -197,8 +202,8 @@ public class LivySubmitter implements ISparkSubmitter {
     }
 
     @Override
-    public void waitToFinish(String id) throws TimeoutException {
-        final int statementId = extractStatementId(id);
+    public void waitToFinish(SubmitResult submitResult) throws TimeoutException {
+        final int statementId = submitResult.getExecId();
 
         int attemptTime = 0;
         try {
