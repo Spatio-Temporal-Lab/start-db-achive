@@ -28,6 +28,7 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
     val rs = stmt.executeQuery("SHOW DATABASES")
     var databases = List[String]()
     while (rs.next()) {
+      println(rs.getString(1))
       databases = databases :+ rs.getString(1)
     }
     assertTrue(databases.contains(databaseName))
@@ -82,12 +83,10 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
     val rs0 = stmt.executeQuery("SELECT DATABASE()")
     rs0.next()
     assertEquals("default", rs0.getString(1))
-    val rs1 = stmt.executeQuery("SHOW DATABASES")
+    stmt.executeUpdate("USE test_57731")
+    val rs1 = stmt.executeQuery("SELECT DATABASE()")
     rs1.next()
-    rs1.next()
-    stmt.executeUpdate("USE " + rs1.getString(1))
-    val rs2 = stmt.executeQuery("SELECT DATABASE()")
-    rs2.next()
-    assertEquals("test_57731", rs2.getString(1))
+    assertEquals("test_57731", rs1.getString(1))
+
   }
 }
