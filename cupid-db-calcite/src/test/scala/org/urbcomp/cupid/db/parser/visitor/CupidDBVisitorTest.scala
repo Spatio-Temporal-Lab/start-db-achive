@@ -170,11 +170,11 @@ class CupidDBVisitorTest extends FunSuite with BeforeAndAfterEach {
     assertEquals("spatial_index", index1.indexName.names.get(0))
     assertEquals(4, node.columnList.size())
   }
+
   test("convert select database() to SqlNode") {
     val sql = CupidDBSQLSamples.SELECT_DATABASE
     val parsed = driver.parseSql(sql)
     assertTrue(parsed.isInstanceOf[SqlSelectDatabase])
-
   }
 
 }
