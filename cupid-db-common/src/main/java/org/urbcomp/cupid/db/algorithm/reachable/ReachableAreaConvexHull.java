@@ -56,20 +56,5 @@ public class ReachableAreaConvexHull {
         Polygon hull = (Polygon) convexHull.getConvexHull();
         return hull;
 
-        /*GeometryFactory gf = new GeometryFactory();
-        
-        CoordinateSequence cs = new CoordinateArraySequence(points.toArray(new Coordinate[0]));
-        MultiPoint pts = gf.createMultiPoint(cs);
-        ConcaveHull ch = new ConcaveHull(pts);
-        Geometry concaveHull = ch.concaveHullByLengthRatio(pts,0.6);
-        System.out.println(concaveHull);
-        
-        System.out.println(hull);
-        
-        
-        
-        //return (Polygon) concaveHull;
-        return hull;*/
-
     }
 }
