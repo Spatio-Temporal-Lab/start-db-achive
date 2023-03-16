@@ -20,11 +20,10 @@ case class SelectDatabaseExecutor() extends BaseExecutor {
   override def execute[Array](): MetadataResult[Array] = {
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
-
-    val all: Database = MetadataAccessUtil.getDatabase(userName, param.getDbName)
-    val dbs = Array(all.getName.asInstanceOf[AnyRef])
+    val res: Database = MetadataAccessUtil.getDatabase(userName, param.getDbName)
+    val db = Array(res.getName.asInstanceOf[AnyRef])
     MetadataResult
-      .buildResult(Array("Database"), java.util.Arrays.asList(dbs))
+      .buildResult(Array("Database"), java.util.Arrays.asList(db))
       .asInstanceOf[MetadataResult[Array]]
   }
 }
