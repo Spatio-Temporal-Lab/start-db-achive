@@ -62,8 +62,6 @@
         <specs2.version>4.9.2</specs2.version>
         <httpclient.version>4.5.14</httpclient.version>
         <mockito.version>3.12.4</mockito.version>
-        <gt.version>23.3</gt.version>
-        <specs2.version>4.9.2</specs2.version>
     </properties>
 
     <dependencyManagement>
@@ -173,11 +171,6 @@
                 <version>${lombok.version}</version>
                 <scope>compile</scope>
             </dependency>
-            <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-epsg-hsql</artifactId>
-                <version>${gt.version}</version>
-            </dependency>
 
             <!-- Test  -->
             <dependency>
@@ -196,26 +189,6 @@
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-testing-util</artifactId>
                 <version>${hbase.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- test dependencies -->
-            <dependency>
-                <groupId>org.specs2</groupId>
-                <artifactId>specs2-core_${scala.binary.version}</artifactId>
-                <version>${specs2.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.specs2</groupId>
-                <artifactId>specs2-junit_${scala.binary.version}</artifactId>
-                <version>${specs2.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.specs2</groupId>
-                <artifactId>specs2-mock_${scala.binary.version}</artifactId>
-                <version>${specs2.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
