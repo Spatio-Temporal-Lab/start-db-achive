@@ -27,7 +27,7 @@ import org.urbcomp.cupid.db.parser.ddl.{
   SqlUseDatabase
 }
 import org.urbcomp.cupid.db.parser.dql.{
-  SqlSelectDataBase,
+  SqlSelectDatabase,
   SqlShowCreateTable,
   SqlShowDatabases,
   SqlShowIndex,
@@ -56,7 +56,6 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
   override def visitProgram(ctx: ProgramContext): SqlNode = visitStmt(ctx.stmt())
 
   override def visitStmt(ctx: StmtContext): SqlNode = ctx.getChild(0) match {
-    //    case c: SelectDataBaseStmtContext => visitSelectDataBaseStmt(c)
     case c: SelectStmtContext          => visitSelectStmt(c)
     case c: CreateTableStmtContext     => visitCreateTableStmt(c)
     case c: ShowTablesStmtContext      => visitShowTablesStmt(c)
@@ -116,7 +115,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
         pos
       )
     } else if ("SELECTDATABASE()".equalsIgnoreCase(ctx.getText)) {
-      return new SqlSelectDataBase(pos)
+      new SqlSelectDatabase(pos)
     } else visitFullselectStmtItem(stmItem.head)
   }
 

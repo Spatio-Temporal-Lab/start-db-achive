@@ -16,18 +16,15 @@ import org.urbcomp.cupid.db.metadata.MetadataAccessUtil
 import org.urbcomp.cupid.db.metadata.entity.Database
 import org.urbcomp.cupid.db.util.SqlParam
 
-import java.util
-import scala.collection.JavaConverters.asScalaBufferConverter
-
-case class SelectDataBaseExecutor() extends BaseExecutor {
+case class SelectDatabaseExecutor() extends BaseExecutor {
   override def execute[Array](): MetadataResult[Array] = {
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
 
-    val all: util.List[Database] = MetadataAccessUtil.getDatabases(userName)
-    val dbs = all.asScala.map(d => Array(d.getName.asInstanceOf[AnyRef])).toArray
+    val all: Database = MetadataAccessUtil.getDatabase(userName, param.getDbName)
+    val dbs = Array(all.getName.asInstanceOf[AnyRef])
     MetadataResult
-      .buildResult(Array("Database"), java.util.Arrays.asList(dbs: _*))
+      .buildResult(Array("Database"), java.util.Arrays.asList(dbs))
       .asInstanceOf[MetadataResult[Array]]
   }
 }

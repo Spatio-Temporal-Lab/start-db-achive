@@ -29,14 +29,14 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class SqlSelectDataBase extends SqlCall {
+public class SqlSelectDatabase extends SqlCall {
 
     public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
         "SELECT DATABASE()",
         SqlKind.OTHER
     );
 
-    public SqlSelectDataBase(SqlParserPos pos) {
+    public SqlSelectDatabase(SqlParserPos pos) {
         super(pos);
     }
 
@@ -52,4 +52,10 @@ public class SqlSelectDataBase extends SqlCall {
         return Collections.emptyList();
 
     }
+
+    @Override
+    public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
+        writer.keyword("SELECT DATABASE()");
+    }
+
 }

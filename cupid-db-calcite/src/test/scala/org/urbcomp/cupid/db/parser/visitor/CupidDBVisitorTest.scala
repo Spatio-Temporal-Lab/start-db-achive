@@ -25,7 +25,7 @@ import org.urbcomp.cupid.db.parser.ddl.{
   SqlUseDatabase
 }
 import org.urbcomp.cupid.db.parser.dql.{
-  SqlSelectDataBase,
+  SqlSelectDatabase,
   SqlShowCreateTable,
   SqlShowDatabases,
   SqlShowIndex,
@@ -168,7 +168,7 @@ class CupidDBVisitorTest extends FunSuite with BeforeAndAfterEach {
   test("convert select database() to SqlNode") {
     val sql = CupidDBSQLSamples.SELECT_DATABASE
     val parsed = driver.parseSql(sql)
-    assertTrue(parsed.isInstanceOf[SqlSelectDataBase])
+    assertTrue(parsed.isInstanceOf[SqlSelectDatabase])
 
   }
 
