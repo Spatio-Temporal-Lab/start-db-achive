@@ -118,7 +118,7 @@ public class RoadFunction {
     }
 
     @CupidDBFunction("st_rn_reachableConvexHull")
-    public LineString st_rn_reachableConvexHull(
+    public Polygon st_rn_reachableConvexHull(
         RoadNetwork roadNetwork,
         Point startPt,
         BigDecimal timeInSec,
@@ -132,12 +132,11 @@ public class RoadFunction {
             travelMode
         );
         Polygon hull = reachable.getConvexHull();
-        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
-        return geometryFactory.createLineString(hull.getCoordinates());
+        return hull;
     }
 
     @CupidDBFunction("st_rn_reachableConcaveHull")
-    public LineString st_rn_reachableConcaveHull(
+    public Polygon st_rn_reachableConcaveHull(
         RoadNetwork roadNetwork,
         Point startPt,
         BigDecimal timeInSec,
@@ -152,8 +151,7 @@ public class RoadFunction {
             travelMode
         );
         Polygon hull = reachable.getConcaveHull();
-        GeometryFactory geometryFactory = GeometryFactoryUtils.defaultGeometryFactory();
-        return geometryFactory.createLineString(hull.getCoordinates());
+        return hull;
     }
 
 }

@@ -37,7 +37,7 @@ public class ReachableAreaConcaveHullTest {
     public void setup() {
         startPt = new SpatialPoint(108.98897, 34.25815);
         this.roadNetwork = ModelGenerator.generateRoadNetwork();
-        concaveHull = new ReachableAreaConcaveHull(roadNetwork, startPt, 360, "Walk");
+        concaveHull = new ReachableAreaConcaveHull(roadNetwork, startPt, 3600, "Walk");
     }
 
     @Test

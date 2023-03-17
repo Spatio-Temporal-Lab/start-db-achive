@@ -52,21 +52,20 @@ public class ReachableAreaConcaveHull {
             this.travelMode
         );
         ArrayList<SpatialPoint> researchable = reachableArea.calReachableArea();
-        if(!researchable.isEmpty())
-        {
+        if (!researchable.isEmpty()) {
             List<Coordinate> points = new ArrayList<>();
-            researchable.stream().forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
+            researchable.stream()
+                .forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
             GeometryFactory geometryFactory = new GeometryFactory();
             CoordinateSequence sequence = new CoordinateArraySequence(
-                    points.toArray(new Coordinate[0])
+                points.toArray(new Coordinate[0])
             );
             MultiPoint pts = geometryFactory.createMultiPoint(sequence);
             ConcaveHull ch = new ConcaveHull(pts);
-            concaveHull = (Polygon)ch.concaveHullByLengthRatio(pts, 0.6);
+            concaveHull = (Polygon) ch.concaveHullByLengthRatio(pts, 0.6);
         }
 
-
-        return  concaveHull;
+        return concaveHull;
 
     }
 }

@@ -20,16 +20,15 @@ import org.urbcomp.cupid.db.model.point.CandidatePoint;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
 import org.urbcomp.cupid.db.model.roadnetwork.*;
 import org.urbcomp.cupid.db.util.GeoFunctions;
-
 import java.util.*;
 
 public class ReachableArea {
 
     private final SpatialPoint startPoint;
     private final double timeBudgetInS;
-    private final List<Integer> roadType;
+    private final List<RoadSegmentLevel> roadType;
     private final RoadNetwork roadNetwork;
-    private final String travelMode;
+    private final TravelMode travelMode;
     private double speed;
 
     public ReachableArea(
@@ -41,18 +40,54 @@ public class ReachableArea {
         this.startPoint = startPoint;
         this.roadNetwork = roadNetwork;
         this.timeBudgetInS = timeBudgetInS;
-        this.travelMode = travelMode;
         switch (travelMode) {
             case "Drive":
-                this.roadType = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8));
+                this.travelMode = TravelMode.DRIVE;
+                this.roadType = new ArrayList<>(
+                    Arrays.asList(
+                        RoadSegmentLevel.ELEVATED_ROAD,
+                        RoadSegmentLevel.HIGH_WAY_ROAD,
+                        RoadSegmentLevel.NATIONAL_ROAD,
+                        RoadSegmentLevel.PROVINCIAL_ROAD,
+                        RoadSegmentLevel.COUNTRY_ROAD,
+                        RoadSegmentLevel.MAIN_ROAD,
+                        RoadSegmentLevel.URBAN_ROAD,
+                        RoadSegmentLevel.DOWNTOWN_ROAD,
+                        RoadSegmentLevel.RESIDENTIAL_ROAD
+                    )
+                );
                 this.speed = 50.0 / 3.6;
                 break;
             case "Walk":
-                this.roadType = new ArrayList<>(Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9));
+                this.travelMode = TravelMode.WALK;
+                this.roadType = new ArrayList<>(
+                    Arrays.asList(
+                        RoadSegmentLevel.NATIONAL_ROAD,
+                        RoadSegmentLevel.PROVINCIAL_ROAD,
+                        RoadSegmentLevel.COUNTRY_ROAD,
+                        RoadSegmentLevel.MAIN_ROAD,
+                        RoadSegmentLevel.URBAN_ROAD,
+                        RoadSegmentLevel.DOWNTOWN_ROAD,
+                        RoadSegmentLevel.RESIDENTIAL_ROAD,
+                        RoadSegmentLevel.SIDEWALK_ROAD
+                    )
+                );
                 this.speed = 5.0 / 3.6;
                 break;
             case "Ride":
-                this.roadType = new ArrayList<>(Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9));
+                this.travelMode = TravelMode.RIDE;
+                this.roadType = new ArrayList<>(
+                    Arrays.asList(
+                        RoadSegmentLevel.NATIONAL_ROAD,
+                        RoadSegmentLevel.PROVINCIAL_ROAD,
+                        RoadSegmentLevel.COUNTRY_ROAD,
+                        RoadSegmentLevel.MAIN_ROAD,
+                        RoadSegmentLevel.URBAN_ROAD,
+                        RoadSegmentLevel.DOWNTOWN_ROAD,
+                        RoadSegmentLevel.RESIDENTIAL_ROAD,
+                        RoadSegmentLevel.SIDEWALK_ROAD
+                    )
+                );
                 this.speed = 10.0 / 3.6;
                 break;
             default:
@@ -77,15 +112,15 @@ public class ReachableArea {
             roadNetwork,
             100
         );
-        if(startCandidatePoint != null)
-        {
-            RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId())
-                    .getStartNode();
+        if (startCandidatePoint != null) {
+            RoadNode startNode = roadNetwork.getRoadSegmentById(
+                startCandidatePoint.getRoadSegmentId()
+            ).getStartNode();
             nodeQueue.offer(startNode);
             visitedNode.add(startNode);
             costMap.put(
-                    startNode,
-                    GeoFunctions.getDistanceInM(this.startPoint, startNode) / this.speed
+                startNode,
+                GeoFunctions.getDistanceInM(this.startPoint, startNode) / this.speed
             );
 
             while (!nodeQueue.isEmpty()) {
@@ -93,25 +128,25 @@ public class ReachableArea {
                 Set<RoadSegment> edges = graph.edgesOf(curNode); // return the edge from the node
                 for (RoadSegment e : edges) {
                     RoadNode candidateNode;
-                    if (this.roadType.contains(e.getLevel().value())) {
+                    if (this.roadType.contains(e.getLevel())) {
                         if (e.getStartNode().equals(curNode)
-                                && (e.getDirection() == RoadSegmentDirection.DUAL
+                            && (e.getDirection() == RoadSegmentDirection.DUAL
                                 || e.getDirection() == RoadSegmentDirection.FORWARD)) {
                             candidateNode = e.getEndNode();
                         } else if (e.getEndNode().equals(curNode)
-                                && (e.getDirection() == RoadSegmentDirection.DUAL
+                            && (e.getDirection() == RoadSegmentDirection.DUAL
                                 || e.getDirection() == RoadSegmentDirection.BACKWARD)) {
-                            candidateNode = e.getStartNode();
-                        } else {
-                            continue;
-                        }
+                                    candidateNode = e.getStartNode();
+                                } else {
+                                    continue;
+                                }
 
                         if (visitedNode.contains(candidateNode)) {
                             continue;
                         }
                         double curCost = costMap.get(curNode);
 
-                        if (this.travelMode.equals("Drive")) {
+                        if (this.travelMode.equals(TravelMode.DRIVE)) {
                             setSpeed(e.getSpeedLimit() / 3.6);
                         }
                         double candidateCost = curCost + e.getLengthInMeter() / this.speed;
