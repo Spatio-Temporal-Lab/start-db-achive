@@ -18,7 +18,7 @@
         <column name="EXPR$0" type="double">
             <row>0.0</row>
         </column>
-    </result>>
+    </result>
 
     <result id="4">
         <column name="EXPR$0" type="double">
@@ -60,7 +60,7 @@
         <column name="EXPR$0" type="double">
             <row>2.0</row>
         </column>
-    </result>null
+    </result>
 
     <result id="11">
         <column name="EXPR$0" type="double">
@@ -78,7 +78,7 @@
         <column name="EXPR$0" type="decimal">
             <row>0.0</row>
         </column>
-    </result>null
+    </result>
 
     <result id="14">
         <column name="EXPR$0" type="decimal">
@@ -96,7 +96,7 @@
         <column name="EXPR$0" type="decimal">
             <row>0</row>
         </column>
-    </result>null
+    </result>
 
     <result id="17">
         <column name="EXPR$0" type="decimal">
@@ -114,7 +114,7 @@
         <column name="EXPR$0" type="int">
             <row>0</row>
         </column>
-    </result>null
+    </result>
 
     <result id="20">
         <column name="EXPR$0" type="decimal">
@@ -126,7 +126,7 @@
         <column name="EXPR$0" type="decimal">
             <row>123.500</row>
         </column>
-    </result>null
+    </result>
 
     <result id="22">
         <column name="EXPR$0" type="decimal">
@@ -144,7 +144,7 @@
         <column name="EXPR$0" type="decimal">
             <row>120.000</row>
         </column>
-    </result>null
+    </result>
 
     <result id="25">
         <column name="EXPR$0" type="decimal">
@@ -162,7 +162,7 @@
         <column name="EXPR$0" type="int">
             <row>-1</row>
         </column>
-    </result>null
+    </result>
 
     <result id="28">
         <column name="EXPR$0" type="int">
@@ -180,7 +180,7 @@
         <column name="EXPR$0" type="int">
             <row>1</row>
         </column>
-    </result>null
+    </result>
 
     <result id="31">
         <column name="EXPR$0" type="int">
@@ -198,7 +198,7 @@
         <column name="EXPR$0" type="int">
             <row>-1</row>
         </column>
-    </result>null
+    </result>
 
     <result id="34">
         <column name="EXPR$0" type="int">
