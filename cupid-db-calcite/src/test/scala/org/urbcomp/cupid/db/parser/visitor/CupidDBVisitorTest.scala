@@ -34,7 +34,8 @@ import org.urbcomp.cupid.db.parser.dql.{
   SqlShowCreateTable,
   SqlShowDatabases,
   SqlShowIndex,
-  SqlShowTables
+  SqlShowTables,
+  SqlSelectUser
 }
 import org.urbcomp.cupid.db.parser.driver.CupidDBParseDriver
 import org.urbcomp.cupid.db.util.{MetadataUtil, SqlParam}
@@ -175,6 +176,12 @@ class CupidDBVisitorTest extends FunSuite with BeforeAndAfterEach {
     val sql = CupidDBSQLSamples.SELECT_DATABASE
     val parsed = driver.parseSql(sql)
     assertTrue(parsed.isInstanceOf[SqlSelectDatabase])
+  }
+
+  test("convert select user() to SqlNode") {
+    val sql = CupidDBSQLSamples.SELECT_USER
+    val parsed = driver.parseSql(sql)
+    assertTrue(parsed.isInstanceOf[SqlSelectUser])
   }
 
 }

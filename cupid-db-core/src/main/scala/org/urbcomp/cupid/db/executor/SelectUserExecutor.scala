@@ -17,18 +17,15 @@
 package org.urbcomp.cupid.db.executor
 
 import org.urbcomp.cupid.db.infra.{BaseExecutor, MetadataResult}
-import org.urbcomp.cupid.db.metadata.MetadataAccessUtil
-import org.urbcomp.cupid.db.metadata.entity.Database
 import org.urbcomp.cupid.db.util.SqlParam
 
-case class SelectDatabaseExecutor() extends BaseExecutor {
+case class SelectUserExecutor() extends BaseExecutor {
   override def execute[Array](): MetadataResult[Array] = {
     val param = SqlParam.CACHE.get()
     val userName = param.getUserName
-    val existed: Database = MetadataAccessUtil.getDatabase(userName, param.getDbName)
-    val db = Array(existed.getName.asInstanceOf[AnyRef])
+    val user = Array(userName.asInstanceOf[AnyRef])
     MetadataResult
-      .buildResult(Array("Database"), java.util.Arrays.asList(db))
+      .buildResult(Array("User"), java.util.Arrays.asList(user))
       .asInstanceOf[MetadataResult[Array]]
   }
 }

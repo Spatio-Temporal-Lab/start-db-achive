@@ -37,7 +37,8 @@ import org.urbcomp.cupid.db.parser.dql.{
   SqlShowDatabases,
   SqlShowIndex,
   SqlShowStatus,
-  SqlShowTables
+  SqlShowTables,
+  SqlSelectUser
 }
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlBaseVisitor
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlParser._
@@ -121,6 +122,8 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
       )
     } else if ("SELECTDATABASE()".equalsIgnoreCase(ctx.getText)) {
       new SqlSelectDatabase(pos)
+    } else if ("SELECTUSER()".equalsIgnoreCase(ctx.getText)) {
+      new SqlSelectUser(pos)
     } else visitFullselectStmtItem(stmItem.head)
   }
 
