@@ -42,6 +42,7 @@ public class ReachableAreaConvexHull {
     }
 
     public Polygon getConvexHull() {
+        Polygon hull = null;
         ReachableArea reachableArea = new ReachableArea(
             this.roadNetwork,
             this.startPt,
@@ -49,11 +50,15 @@ public class ReachableAreaConvexHull {
             this.travelMode
         );
         ArrayList<SpatialPoint> researchable = reachableArea.calReachableArea();
-        GeometryFactory geometryFactory = new GeometryFactory();
-        List<Coordinate> points = new ArrayList<>();
-        researchable.stream().forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
-        ConvexHull convexHull = new ConvexHull(points.toArray(new Coordinate[0]), geometryFactory);
-        Polygon hull = (Polygon) convexHull.getConvexHull();
+        if(!researchable.isEmpty()) {
+            GeometryFactory geometryFactory = new GeometryFactory();
+            List<Coordinate> points = new ArrayList<>();
+            researchable.stream().forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
+            ConvexHull convexHull = new ConvexHull(points.toArray(new Coordinate[0]), geometryFactory);
+            hull = (Polygon) convexHull.getConvexHull();
+        }
+
+
         return hull;
 
     }

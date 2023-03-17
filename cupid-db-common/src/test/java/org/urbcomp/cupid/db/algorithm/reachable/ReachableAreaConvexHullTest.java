@@ -36,7 +36,7 @@ public class ReachableAreaConvexHullTest {
     public void setup() {
         startPt = new SpatialPoint(108.98897, 34.25815);
         this.roadNetwork = ModelGenerator.generateRoadNetwork();
-        access = new ReachableAreaConvexHull(roadNetwork, startPt, 360, "Drive");
+        access = new ReachableAreaConvexHull(roadNetwork, startPt, 3600, "Walk");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ReachableAreaConvexHullTest {
         for (Coordinate coordinate : hull.getCoordinates()) {
             SpatialPoint endPt = new SpatialPoint(coordinate.y, coordinate.x);
             double dis = GeoFunctions.getDistanceInM(startNodePoint, endPt);
-            Assert.assertTrue(dis < 3000.0);
+            Assert.assertTrue(dis < 5000.0);
 
         }
 

@@ -28,7 +28,6 @@ public class ReachableAreaConcaveHull {
     private SpatialPoint startPt;
     private double timeBudgetInS;
     private String travelMode;
-    private double lengthRatio;
     private final RoadNetwork roadNetwork;
 
     public ReachableAreaConcaveHull(
@@ -45,6 +44,7 @@ public class ReachableAreaConcaveHull {
     }
 
     public Polygon getConcaveHull() {
+        Polygon concaveHull = null;
         ReachableArea reachableArea = new ReachableArea(
             this.roadNetwork,
             this.startPt,
@@ -52,16 +52,21 @@ public class ReachableAreaConcaveHull {
             this.travelMode
         );
         ArrayList<SpatialPoint> researchable = reachableArea.calReachableArea();
-        List<Coordinate> points = new ArrayList<>();
-        researchable.stream().forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
-        GeometryFactory geometryFactory = new GeometryFactory();
-        CoordinateSequence sequence = new CoordinateArraySequence(
-            points.toArray(new Coordinate[0])
-        );
-        MultiPoint pts = geometryFactory.createMultiPoint(sequence);
-        ConcaveHull ch = new ConcaveHull(pts);
-        Geometry concaveHull = ch.concaveHullByLengthRatio(pts, 0.6);
-        return (Polygon) concaveHull;
+        if(!researchable.isEmpty())
+        {
+            List<Coordinate> points = new ArrayList<>();
+            researchable.stream().forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
+            GeometryFactory geometryFactory = new GeometryFactory();
+            CoordinateSequence sequence = new CoordinateArraySequence(
+                    points.toArray(new Coordinate[0])
+            );
+            MultiPoint pts = geometryFactory.createMultiPoint(sequence);
+            ConcaveHull ch = new ConcaveHull(pts);
+            concaveHull = (Polygon)ch.concaveHullByLengthRatio(pts, 0.6);
+        }
+
+
+        return  concaveHull;
 
     }
 }

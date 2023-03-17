@@ -16,8 +16,6 @@
  */
 package org.urbcomp.cupid.db.algorithm.reachable;
 
-import org.urbcomp.cupid.db.algorithm.shortestpath.AbstractShortestPath;
-import org.urbcomp.cupid.db.algorithm.shortestpath.BiDijkstraShortestPath;
 import org.urbcomp.cupid.db.model.point.CandidatePoint;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
 import org.urbcomp.cupid.db.model.roadnetwork.*;
@@ -27,88 +25,119 @@ import java.util.*;
 
 public class ReachableArea {
 
-    private SpatialPoint startPt;
-    private double disInMeter;
-    private List<Integer> roadType;
-    private final AbstractShortestPath pathAlgo;
+    private final SpatialPoint startPoint;
+    private final double timeBudgetInS;
+    private final List<Integer> roadType;
     private final RoadNetwork roadNetwork;
+    private final String travelMode;
+    private double speed;
 
     public ReachableArea(
         RoadNetwork roadNetwork,
-        SpatialPoint startPt,
+        SpatialPoint startPoint,
         double timeBudgetInS,
         String travelMode
     ) {
-        this.startPt = startPt;
+        this.startPoint = startPoint;
         this.roadNetwork = roadNetwork;
-        this.pathAlgo = new BiDijkstraShortestPath(roadNetwork);
-        if (travelMode == "Drive") {
-            this.roadType = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8));
-            this.disInMeter = timeBudgetInS / 3600 * 30000;
-        } else if (travelMode == "Walk") {
-            this.roadType = new ArrayList<>(Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9));
-            this.disInMeter = timeBudgetInS / 3600 * 5000;
-        } else if (travelMode == "Ride") {
-            this.roadType = new ArrayList<>(Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9));
-            this.disInMeter = timeBudgetInS / 3600 * 10000;
-        } else {
-            throw new IllegalArgumentException("Travel mode should be drive, walk, or ride");
+        this.timeBudgetInS = timeBudgetInS;
+        this.travelMode = travelMode;
+        switch (travelMode) {
+            case "Drive":
+                this.roadType = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8));
+                this.speed = 50.0 / 3.6;
+                break;
+            case "Walk":
+                this.roadType = new ArrayList<>(Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9));
+                this.speed = 5.0 / 3.6;
+                break;
+            case "Ride":
+                this.roadType = new ArrayList<>(Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9));
+                this.speed = 10.0 / 3.6;
+                break;
+            default:
+                throw new IllegalArgumentException("Travel mode should be drive, walk, or ride");
         }
     }
 
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
     public ArrayList<SpatialPoint> calReachableArea() {
-        Stack<RoadNode> nodeStack = new Stack<>();
-        ArrayList<RoadNode> visitedNode = new ArrayList<>();
+
+        Queue<RoadNode> nodeQueue = new LinkedList<>();
+        HashMap<RoadNode, Double> costMap = new HashMap<>();
         ArrayList<SpatialPoint> researchable = new ArrayList<>();
-        RoadGraph graph = roadNetwork.getDirectedRoadGraph();
-        SpatialPoint startPoint = new SpatialPoint(startPt.getCoordinate());
+        ArrayList<SpatialPoint> visitedNode = new ArrayList<>();
+        RoadGraph graph = this.roadNetwork.getDirectedRoadGraph();
 
         CandidatePoint startCandidatePoint = CandidatePoint.getNearestCandidatePoint(
             startPoint,
             roadNetwork,
-            500
+            100
         );
-        RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId())
-            .getStartNode();
-        nodeStack.push(startNode);
-        SpatialPoint startNodePoint = new SpatialPoint(startNode.getLng(), startNode.getLat());
+        if(startCandidatePoint != null)
+        {
+            RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId())
+                    .getStartNode();
+            nodeQueue.offer(startNode);
+            visitedNode.add(startNode);
+            costMap.put(
+                    startNode,
+                    GeoFunctions.getDistanceInM(this.startPoint, startNode) / this.speed
+            );
 
-        this.disInMeter = this.disInMeter - GeoFunctions.getDistanceInM(
-            startCandidatePoint,
-            startNodePoint
-        );
-
-        while (!nodeStack.isEmpty()) {
-            RoadNode node = nodeStack.pop();
-            visitedNode.add(node);
-            Set<RoadSegment> edges = graph.edgesOf(node); // return the edge from the node
-            for (RoadSegment e : edges) {
-                if (roadType.contains(e.getLevel().value())) // check road level
-                {
-                    if (e.getStartNode().equals(node)
-                        && (e.getDirection() == RoadSegmentDirection.DUAL
-                            || e.getDirection() == RoadSegmentDirection.FORWARD)) {
-
-                        if (!visitedNode.contains(e.getEndNode())
-                            && pathAlgo.findShortestPath(startNode, e.getEndNode())
-                                .getLengthInMeter() < disInMeter) {
-                            nodeStack.push(e.getEndNode());
-                            researchable.add(e.getEndNode());
+            while (!nodeQueue.isEmpty()) {
+                RoadNode curNode = nodeQueue.poll();
+                Set<RoadSegment> edges = graph.edgesOf(curNode); // return the edge from the node
+                for (RoadSegment e : edges) {
+                    RoadNode candidateNode;
+                    if (this.roadType.contains(e.getLevel().value())) {
+                        if (e.getStartNode().equals(curNode)
+                                && (e.getDirection() == RoadSegmentDirection.DUAL
+                                || e.getDirection() == RoadSegmentDirection.FORWARD)) {
+                            candidateNode = e.getEndNode();
+                        } else if (e.getEndNode().equals(curNode)
+                                && (e.getDirection() == RoadSegmentDirection.DUAL
+                                || e.getDirection() == RoadSegmentDirection.BACKWARD)) {
+                            candidateNode = e.getStartNode();
+                        } else {
+                            continue;
                         }
-                    } else if (e.getEndNode().equals(node)
-                        && (e.getDirection() == RoadSegmentDirection.DUAL
-                            || e.getDirection() == RoadSegmentDirection.BACKWARD)) {
-                                if (!visitedNode.contains(e.getStartNode())
-                                    && pathAlgo.findShortestPath(startNode, e.getStartNode())
-                                        .getLengthInMeter() < disInMeter) {
-                                    nodeStack.push(e.getStartNode());
-                                    researchable.add(e.getStartNode());
 
+                        if (visitedNode.contains(candidateNode)) {
+                            continue;
+                        }
+                        double curCost = costMap.get(curNode);
+
+                        if (this.travelMode.equals("Drive")) {
+                            setSpeed(e.getSpeedLimit() / 3.6);
+                        }
+                        double candidateCost = curCost + e.getLengthInMeter() / this.speed;
+
+                        if (candidateCost <= this.timeBudgetInS) {
+                            nodeQueue.offer(candidateNode);
+                            visitedNode.add(candidateNode);
+                            researchable.add(candidateNode);
+                            costMap.put(candidateNode, candidateCost);
+                        } else {
+                            List<SpatialPoint> pts = e.getPoints();
+                            for (int i = 0; i < pts.size(); i++) {
+                                double dis = GeoFunctions.getDistanceInM(curNode, pts.get(i));
+                                if (curCost + dis / this.speed > this.timeBudgetInS) {
+                                    if (i > 0) {
+                                        researchable.add(pts.get(i - 1));
+                                    }
+                                    break;
                                 }
                             }
+                        }
+                    }
                 }
             }
         }
+
         return researchable;
     }
 }
