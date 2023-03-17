@@ -32,8 +32,6 @@ class UserExecutorTest extends AbstractCalciteFunctionTest {
 
   test("test select user") {
     val stmt = connect.createStatement()
-    val databaseName = "test_%d".format(scala.util.Random.nextInt(100000))
-    stmt.executeUpdate("CREATE DATABASE %s".format(databaseName))
     val rs = stmt.executeQuery("SELECT USER()")
     rs.next()
     assertEquals("root", rs.getString(1))
