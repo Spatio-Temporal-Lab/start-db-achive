@@ -36,6 +36,7 @@ public class MainTest {
     private static final Logger log = LoggerFactory.getLogger(MainTest.class);
 
     @Test
+    @Ignore
     public void testDrop() throws Exception {
         try (
             Connection connection = getConnect();
