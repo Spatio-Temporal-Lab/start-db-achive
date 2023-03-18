@@ -36,14 +36,13 @@ public class MainTest {
     private static final Logger log = LoggerFactory.getLogger(MainTest.class);
 
     @Test
-    @Ignore
-    public void testdrop() throws Exception {
+    public void testDrop() throws Exception {
         try (
             Connection connection = getConnect();
             Statement statement = connection.createStatement()
         ) {
-            statement.executeUpdate("create database if not exists testdrop");
-            statement.executeUpdate("drop database testdrop");
+            statement.executeUpdate("create database if not exists testDrop");
+            statement.executeUpdate("drop database testDrop");
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -76,8 +75,8 @@ public class MainTest {
     public void testQuery() throws Exception {
         try (
             Connection conn = getConnect();
-            Statement stat = conn.createStatement();
-            ResultSet result = stat.executeQuery("select * from t_test order by idx;")
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt.executeQuery("select * from t_test order by idx;")
         ) {
             List<String> resultArray = getResultArray(result);
             for (String s : resultArray) {

@@ -86,7 +86,7 @@ public class GetData {
      * @param resultID 预期数据的ID
      * @return 预期内容
      * */
-    public static List<String> getexpectedDataArray(
+    public static List<String> getExpectedDataArray(
         String expectedData,
         String filePath,
         String resultID

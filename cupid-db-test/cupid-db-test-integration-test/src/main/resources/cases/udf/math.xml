@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <!--  通用数学函数 测试用例  -->
-<testcase>
+<testCase>
 
-    <resultxml>math_result.xml</resultxml>
+    <resultXml>math_result.xml</resultXml>
 
     <!--  求普通对数，num >   log(base: Double, num: Double): Double  -->
     <case>
@@ -206,4 +206,4 @@
         <arguments resultID="75">[-1]</arguments>
     </case>
 
-</testcase>
+</testCase>
