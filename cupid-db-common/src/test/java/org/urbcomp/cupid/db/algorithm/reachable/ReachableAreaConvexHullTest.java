@@ -50,13 +50,14 @@ public class ReachableAreaConvexHullTest {
             100
         );
         assert startCandidatePoint != null;
-        RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId()).getStartNode();
+        RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId())
+            .getStartNode();
         SpatialPoint startNodePoint = new SpatialPoint(startNode.getLng(), startNode.getLat());
 
         for (Coordinate coordinate : hull.getCoordinates()) {
             SpatialPoint endPt = new SpatialPoint(coordinate.y, coordinate.x);
             double dis = GeoFunctions.getDistanceInM(startNodePoint, endPt);
-            Assert.assertTrue(dis < ReachableArea.walkSpeedInMeterPerSec *  timeBudgetInS);
+            Assert.assertTrue(dis < ReachableArea.walkSpeedInMeterPerSec * timeBudgetInS);
 
         }
 

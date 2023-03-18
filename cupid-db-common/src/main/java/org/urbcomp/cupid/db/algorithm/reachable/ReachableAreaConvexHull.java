@@ -23,7 +23,7 @@ import org.urbcomp.cupid.db.model.roadnetwork.*;
 
 import java.util.*;
 
-public class ReachableAreaConvexHull extends AbstractReachableArea{
+public class ReachableAreaConvexHull extends AbstractReachableArea {
 
     public ReachableAreaConvexHull(
         RoadNetwork roadNetwork,
@@ -31,16 +31,16 @@ public class ReachableAreaConvexHull extends AbstractReachableArea{
         double timeBudgetInS,
         String travelMode
     ) {
-       super(roadNetwork,startPt,timeBudgetInS,travelMode);
+        super(roadNetwork, startPt, timeBudgetInS, travelMode);
     }
 
     @Override
     public Polygon getHull() {
         ReachableArea reachableArea = new ReachableArea(
-                this.roadNetwork,
-                this.startPt,
-                this.timeBudgetInS,
-                this.travelMode
+            this.roadNetwork,
+            this.startPt,
+            this.timeBudgetInS,
+            this.travelMode
         );
         ArrayList<SpatialPoint> researchable = reachableArea.calReachableArea();
         if (!researchable.isEmpty()) {
@@ -48,14 +48,13 @@ public class ReachableAreaConvexHull extends AbstractReachableArea{
             List<Coordinate> points = new ArrayList<>();
             researchable.forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
             ConvexHull convexHull = new ConvexHull(
-                    points.toArray(new Coordinate[0]),
-                    geometryFactory
+                points.toArray(new Coordinate[0]),
+                geometryFactory
             );
             return (Polygon) convexHull.getConvexHull();
         } else {
             return null;
         }
-
 
     }
 

@@ -28,7 +28,6 @@ import org.urbcomp.cupid.db.model.roadnetwork.RoadNode;
 import org.urbcomp.cupid.db.model.sample.ModelGenerator;
 import org.urbcomp.cupid.db.util.GeoFunctions;
 
-
 public class ReachableAreaConcaveHullTest {
     private static ReachableAreaConcaveHull concaveHull;
     private RoadNetwork roadNetwork;
@@ -55,7 +54,8 @@ public class ReachableAreaConcaveHullTest {
         );
 
         assert startCandidatePoint != null;
-        RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId()).getStartNode();
+        RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId())
+            .getStartNode();
         SpatialPoint startNodePoint = new SpatialPoint(startNode.getLng(), startNode.getLat());
 
         for (Coordinate coordinate : hull.getCoordinates()) {
