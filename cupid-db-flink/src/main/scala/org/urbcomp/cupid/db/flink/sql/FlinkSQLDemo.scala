@@ -11,9 +11,7 @@
 
 package org.urbcomp.cupid.db.flink.sql
 
-import org.apache.flink.api.scala.createTypeInformation
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
-import org.apache.flink.table.api.Table
+import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.table.api.bridge.scala.StreamTableEnvironment
 import org.locationtech.jts.geom.Point
 import org.urbcomp.cupid.db.flink.function.Functions
