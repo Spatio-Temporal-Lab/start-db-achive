@@ -28,34 +28,40 @@ import org.urbcomp.cupid.db.model.roadnetwork.RoadNode;
 import org.urbcomp.cupid.db.model.sample.ModelGenerator;
 import org.urbcomp.cupid.db.util.GeoFunctions;
 
+
 public class ReachableAreaConcaveHullTest {
     private static ReachableAreaConcaveHull concaveHull;
     private RoadNetwork roadNetwork;
     private SpatialPoint startPt;
+    private double timeBudgetInS;
 
     @Before
     public void setup() {
+        timeBudgetInS = 3600.0;
         startPt = new SpatialPoint(108.98897, 34.25815);
         this.roadNetwork = ModelGenerator.generateRoadNetwork();
-        concaveHull = new ReachableAreaConcaveHull(roadNetwork, startPt, 3600, "Walk");
+        concaveHull = new ReachableAreaConcaveHull(roadNetwork, startPt, timeBudgetInS, "Walk");
     }
 
     @Test
     public void reachableAreaTest() {
-        Polygon hull = concaveHull.getConcaveHull();
+
+        Polygon hull = concaveHull.getHull();
+        System.out.println(hull);
         CandidatePoint startCandidatePoint = CandidatePoint.getNearestCandidatePoint(
             startPt,
             roadNetwork,
             100
         );
-        RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId())
-            .getStartNode();
+
+        assert startCandidatePoint != null;
+        RoadNode startNode = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId()).getStartNode();
         SpatialPoint startNodePoint = new SpatialPoint(startNode.getLng(), startNode.getLat());
 
         for (Coordinate coordinate : hull.getCoordinates()) {
             SpatialPoint endPt = new SpatialPoint(coordinate.y, coordinate.x);
             double dis = GeoFunctions.getDistanceInM(startNodePoint, endPt);
-            Assert.assertTrue(dis < 5000.0);
+            Assert.assertTrue(dis < ReachableArea.walkSpeedInMeterPerSec * timeBudgetInS);
         }
     }
 }

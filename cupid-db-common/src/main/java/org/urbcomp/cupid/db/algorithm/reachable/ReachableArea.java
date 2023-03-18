@@ -22,6 +22,8 @@ import org.urbcomp.cupid.db.model.roadnetwork.*;
 import org.urbcomp.cupid.db.util.GeoFunctions;
 import java.util.*;
 
+
+
 public class ReachableArea {
 
     private final SpatialPoint startPoint;
@@ -29,7 +31,11 @@ public class ReachableArea {
     private final List<RoadSegmentLevel> roadType;
     private final RoadNetwork roadNetwork;
     private final TravelMode travelMode;
-    private double speed;
+    protected static double rideSpeedInMeterPerSec = 10.0 / 3.6;
+    protected static double walkSpeedInMeterPerSec= 5.0 / 3.6;
+
+
+
 
     public ReachableArea(
         RoadNetwork roadNetwork,
@@ -43,8 +49,7 @@ public class ReachableArea {
         switch (travelMode) {
             case "Drive":
                 this.travelMode = TravelMode.DRIVE;
-                this.roadType = new ArrayList<>(
-                    Arrays.asList(
+                this.roadType = Arrays.asList(
                         RoadSegmentLevel.ELEVATED_ROAD,
                         RoadSegmentLevel.HIGH_WAY_ROAD,
                         RoadSegmentLevel.NATIONAL_ROAD,
@@ -54,14 +59,11 @@ public class ReachableArea {
                         RoadSegmentLevel.URBAN_ROAD,
                         RoadSegmentLevel.DOWNTOWN_ROAD,
                         RoadSegmentLevel.RESIDENTIAL_ROAD
-                    )
                 );
-                this.speed = 50.0 / 3.6;
                 break;
             case "Walk":
                 this.travelMode = TravelMode.WALK;
-                this.roadType = new ArrayList<>(
-                    Arrays.asList(
+                this.roadType = Arrays.asList(
                         RoadSegmentLevel.NATIONAL_ROAD,
                         RoadSegmentLevel.PROVINCIAL_ROAD,
                         RoadSegmentLevel.COUNTRY_ROAD,
@@ -70,14 +72,11 @@ public class ReachableArea {
                         RoadSegmentLevel.DOWNTOWN_ROAD,
                         RoadSegmentLevel.RESIDENTIAL_ROAD,
                         RoadSegmentLevel.SIDEWALK_ROAD
-                    )
                 );
-                this.speed = 5.0 / 3.6;
                 break;
             case "Ride":
                 this.travelMode = TravelMode.RIDE;
-                this.roadType = new ArrayList<>(
-                    Arrays.asList(
+                this.roadType = Arrays.asList(
                         RoadSegmentLevel.NATIONAL_ROAD,
                         RoadSegmentLevel.PROVINCIAL_ROAD,
                         RoadSegmentLevel.COUNTRY_ROAD,
@@ -86,26 +85,64 @@ public class ReachableArea {
                         RoadSegmentLevel.DOWNTOWN_ROAD,
                         RoadSegmentLevel.RESIDENTIAL_ROAD,
                         RoadSegmentLevel.SIDEWALK_ROAD
-                    )
                 );
-                this.speed = 10.0 / 3.6;
                 break;
             default:
                 throw new IllegalArgumentException("Travel mode should be drive, walk, or ride");
         }
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public double getSpeed(TravelMode mode, RoadSegment roadSegment)
+    {
+        switch (mode) {
+            case WALK:
+                return walkSpeedInMeterPerSec;
+            case RIDE:
+                return rideSpeedInMeterPerSec;
+            case DRIVE:
+                return roadSegment.getSpeedLimit() / 3.6;
+            default:
+                throw new IllegalArgumentException("Travel mode should be drive, walk, or ride");
+        }
+    }
+
+    public RoadNode getCandidateNode(TravelMode mode, RoadSegment e, ReachableNode curNode)
+    {
+        if(mode.equals(TravelMode.DRIVE))
+        {
+            if (e.getStartNode().equals(curNode.getNode())
+                    && (e.getDirection() == RoadSegmentDirection.DUAL
+                    || e.getDirection() == RoadSegmentDirection.FORWARD)) {
+                return  e.getEndNode();
+            } else if (e.getEndNode().equals(curNode.getNode())
+                    && (e.getDirection() == RoadSegmentDirection.DUAL
+                    || e.getDirection() == RoadSegmentDirection.BACKWARD)) {
+                return e.getStartNode();
+            } else {
+                return null;
+            }
+        }
+        else{
+            if(e.getStartNode().equals(curNode.getNode())){
+                return e.getEndNode();
+            } else {
+                return e.getStartNode();
+            }
+        }
     }
 
     public ArrayList<SpatialPoint> calReachableArea() {
 
-        Queue<RoadNode> nodeQueue = new LinkedList<>();
-        HashMap<RoadNode, Double> costMap = new HashMap<>();
         ArrayList<SpatialPoint> researchable = new ArrayList<>();
-        ArrayList<SpatialPoint> visitedNode = new ArrayList<>();
+        HashSet<SpatialPoint> visitedNode = new HashSet<>();
         RoadGraph graph = this.roadNetwork.getDirectedRoadGraph();
+        Queue<ReachableNode> nodeQueue = new PriorityQueue<>((o1, o2) -> {
+            if(o1.getCost() == o2.getCost()) {
+                return 0;
+            } else {
+                return o1.getCost() <= o2.getCost() ? -1:1;
+            }
+        });
 
         CandidatePoint startCandidatePoint = CandidatePoint.getNearestCandidatePoint(
             startPoint,
@@ -113,54 +150,31 @@ public class ReachableArea {
             100
         );
         if (startCandidatePoint != null) {
-            RoadNode startNode = roadNetwork.getRoadSegmentById(
-                startCandidatePoint.getRoadSegmentId()
-            ).getStartNode();
-            nodeQueue.offer(startNode);
+            RoadSegment startSegment = roadNetwork.getRoadSegmentById(startCandidatePoint.getRoadSegmentId());
+            RoadNode startNode = startSegment.getStartNode();
             visitedNode.add(startNode);
-            costMap.put(
-                startNode,
-                GeoFunctions.getDistanceInM(this.startPoint, startNode) / this.speed
-            );
-
+            nodeQueue.offer(new ReachableNode(startNode, GeoFunctions.getDistanceInM(this.startPoint, startNode) / getSpeed(this.travelMode,startSegment)));
             while (!nodeQueue.isEmpty()) {
-                RoadNode curNode = nodeQueue.poll();
-                Set<RoadSegment> edges = graph.edgesOf(curNode); // return the edge from the node
+                ReachableNode curNode = nodeQueue.poll();
+                assert curNode != null;
+                Set<RoadSegment> edges = graph.edgesOf( curNode.getNode()); // return the edge from the node
                 for (RoadSegment e : edges) {
-                    RoadNode candidateNode;
                     if (this.roadType.contains(e.getLevel())) {
-                        if (e.getStartNode().equals(curNode)
-                            && (e.getDirection() == RoadSegmentDirection.DUAL
-                                || e.getDirection() == RoadSegmentDirection.FORWARD)) {
-                            candidateNode = e.getEndNode();
-                        } else if (e.getEndNode().equals(curNode)
-                            && (e.getDirection() == RoadSegmentDirection.DUAL
-                                || e.getDirection() == RoadSegmentDirection.BACKWARD)) {
-                                    candidateNode = e.getStartNode();
-                                } else {
-                                    continue;
-                                }
-
-                        if (visitedNode.contains(candidateNode)) {
+                        RoadNode candidateNode = getCandidateNode(this.travelMode, e, curNode);
+                        if(candidateNode == null || visitedNode.contains(candidateNode)){
                             continue;
                         }
-                        double curCost = costMap.get(curNode);
-
-                        if (this.travelMode.equals(TravelMode.DRIVE)) {
-                            setSpeed(e.getSpeedLimit() / 3.6);
-                        }
-                        double candidateCost = curCost + e.getLengthInMeter() / this.speed;
-
+                        double curCost = curNode.getCost();
+                        double candidateCost = curCost + e.getLengthInMeter() / getSpeed(this.travelMode,e);
                         if (candidateCost <= this.timeBudgetInS) {
-                            nodeQueue.offer(candidateNode);
                             visitedNode.add(candidateNode);
                             researchable.add(candidateNode);
-                            costMap.put(candidateNode, candidateCost);
+                            nodeQueue.offer(new ReachableNode(candidateNode,candidateCost));
                         } else {
                             List<SpatialPoint> pts = e.getPoints();
                             for (int i = 0; i < pts.size(); i++) {
-                                double dis = GeoFunctions.getDistanceInM(curNode, pts.get(i));
-                                if (curCost + dis / this.speed > this.timeBudgetInS) {
+                                double dis = GeoFunctions.getDistanceInM(curNode.getNode(), pts.get(i));
+                                if (curCost + dis / getSpeed(this.travelMode,e) > this.timeBudgetInS) {
                                     if (i > 0) {
                                         researchable.add(pts.get(i - 1));
                                     }
@@ -175,4 +189,5 @@ public class ReachableArea {
 
         return researchable;
     }
+
 }

@@ -131,8 +131,7 @@ public class RoadFunction {
             timeInSec.doubleValue(),
             travelMode
         );
-        Polygon hull = reachable.getConvexHull();
-        return hull;
+        return reachable.getHull();
     }
 
     @CupidDBFunction("st_rn_reachableConcaveHull")
@@ -150,8 +149,7 @@ public class RoadFunction {
             timeInSec.doubleValue(),
             travelMode
         );
-        Polygon hull = reachable.getConcaveHull();
-        return hull;
+        return reachable.getHull();
     }
 
 }

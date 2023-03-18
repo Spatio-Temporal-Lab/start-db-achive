@@ -24,11 +24,7 @@ import org.urbcomp.cupid.db.model.roadnetwork.*;
 
 import java.util.*;
 
-public class ReachableAreaConcaveHull {
-    private SpatialPoint startPt;
-    private double timeBudgetInS;
-    private String travelMode;
-    private final RoadNetwork roadNetwork;
+public class ReachableAreaConcaveHull extends AbstractReachableArea{
 
     public ReachableAreaConcaveHull(
         RoadNetwork roadNetwork,
@@ -36,36 +32,33 @@ public class ReachableAreaConcaveHull {
         double timeBudgetInS,
         String travelMode
     ) {
-        this.startPt = startPt;
-        this.roadNetwork = roadNetwork;
-        this.timeBudgetInS = timeBudgetInS;
-        this.travelMode = travelMode;
+        super(roadNetwork,startPt,timeBudgetInS,travelMode);
 
     }
 
-    public Polygon getConcaveHull() {
-        Polygon concaveHull = null;
+    @Override
+    public Polygon getHull() {
         ReachableArea reachableArea = new ReachableArea(
-            this.roadNetwork,
-            this.startPt,
-            this.timeBudgetInS,
-            this.travelMode
+                this.roadNetwork,
+                this.startPt,
+                this.timeBudgetInS,
+                this.travelMode
         );
         ArrayList<SpatialPoint> researchable = reachableArea.calReachableArea();
         if (!researchable.isEmpty()) {
             List<Coordinate> points = new ArrayList<>();
-            researchable.stream()
-                .forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
+            researchable.forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));
             GeometryFactory geometryFactory = new GeometryFactory();
             CoordinateSequence sequence = new CoordinateArraySequence(
-                points.toArray(new Coordinate[0])
+                    points.toArray(new Coordinate[0])
             );
             MultiPoint pts = geometryFactory.createMultiPoint(sequence);
-            ConcaveHull ch = new ConcaveHull(pts);
-            concaveHull = (Polygon) ch.concaveHullByLengthRatio(pts, 0.6);
+            return (Polygon) ConcaveHull.concaveHullByLengthRatio(pts, 0.6);
+        } else {
+            return null;
         }
 
-        return concaveHull;
 
     }
+
 }
