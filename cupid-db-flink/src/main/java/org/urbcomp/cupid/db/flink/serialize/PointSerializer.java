@@ -1,4 +1,15 @@
-package org.urbcomp.cupid.db.flink;
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
+package org.urbcomp.cupid.db.flink.serialize;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -10,7 +21,7 @@ import org.locationtech.jts.io.WKTReader;
 
 import java.io.Serializable;
 
-public class GeometrySerializer extends Serializer<Point> implements Serializable {
+public class PointSerializer extends Serializer<Point> implements Serializable {
 
     @Override
     public Point read(Kryo kryo, Input input, Class aClass) {

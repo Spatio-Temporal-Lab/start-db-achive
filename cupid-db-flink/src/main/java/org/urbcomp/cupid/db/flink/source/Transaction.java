@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 ST-Lab
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License version 3 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ */
+
 package org.urbcomp.cupid.db.flink.source;
 
 import java.io.Serializable;
@@ -8,7 +19,7 @@ public class Transaction implements Serializable {
     public long timestamp;      // 交易时间
     public double amount;       // 交易金额
 
-    public Transaction() { }
+    public Transaction() {}
 
     public Transaction(long accountId, long timestamp, double amount) {
         this.accountId = accountId;
@@ -48,9 +59,9 @@ public class Transaction implements Serializable {
             return false;
         }
         Transaction that = (Transaction) o;
-        return accountId == that.accountId &&
-                timestamp == that.timestamp &&
-                Double.compare(that.amount, amount) == 0;
+        return accountId == that.accountId
+            && timestamp == that.timestamp
+            && Double.compare(that.amount, amount) == 0;
     }
 
     @Override
@@ -60,10 +71,13 @@ public class Transaction implements Serializable {
 
     @Override
     public String toString() {
-        return "Transaction{" +
-                "accountId=" + accountId +
-                ", timestamp=" + timestamp +
-                ", amount=" + amount +
-                '}';
+        return "Transaction{"
+            + "accountId="
+            + accountId
+            + ", timestamp="
+            + timestamp
+            + ", amount="
+            + amount
+            + '}';
     }
 }
