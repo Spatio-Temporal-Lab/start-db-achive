@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (C) 2022  ST-Lab
  *
  * This program is free software: you can redistribute it and/or modify
@@ -10,7 +10,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -76,7 +76,7 @@ public class RunSingleSQLCase {
                     log.info("case的子标签内容有误, 跳过执行");
                     continue;
                 }
-                
+
                 // 获取case标签下的sql标签和arguments标签列表
                 List<Element> sqlElements = caseElement.elements("sql");
                 List<Element> argumentsElements = caseElement.elements("arguments");
@@ -89,7 +89,8 @@ public class RunSingleSQLCase {
 
                     // sql不需要拼接参数时
                     if (!initSql.contains("?")) {
-                        if (sqlType.equals("query") && sqlElement.attributeValue("resultID") != null) {
+                        if (sqlType.equals("query")
+                            && sqlElement.attributeValue("resultID") != null) {
                             String resultID = sqlElement.attributeValue("resultID");
                             log.info("开始执行sql:" + initSql + " resultID: " + resultID);
                         } else {
@@ -106,7 +107,7 @@ public class RunSingleSQLCase {
                     }
                     // sql需要拼接参数时
                     else {
-                        for(Element argumentsElement : argumentsElements) {
+                        for (Element argumentsElement : argumentsElements) {
                             String params = argumentsElement.getText();
                             String resultID = argumentsElement.attributeValue("resultID");
                             String error = argumentsElement.attributeValue("error");
@@ -114,7 +115,8 @@ public class RunSingleSQLCase {
 
                             // 将sql和参数进行拼接
                             String sqlWithParam = getSqlWithParam(initSql, params);
-                            if (resultID == null && error == null || resultID != null && error != null) {
+                            if (resultID == null && error == null
+                                || resultID != null && error != null) {
                                 throw new Exception("参数标签格式不对");
                             }
 
@@ -135,8 +137,7 @@ public class RunSingleSQLCase {
                             else {
                                 if (!error.contains("Exception")) {
                                     throw new Exception("预期异常内容不对");
-                                }
-                                else {
+                                } else {
                                     log.info("开始执行sql:" + sqlWithParam);
                                     sqlWithParam = dataTransform(sqlWithParam);
                                     try (Statement stmt = connect.createStatement()) {
