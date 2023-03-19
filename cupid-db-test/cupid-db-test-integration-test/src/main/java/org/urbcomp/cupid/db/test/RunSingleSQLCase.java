@@ -23,7 +23,6 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -143,7 +142,7 @@ public class RunSingleSQLCase {
             }
 
             // 有预期异常加入预期数据中，然后与实际数据进行比较
-            else if (error != null){
+            else if (error != null) {
                 if (!error.contains("Exception")) {
                     throw new Exception("预期异常内容不对");
                 } else {
@@ -172,7 +171,7 @@ public class RunSingleSQLCase {
                 }
                 log.info("sql执行完成");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             if (ERROR_STOP) {
                 throw new Exception(e.getMessage());
             }

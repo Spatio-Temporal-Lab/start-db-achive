@@ -86,11 +86,8 @@ public class GetData {
      * @param resultID 预期数据的ID
      * @return 预期内容
      * */
-    public static List<String> getExpectedDataArray(
-        String xmlPath,
-        String xmlName,
-        String resultID
-    ) throws Exception {
+    public static List<String> getExpectedDataArray(String xmlPath, String xmlName, String resultID)
+        throws Exception {
         // 获取储存预期数据的xml文件路径
         File parentFile = new File(xmlPath).getParentFile();
         String filePath = parentFile.getPath()
