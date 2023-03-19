@@ -81,30 +81,30 @@ public class GetData {
     /**
      *以字符串数组的格式返回预期数据
      *
-     * @param expectedData 预期字符串
-     * @param filePath sql用例的文件路径
+     * @param xmlPath sql用例的文件路径
+     * @param xmlName 预期字符串
      * @param resultID 预期数据的ID
      * @return 预期内容
      * */
     public static List<String> getExpectedDataArray(
-        String expectedData,
-        String filePath,
+        String xmlPath,
+        String xmlName,
         String resultID
     ) throws Exception {
         // 获取储存预期数据的xml文件路径
-        File parentFile = new File(filePath).getParentFile();
-        String expectedPath = parentFile.getPath()
+        File parentFile = new File(xmlPath).getParentFile();
+        String filePath = parentFile.getPath()
             + File.separator
             + "expected"
             + File.separator
-            + expectedData;
+            + xmlName;
 
         StringBuilder expectedValue = new StringBuilder();
         List<String> expectedArray = new ArrayList<>();
 
         // 获取根标签
         SAXReader saxReader = new SAXReader();
-        Document document = saxReader.read(expectedPath);
+        Document document = saxReader.read(filePath);
         Element rootElement = document.getRootElement();
 
         // 根据resultID获取当前执行sql的预期结果标签

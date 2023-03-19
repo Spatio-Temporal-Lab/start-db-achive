@@ -23,6 +23,7 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,8 +35,12 @@ import static org.urbcomp.cupid.db.test.GetData.*;
 public class RunSingleSQLCase {
     // 用一个静态变量来控制出现报错后是否继续执行, 是否抛出异常
     static boolean ERROR_STOP = true;
+    static boolean WRTIE_ACTUAL = true;
+    static boolean COMPARE = true;
     static String DBNAME;
     static Date START_TIME;
+    static String XML_PATH;
+    static String XML_NAME;
     private final static Logger log = LoggerFactory.getLogger(RunSingleSQLCase.class);
 
     public static Connection getConnect() throws Exception {
@@ -58,108 +63,120 @@ public class RunSingleSQLCase {
      * @param xmlPath xml文件路径
      */
     public static void runSingleCase(String xmlPath) throws Exception {
-        try (Connection connect = getConnect()) {
-            SAXReader saxReader = new SAXReader();
-            Document document = saxReader.read(xmlPath);
+        XML_PATH = xmlPath;
+        SAXReader saxReader = new SAXReader();
+        Document document = saxReader.read(xmlPath);
 
-            // 获取xml文件名
-            Element xmlElement = (Element) document.selectSingleNode("//resultXml");
-            String xmlName = xmlElement.getText();
+        // 获取xml文件名
+        Element xmlElement = (Element) document.selectSingleNode("//resultXml");
+        XML_NAME = xmlElement.getText();
 
-            // 获取所有case标签
-            List<Node> caseElements = document.selectNodes("//case");
-            for (int i = 0; i < caseElements.size(); i++) {
-                Element caseElement = (Element) caseElements.get(i);
+        // 获取所有case标签
+        List<Node> caseElements = document.selectNodes("//case");
+        for (int i = 0; i < caseElements.size(); i++) {
+            Element caseElement = (Element) caseElements.get(i);
+            // 第一个标签一定是sql
+            if (!caseElement.node(1).getName().equals("sql")) {
+                log.info("case的子标签内容有误, 跳过执行");
+                continue;
+            }
 
-                // 第一个标签一定是sql
-                if (!caseElement.node(1).getName().equals("sql")) {
-                    log.info("case的子标签内容有误, 跳过执行");
-                    continue;
+            // 获取case标签下的sql标签和arguments标签列表
+            List<Element> sqlElements = caseElement.elements("sql");
+            List<Element> argumentsElements = caseElement.elements("arguments");
+
+            // 遍历单个case标签内的sql标签列表
+            for (Element sqlElement : sqlElements) {
+                String initSql = sqlElement.getText();
+                String sqlType = sqlElement.attributeValue("type");
+
+                // sql不需要拼接参数时
+                if (!initSql.contains("?")) {
+                    analyseSql(sqlElement, initSql, sqlType);
                 }
 
-                // 获取case标签下的sql标签和arguments标签列表
-                List<Element> sqlElements = caseElement.elements("sql");
-                List<Element> argumentsElements = caseElement.elements("arguments");
-                List<String> actualArray;
-
-                // 遍历单个case标签内的sql标签列表
-                for (Element sqlElement : sqlElements) {
-                    String initSql = sqlElement.getText();
-                    String sqlType = sqlElement.attributeValue("type");
-
-                    // sql不需要拼接参数时
-                    if (!initSql.contains("?")) {
-                        if (sqlType.equals("query")
-                            && sqlElement.attributeValue("resultID") != null) {
-                            String resultID = sqlElement.attributeValue("resultID");
-                            log.info("开始执行sql:" + initSql + " resultID: " + resultID);
-                        } else {
-                            log.info("开始执行sql:" + initSql);
-                        }
-                        // 替换sql中的文本内容然后执行sql, 获取返回值
-                        initSql = dataTransform(initSql);
-                        // 每次执行sql都需要重新创建 Statement
-                        try (Statement stmt = connect.createStatement()) {
-                            actualArray = executeSql(stmt, initSql, sqlType);
-                        }
-                        System.out.println("实际返回值： " + actualArray);
-                        log.info("sql执行完成");
-                    }
-                    // sql需要拼接参数时
-                    else {
-                        for (Element argumentsElement : argumentsElements) {
-                            String params = argumentsElement.getText();
-                            String resultID = argumentsElement.attributeValue("resultID");
-                            String error = argumentsElement.attributeValue("error");
-                            List<String> expectedArray = new ArrayList<>();
-
-                            // 将sql和参数进行拼接
-                            String sqlWithParam = getSqlWithParam(initSql, params);
-                            if (resultID == null && error == null
-                                || resultID != null && error != null) {
-                                throw new Exception("参数标签格式不对");
-                            }
-
-                            // 有预期结果获取并加入预期数据中,然后与实际数据进行比较
-                            if (resultID != null) {
-                                log.info("开始执行sql:" + sqlWithParam + " resultID: " + resultID);
-                                sqlWithParam = dataTransform(sqlWithParam);
-                                try (Statement stmt = connect.createStatement()) {
-                                    actualArray = executeSql(stmt, sqlWithParam, sqlType);
-                                }
-                                System.out.println("实际返回值： " + actualArray);
-                                expectedArray = getExpectedDataArray(xmlName, xmlPath, resultID);
-                                System.out.println("预期返回值： " + expectedArray);
-                                compareResult(actualArray, expectedArray);
-                            }
-
-                            // 有预期异常加入预期数据中，然后与实际数据进行比较
-                            else {
-                                if (!error.contains("Exception")) {
-                                    throw new Exception("预期异常内容不对");
-                                } else {
-                                    log.info("开始执行sql:" + sqlWithParam);
-                                    sqlWithParam = dataTransform(sqlWithParam);
-                                    try (Statement stmt = connect.createStatement()) {
-                                        actualArray = executeSql(stmt, sqlWithParam, sqlType);
-                                    }
-                                    System.out.println("实际返回值： " + actualArray);
-                                    expectedArray.add(error);
-                                    System.out.println("预期异常： " + expectedArray);
-                                    compareException(actualArray, expectedArray);
-                                }
-                            }
-                            log.info("sql执行完成");
-                        }
+                // sql需要拼接参数时
+                else {
+                    for (Element argumentsElement : argumentsElements) {
+                        // 将sql和参数进行拼接
+                        String params = argumentsElement.getText();
+                        String sqlWithParam = getSqlWithParam(initSql, params);
+                        analyseSql(argumentsElement, sqlWithParam, sqlType);
                     }
                 }
             }
-        } catch (Exception e) {
+        }
+        log.info("用例执行结束");
+    }
+
+    /**
+     * 解析当前xml中的结点决定要如何执行sql
+     *
+     * @param element 当前结点
+     * @param sql     要执行的sql
+     * @param sqlType sql的类型
+     */
+    public static void analyseSql(Element element, String sql, String sqlType) throws Exception {
+        try (Connection connect = getConnect()) {
+            List<String> actualArray;
+            String resultID = element.attributeValue("resultID");
+            String error = element.attributeValue("error");
+            if (resultID != null && error != null) {
+                throw new Exception("参数标签格式不对");
+            }
+
+            // 有预期结果获取并加入预期数据中,然后与实际数据进行比较
+            if (resultID != null) {
+                log.info("开始执行sql:" + sql + " resultID: " + resultID);
+                sql = dataTransform(sql);
+                try (Statement stmt = connect.createStatement()) {
+                    actualArray = executeSql(stmt, sql, sqlType);
+                }
+                System.out.println("实际返回值： " + actualArray);
+                if (COMPARE) {
+                    List<String> expectedArray;
+                    expectedArray = getExpectedDataArray(XML_PATH, XML_NAME, resultID);
+                    System.out.println("预期返回值： " + expectedArray);
+                    compareResult(actualArray, expectedArray);
+                }
+                log.info("sql执行完成");
+            }
+
+            // 有预期异常加入预期数据中，然后与实际数据进行比较
+            else if (error != null){
+                if (!error.contains("Exception")) {
+                    throw new Exception("预期异常内容不对");
+                } else {
+                    log.info("开始执行sql:" + sql);
+                    sql = dataTransform(sql);
+                    try (Statement stmt = connect.createStatement()) {
+                        actualArray = executeSql(stmt, sql, sqlType);
+                    }
+                    System.out.println("实际返回值： " + actualArray);
+                    if (COMPARE) {
+                        List<String> expectedArray = new ArrayList<>();
+                        expectedArray.add(error);
+                        System.out.println("预期异常： " + expectedArray);
+                        compareException(actualArray, expectedArray);
+                    }
+                    log.info("sql执行完成");
+                }
+            }
+
+            // 没有预期结果和异常
+            else {
+                log.info("开始执行sql:" + sql);
+                sql = dataTransform(sql);
+                try (Statement stmt = connect.createStatement()) {
+                    executeSql(stmt, sql, sqlType);
+                }
+                log.info("sql执行完成");
+            }
+        }catch (Exception e) {
             if (ERROR_STOP) {
                 throw new Exception(e.getMessage());
             }
         }
-        log.info("用例执行结束");
     }
 
     /**
