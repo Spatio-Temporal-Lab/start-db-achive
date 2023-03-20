@@ -23,10 +23,13 @@ import com.esotericsoftware.kryo.io.Output;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
 public class MultiPointSerializer extends Serializer<MultiPoint> implements Serializable {
+    private static final Logger logger = LoggerFactory.getLogger(MultiPointSerializer.class);
 
     @Override
     public MultiPoint read(Kryo kryo, Input input, Class aClass) {
@@ -35,7 +38,7 @@ public class MultiPointSerializer extends Serializer<MultiPoint> implements Seri
         try {
             return (MultiPoint) reader.read(wkt);
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error("Parse failed while serializing MultiPoint");
         }
         return null;
     }

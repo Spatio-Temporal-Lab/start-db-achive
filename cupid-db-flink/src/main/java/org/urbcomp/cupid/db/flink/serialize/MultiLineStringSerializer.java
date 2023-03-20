@@ -23,10 +23,13 @@ import com.esotericsoftware.kryo.io.Output;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
 public class MultiLineStringSerializer extends Serializer<MultiLineString> implements Serializable {
+    private static final Logger logger = LoggerFactory.getLogger(MultiLineStringSerializer.class);
 
     @Override
     public MultiLineString read(Kryo kryo, Input input, Class aClass) {
@@ -35,7 +38,7 @@ public class MultiLineStringSerializer extends Serializer<MultiLineString> imple
         try {
             return (MultiLineString) reader.read(wkt);
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error("Parse failed while serializing MultiLineString");
         }
         return null;
     }

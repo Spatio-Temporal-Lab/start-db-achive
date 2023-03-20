@@ -23,10 +23,13 @@ import com.esotericsoftware.kryo.io.Output;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
 public class PolygonSerializer extends Serializer<Polygon> implements Serializable {
+    private static final Logger logger = LoggerFactory.getLogger(Polygon.class);
 
     @Override
     public Polygon read(Kryo kryo, Input input, Class aClass) {
@@ -35,7 +38,7 @@ public class PolygonSerializer extends Serializer<Polygon> implements Serializab
         try {
             return (Polygon) reader.read(wkt);
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error("Parse failed while serializing Polygon");
         }
         return null;
     }

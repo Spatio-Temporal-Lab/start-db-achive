@@ -23,10 +23,13 @@ import com.esotericsoftware.kryo.io.Output;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
 public class MultiPolygonSerializer extends Serializer<MultiPolygon> implements Serializable {
+    private static final Logger logger = LoggerFactory.getLogger(MultiPolygonSerializer.class);
 
     @Override
     public MultiPolygon read(Kryo kryo, Input input, Class aClass) {
@@ -35,7 +38,7 @@ public class MultiPolygonSerializer extends Serializer<MultiPolygon> implements 
         try {
             return (MultiPolygon) reader.read(wkt);
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error("Parse failed while serializing MultiPolygon");
         }
         return null;
     }
