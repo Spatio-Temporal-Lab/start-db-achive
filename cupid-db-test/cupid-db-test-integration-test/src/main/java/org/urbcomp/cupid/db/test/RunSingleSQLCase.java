@@ -30,12 +30,14 @@ import java.util.List;
 
 import static org.urbcomp.cupid.db.test.CompareResult.*;
 import static org.urbcomp.cupid.db.test.GetData.*;
+import static org.urbcomp.cupid.db.test.AutoWriteActual.*;
 
 public class RunSingleSQLCase {
     // 用一个静态变量来控制出现报错后是否继续执行, 是否抛出异常
     static boolean ERROR_STOP = true;
-    static boolean WRTIE_ACTUAL = true;
-    static boolean COMPARE = true;
+    static boolean WRITE_ACTUAL = true;
+    static boolean COMPARE_RESULT = true;
+    static boolean COMPARE_EXCEPTION = true;
     static String DBNAME;
     static Date START_TIME;
     static String XML_PATH;
@@ -59,14 +61,14 @@ public class RunSingleSQLCase {
     /**
      * 执行指定xml文件中的sql用例并对返回值进行校验
      *
-     * @param xmlPath xml文件路径
+     * @param xmlPath 要执行的xml文件路径
      */
     public static void runSingleCase(String xmlPath) throws Exception {
         XML_PATH = xmlPath;
         SAXReader saxReader = new SAXReader();
-        Document document = saxReader.read(xmlPath);
+        Document document = saxReader.read(XML_PATH);
 
-        // 获取xml文件名
+        // 获取储存sql执行结果的xml文件名
         Element xmlElement = (Element) document.selectSingleNode("//resultXml");
         XML_NAME = xmlElement.getText();
 
@@ -105,6 +107,9 @@ public class RunSingleSQLCase {
                 }
             }
         }
+        if (WRITE_ACTUAL) {
+            writeActualXml(XML_PATH, XML_NAME);
+        }
         log.info("用例执行结束");
     }
 
@@ -119,8 +124,8 @@ public class RunSingleSQLCase {
         try (Connection connect = getConnect()) {
             List<String> actualArray;
             String resultID = element.attributeValue("resultID");
-            String error = element.attributeValue("error");
-            if (resultID != null && error != null) {
+            String exception = element.attributeValue("exception");
+            if (resultID != null && exception != null) {
                 throw new Exception("参数标签格式不对");
             }
 
@@ -130,9 +135,12 @@ public class RunSingleSQLCase {
                 sql = dataTransform(sql);
                 try (Statement stmt = connect.createStatement()) {
                     actualArray = executeSql(stmt, sql, sqlType);
+                    if (WRITE_ACTUAL) {
+                        writeActualDocument(actualArray, resultID);
+                    }
                 }
                 System.out.println("实际返回值： " + actualArray);
-                if (COMPARE) {
+                if (COMPARE_RESULT) {
                     List<String> expectedArray;
                     expectedArray = getExpectedDataArray(XML_PATH, XML_NAME, resultID);
                     System.out.println("预期返回值： " + expectedArray);
@@ -142,8 +150,8 @@ public class RunSingleSQLCase {
             }
 
             // 有预期异常加入预期数据中，然后与实际数据进行比较
-            else if (error != null) {
-                if (!error.contains("Exception")) {
+            else if (exception != null) {
+                if (!exception.contains("Exception")) {
                     throw new Exception("预期异常内容不对");
                 } else {
                     log.info("开始执行sql:" + sql);
@@ -152,9 +160,9 @@ public class RunSingleSQLCase {
                         actualArray = executeSql(stmt, sql, sqlType);
                     }
                     System.out.println("实际返回值： " + actualArray);
-                    if (COMPARE) {
+                    if (COMPARE_EXCEPTION) {
                         List<String> expectedArray = new ArrayList<>();
-                        expectedArray.add(error);
+                        expectedArray.add(exception);
                         System.out.println("预期异常： " + expectedArray);
                         compareException(actualArray, expectedArray);
                     }

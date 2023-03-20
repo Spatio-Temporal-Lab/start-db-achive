@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import static org.urbcomp.cupid.db.test.GetData.getResultArray;
 import static org.urbcomp.cupid.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.cupid.db.test.RunSingleSQLCase.runSingleCase;
-import static org.urbcomp.cupid.db.test.AutoWriteExpect.writeExpect;
 import static org.urbcomp.cupid.db.test.RunSingleSQLCase.getConnect;
 
 public class MainTest {
@@ -47,16 +46,6 @@ public class MainTest {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
-    }
-
-    @Test
-    @Ignore
-    public void testAutoWriteExpect() throws Exception {
-        String xmlPath = Objects.requireNonNull(
-            MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
-        ).getPath();
-        writeExpect(xmlPath);
-
     }
 
     @Test

@@ -81,21 +81,16 @@ public class GetData {
     /**
      *以字符串数组的格式返回预期数据
      *
-     * @param xmlPath sql用例的文件路径
-     * @param xmlName 预期字符串
-     * @param resultID 预期数据的ID
+     * @param xmlPath 执行的xml文件路径
+     * @param xmlName 储存sql执行结果的xml文件名
+     * @param resultID 执行结果的ID
      * @return 预期内容
      * */
     public static List<String> getExpectedDataArray(String xmlPath, String xmlName, String resultID)
         throws Exception {
-        // 获取储存预期数据的xml文件路径
+        // 获取储存sql执行结果的xml文件路径
         File parentFile = new File(xmlPath).getParentFile();
-        String filePath = parentFile.getPath()
-            + File.separator
-            + "expected"
-            + File.separator
-            + xmlName;
-
+        String filePath = parentFile.getPath() + "/expected/" + xmlName;
         StringBuilder expectedValue = new StringBuilder();
         List<String> expectedArray = new ArrayList<>();
 
@@ -105,14 +100,9 @@ public class GetData {
         Element rootElement = document.getRootElement();
 
         // 根据resultID获取当前执行sql的预期结果标签
-        List<Element> resultElements = rootElement.elements();
-        Element resultElement = resultElements.get(0);
-        for (Element Element : resultElements) {
-            if (Element.attributeValue("id").equals(resultID)) {
-                resultElement = Element;
-                break;
-            }
-        }
+        Element resultElement = (Element) rootElement.selectSingleNode(
+            "//result[@id = " + resultID + "]"
+        );
         List<Element> columnElements = resultElement.elements();
         for (Element columnElement : columnElements) {
             String filedName = columnElement.attributeValue("name");
@@ -130,7 +120,6 @@ public class GetData {
                 expectedArray.add(rowText + "\t");
             }
         }
-
         return expectedArray;
     }
 
@@ -194,7 +183,7 @@ public class GetData {
      * @return 转换后的数据类型
      * */
     private static String typeConvert(String colType) {
-        String type = "";
+        String type;
         switch (colType.toLowerCase()) {
             case "varchar":
                 type = "string";

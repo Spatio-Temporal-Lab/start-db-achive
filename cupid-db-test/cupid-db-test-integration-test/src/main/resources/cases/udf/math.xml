@@ -11,8 +11,8 @@
         <arguments resultID="1">[2][2]</arguments>
         <arguments resultID="2">[2][4]</arguments>
         <arguments resultID="3">[0][2]</arguments>
-        <arguments error="ClassCastException">[2][0]</arguments>
-        <arguments error="ClassCastException">[2][-2]</arguments>
+        <arguments exception="ClassCastException">[2][0]</arguments>
+        <arguments exception="ClassCastException">[2][-2]</arguments>
     </case>
 
     <!--  求π  PI()  -->
@@ -25,8 +25,8 @@
     <case>
         <sql type="query">select log2(?);</sql>
         <arguments resultID="5">[4]</arguments>
-        <arguments error="ClassCastException">[0]</arguments>
-        <arguments error="ClassCastException">[-1]</arguments>
+        <arguments exception="ClassCastException">[0]</arguments>
+        <arguments exception="ClassCastException">[-1]</arguments>
     </case>
 
     <!--  求以1p为底对数，num >   log1p(num: Double): Double  -->
@@ -34,15 +34,15 @@
         <sql type="query">select log1p(?);</sql>
         <arguments resultID="6">[1]</arguments>
         <arguments resultID="7">[0]</arguments>
-        <arguments error="ClassCastException">[-1]</arguments>
+        <arguments exception="ClassCastException">[-1]</arguments>
     </case>
 
     <!--  求以e为底对数, num >   ln(num: Double): Double  -->
     <case>
         <sql type="query">select ln(?);</sql>
         <arguments resultID="8">[2.718281828459045]</arguments>
-        <arguments error="ClassCastException">[0]</arguments>
-        <arguments error="ClassCastException">[-1]</arguments>
+        <arguments exception="ClassCastException">[0]</arguments>
+        <arguments exception="ClassCastException">[-1]</arguments>
         <arguments resultID="9">[null]</arguments>
     </case>
 
@@ -50,8 +50,8 @@
     <case>
         <sql type="query">select log10(?);</sql>
         <arguments resultID="10">[100.0]</arguments>
-        <arguments error="ClassCastException">[0]</arguments>
-        <arguments error="ClassCastException">[-1]</arguments>
+        <arguments exception="ClassCastException">[0]</arguments>
+        <arguments exception="ClassCastException">[-1]</arguments>
         <arguments resultID="11">[null]</arguments>
     </case>
 
@@ -61,7 +61,7 @@
         <arguments resultID="12">[-100]</arguments>
         <arguments resultID="13">[0.0]</arguments>
         <arguments resultID="14">[100.123]</arguments>
-        <arguments error="IllegalStateException">[null]</arguments>
+        <arguments exception="IllegalStateException">[null]</arguments>
     </case>
 
     <!--  向上取整  ceil(num: Double): Double  -->
@@ -70,7 +70,7 @@
         <arguments resultID="15">[1.23]</arguments>
         <arguments resultID="16">[0.0]</arguments>
         <arguments resultID="17">[-1.23]</arguments>
-        <arguments error="SQLException">[null]</arguments>
+        <arguments exception="SQLException">[null]</arguments>
     </case>
 
     <!--  向下取整  floor(num: Double): Double  -->
@@ -79,7 +79,7 @@
         <arguments resultID="18">[12.34]</arguments>
         <arguments resultID="19">[0]</arguments>
         <arguments resultID="20">[-12.34]</arguments>
-        <arguments error="SQLException">[null]</arguments>
+        <arguments exception="SQLException">[null]</arguments>
     </case>
 
     <!--  保留小数位  round(num: Double[, precision:int]): Double  -->
@@ -99,7 +99,7 @@
         <arguments resultID="27">[-20]</arguments>
         <arguments resultID="28">[0]</arguments>
         <arguments resultID="29">[20]</arguments>
-        <arguments error="IllegalStateException">[null]</arguments>
+        <arguments exception="IllegalStateException">[null]</arguments>
     </case>
 
     <!--  取模  mod(num1: Integer, num2: Integer): Integer  -->
@@ -113,7 +113,7 @@
         <arguments resultID="35">[-4][5]</arguments>
         <arguments resultID="36">[0][-233]</arguments>
         <arguments resultID="37">[null][4]</arguments>
-        <arguments error="IllegalStateException">[4][null]</arguments>
+        <arguments exception="IllegalStateException">[4][null]</arguments>
     </case>
 
     <!--  正弦值  sin(num: Double): Double  -->
@@ -147,7 +147,7 @@
     <case>
         <sql type="query">select cot(?);</sql>
         <arguments resultID="50">[1]</arguments>
-        <arguments error="ClassCastException">[0]</arguments>
+        <arguments exception="ClassCastException">[0]</arguments>
         <arguments resultID="51">[-1]</arguments>
         <arguments resultID="52">[null]</arguments>
     </case>
@@ -175,7 +175,7 @@
         <sql type="query">select sqrt(?);</sql>
         <arguments resultID="61">4.0</arguments>
         <arguments resultID="62">0</arguments>
-        <arguments error="ClassCastException">-4.0</arguments>
+        <arguments exception="ClassCastException">-4.0</arguments>
         <arguments resultID="63">null</arguments>
     </case>
 
