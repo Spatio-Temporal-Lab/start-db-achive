@@ -16,7 +16,7 @@
  */
 package org.urbcomp.cupid.db.executor
 
-import org.junit.Assert.{assertEquals, assertNotNull}
+import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertNull}
 import org.urbcomp.cupid.db.AbstractCalciteFunctionTest
 import org.urbcomp.cupid.db.model.sample.ModelGenerator
 import org.urbcomp.cupid.db.model.trajectory.Trajectory
@@ -64,9 +64,9 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                             |    name String,
                             |    st Point,
                             |    et Point,
-                            |    dtg Datetime
+                            |    dtg Datetime,
                             |    SPATIAL INDEX (st, dtg),
-                            |    SPATIAL INDEX spatial_index(et, dtg),
+                            |    SPATIAL INDEX spatial_index(et, dtg)
                             |)""".stripMargin.format(uniqueId).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
@@ -85,6 +85,19 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                             |)""".stripMargin.format(uniqueId).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
+  }
+
+  test("test create table with single string column") {
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE gemo_%s (
+                            |    name String
+                            |)""".stripMargin.format(uniqueId).stripMargin
+    println("execute sql", createTableSQL)
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+    val rs = stmt.executeQuery("""show index from gemo_%s""".format(uniqueId))
+    // we have no way to get geomesa inner id attribute so no index recorded
+    assertFalse(rs.next())
   }
 
   test("test create then insert") {
