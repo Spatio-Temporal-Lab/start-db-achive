@@ -31,11 +31,6 @@ import java.nio.charset.StandardCharsets;
  * CUPID-DB sql samples used in tests.
  */
 public class CupidDBSQLSamples {
-    // select user
-    public static final String SELECT_USER = "SELECT USER()";
-    // select database
-    public static final String SELECT_DATABASE = "SELECT DATABASE()";
-
     // Show databases
     public static final String SHOW_DATABASES = "SHOW DATABASES";
 

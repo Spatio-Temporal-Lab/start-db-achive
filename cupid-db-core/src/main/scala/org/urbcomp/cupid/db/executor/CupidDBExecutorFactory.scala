@@ -27,13 +27,11 @@ import org.urbcomp.cupid.db.parser.ddl.{
   SqlUseDatabase
 }
 import org.urbcomp.cupid.db.parser.dql.{
-  SqlSelectDatabase,
   SqlShowCreateTable,
   SqlShowDatabases,
   SqlShowIndex,
   SqlShowStatus,
-  SqlShowTables,
-  SqlSelectUser
+  SqlShowTables
 }
 
 class CupidDBExecutorFactory extends BaseExecutorFactory {
@@ -54,8 +52,6 @@ class CupidDBExecutorFactory extends BaseExecutorFactory {
     case n: SqlDescribeTable    => DescribeTableExecutor(n)
     case n: SqlDropSchema       => DropDatabaseExecutor(n)
     case n: SqlTruncateTable    => TruncateTableExecutor(n)
-    case _: SqlSelectDatabase   => SelectDatabaseExecutor()
-    case _: SqlSelectUser       => SelectUserExecutor()
     case _                      => throw new IllegalStateException("Not Support SQL")
   }
 }

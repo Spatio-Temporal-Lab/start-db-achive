@@ -20,42 +20,15 @@
  * limitations under the License.
  */
 
-package org.urbcomp.cupid.db.parser.dql;
+package org.urbcomp.cupid.db.function;
 
-import org.apache.calcite.sql.*;
-import org.apache.calcite.sql.parser.SqlParserPos;
+import org.urbcomp.cupid.db.util.SqlParam;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
+public class OtherFunction {
 
-public class SqlSelectDatabase extends SqlCall {
-
-    public static final SqlSpecialOperator OPERATOR = new SqlSpecialOperator(
-        "SELECT DATABASE()",
-        SqlKind.OTHER
-    );
-
-    public SqlSelectDatabase(SqlParserPos pos) {
-        super(pos);
-    }
-
-    @Nonnull
-    @Override
-    public SqlOperator getOperator() {
-        return OPERATOR;
-    }
-
-    @Nonnull
-    @Override
-    public List<SqlNode> getOperandList() {
-        return Collections.emptyList();
-
-    }
-
-    @Override
-    public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
-        writer.keyword("SELECT DATABASE()");
+    @CupidDBFunction("database")
+    public String database() {
+        return SqlParam.CACHE.get().getDbName();
     }
 
 }

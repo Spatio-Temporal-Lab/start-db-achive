@@ -286,7 +286,6 @@ fullselectSetClause :
        T_UNION T_ALL?
      | T_EXCEPT T_ALL?
      | T_INTERSECT T_ALL?
-     | T_DATABASE T_OPEN_P T_CLOSE_P?
      ;
 
 subselectStmt :

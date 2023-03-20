@@ -16,7 +16,6 @@
  */
 package org.urbcomp.cupid.db.executor
 
-import org.junit.Assert.assertEquals
 import org.urbcomp.cupid.db.AbstractCalciteFunctionTest
 
 class UserExecutorTest extends AbstractCalciteFunctionTest {
@@ -28,13 +27,6 @@ class UserExecutorTest extends AbstractCalciteFunctionTest {
   test("test create user") {
     val stmt = connect.createStatement()
     stmt.executeUpdate(CREATE_USER_EXAMPLE)
-  }
-
-  test("test select user") {
-    val stmt = connect.createStatement()
-    val rs = stmt.executeQuery("SELECT USER()")
-    rs.next()
-    assertEquals("root", rs.getString(1))
   }
 
 }

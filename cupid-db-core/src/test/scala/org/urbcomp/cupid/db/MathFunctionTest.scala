@@ -89,5 +89,4 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     resultSet.next()
     assertEquals(57.29577951308232, resultSet.getObject(1))
   }
-
 }

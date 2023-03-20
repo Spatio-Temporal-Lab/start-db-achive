@@ -30,12 +30,10 @@ import org.urbcomp.cupid.db.parser.ddl.{
   SqlUseDatabase
 }
 import org.urbcomp.cupid.db.parser.dql.{
-  SqlSelectDatabase,
   SqlShowCreateTable,
   SqlShowDatabases,
   SqlShowIndex,
-  SqlShowTables,
-  SqlSelectUser
+  SqlShowTables
 }
 import org.urbcomp.cupid.db.parser.driver.CupidDBParseDriver
 import org.urbcomp.cupid.db.util.{MetadataUtil, SqlParam}
@@ -170,18 +168,6 @@ class CupidDBVisitorTest extends FunSuite with BeforeAndAfterEach {
     val index1 = node.indexList.get(1).asInstanceOf[SqlIndexDeclaration]
     assertEquals("spatial_index", index1.indexName.names.get(0))
     assertEquals(4, node.columnList.size())
-  }
-
-  test("convert select database() to SqlNode") {
-    val sql = CupidDBSQLSamples.SELECT_DATABASE
-    val parsed = driver.parseSql(sql)
-    assertTrue(parsed.isInstanceOf[SqlSelectDatabase])
-  }
-
-  test("convert select user() to SqlNode") {
-    val sql = CupidDBSQLSamples.SELECT_USER
-    val parsed = driver.parseSql(sql)
-    assertTrue(parsed.isInstanceOf[SqlSelectUser])
   }
 
 }

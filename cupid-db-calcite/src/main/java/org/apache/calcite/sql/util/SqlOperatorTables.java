@@ -51,7 +51,8 @@ public class SqlOperatorTables extends ReflectiveSqlOperatorTable {
             GeometricTypeConversionFunction.class.getName(),
             TrajectoryFunction.class.getName(),
             RoadFunction.class.getName(),
-            CoordTransformFunction.class.getName()
+            CoordTransformFunction.class.getName(),
+            OtherFunction.class.getName()
         );
     }
 

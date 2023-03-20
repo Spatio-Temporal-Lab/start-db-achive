@@ -32,13 +32,11 @@ import org.urbcomp.cupid.db.parser.ddl.{
   SqlUseDatabase
 }
 import org.urbcomp.cupid.db.parser.dql.{
-  SqlSelectDatabase,
   SqlShowCreateTable,
   SqlShowDatabases,
   SqlShowIndex,
   SqlShowStatus,
-  SqlShowTables,
-  SqlSelectUser
+  SqlShowTables
 }
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlBaseVisitor
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlParser._
@@ -89,7 +87,6 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
   override def visitSelectStmt(ctx: SelectStmtContext): SqlNode = {
     // TODO 暂时不考虑cte情况
     visitFullselectStmt(ctx.fullselectStmt())
-
   }
 
   def transfer(item: FullselectSetClauseContext): SqlOperator = {
@@ -120,10 +117,6 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
         Array(visitFullselectStmtItem(stmItem.head), visitFullselectStmtItem(stmItem(1))),
         pos
       )
-    } else if ("SELECTDATABASE()".equalsIgnoreCase(ctx.getText)) {
-      new SqlSelectDatabase(pos)
-    } else if ("SELECTUSER()".equalsIgnoreCase(ctx.getText)) {
-      new SqlSelectUser(pos)
     } else visitFullselectStmtItem(stmItem.head)
   }
 
@@ -135,7 +128,6 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
       case null => null // TODO 可能需要处理嵌套的事情
       case _    => visitSubselectStmt(ctx.subselectStmt())
     }
-
   }
 
   override def visitSubselectStmt(ctx: SubselectStmtContext): SqlNode = {
@@ -177,8 +169,9 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
       else null
     if (null != orderBy || null != fetch) {
       new SqlOrderBy(pos, query, orderBy, offset, fetch)
-    } else query
-
+    } else {
+      query
+    }
   }
 
   def visitOverFunction(ctx: ExprFuncOverClauseContext, aggBasicCall: SqlBasicCall): SqlNode = {
@@ -276,9 +269,10 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
     else getSqlJoin(contexts, ctx, flag = false)
   }
 
-  override def visitFromClause(ctx: FromClauseContext): SqlNode =
+  override def visitFromClause(ctx: FromClauseContext): SqlNode = {
     if (ctx.fromJoinClause().isEmpty) visitFromTableClause(ctx.fromTableClause())
     else visitFromTableJoinClause(ctx.fromJoinClause().asScala.reverse, ctx)
+  }
 
   override def visitFromTableNameClause(ctx: FromTableNameClauseContext): SqlNode =
     ctx.fromAliasClause() match {
@@ -551,7 +545,6 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
     if (ctx.ident().getText.equalsIgnoreCase("fibonacci")) {
       val nodeList = List(new SqlIdentifier("result", pos)).asJava
       new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
-
     } else if (ctx.ident().getText.equalsIgnoreCase("st_traj_timeIntervalSegment")) {
       val nodeList = List(new SqlIdentifier("subTrajectory", pos)).asJava
       new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)

@@ -115,4 +115,5 @@ public class MathFunction {
     public double toDegrees(double angRad) {
         return Math.toDegrees(angRad);
     }
+
 }

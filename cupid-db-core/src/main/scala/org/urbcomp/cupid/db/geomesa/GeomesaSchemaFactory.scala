@@ -19,12 +19,13 @@ package org.urbcomp.cupid.db.geomesa
 import org.apache.calcite.schema.impl.{AggregateFunctionImpl, TableFunctionImpl}
 import org.apache.calcite.schema.{Schema, SchemaFactory, SchemaPlus}
 import org.urbcomp.cupid.db.function.udaf.CollectList
+import org.urbcomp.cupid.db.parser.dql.SqlSelectUser
 import org.urbcomp.cupid.db.udtf.{
   DBSCANClustering,
   Fibonacci,
+  HybridTrajectorySegment,
   KMeansClustering,
   StayPointDetect,
-  HybridTrajectorySegment,
   StayPointTrajectorySegment,
   TimeIntervalTrajectorySegment
 }
