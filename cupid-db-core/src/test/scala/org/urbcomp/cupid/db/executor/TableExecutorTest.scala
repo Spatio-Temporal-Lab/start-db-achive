@@ -92,7 +92,6 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
     val createTableSQL = s"""CREATE TABLE gemo_%s (
                             |    name String
                             |)""".stripMargin.format(uniqueId).stripMargin
-    println("execute sql", createTableSQL)
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
     val rs = stmt.executeQuery("""show index from gemo_%s""".format(uniqueId))
