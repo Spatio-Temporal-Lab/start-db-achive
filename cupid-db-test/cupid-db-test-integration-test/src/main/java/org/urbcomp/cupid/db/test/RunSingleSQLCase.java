@@ -35,13 +35,17 @@ import static org.urbcomp.cupid.db.test.AutoWriteActual.*;
 public class RunSingleSQLCase {
     // 用一个静态变量来控制出现报错后是否继续执行, 是否抛出异常
     static boolean ERROR_STOP = true;
+    // 用一个静态变量来控制是否自动将实际返回值写入xml文件中
     static boolean WRITE_ACTUAL = true;
+    // 分别用一个静态变量来控制是否比较执行结果或异常
     static boolean COMPARE_RESULT = true;
     static boolean COMPARE_EXCEPTION = true;
-    static String DBNAME;
-    static Date START_TIME;
+    // 用一个静态变量来控制是否输出过程信息
+    static boolean OUTPUT_MESSAGE = false;
     static String XML_PATH;
     static String XML_NAME;
+    static String DBNAME;
+    static Date START_TIME;
     private final static Logger log = LoggerFactory.getLogger(RunSingleSQLCase.class);
 
     public static Connection getConnect() throws Exception {
@@ -65,8 +69,10 @@ public class RunSingleSQLCase {
      */
     public static void runSingleCase(String xmlPath) throws Exception {
         XML_PATH = xmlPath;
+        log.info("xmlPath:" + XML_PATH);
         SAXReader saxReader = new SAXReader();
         Document document = saxReader.read(XML_PATH);
+        log.info("开始执行测试用例");
 
         // 获取储存sql执行结果的xml文件名
         Element xmlElement = (Element) document.selectSingleNode("//resultXml");
@@ -108,7 +114,7 @@ public class RunSingleSQLCase {
         if (WRITE_ACTUAL) {
             writeActualXml(XML_PATH, XML_NAME);
         }
-        log.info("用例执行结束");
+        log.info("测试用例执行结束");
     }
 
     /**
@@ -129,49 +135,72 @@ public class RunSingleSQLCase {
 
             // 有预期结果获取并加入预期数据中,然后与实际数据进行比较
             if (resultID != null) {
-                log.info("开始执行sql:" + sql + " resultID: " + resultID);
+                if (OUTPUT_MESSAGE) {
+                    log.info("开始执行sql: " + sql + " resultID: " + resultID);
+                }
                 sql = dataTransform(sql);
+                // 执行sql并选择是否将实际返回值写入文档
                 try (Statement stmt = connect.createStatement()) {
                     actualArray = executeSql(stmt, sql, sqlType);
                     if (WRITE_ACTUAL) {
                         writeActualDocument(actualArray, resultID);
                     }
                 }
-                System.out.println("实际返回值： " + actualArray);
+                if (OUTPUT_MESSAGE) {
+                    log.info("实际返回值：" + actualArray);
+                }
+                // 选择是否进行结果比较，是的话获取预期结果然后与实际结果进行比较
                 if (COMPARE_RESULT) {
                     List<String> expectedArray;
                     expectedArray = getExpectedDataArray(XML_PATH, XML_NAME, resultID);
-                    System.out.println("预期返回值： " + expectedArray);
+                    if (OUTPUT_MESSAGE) {
+                        log.info("预期返回值：" + expectedArray);
+                    }
                     compareResult(actualArray, expectedArray);
                 }
-                log.info("sql执行完成");
+                if (OUTPUT_MESSAGE) {
+                    log.info("sql执行完成");
+                }
             } else if (exception != null) {
                 // 有预期异常加入预期数据中，然后与实际数据进行比较
                 if (!exception.contains("Exception")) {
                     throw new Exception("预期异常内容不对");
                 } else {
-                    log.info("开始执行sql:" + sql);
+                    if (OUTPUT_MESSAGE) {
+                        log.info("开始执行sql: " + sql);
+                    }
                     sql = dataTransform(sql);
                     try (Statement stmt = connect.createStatement()) {
                         actualArray = executeSql(stmt, sql, sqlType);
                     }
-                    log.info("实际返回值： " + actualArray);
+                    if (OUTPUT_MESSAGE) {
+                        log.info("实际返回值：" + actualArray);
+                    }
+                    // 选择是否进行异常比较，是的话获取预期异常与实际异常进行比较
                     if (COMPARE_EXCEPTION) {
                         List<String> expectedArray = new ArrayList<>();
                         expectedArray.add(exception);
-                        System.out.println("预期异常： " + expectedArray);
+                        if (OUTPUT_MESSAGE) {
+                            log.info("预期异常：" + expectedArray);
+                        }
                         compareException(actualArray, expectedArray);
                     }
-                    log.info("sql执行完成");
+                    if (OUTPUT_MESSAGE) {
+                        log.info("sql执行完成");
+                    }
                 }
             } else {
                 // 没有预期结果和异常
-                log.info("开始执行sql:" + sql);
+                if (OUTPUT_MESSAGE) {
+                    log.info("开始执行sql: " + sql);
+                }
                 sql = dataTransform(sql);
                 try (Statement stmt = connect.createStatement()) {
                     executeSql(stmt, sql, sqlType);
                 }
-                log.info("sql执行完成");
+                if (OUTPUT_MESSAGE) {
+                    log.info("sql执行完成");
+                }
             }
         } catch (Exception e) {
             if (ERROR_STOP) {
