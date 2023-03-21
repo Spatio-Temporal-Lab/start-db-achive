@@ -391,10 +391,10 @@ class XZStarSFC(g: Short, xBounds: (Double, Double), yBounds: (Double, Double), 
     val ranges = new java.util.ArrayList[IndexRange](100)
 
     // values remaining to process - initial size of 100 in general saves us some re-allocation
-    val remaining = new java.util.ArrayDeque[ElementKNN](100)
+    val remaining = new java.util.ArrayDeque[XZStarElement](100)
 
-    val levelStop = new ElementKNN(-1, -1, -1, -1, -1, -1, pre, 0)
-    val root = new ElementKNN(-180.0, -90.0, 180.0, 90.0, 0, g, new PrecisionModel, 0L)
+    val levelStop = new XZStarElement(-1, -1, -1, -1, -1, -1, pre, 0)
+    val root = new XZStarElement(-180.0, -90.0, 180.0, 90.0, 0, g, new PrecisionModel, 0L)
     root.split()
     root.children.asScala.foreach(remaining.add)
     remaining.add(levelStop)
@@ -413,7 +413,7 @@ class XZStarSFC(g: Short, xBounds: (Double, Double), yBounds: (Double, Double), 
       }
     }
 
-    def checkValue(quad: ElementKNN, level: Short): Unit = {
+    def checkValue(quad: XZStarElement, level: Short): Unit = {
       if (quad.isContained(queryWindow.head)) {
         val (min, max) = (quad.elementCode + 1L, quad.elementCode + quad.IS(level) - 1L)
         ranges.add(IndexRange(min, max, contained = true))

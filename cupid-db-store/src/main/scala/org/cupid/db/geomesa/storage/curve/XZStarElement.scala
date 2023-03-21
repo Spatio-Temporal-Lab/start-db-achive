@@ -29,7 +29,7 @@ import org.locationtech.sfcurve.IndexRange
 import java.util
 import scala.collection.JavaConverters._
 
-class ElementKNN(
+class XZStarElement(
     val xmin: Double,
     val ymin: Double,
     val xmax: Double,
@@ -43,14 +43,13 @@ class ElementKNN(
   var addedPositionCodes = 0
   var checkedPositionCodes = 0
 
-  private val disOfFourSubElements = new java.util.ArrayList[Double](4)
-  val xLength = xmax - xmin
-  val yLength = ymax - ymin
-  val psMaximum = Array(0, 10, 0, 1, 0, 2, 9, 3, 0, 8, 0, 5, 0, 6, 7, 4)
-  val positionIndex = Array(3, 5, 7, 15, 11, 13, 14, 9, 6, 1)
+  val xLength: Double = xmax - xmin
+  val yLength: Double = ymax - ymin
+  val psMaximum: Array[Int] = Array(0, 10, 0, 1, 0, 2, 9, 3, 0, 8, 0, 5, 0, 6, 7, 4)
+  val positionIndex: Array[Int] = Array(3, 5, 7, 15, 11, 13, 14, 9, 6, 1)
   val positionDisMap = new util.HashMap[Long, (Double, Int)]()
   val positionDisMap2 = new util.HashMap[Long, Boolean]()
-  val children = new java.util.ArrayList[ElementKNN](4)
+  val children = new java.util.ArrayList[XZStarElement](4)
 
   def insertion(window: QueryWindow): Boolean = {
     window.xmax >= xmin && window.ymax >= ymin && window.xmin <= xmax + xLength && window.ymin <= ymax + yLength
@@ -137,10 +136,10 @@ class ElementKNN(
       val xCenter = (xmax + xmin) / 2.0
       val yCenter = (ymax + ymin) / 2.0
       children.add(
-        new ElementKNN(xmin, ymin, xCenter, yCenter, level + 1, g, pre, elementCode + 9L)
+        new XZStarElement(xmin, ymin, xCenter, yCenter, level + 1, g, pre, elementCode + 9L)
       )
       children.add(
-        new ElementKNN(
+        new XZStarElement(
           xCenter,
           ymin,
           xmax,
@@ -152,7 +151,7 @@ class ElementKNN(
         )
       )
       children.add(
-        new ElementKNN(
+        new XZStarElement(
           xmin,
           yCenter,
           xCenter,
@@ -164,7 +163,7 @@ class ElementKNN(
         )
       )
       children.add(
-        new ElementKNN(
+        new XZStarElement(
           xCenter,
           yCenter,
           xmax,
@@ -183,10 +182,10 @@ class ElementKNN(
       val xCenter = (xmax + xmin) / 2.0
       val yCenter = (ymax + ymin) / 2.0
       children.add(
-        new ElementKNN(xmin, ymin, xCenter, yCenter, level + 1, g, pre, elementCode + 1L)
+        new XZStarElement(xmin, ymin, xCenter, yCenter, level + 1, g, pre, elementCode + 1L)
       )
       children.add(
-        new ElementKNN(
+        new XZStarElement(
           xCenter,
           ymin,
           xmax,
@@ -198,7 +197,7 @@ class ElementKNN(
         )
       )
       children.add(
-        new ElementKNN(
+        new XZStarElement(
           xmin,
           yCenter,
           xCenter,
@@ -210,7 +209,7 @@ class ElementKNN(
         )
       )
       children.add(
-        new ElementKNN(
+        new XZStarElement(
           xCenter,
           yCenter,
           xmax,
@@ -228,7 +227,7 @@ class ElementKNN(
     (39L * math.pow(4, g - i).toLong - 9L) / 3L
   }
 
-  def search(root: ElementKNN, x: Double, y: Double, l: Int): ElementKNN = {
+  def search(root: XZStarElement, x: Double, y: Double, l: Int): XZStarElement = {
     var i = root.level
     var currentElement = root
     while (i < l) {
@@ -245,13 +244,13 @@ class ElementKNN(
     currentElement
   }
 
-  def getChildren: util.ArrayList[ElementKNN] = {
+  def getChildren: util.ArrayList[XZStarElement] = {
     if (children.isEmpty) {
       split()
     }
     children
   }
-  def getChildrenQuadTree: util.ArrayList[ElementKNN] = {
+  def getChildrenQuadTree: util.ArrayList[XZStarElement] = {
     if (children.isEmpty) {
       split1()
     }
