@@ -18,30 +18,26 @@ package org.urbcomp.cupid.db.algorithm.reachable;
 
 public enum TravelMode {
     // 未定义
-    UNDEFINED(-1),
+    UNDEFINED("undefined"),
     // 汽车
-    DRIVE(0),
+    DRIVE("drive"),
     // 自行车
-    RIDE(1),
+    RIDE("ride"),
     // 步行
-    WALK(2);
+    WALK("walk");
 
-    private final int value;
+    private final String text;
 
-    TravelMode(int value) {
-        this.value = value;
+    TravelMode(String text) {
+        this.text = text;
     }
 
-    public static TravelMode valueOf(int value) {
-        for (TravelMode mode : values()) {
-            if (mode.value() == value) {
-                return mode;
+    public static TravelMode fromString(String text) {
+        for (TravelMode tm : TravelMode.values()) {
+            if (tm.text.equalsIgnoreCase(text)) {
+                return tm;
             }
         }
-        return null;
-    }
-
-    public int value() {
-        return this.value;
+        throw new IllegalArgumentException("Travel mode should be drive, walk, or ride");
     }
 }

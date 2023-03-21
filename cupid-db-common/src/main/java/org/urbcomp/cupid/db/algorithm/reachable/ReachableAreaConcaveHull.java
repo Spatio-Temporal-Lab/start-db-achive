@@ -38,13 +38,7 @@ public class ReachableAreaConcaveHull extends AbstractReachableArea {
 
     @Override
     public Polygon getHull() {
-        ReachableArea reachableArea = new ReachableArea(
-            this.roadNetwork,
-            this.startPt,
-            this.timeBudgetInS,
-            this.travelMode
-        );
-        ArrayList<SpatialPoint> researchable = reachableArea.calReachableArea();
+        ArrayList<SpatialPoint> researchable = calReachableArea();
         if (!researchable.isEmpty()) {
             List<Coordinate> points = new ArrayList<>();
             researchable.forEach(pt -> points.add(new Coordinate(pt.getLat(), pt.getLng())));

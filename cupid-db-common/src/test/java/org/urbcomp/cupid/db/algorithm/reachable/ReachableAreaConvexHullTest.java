@@ -57,10 +57,9 @@ public class ReachableAreaConvexHullTest {
         for (Coordinate coordinate : hull.getCoordinates()) {
             SpatialPoint endPt = new SpatialPoint(coordinate.y, coordinate.x);
             double dis = GeoFunctions.getDistanceInM(startNodePoint, endPt);
-            Assert.assertTrue(dis < ReachableArea.walkSpeedInMeterPerSec * timeBudgetInS);
+            Assert.assertTrue(dis < AbstractReachableArea.walkSpeedInMeterPerSec * timeBudgetInS);
 
         }
-
     }
 
 }

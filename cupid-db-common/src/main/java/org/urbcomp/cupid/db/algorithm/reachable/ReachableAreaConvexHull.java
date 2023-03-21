@@ -36,13 +36,7 @@ public class ReachableAreaConvexHull extends AbstractReachableArea {
 
     @Override
     public Polygon getHull() {
-        ReachableArea reachableArea = new ReachableArea(
-            this.roadNetwork,
-            this.startPt,
-            this.timeBudgetInS,
-            this.travelMode
-        );
-        ArrayList<SpatialPoint> researchable = reachableArea.calReachableArea();
+        ArrayList<SpatialPoint> researchable = calReachableArea();
         if (!researchable.isEmpty()) {
             GeometryFactory geometryFactory = new GeometryFactory();
             List<Coordinate> points = new ArrayList<>();

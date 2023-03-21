@@ -17,14 +17,22 @@
 package org.urbcomp.cupid.db.algorithm.reachable;
 
 import org.locationtech.jts.geom.Polygon;
+import org.urbcomp.cupid.db.model.point.CandidatePoint;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
-import org.urbcomp.cupid.db.model.roadnetwork.RoadNetwork;
+import org.urbcomp.cupid.db.model.roadnetwork.*;
+import org.urbcomp.cupid.db.util.GeoFunctions;
+
+import java.util.*;
 
 public abstract class AbstractReachableArea {
-    protected final SpatialPoint startPt;
+    protected final SpatialPoint startPoint;
     protected final double timeBudgetInS;
-    protected final String travelMode;
     protected final RoadNetwork roadNetwork;
+    private final TravelMode travelMode;
+    private final List<RoadSegmentLevel> roadType;
+
+    protected final static double rideSpeedInMeterPerSec = 10.0 / 3.6;
+    protected final static double walkSpeedInMeterPerSec = 5.0 / 3.6;
 
     public AbstractReachableArea(
         RoadNetwork roadNetwork,
@@ -32,12 +40,157 @@ public abstract class AbstractReachableArea {
         double timeBudgetInS,
         String travelMode
     ) {
-        this.startPt = startPt;
+        this.startPoint = startPt;
         this.roadNetwork = roadNetwork;
         this.timeBudgetInS = timeBudgetInS;
-        this.travelMode = travelMode;
+        this.travelMode = TravelMode.fromString(travelMode);
+        this.roadType = getRoadType(this.travelMode);
+    }
+
+    public double getSpeed(TravelMode mode, RoadSegment roadSegment) {
+        switch (mode) {
+            case WALK:
+                return walkSpeedInMeterPerSec;
+            case RIDE:
+                return rideSpeedInMeterPerSec;
+            case DRIVE:
+                return roadSegment.getSpeedLimit() / 3.6;
+            default:
+                throw new IllegalArgumentException("Travel mode should be drive, walk, or ride");
+        }
+    }
+
+    public RoadNode getCandidateNode(TravelMode mode, RoadSegment e, ReachableNode curNode) {
+        if (mode == TravelMode.DRIVE) {
+            if (e.getStartNode().equals(curNode.getNode())
+                && (e.getDirection() == RoadSegmentDirection.DUAL
+                    || e.getDirection() == RoadSegmentDirection.FORWARD)) {
+                return e.getEndNode();
+            } else if (e.getEndNode().equals(curNode.getNode())
+                && (e.getDirection() == RoadSegmentDirection.DUAL
+                    || e.getDirection() == RoadSegmentDirection.BACKWARD)) {
+                        return e.getStartNode();
+                    } else {
+                        return null;
+                    }
+        } else {
+            if (e.getStartNode().equals(curNode.getNode())) {
+                return e.getEndNode();
+            } else {
+                return e.getStartNode();
+            }
+        }
     }
 
     public abstract Polygon getHull();
 
+    private List<RoadSegmentLevel> getRoadType(TravelMode travelMode) {
+        switch (travelMode) {
+            case DRIVE:
+                return Arrays.asList(
+                    RoadSegmentLevel.ELEVATED_ROAD,
+                    RoadSegmentLevel.HIGH_WAY_ROAD,
+                    RoadSegmentLevel.NATIONAL_ROAD,
+                    RoadSegmentLevel.PROVINCIAL_ROAD,
+                    RoadSegmentLevel.COUNTRY_ROAD,
+                    RoadSegmentLevel.MAIN_ROAD,
+                    RoadSegmentLevel.URBAN_ROAD,
+                    RoadSegmentLevel.DOWNTOWN_ROAD,
+                    RoadSegmentLevel.RESIDENTIAL_ROAD
+                );
+            case WALK:
+            case RIDE:
+                return Arrays.asList(
+                    RoadSegmentLevel.NATIONAL_ROAD,
+                    RoadSegmentLevel.PROVINCIAL_ROAD,
+                    RoadSegmentLevel.COUNTRY_ROAD,
+                    RoadSegmentLevel.MAIN_ROAD,
+                    RoadSegmentLevel.URBAN_ROAD,
+                    RoadSegmentLevel.DOWNTOWN_ROAD,
+                    RoadSegmentLevel.RESIDENTIAL_ROAD,
+                    RoadSegmentLevel.SIDEWALK_ROAD
+                );
+            default:
+                throw new IllegalArgumentException("Unsupported travel mode");
+        }
+    }
+
+    protected ArrayList<SpatialPoint> calReachableArea() {
+
+        ArrayList<SpatialPoint> researchable = new ArrayList<>();
+        HashSet<SpatialPoint> visitedNode = new HashSet<>();
+        RoadGraph graph = this.roadNetwork.getDirectedRoadGraph();
+        Queue<ReachableNode> nodeQueue = new PriorityQueue<>((o1, o2) -> {
+            if (o1.getCost() == o2.getCost()) {
+                return 0;
+            } else {
+                return o1.getCost() <= o2.getCost() ? -1 : 1;
+            }
+        });
+
+        CandidatePoint startCandidatePoint = CandidatePoint.getNearestCandidatePoint(
+            startPoint,
+            roadNetwork,
+            100
+        );
+        if (startCandidatePoint != null) {
+            RoadSegment startSegment = roadNetwork.getRoadSegmentById(
+                startCandidatePoint.getRoadSegmentId()
+            );
+            RoadNode startNode = startSegment.getStartNode();
+            visitedNode.add(startNode);
+            nodeQueue.offer(
+                new ReachableNode(
+                    startNode,
+                    GeoFunctions.getDistanceInM(this.startPoint, startNode) / getSpeed(
+                        this.travelMode,
+                        startSegment
+                    )
+                )
+            );
+            while (!nodeQueue.isEmpty()) {
+                ReachableNode curNode = nodeQueue.poll();
+                assert curNode != null;
+                Set<RoadSegment> edges = graph.edgesOf(curNode.getNode()); // return the edge from
+                // the node
+                for (RoadSegment e : edges) {
+                    if (this.roadType.contains(e.getLevel())) {
+                        RoadNode candidateNode = getCandidateNode(this.travelMode, e, curNode);
+                        if (candidateNode == null || visitedNode.contains(candidateNode)) {
+                            continue;
+                        }
+                        double curCost = curNode.getCost();
+                        double candidateCost = curCost + e.getLengthInMeter() / getSpeed(
+                            this.travelMode,
+                            e
+                        );
+                        if (candidateCost <= this.timeBudgetInS) {
+                            visitedNode.add(candidateNode);
+                            researchable.add(candidateNode);
+                            nodeQueue.offer(new ReachableNode(candidateNode, candidateCost));
+                        } else {
+                            List<SpatialPoint> pts = e.getPoints();
+                            for (int i = 0; i < pts.size(); i++) {
+                                double dis = GeoFunctions.getDistanceInM(
+                                    curNode.getNode(),
+                                    pts.get(i)
+                                );
+                                if (curCost + dis / getSpeed(
+                                    this.travelMode,
+                                    e
+                                ) > this.timeBudgetInS) {
+                                    if (i > 0) {
+                                        researchable.add(pts.get(i - 1));
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return researchable;
+    }
 }
