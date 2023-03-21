@@ -150,7 +150,8 @@ public abstract class AbstractReachableArea {
             while (!nodeQueue.isEmpty()) {
                 ReachableNode curNode = nodeQueue.poll();
                 assert curNode != null;
-                Set<RoadSegment> edges = graph.edgesOf(curNode.getNode()); // return the edge from the node
+                Set<RoadSegment> edges = graph.edgesOf(curNode.getNode()); // return the edge from
+                                                                           // the node
                 for (RoadSegment e : edges) {
                     if (this.roadType.contains(e.getLevel())) {
                         RoadNode candidateNode = getCandidateNode(this.travelMode, e, curNode);
@@ -158,7 +159,10 @@ public abstract class AbstractReachableArea {
                             continue;
                         }
                         double curCost = curNode.getCost();
-                        double candidateCost = curCost + e.getLengthInMeter() / getSpeed(this.travelMode, e);
+                        double candidateCost = curCost + e.getLengthInMeter() / getSpeed(
+                            this.travelMode,
+                            e
+                        );
                         if (candidateCost <= this.timeBudgetInS) {
                             visitedNodes.add(candidateNode);
                             reachablePoints.add(candidateNode);
@@ -170,7 +174,10 @@ public abstract class AbstractReachableArea {
                                     curNode.getNode(),
                                     pts.get(i)
                                 );
-                                if (curCost + dis / getSpeed(this.travelMode, e) > this.timeBudgetInS) {
+                                if (curCost + dis / getSpeed(
+                                    this.travelMode,
+                                    e
+                                ) > this.timeBudgetInS) {
                                     if (i > 0) {
                                         reachablePoints.add(pts.get(i - 1));
                                     }
