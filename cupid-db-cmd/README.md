@@ -10,7 +10,7 @@ mvn package -pl cupid-db-cmd -am -DskipTests=true -Dcheckstyle.skip
 # usage
 
 ```shell
-D:\workspace\git\cupid-db\cmd\target>java -jar cupid-db-cmd.jar -u start_db -p cupid-db -r jdbc:cupid-db:url=http://127.0.0.1:8000
+D:\workspace\git\cupid-db\cmd\target>java -jar cupid-db-cmd.jar -u cupid_db -p cupid-db -r jdbc:cupid-db:url=http://127.0.0.1:8000
 sqlline version 1.12.0
 Transaction isolation level TRANSACTION_REPEATABLE_READ is not supported. Default (TRANSACTION_NONE) will be used instead.
 cupid-db> select count(1) from citibike_tripdata;

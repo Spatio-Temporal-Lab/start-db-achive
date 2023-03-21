@@ -32,7 +32,7 @@ public class DriverTest {
         try (
             Connection conn = DriverManager.getConnection(
                 "jdbc:cupid-db:url=http://127.0.0.1:8000;db=default",
-                "start_db",
+                "cupid_db",
                 "cupid-db"
             )
         ) {
@@ -49,13 +49,13 @@ public class DriverTest {
         try (
             Connection conn = DriverManager.getConnection(
                 "jdbc:cupid-db:url=http://127.0.0.1:8000",
-                "start_db",
+                "cupid_db",
                 "cupid-db"
             )
         ) {
             final Statement stmt = conn.createStatement();
 
-            final ResultSet rs = stmt.executeQuery("select * from `start_db.default.t_test`");
+            final ResultSet rs = stmt.executeQuery("select * from `cupid_db.default.t_test`");
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
                 for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -70,14 +70,14 @@ public class DriverTest {
         try (
             Connection conn = DriverManager.getConnection(
                 "jdbc:cupid-db:url=http://127.0.0.1:8000",
-                "start_db",
+                "cupid_db",
                 "cupid-db"
             )
         ) {
             final Statement stmt = conn.createStatement();
 
             final ResultSet rs = stmt.executeQuery(
-                "select started_at,st_x(start_point) from `start_db.default.t_test`"
+                "select started_at,st_x(start_point) from `cupid_db.default.t_test`"
             );
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
@@ -94,13 +94,13 @@ public class DriverTest {
         try (
             Connection conn = DriverManager.getConnection(
                 "jdbc:cupid-db:url=http://127.0.0.1:8000",
-                "start_db",
+                "cupid_db",
                 "cupid-db"
             )
         ) {
             final Statement stmt = conn.createStatement();
 
-            final ResultSet rs = stmt.executeQuery("show create table `start_db.default.t_test`");
+            final ResultSet rs = stmt.executeQuery("show create table `cupid_db.default.t_test`");
             final ResultSetMetaData md = rs.getMetaData();
             while (rs.next()) {
                 for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -114,7 +114,7 @@ public class DriverTest {
     @Test
     public void testBatchInsert() throws SQLException {
         final Properties info = new Properties();
-        info.put("user", "start_db");
+        info.put("user", "cupid_db");
         info.put("password", "cupid-db");
         info.put("db", "default");
         try (
@@ -140,7 +140,7 @@ public class DriverTest {
         try (
             Connection conn = DriverManager.getConnection(
                 "jdbc:cupid-db:url=http://127.0.0.1:8000;db=default",
-                "start_db",
+                "cupid_db",
                 "cupid-db"
             )
         ) {

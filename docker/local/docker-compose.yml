@@ -3,9 +3,9 @@ services:
   mysql:
     image: 'mysql:5.7'
     environment:
-      MYSQL_ROOT_PASSWORD: start_db
-      MYSQL_USER: start_db
-      MYSQL_PASSWORD: start_db
+      MYSQL_ROOT_PASSWORD: cupid_db
+      MYSQL_USER: cupid_db
+      MYSQL_PASSWORD: cupid_db
       MYSQL_DATABASE: meta_data
     ports:
       - '3306:3306'

@@ -38,8 +38,8 @@ public class MySQLServerInit {
     public static void init() throws Exception {
         String jdbcUrl =
             "jdbc:mysql://localhost:3306/meta_data?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8";
-        String user = "start_db";
-        String password = "start_db";
+        String user = "cupid_db";
+        String password = "cupid_db";
         Class.forName("com.mysql.cj.jdbc.Driver");
         final String sqlTxt = Files.readAllLines(
             Paths.get("cupid-db-core/src/main/resources/metadata/ddl.sql")

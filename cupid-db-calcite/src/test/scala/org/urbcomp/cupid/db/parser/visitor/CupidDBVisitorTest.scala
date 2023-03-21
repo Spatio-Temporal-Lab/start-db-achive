@@ -42,7 +42,7 @@ class CupidDBVisitorTest extends FunSuite with BeforeAndAfterEach {
 
   def driver = CupidDBParseDriver
 
-  def testUser = "start_db";
+  def testUser = "cupid_db";
   def testDatabase = "default";
   def tableName = "table_name";
 

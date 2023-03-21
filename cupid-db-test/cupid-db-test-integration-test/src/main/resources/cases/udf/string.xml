@@ -85,7 +85,7 @@
     <!--  返回字符串占用的字节数  length(str: String): Int  一个中文占3个字节-->
     <case>
         <sql type="query">select length(?);</sql>
-        <assertion expected="string_013.xml">['start_db']</assertion>
+        <assertion expected="string_013.xml">['cupid_db']</assertion>
         <assertion expected="string_013.xml">['开心工作']</assertion>
         <assertion expected="error:参数有误">[null]</assertion>
     </case>
@@ -93,7 +93,7 @@
     <!--  返回字符串的长度，一个多字节字符算作一个字符  charLength(str: String): Int  -->
     <case>
         <sql type="query">select charLength(?);</sql>
-        <assertion expected="string_014.xml">['start_db']</assertion>
+        <assertion expected="string_014.xml">['cupid_db']</assertion>
         <assertion expected="string_014.xml">['开心工作']</assertion>
         <assertion expected="error:参数有误">[null]</assertion>
     </case>

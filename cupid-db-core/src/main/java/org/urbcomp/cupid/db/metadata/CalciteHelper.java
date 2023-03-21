@@ -35,10 +35,10 @@ public class CalciteHelper {
     public static String modelJson() {
         return "{\n"
             + "  \"version\": \"1.0\",\n"
-            + "  \"defaultSchema\": \"START_DB\",\n"
+            + "  \"defaultSchema\": \"CUPID_DB\",\n"
             + "  \"schemas\": [\n"
             + "    {\n"
-            + "      \"name\": \"START_DB\",\n"
+            + "      \"name\": \"CUPID_DB\",\n"
             + "      \"type\": \"custom\",\n"
             + "      \"factory\": \""
             + GeomesaSchemaFactory.class.getCanonicalName().replace("$", "")

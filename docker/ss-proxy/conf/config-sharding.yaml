@@ -27,5 +27,5 @@ databaseName: db
 dataSources:
   ds01:
     url: jdbc:cupid-db:url=http://cupid-db:8000
-    username: start_db
+    username: cupid_db
     password: cupid-db
