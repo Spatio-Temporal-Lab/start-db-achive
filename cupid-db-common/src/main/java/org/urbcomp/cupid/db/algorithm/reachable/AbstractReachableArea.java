@@ -116,15 +116,14 @@ public abstract class AbstractReachableArea {
     }
 
     protected ArrayList<SpatialPoint> calReachableArea() {
-
-        ArrayList<SpatialPoint> researchable = new ArrayList<>();
-        HashSet<SpatialPoint> visitedNode = new HashSet<>();
+        ArrayList<SpatialPoint> reachablePoints = new ArrayList<>();
+        HashSet<SpatialPoint> visitedNodes = new HashSet<>();
         RoadGraph graph = this.roadNetwork.getDirectedRoadGraph();
         Queue<ReachableNode> nodeQueue = new PriorityQueue<>((o1, o2) -> {
             if (o1.getCost() == o2.getCost()) {
                 return 0;
             } else {
-                return o1.getCost() <= o2.getCost() ? -1 : 1;
+                return o1.getCost() < o2.getCost() ? -1 : 1;
             }
         });
 
@@ -138,7 +137,7 @@ public abstract class AbstractReachableArea {
                 startCandidatePoint.getRoadSegmentId()
             );
             RoadNode startNode = startSegment.getStartNode();
-            visitedNode.add(startNode);
+            visitedNodes.add(startNode);
             nodeQueue.offer(
                 new ReachableNode(
                     startNode,
@@ -151,22 +150,18 @@ public abstract class AbstractReachableArea {
             while (!nodeQueue.isEmpty()) {
                 ReachableNode curNode = nodeQueue.poll();
                 assert curNode != null;
-                Set<RoadSegment> edges = graph.edgesOf(curNode.getNode()); // return the edge from
-                // the node
+                Set<RoadSegment> edges = graph.edgesOf(curNode.getNode()); // return the edge from the node
                 for (RoadSegment e : edges) {
                     if (this.roadType.contains(e.getLevel())) {
                         RoadNode candidateNode = getCandidateNode(this.travelMode, e, curNode);
-                        if (candidateNode == null || visitedNode.contains(candidateNode)) {
+                        if (candidateNode == null || visitedNodes.contains(candidateNode)) {
                             continue;
                         }
                         double curCost = curNode.getCost();
-                        double candidateCost = curCost + e.getLengthInMeter() / getSpeed(
-                            this.travelMode,
-                            e
-                        );
+                        double candidateCost = curCost + e.getLengthInMeter() / getSpeed(this.travelMode, e);
                         if (candidateCost <= this.timeBudgetInS) {
-                            visitedNode.add(candidateNode);
-                            researchable.add(candidateNode);
+                            visitedNodes.add(candidateNode);
+                            reachablePoints.add(candidateNode);
                             nodeQueue.offer(new ReachableNode(candidateNode, candidateCost));
                         } else {
                             List<SpatialPoint> pts = e.getPoints();
@@ -175,12 +170,9 @@ public abstract class AbstractReachableArea {
                                     curNode.getNode(),
                                     pts.get(i)
                                 );
-                                if (curCost + dis / getSpeed(
-                                    this.travelMode,
-                                    e
-                                ) > this.timeBudgetInS) {
+                                if (curCost + dis / getSpeed(this.travelMode, e) > this.timeBudgetInS) {
                                     if (i > 0) {
-                                        researchable.add(pts.get(i - 1));
+                                        reachablePoints.add(pts.get(i - 1));
                                     }
                                     break;
                                 }
@@ -191,6 +183,6 @@ public abstract class AbstractReachableArea {
             }
         }
 
-        return researchable;
+        return reachablePoints;
     }
 }
