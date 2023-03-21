@@ -466,4 +466,10 @@ public class TimeFunction {
     public int dayOfYear(String dtString) throws DateTimeException {
         return toDateTime(dtString).getDayOfYear();
     }
+
+    @CupidDBFunction("now")
+    public String now() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMATS[1]);
+        return LocalDateTime.now().format(formatter);
+    }
 }

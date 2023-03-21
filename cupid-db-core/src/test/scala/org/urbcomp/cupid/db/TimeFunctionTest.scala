@@ -274,4 +274,12 @@ class TimeFunctionTest extends AbstractCalciteFunctionTest {
     resultSet.next()
     assertEquals(140, resultSet.getObject(1))
   }
+
+  test("now") {
+    val statement = connect.createStatement()
+    val resultSet =
+      statement.executeQuery("select now()")
+    resultSet.next()
+    //2023-03-21 07:58:09
+  }
 }
