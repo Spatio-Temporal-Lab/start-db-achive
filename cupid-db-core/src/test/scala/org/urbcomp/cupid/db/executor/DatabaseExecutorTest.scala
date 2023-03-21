@@ -18,8 +18,13 @@ package org.urbcomp.cupid.db.executor
 
 import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
 import org.urbcomp.cupid.db.AbstractCalciteFunctionTest
+import java.util.UUID
 
 class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
+
+  private def generateUniqueId(): String = {
+    UUID.randomUUID().toString.replace("-", "_")
+  }
 
   test("test create then show databases") {
     val stmt = connect.createStatement()
@@ -57,7 +62,6 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
   test("test create then drop if exists database") {
     val stmt = connect.createStatement()
     val databaseName = "test_%d".format(scala.util.Random.nextInt(100000))
-
     stmt.executeUpdate("CREATE DATABASE %s".format(databaseName))
     val rs1 = stmt.executeQuery("SHOW DATABASES")
     var databasesBefore = List[String]()
@@ -77,18 +81,14 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
 
   test("test create then select database") {
     val stmt = connect.createStatement()
-    val databaseName = "test_%d".format(scala.util.Random.nextInt(100000))
-    stmt.executeUpdate("CREATE DATABASE %s".format(databaseName))
-    val rs0 = stmt.executeQuery("SELECT DATABASE()")
-    rs0.next()
-    assertEquals("default", rs0.getString(1))
-    val rs1 = stmt.executeQuery("SHOW DATABASES")
+    val dbNames = generateUniqueId().split("_")
+    stmt.executeUpdate("CREATE DATABASE %s".format(dbNames(0)))
+    val rs1 = stmt.executeQuery("select DATABASE()")
     rs1.next()
-    rs1.next()
-    val before = rs1.getString(1)
-    stmt.executeUpdate("USE " + rs1.getString(1))
-    val rs2 = stmt.executeQuery("SELECT DATABASE()")
+    assertEquals("default", rs1.getString(1))
+    stmt.executeUpdate("USE %s".format(dbNames(0)))
+    val rs2 = stmt.executeQuery("select database()")
     rs2.next()
-    assertEquals(before, rs2.getString(1))
+    assertEquals("%s".format(dbNames(0)), rs2.getString(1))
   }
 }

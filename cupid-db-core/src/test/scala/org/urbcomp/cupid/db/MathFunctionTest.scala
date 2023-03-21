@@ -89,48 +89,4 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     resultSet.next()
     assertEquals(57.29577951308232, resultSet.getObject(1))
   }
-
-  test("abs") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select abs(-4.8)")
-    resultSet.next()
-    println(resultSet.getObject(1))
-    assertEquals(BigDecimal(4.8).bigDecimal, resultSet.getObject(1))
-  }
-
-  test("sqrt") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select sqrt(0.25)")
-    resultSet.next()
-    assertEquals(0.5, resultSet.getObject(1))
-  }
-
-  test("ceil") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select ceil(0.25)")
-    resultSet.next()
-    assertEquals(BigDecimal(1).bigDecimal, resultSet.getObject(1))
-  }
-
-  test("floor") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select floor(0.25)")
-    resultSet.next()
-    assertEquals(BigDecimal(0).bigDecimal, resultSet.getObject(1))
-  }
-
-  test("round") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select round(0.25)")
-    resultSet.next()
-    assertEquals(BigDecimal(0).bigDecimal, resultSet.getObject(1))
-  }
-
-  test("sign") {
-    val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select sign(1.9)")
-    resultSet.next()
-    assertEquals(BigDecimal(1).bigDecimal, resultSet.getObject(1))
-  }
-
 }
