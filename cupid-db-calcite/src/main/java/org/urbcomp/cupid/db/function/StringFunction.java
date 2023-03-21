@@ -156,5 +156,4 @@ public class StringFunction {
         }
         return new String(code);
     }
-
 }

@@ -34,9 +34,9 @@ import org.urbcomp.cupid.db.parser.ddl.{
 import org.urbcomp.cupid.db.parser.dql.{
   SqlShowCreateTable,
   SqlShowDatabases,
+  SqlShowIndex,
   SqlShowStatus,
-  SqlShowTables,
-  SqlShowIndex
+  SqlShowTables
 }
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlBaseVisitor
 import org.urbcomp.cupid.db.parser.parser.CupidDBSqlParser._
@@ -169,7 +169,9 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
       else null
     if (null != orderBy || null != fetch) {
       new SqlOrderBy(pos, query, orderBy, offset, fetch)
-    } else query
+    } else {
+      query
+    }
   }
 
   def visitOverFunction(ctx: ExprFuncOverClauseContext, aggBasicCall: SqlBasicCall): SqlNode = {
@@ -267,9 +269,10 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
     else getSqlJoin(contexts, ctx, flag = false)
   }
 
-  override def visitFromClause(ctx: FromClauseContext): SqlNode =
+  override def visitFromClause(ctx: FromClauseContext): SqlNode = {
     if (ctx.fromJoinClause().isEmpty) visitFromTableClause(ctx.fromTableClause())
     else visitFromTableJoinClause(ctx.fromJoinClause().asScala.reverse, ctx)
+  }
 
   override def visitFromTableNameClause(ctx: FromTableNameClauseContext): SqlNode =
     ctx.fromAliasClause() match {
@@ -542,7 +545,6 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
     if (ctx.ident().getText.equalsIgnoreCase("fibonacci")) {
       val nodeList = List(new SqlIdentifier("result", pos)).asJava
       new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)
-
     } else if (ctx.ident().getText.equalsIgnoreCase("st_traj_timeIntervalSegment")) {
       val nodeList = List(new SqlIdentifier("subTrajectory", pos)).asJava
       new SqlBasicCall(SqlStdOperatorTable.AS, Array(res, new SqlNodeList(nodeList, pos)), pos)

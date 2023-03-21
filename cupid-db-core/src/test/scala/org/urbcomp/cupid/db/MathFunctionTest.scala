@@ -45,9 +45,9 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("log1p") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select log1p(1)")
+    val resultSet = statement.executeQuery("select log1p('1.5')")
     resultSet.next()
-    assertEquals(0.6931471805599453, resultSet.getObject(1))
+    assertEquals(0.9162907318741551, resultSet.getObject(1))
   }
 
   /**
@@ -55,9 +55,9 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("log2") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select log2(8)")
+    val resultSet = statement.executeQuery("select log2('8.6')")
     resultSet.next()
-    assertEquals(3.0, resultSet.getObject(1))
+    assertEquals(3.1043366598147353, resultSet.getObject(1))
   }
 
   /**
@@ -89,5 +89,4 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     resultSet.next()
     assertEquals(57.29577951308232, resultSet.getObject(1))
   }
-
 }
