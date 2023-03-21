@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <testCase>
-    <caee>
+    <case>
         <!--   delete init   -->
         <sql type="update">drop table if exists insert_table;</sql>
         <sql type="update">
@@ -50,9 +50,9 @@
         </sql>
         <sql type="query">select * from insert_table;</sql>
         <assertion expected="delete_000.xml"/>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   int   -->
         <sql type="update">create table delete_int(int1 int);</sql>
         <sql type="update">insert into table delete_int values(?),(?);</sql>
@@ -74,9 +74,9 @@
         <assertion expected="delete_004.xml"/>
 
         <sql type="update">drop table delete_int;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   long   -->
         <sql type="update">create table delete_long(long1 long);</sql>
         <sql type="update">insert into table delete_long values(?),(?);</sql>
@@ -97,10 +97,10 @@
         <sql type="query">select * from delete_long;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_long;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   float   -->
         <sql type="update">create table delete_float(float1 float);</sql>
         <sql type="update">insert into table delete_float values(?),(?);</sql>
@@ -121,10 +121,10 @@
         <sql type="query">select * from delete_float;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_float;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   double   -->
         <sql type="update">create table delete_double(double1 double);</sql>
         <sql type="update">insert into table delete_double values(?),(?);</sql>
@@ -145,10 +145,10 @@
         <sql type="query">select * from delete_double;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_double;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   string   -->
         <sql type="update">create table delete_string(string1 string);</sql>
         <sql type="update">insert into table delete_string values(?),(?);</sql>
@@ -169,10 +169,10 @@
         <sql type="query">select * from delete_string;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_string;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   boolean   -->
         <sql type="update">create table delete_boolean(boolean1 boolean);</sql>
         <sql type="update">insert into table delete_boolean values(?),(?);</sql>
@@ -193,10 +193,10 @@
         <sql type="query">select * from delete_boolean;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_boolean;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   binary   -->
         <sql type="update">create table delete_binary(binary1 binary);</sql>
         <sql type="update">insert into table delete_binary values(?),(?);</sql>
@@ -220,10 +220,10 @@
         <sql type="query">select * from delete_binary;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_binary;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   datetime   -->
         <sql type="update">create table delete_datetime(datetime1 datetime);</sql>
         <sql type="update">insert into table delete_datetime values(?),(?);</sql>
@@ -247,10 +247,10 @@
         <sql type="query">select * from delete_datetime;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_datetime;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   timestamp   -->
         <sql type="update">create table delete_timestamp(timestamp1 timestamp);</sql>
         <sql type="update">insert into table delete_timestamp values(?),(?);</sql>
@@ -274,10 +274,10 @@
         <sql type="query">select * from delete_timestamp;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_timestamp;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   geometry   -->
         <sql type="update">create table delete_geometry(geometry1 geometry);</sql>
         <sql type="update">insert into table delete_geometry values(?),(?);</sql>
@@ -301,10 +301,10 @@
         <sql type="query">select * from delete_geometry;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_geometry;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   point   -->
         <sql type="update">create table delete_point(point1 point);</sql>
         <sql type="update">insert into table delete_point values(?),(?);</sql>
@@ -328,10 +328,10 @@
         <sql type="query">select * from delete_point;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_point;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   linestring   -->
         <sql type="update">create table delete_linestring(linestring1 linestring);</sql>
         <sql type="update">insert into table delete_linestring values(?),(?);</sql>
@@ -355,10 +355,10 @@
         <sql type="query">select * from delete_linestring;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_linestring;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   polygon   -->
         <sql type="update">create table delete_polygon(polygon1 polygon);</sql>
         <sql type="update">insert into table delete_polygon values(?),(?);</sql>
@@ -382,10 +382,10 @@
         <sql type="query">select * from delete_polygon;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_polygon;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   multipoint   -->
         <sql type="update">create table delete_multipoint(multipoint1 multipoint);</sql>
         <sql type="update">insert into table delete_multipoint values(?),(?);</sql>
@@ -409,10 +409,10 @@
         <sql type="query">select * from delete_multipoint;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_multipoint;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   multilinestring   -->
         <sql type="update">create table delete_multilinestring(multilinestring1 multilinestring);</sql>
         <sql type="update">insert into table delete_multilinestring values(?),(?);</sql>
@@ -438,10 +438,10 @@
         <sql type="query">select * from delete_multilinestring;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_multilinestring;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   multipolygon   -->
         <sql type="update">create table delete_multipolygon(multipolygon1 multipolygon);</sql>
         <sql type="update">insert into table delete_multipolygon values(?),(?);</sql>
@@ -467,10 +467,10 @@
         <sql type="query">select * from delete_multipolygon;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_multipolygon;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   geometrycollection   -->
         <sql type="update">create table delete_geometrycollection(geometrycollection1 geometrycollection);</sql>
         <sql type="update">insert into table delete_geometrycollection values(?),(?);</sql>
@@ -496,10 +496,10 @@
         <sql type="query">select * from delete_geometrycollection;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_geometrycollection;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   trajectory   -->
         <sql type="update">create table delete_trajectory(trajectory1 trajectory);</sql>
         <sql type="update">insert into table delete_trajectory values(?),(?);</sql>
@@ -558,10 +558,10 @@
         <sql type="query">select * from delete_trajectory;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_trajectory;</sql>
+    </case>
 
-    <caee>
+    <case>
         <!--   roadSegment   -->
         <sql type="update">create table delete_roadSegment(roadSegment1 roadSegment);</sql>
         <sql type="update">insert into table delete_roadSegment values(?),(?);</sql>
@@ -623,7 +623,7 @@
         <sql type="query">select * from delete_roadSegment;</sql>
         <assertion expected="delete_004.xml"/>
 
-        <sql type="update">drop table delete_int;</sql>
-    </caee>
+        <sql type="update">drop table delete_roadSegment;</sql>
+    </case>
 
 </testCase>

@@ -52,7 +52,7 @@
         <assertion expected="insert_000.xml"/>
     </case>
 
-    <caee>
+    <case>
         <!--   int   -->
         <sql type="update">create table update_int(int1 int);</sql>
         <sql type="update">insert into table update_int values(?);</sql>
@@ -72,9 +72,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_int;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   long   -->
         <sql type="update">create table update_long(long1 long);</sql>
         <sql type="update">insert into table update_long values(?);</sql>
@@ -94,9 +94,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_long;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   float   -->
         <sql type="update">create table update_float(float1 float);</sql>
         <sql type="update">insert into table update_float values(?);</sql>
@@ -116,9 +116,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_float;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   double   -->
         <sql type="update">create table update_double(double1 double);</sql>
         <sql type="update">insert into table update_double values(?);</sql>
@@ -138,9 +138,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_double;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   string   -->
         <sql type="update">create table update_string(string1 string);</sql>
         <sql type="update">insert into table update_string values(?);</sql>
@@ -160,9 +160,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_string;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   string   -->
         <sql type="update">create table update_string(string1 string);</sql>
         <sql type="update">insert into table update_string values(?);</sql>
@@ -182,10 +182,10 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_string;</sql>
-    </caee>
+    </case>
 
 
-    <caee>
+    <case>
         <!--   boolean   -->
         <sql type="update">create table update_boolean(boolean1 boolean);</sql>
         <sql type="update">insert into table update_boolean values(?);</sql>
@@ -205,9 +205,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_boolean;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   binary   -->
         <sql type="update">create table update_binary(binary1 binary);</sql>
         <sql type="update">insert into table update_binary values(?);</sql>
@@ -233,9 +233,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_binary;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   datetime   -->
         <sql type="update">create table update_datetime(datetime1 datetime);</sql>
         <sql type="update">insert into table update_datetime values(?);</sql>
@@ -261,9 +261,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_datetime;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   timestamp   -->
         <sql type="update">create table update_timestamp(timestamp1 timestamp);</sql>
         <sql type="update">insert into table update_timestamp values(?);</sql>
@@ -289,9 +289,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_timestamp;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   geometry   -->
         <sql type="update">create table update_geometry(geometry1 geometry);</sql>
         <sql type="update">insert into table update_geometry values(?);</sql>
@@ -317,9 +317,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_geometry;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   point   -->
         <sql type="update">create table update_point(point1 point);</sql>
         <sql type="update">insert into table update_point values(?);</sql>
@@ -345,9 +345,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_point;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   linestring   -->
         <sql type="update">create table update_linestring(linestring1 linestring);</sql>
         <sql type="update">insert into table update_linestring values(?);</sql>
@@ -373,9 +373,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_linestring;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   polygon   -->
         <sql type="update">create table update_polygon(polygon1 polygon);</sql>
         <sql type="update">insert into table update_polygon values(?);</sql>
@@ -401,9 +401,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_polygon;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   multipoint   -->
         <sql type="update">create table update_multipoint(multipoint1 multipoint);</sql>
         <sql type="update">insert into table update_multipoint values(?);</sql>
@@ -429,9 +429,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_multipoint;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   multilinestring   -->
         <sql type="update">create table update_multilinestring(multilinestring1 multilinestring);</sql>
         <sql type="update">insert into table update_multilinestring values(?);</sql>
@@ -457,9 +457,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_multilinestring;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   multipolygon   -->
         <sql type="update">create table update_multipolygon(multipolygon1 multipolygon);</sql>
         <sql type="update">insert into table update_multipolygon values(?);</sql>
@@ -487,9 +487,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_multipolygon;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   geometrycollection   -->
         <sql type="update">create table update_geometrycollection(geometrycollection1 geometrycollection);</sql>
         <sql type="update">insert into table update_geometrycollection values(?);</sql>
@@ -517,9 +517,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_geometrycollection;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   trajectory   -->
         <sql type="update">create table update_trajectory(trajectory1 trajectory);</sql>
         <sql type="update">insert into table update_trajectory values(?);</sql>
@@ -602,9 +602,9 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_trajectory;</sql>
-    </caee>
+    </case>
 
-    <caee>
+    <case>
         <!--   roadSegment   -->
         <sql type="update">create table update_roadSegment(roadSegment1 roadSegment);</sql>
         <sql type="update">insert into table update_roadSegment values(?);</sql>
@@ -692,7 +692,7 @@
         <assertion expected="update_003.xml"/>
 
         <sql type="update">drop table update_roadSegment;</sql>
-    </caee>
+    </case>
 
 
     

@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<expectedResult>
+
+    <result id="1">
+        <column name="EXPR$0" type="double">
+            <row>1.0</row>
+        </column>
+    </result>
+
+    <result id="2">
+        <column name="EXPR$0" type="double">
+            <row>2.0</row>
+        </column>
+    </result>
+
+    <result id="3">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="4">
+        <column name="EXPR$0" type="double">
+            <row>3.141592653589793</row>
+        </column>
+    </result>
+
+    <result id="5">
+        <column name="EXPR$0" type="double">
+            <row>2.0</row>
+        </column>
+    </result>
+
+    <result id="6">
+        <column name="EXPR$0" type="double">
+            <row>0.6931471805599453</row>
+        </column>
+    </result>
+
+    <result id="7">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="8">
+        <column name="EXPR$0" type="double">
+            <row>1.0</row>
+        </column>
+    </result>
+
+    <result id="9">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="10">
+        <column name="EXPR$0" type="double">
+            <row>2.0</row>
+        </column>
+    </result>
+
+    <result id="11">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="12">
+        <column name="EXPR$0" type="int">
+            <row>100</row>
+        </column>
+    </result>
+
+    <result id="13">
+        <column name="EXPR$0" type="decimal">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="14">
+        <column name="EXPR$0" type="decimal">
+            <row>100.123</row>
+        </column>
+    </result>
+
+    <result id="15">
+        <column name="EXPR$0" type="decimal">
+            <row>2</row>
+        </column>
+    </result>
+
+    <result id="16">
+        <column name="EXPR$0" type="decimal">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="17">
+        <column name="EXPR$0" type="decimal">
+            <row>-1</row>
+        </column>
+    </result>
+
+    <result id="18">
+        <column name="EXPR$0" type="decimal">
+            <row>12</row>
+        </column>
+    </result>
+
+    <result id="19">
+        <column name="EXPR$0" type="int">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="20">
+        <column name="EXPR$0" type="decimal">
+            <row>-13</row>
+        </column>
+    </result>
+
+    <result id="21">
+        <column name="EXPR$0" type="decimal">
+            <row>123.500</row>
+        </column>
+    </result>
+
+    <result id="22">
+        <column name="EXPR$0" type="decimal">
+            <row>123.000</row>
+        </column>
+    </result>
+
+    <result id="23">
+        <column name="EXPR$0" type="decimal">
+            <row>123.456</row>
+        </column>
+    </result>
+
+    <result id="24">
+        <column name="EXPR$0" type="decimal">
+            <row>120.000</row>
+        </column>
+    </result>
+
+    <result id="25">
+        <column name="EXPR$0" type="decimal">
+            <row>0.000</row>
+        </column>
+    </result>
+
+    <result id="26">
+        <column name="EXPR$0" type="decimal">
+            <row>0.000</row>
+        </column>
+    </result>
+
+    <result id="27">
+        <column name="EXPR$0" type="int">
+            <row>-1</row>
+        </column>
+    </result>
+
+    <result id="28">
+        <column name="EXPR$0" type="int">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="29">
+        <column name="EXPR$0" type="int">
+            <row>1</row>
+        </column>
+    </result>
+
+    <result id="30">
+        <column name="EXPR$0" type="int">
+            <row>1</row>
+        </column>
+    </result>
+
+    <result id="31">
+        <column name="EXPR$0" type="int">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="32">
+        <column name="EXPR$0" type="int">
+            <row>4</row>
+        </column>
+    </result>
+
+    <result id="33">
+        <column name="EXPR$0" type="int">
+            <row>-1</row>
+        </column>
+    </result>
+
+    <result id="34">
+        <column name="EXPR$0" type="int">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="35">
+        <column name="EXPR$0" type="int">
+            <row>-4</row>
+        </column>
+    </result>
+
+    <result id="36">
+        <column name="EXPR$0" type="int">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="37">
+        <column name="EXPR$0" type="int">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="38">
+        <column name="EXPR$0" type="double">
+            <row>0.8414709848078965</row>
+        </column>
+    </result>
+
+    <result id="39">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="40">
+        <column name="EXPR$0" type="double">
+            <row>-0.8414709848078965</row>
+        </column>
+    </result>
+
+    <result id="41">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="42">
+        <column name="EXPR$0" type="double">
+            <row>0.5403023058681398</row>
+        </column>
+    </result>
+
+    <result id="43">
+        <column name="EXPR$0" type="double">
+            <row>1.0</row>
+        </column>
+    </result>
+
+    <result id="44">
+        <column name="EXPR$0" type="double">
+            <row>0.5403023058681398</row>
+        </column>
+    </result>
+
+    <result id="45">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="46">
+        <column name="EXPR$0" type="double">
+            <row>1.5574077246549023</row>
+        </column>
+    </result>
+
+    <result id="47">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="48">
+        <column name="EXPR$0" type="double">
+            <row>-1.5574077246549023</row>
+        </column>
+    </result>
+
+    <result id="49">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="50">
+        <column name="EXPR$0" type="double">
+            <row>0.6420926159343306</row>
+        </column>
+    </result>
+
+    <result id="51">
+        <column name="EXPR$0" type="double">
+            <row>-0.6420926159343306</row>
+        </column>
+    </result>
+
+    <result id="52">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="53">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="54">
+        <column name="EXPR$0" type="double">
+            <row>1.5707963267948966</row>
+        </column>
+    </result>
+
+    <result id="55">
+        <column name="EXPR$0" type="double">
+            <row>3.141592653589793</row>
+        </column>
+    </result>
+
+    <result id="56">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="57">
+        <column name="EXPR$0" type="double">
+            <row>1.5707963267948966</row>
+        </column>
+    </result>
+
+    <result id="58">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="59">
+        <column name="EXPR$0" type="double">
+            <row>-1.5707963267948966</row>
+        </column>
+    </result>
+
+    <result id="60">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="61">
+        <column name="EXPR$0" type="double">
+            <row>2.0</row>
+        </column>
+    </result>
+
+    <result id="62">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="63">
+        <column name="EXPR$0" type="double">
+            <row>null</row>
+        </column>
+    </result>
+
+    <result id="64">
+        <column name="EXPR$0" type="double">
+            <row>4.0</row>
+        </column>
+    </result>
+
+    <result id="65">
+        <column name="EXPR$0" type="double">
+            <row>1.0</row>
+        </column>
+    </result>
+
+    <result id="66">
+        <column name="EXPR$0" type="double">
+            <row>0.5</row>
+        </column>
+    </result>
+
+    <result id="67">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="68">
+        <column name="EXPR$0" type="double">
+            <row>4.0</row>
+        </column>
+    </result>
+
+    <result id="69">
+        <column name="EXPR$0" type="double">
+            <row>0.25</row>
+        </column>
+    </result>
+
+    <result id="70">
+        <column name="EXPR$0" type="double">
+            <row>1.5707963267948966</row>
+        </column>
+    </result>
+
+    <result id="71">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="72">
+        <column name="EXPR$0" type="double">
+            <row>-1.5707963267948966</row>
+        </column>
+    </result>
+
+    <result id="73">
+        <column name="EXPR$0" type="double">
+            <row>57.29577951308232</row>
+        </column>
+    </result>
+
+    <result id="74">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="75">
+        <column name="EXPR$0" type="double">
+            <row>-57.29577951308232</row>
+        </column>
+    </result>
+
+</expectedResult>

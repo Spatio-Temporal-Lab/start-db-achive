@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class GetCasePathByXML {
@@ -32,12 +33,12 @@ public class GetCasePathByXML {
      *
      * @return 返回cases目录下, 所有sql用例的xml文件路径列表
      * */
-    public static ArrayList<String> getSqlCaseXMLs() {
+    public static List<String> getSqlCaseXMLs() {
         String casePath = Objects.requireNonNull(
             GetCasePathByXML.class.getClassLoader().getResource("cases")
         ).getPath();
         String[] foldList = new File(casePath).list();
-        ArrayList<String> caseFileList = new ArrayList<>();
+        List<String> caseFileList = new ArrayList<>();
         if (foldList != null) {
             for (String fold : foldList) {
                 String foldPath = casePath + File.separator + fold;
@@ -54,9 +55,9 @@ public class GetCasePathByXML {
      *
      * @return 返回文件列表
      * */
-    private static ArrayList<String> getFilesInFold(String foldPath) {
+    private static List<String> getFilesInFold(String foldPath) {
         String[] fileList = new File(foldPath).list();
-        ArrayList<String> fileArrayList = new ArrayList<>();
+        List<String> fileArrayList = new ArrayList<>();
         if (fileList != null) {
             for (String fileName : fileList) {
                 File file = new File(foldPath + File.separator + fileName);

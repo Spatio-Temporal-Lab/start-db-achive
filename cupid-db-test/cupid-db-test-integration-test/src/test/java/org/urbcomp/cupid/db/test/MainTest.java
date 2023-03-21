@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.Ignore;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import static org.urbcomp.cupid.db.test.GetData.getResultArray;
 import static org.urbcomp.cupid.db.test.GetCasePathByXML.getSqlCaseXMLs;
 import static org.urbcomp.cupid.db.test.RunSingleSQLCase.runSingleCase;
-import static org.urbcomp.cupid.db.test.AutoWriteExpect.writeExpect;
 import static org.urbcomp.cupid.db.test.RunSingleSQLCase.getConnect;
 
 public class MainTest {
@@ -37,12 +36,16 @@ public class MainTest {
 
     @Test
     @Ignore
-    public void testAutoWriteExpect() throws Exception {
-        String xmlPath = Objects.requireNonNull(
-            MainTest.class.getClassLoader().getResource("cases/ddl/database.xml")
-        ).getPath();
-        writeExpect(xmlPath);
-
+    public void testDrop() throws Exception {
+        try (
+            Connection connection = getConnect();
+            Statement statement = connection.createStatement()
+        ) {
+            statement.executeUpdate("create database if not exists testDrop");
+            statement.executeUpdate("drop database testDrop");
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Test
@@ -62,10 +65,10 @@ public class MainTest {
     public void testQuery() throws Exception {
         try (
             Connection conn = getConnect();
-            Statement stat = conn.createStatement();
-            ResultSet result = stat.executeQuery("select * from t_test order by idx;")
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt.executeQuery("select * from t_test order by idx;")
         ) {
-            ArrayList<String> resultArray = getResultArray(result);
+            List<String> resultArray = getResultArray(result);
             for (String s : resultArray) {
                 log.info(s);
             }
@@ -77,7 +80,7 @@ public class MainTest {
     public void singleSQLCaseTest() throws Exception {
         // 执行单个xml测试用例文件
         String xmlResource = Objects.requireNonNull(
-            RunSingleSQLCase.class.getClassLoader().getResource("cases/ddl/database.xml")
+            RunSingleSQLCase.class.getClassLoader().getResource("cases/udf/math.xml")
         ).getPath();
         log.info("xmlResource:" + xmlResource);
         runSingleCase(xmlResource);
@@ -87,11 +90,10 @@ public class MainTest {
     @Ignore
     public void allSQLCaseTest() throws Exception {
         // 执行所有测试用例文件
-        ArrayList<String> sqlCaseXMLs = getSqlCaseXMLs();
+        List<String> sqlCaseXMLs = getSqlCaseXMLs();
         for (String sqlCaseXML : sqlCaseXMLs) {
             log.info("执行文件:" + sqlCaseXML);
             runSingleCase(sqlCaseXML);
         }
     }
-
 }

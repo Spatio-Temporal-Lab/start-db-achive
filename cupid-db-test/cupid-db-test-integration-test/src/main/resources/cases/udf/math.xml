@@ -1,172 +1,209 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <!--  通用数学函数 测试用例  -->
 <testCase>
 
-    <!--  求普通对数，num > 0  log(base: Double, num: Double): Double  -->
+    <resultXml>math_result.xml</resultXml>
+
+    <!--  求普通对数，num >   log(base: Double, num: Double): Double  -->
     <case>
         <sql type="query">select log(?, ?);</sql>
-        <assertion expected="math_001.xml">[2][2]</assertion>
-        <assertion expected="error:参数有误">[2][0]</assertion>
-        <assertion expected="error:参数有误">[2][-1]</assertion>
+        <arguments resultID="1">[2][2]</arguments>
+        <arguments resultID="2">[2][4]</arguments>
+        <arguments resultID="3">[0][2]</arguments>
+        <arguments exception="ClassCastException">[2][0]</arguments>
+        <arguments exception="ClassCastException">[2][-2]</arguments>
     </case>
 
     <!--  求π  PI()  -->
     <case>
         <sql type="query">select pi( );</sql>
-        <assertion expected="math_002.xml" />
+        <arguments resultID="4"/>
     </case>
 
-    <!--  求以2为底对数，num > 0  log2(num: Double): Double  -->
+    <!--  求以2为底对数，num >   log2(num: Double): Double  -->
     <case>
         <sql type="query">select log2(?);</sql>
-        <assertion expected="math_003.xml">[4]</assertion>
-        <assertion expected="error:参数有误">[0]</assertion>
-        <assertion expected="error:参数有误">[-1]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="5">[4]</arguments>
+        <arguments exception="ClassCastException">[0]</arguments>
+        <arguments exception="ClassCastException">[-1]</arguments>
     </case>
 
-    <!--  求以1p为底对数，num > -1  log1p(num: Double): Double  -->
+    <!--  求以1p为底对数，num >   log1p(num: Double): Double  -->
     <case>
         <sql type="query">select log1p(?);</sql>
-        <assertion expected="math_004.xml">[10]</assertion>
-        <assertion expected="math_005.xml">[0]</assertion>
-        <assertion expected="math_006.xml">[-0.9]</assertion>
-        <assertion expected="error:参数有误">[-1]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="6">[1]</arguments>
+        <arguments resultID="7">[0]</arguments>
+        <arguments exception="ClassCastException">[-1]</arguments>
     </case>
 
-    <!--  求以e为底对数, num > 0  ln(num: Double): Double  -->
+    <!--  求以e为底对数, num >   ln(num: Double): Double  -->
     <case>
         <sql type="query">select ln(?);</sql>
-        <assertion expected="math_007.xml">[2]</assertion>
-        <assertion expected="error:参数有误">[0]</assertion>
-        <assertion expected="error:参数有误">[-1]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="8">[2.718281828459045]</arguments>
+        <arguments exception="ClassCastException">[0]</arguments>
+        <arguments exception="ClassCastException">[-1]</arguments>
+        <arguments resultID="9">[null]</arguments>
     </case>
 
-    <!--  求以10为底对数 ，num > 0  log10(num: Double): Double  -->
+    <!--  求以10为底对数 ，num >   log10(num: Double): Double  -->
     <case>
         <sql type="query">select log10(?);</sql>
-        <assertion expected="math_008.xml">[100]</assertion>
-        <assertion expected="error:参数有误">[0]</assertion>
-        <assertion expected="error:参数有误">[-1]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="10">[100.0]</arguments>
+        <arguments exception="ClassCastException">[0]</arguments>
+        <arguments exception="ClassCastException">[-1]</arguments>
+        <arguments resultID="11">[null]</arguments>
     </case>
 
     <!--  绝对值  abs(num: Double): Double  -->
     <case>
         <sql type="query">select abs(?);</sql>
-        <assertion expected="math_009.xml">[-100]</assertion>
-        <assertion expected="math_010.xml">[0]</assertion>
-        <assertion expected="math_011.xml">[100]</assertion>
-        <assertion expected="math_012.xml">[100.123]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="12">[-100]</arguments>
+        <arguments resultID="13">[0.0]</arguments>
+        <arguments resultID="14">[100.123]</arguments>
+        <arguments exception="IllegalStateException">[null]</arguments>
     </case>
 
     <!--  向上取整  ceil(num: Double): Double  -->
     <case>
         <sql type="query">select ceil(?);</sql>
-        <assertion expected="math_013.xml">[1.23]</assertion>
-        <assertion expected="math_014.xml">[0]</assertion>
-        <assertion expected="math_015.xml">[-1.23]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="15">[1.23]</arguments>
+        <arguments resultID="16">[0.0]</arguments>
+        <arguments resultID="17">[-1.23]</arguments>
+        <arguments exception="SQLException">[null]</arguments>
     </case>
 
     <!--  向下取整  floor(num: Double): Double  -->
     <case>
         <sql type="query">select floor(?);</sql>
-        <assertion expected="math_016.xml">[12.34]</assertion>
-        <assertion expected="math_017.xml">[0]</assertion>
-        <assertion expected="math_018.xml">[-12.34]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="18">[12.34]</arguments>
+        <arguments resultID="19">[0]</arguments>
+        <arguments resultID="20">[-12.34]</arguments>
+        <arguments exception="SQLException">[null]</arguments>
     </case>
 
     <!--  保留小数位  round(num: Double[, precision:int]): Double  -->
     <case>
         <sql type="query">select round(?, ?);</sql>
-        <assertion expected="math_0019.xml">[123.456][1]</assertion>
-        <assertion expected="math_0020.xml">[123.456][0]</assertion>
-        <assertion expected="math_0021.xml">[123.456][4]</assertion>
-        <assertion expected="math_0022.xml">[123.456][-1]</assertion>
-        <assertion expected="math_0023.xml">[123.456][-3]</assertion>
+        <arguments resultID="21">[123.456][1]</arguments>
+        <arguments resultID="22">[123.456][0]</arguments>
+        <arguments resultID="23">[123.456][4]</arguments>
+        <arguments resultID="24">[123.456][-1]</arguments>
+        <arguments resultID="25">[123.456][-3]</arguments>
+        <arguments resultID="26">[123.456][-10]</arguments>
     </case>
 
     <!--  符号函数值  sign(num: Double): Integer  -->
     <case>
         <sql type="query">select sign(?);</sql>
-        <assertion expected="math_024.xml">[-20]</assertion>
-        <assertion expected="math_025.xml">[0]</assertion>
-        <assertion expected="math_026.xml">[20]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="27">[-20]</arguments>
+        <arguments resultID="28">[0]</arguments>
+        <arguments resultID="29">[20]</arguments>
+        <arguments exception="IllegalStateException">[null]</arguments>
     </case>
 
     <!--  取模  mod(num1: Integer, num2: Integer): Integer  -->
     <case>
         <sql type="query">select mod(?, ?);</sql>
-        <assertion expected="math_027.xml">[4][3]</assertion>
-        <assertion expected="math_028.xml">[4][4]</assertion>
-        <assertion expected="math_029.xml">[4][5]</assertion>
-        <assertion expected="math_030.xml">[-4][3]</assertion>
-        <assertion expected="math_031.xml">[-4][4]</assertion>
-        <assertion expected="math_032.xml">[-4][5]</assertion>
-        <assertion expected="math_033.xml">[0][-233]</assertion>
+        <arguments resultID="30">[4][3]</arguments>
+        <arguments resultID="31">[4][4]</arguments>
+        <arguments resultID="32">[4][5]</arguments>
+        <arguments resultID="33">[-4][3]</arguments>
+        <arguments resultID="34">[-4][4]</arguments>
+        <arguments resultID="35">[-4][5]</arguments>
+        <arguments resultID="36">[0][-233]</arguments>
+        <arguments resultID="37">[null][4]</arguments>
+        <arguments exception="IllegalStateException">[4][null]</arguments>
     </case>
 
     <!--  正弦值  sin(num: Double): Double  -->
     <case>
         <sql type="query">select sin(?);</sql>
-        <assertion expected="math_034.xml">[-90]</assertion>
-        <assertion expected="math_035.xml">[0]</assertion>
-        <assertion expected="math_036.xml">[90]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="38">[1]</arguments>
+        <arguments resultID="39">[0]</arguments>
+        <arguments resultID="40">[-1]</arguments>
+        <arguments resultID="41">[null]</arguments>
     </case>
 
     <!--  余弦值  cos(num: Double): Double  -->
     <case>
         <sql type="query">select cos(?);</sql>
-        <assertion expected="math_0037.xml">[-90]</assertion>
-        <assertion expected="math_0038.xml">[0]</assertion>
-        <assertion expected="math_0039.xml">[90]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="42">[1]</arguments>
+        <arguments resultID="43">[0]</arguments>
+        <arguments resultID="44">[-1]</arguments>
+        <arguments resultID="45">[null]</arguments>
     </case>
 
     <!--  正切值  tan(num: Double): Double  -->
     <case>
         <sql type="query">select tan(?);</sql>
-        <assertion expected="math_040.xml">[45]</assertion>
-        <assertion expected="math_041.xml">[0]</assertion>
-        <assertion expected="math_042.xml">[-45]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="46">[1]</arguments>
+        <arguments resultID="47">[0]</arguments>
+        <arguments resultID="48">[-1]</arguments>
+        <arguments resultID="49">[null]</arguments>
     </case>
 
     <!--  余切值  cot(num: Double): Double  -->
     <case>
         <sql type="query">select cot(?);</sql>
-        <assertion expected="math_043.xml">[90]</assertion>
-        <assertion expected="math_044.xml">[45]</assertion>
-        <assertion expected="math_045.xml">[0]</assertion>
-        <assertion expected="math_046.xml">[90]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="50">[1]</arguments>
+        <arguments exception="ClassCastException">[0]</arguments>
+        <arguments resultID="51">[-1]</arguments>
+        <arguments resultID="52">[null]</arguments>
     </case>
 
     <!--  反余弦值  acos(num: Double): Double  -->
     <case>
         <sql type="query">select acos(?);</sql>
-        <assertion expected="math_047.xml">[90]</assertion>
-        <assertion expected="math_048.xml">[0]</assertion>
-        <assertion expected="math_049.xml">[-90]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="53">[1]</arguments>
+        <arguments resultID="54">[0]</arguments>
+        <arguments resultID="55">[-1]</arguments>
+        <arguments resultID="56">[null]</arguments>
     </case>
 
     <!--  反正弦值  asin(num: Double): Double  -->
     <case>
         <sql type="query">select asin(?);</sql>
-        <assertion expected="math_050.xml">[0.5]</assertion>
-        <assertion expected="math_051.xml">[0]</assertion>
-        <assertion expected="math_052.xml">[-0.5]</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="57">[1]</arguments>
+        <arguments resultID="58">[0]</arguments>
+        <arguments resultID="59">[-1]</arguments>
+        <arguments resultID="60">[null]</arguments>
     </case>
 
+    <!--  算数平方根  sqrt(num：Double): Double  -->
+    <case>
+        <sql type="query">select sqrt(?);</sql>
+        <arguments resultID="61">4.0</arguments>
+        <arguments resultID="62">0</arguments>
+        <arguments exception="ClassCastException">-4.0</arguments>
+        <arguments resultID="63">null</arguments>
+    </case>
+
+    <!--  指数  pow(base：Double, num：Double): Double  -->
+    <case>
+        <sql type="query">select pow(?,?);</sql>
+        <arguments resultID="64">[2][2]</arguments>
+        <arguments resultID="65">[2][0]</arguments>
+        <arguments resultID="66">[2][-1]</arguments>
+        <arguments resultID="67">[0][2]</arguments>
+        <arguments resultID="68">[-2][2]</arguments>
+        <arguments resultID="69">[-2][-2]</arguments>
+    </case>
+
+    <!--  角度转弧度  toRadians(num：Double): Double  -->
+    <case>
+        <sql type="query">select toRadians(?);</sql>
+        <arguments resultID="70">[90]</arguments>
+        <arguments resultID="71">[0]</arguments>
+        <arguments resultID="72">[-90]</arguments>
+    </case>
+
+    <!--  弧度转角度  toDegrees(num：Double): Double  -->
+    <case>
+        <sql type="query">select toDegrees(?);</sql>
+        <arguments resultID="73">[1]</arguments>
+        <arguments resultID="74">[0]</arguments>
+        <arguments resultID="75">[-1]</arguments>
+    </case>
 
 </testCase>
