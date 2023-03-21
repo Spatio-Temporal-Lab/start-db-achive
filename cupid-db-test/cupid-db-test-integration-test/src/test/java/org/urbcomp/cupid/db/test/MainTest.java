@@ -82,7 +82,6 @@ public class MainTest {
         String xmlResource = Objects.requireNonNull(
             RunSingleSQLCase.class.getClassLoader().getResource("cases/udf/math.xml")
         ).getPath();
-        log.info("xmlResource:" + xmlResource);
         runSingleCase(xmlResource);
     }
 
@@ -92,7 +91,6 @@ public class MainTest {
         // 执行所有测试用例文件
         List<String> sqlCaseXMLs = getSqlCaseXMLs();
         for (String sqlCaseXML : sqlCaseXMLs) {
-            log.info("执行文件:" + sqlCaseXML);
             runSingleCase(sqlCaseXML);
         }
     }
