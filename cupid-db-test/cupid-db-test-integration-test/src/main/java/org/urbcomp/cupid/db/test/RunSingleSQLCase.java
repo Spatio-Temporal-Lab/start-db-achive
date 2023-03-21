@@ -74,8 +74,8 @@ public class RunSingleSQLCase {
 
         // 获取所有case标签
         List<Node> caseElements = document.selectNodes("//case");
-        for (int i = 0; i < caseElements.size(); i++) {
-            Element caseElement = (Element) caseElements.get(i);
+        for (Node element : caseElements) {
+            Element caseElement = (Element) element;
             // 第一个标签一定是sql
             if (!caseElement.node(1).getName().equals("sql")) {
                 log.info("case的子标签内容有误, 跳过执行");
@@ -94,10 +94,8 @@ public class RunSingleSQLCase {
                 // sql不需要拼接参数时
                 if (!initSql.contains("?")) {
                     analyseSql(sqlElement, initSql, sqlType);
-                }
-
-                // sql需要拼接参数时
-                else {
+                } else {
+                    // sql需要拼接参数时
                     for (Element argumentsElement : argumentsElements) {
                         // 将sql和参数进行拼接
                         String params = argumentsElement.getText();
@@ -147,10 +145,8 @@ public class RunSingleSQLCase {
                     compareResult(actualArray, expectedArray);
                 }
                 log.info("sql执行完成");
-            }
-
-            // 有预期异常加入预期数据中，然后与实际数据进行比较
-            else if (exception != null) {
+            } else if (exception != null) {
+                // 有预期异常加入预期数据中，然后与实际数据进行比较
                 if (!exception.contains("Exception")) {
                     throw new Exception("预期异常内容不对");
                 } else {
@@ -159,7 +155,7 @@ public class RunSingleSQLCase {
                     try (Statement stmt = connect.createStatement()) {
                         actualArray = executeSql(stmt, sql, sqlType);
                     }
-                    System.out.println("实际返回值： " + actualArray);
+                    log.info("实际返回值： " + actualArray);
                     if (COMPARE_EXCEPTION) {
                         List<String> expectedArray = new ArrayList<>();
                         expectedArray.add(exception);
@@ -168,10 +164,8 @@ public class RunSingleSQLCase {
                     }
                     log.info("sql执行完成");
                 }
-            }
-
-            // 没有预期结果和异常
-            else {
+            } else {
+                // 没有预期结果和异常
                 log.info("开始执行sql:" + sql);
                 sql = dataTransform(sql);
                 try (Statement stmt = connect.createStatement()) {
