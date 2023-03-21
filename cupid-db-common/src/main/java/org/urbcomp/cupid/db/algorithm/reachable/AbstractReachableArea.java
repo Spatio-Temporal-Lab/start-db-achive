@@ -165,22 +165,22 @@ public abstract class AbstractReachableArea {
                         );
                         if (candidateCost <= this.timeBudgetInS) {
                             visitedNodes.add(candidateNode);
-                            reachablePoints.add(candidateNode);
+                            List<SpatialPoint> pts = e.getPoints();
+                            for (int i = 1; i < pts.size(); i++) {
+                                reachablePoints.add(pts.get(i));
+                            }
                             nodeQueue.offer(new ReachableNode(candidateNode, candidateCost));
                         } else {
                             List<SpatialPoint> pts = e.getPoints();
-                            for (int i = 0; i < pts.size(); i++) {
-                                double dis = GeoFunctions.getDistanceInM(
-                                    curNode.getNode(),
-                                    pts.get(i)
-                                );
+                            double dis = 0;
+                            for (int i = 1; i < pts.size(); i++) {
+                                dis += GeoFunctions.getDistanceInM(pts.get(i - 1), pts.get(i));
                                 if (curCost + dis / getSpeed(
                                     this.travelMode,
                                     e
-                                ) > this.timeBudgetInS) {
-                                    if (i > 0) {
-                                        reachablePoints.add(pts.get(i - 1));
-                                    }
+                                ) <= this.timeBudgetInS) {
+                                    reachablePoints.add(pts.get(i));
+                                } else {
                                     break;
                                 }
                             }
