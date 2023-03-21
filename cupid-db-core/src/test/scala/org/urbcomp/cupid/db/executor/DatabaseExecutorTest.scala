@@ -81,14 +81,14 @@ class DatabaseExecutorTest extends AbstractCalciteFunctionTest {
 
   test("test create then select database") {
     val stmt = connect.createStatement()
-    val dbNames = generateUniqueId().split("_")
-    stmt.executeUpdate("CREATE DATABASE %s".format(dbNames(0)))
+    val dbNames = generateUniqueId().split("_").map(s => "test_" + s)
+    stmt.executeUpdate("CREATE DATABASE " + dbNames(0))
     val rs1 = stmt.executeQuery("select DATABASE()")
     rs1.next()
     assertEquals("default", rs1.getString(1))
-    stmt.executeUpdate("USE %s".format(dbNames(0)))
+    stmt.executeUpdate("USE " + dbNames(0))
     val rs2 = stmt.executeQuery("select database()")
     rs2.next()
-    assertEquals("%s".format(dbNames(0)), rs2.getString(1))
+    assertEquals(dbNames(0), rs2.getString(1))
   }
 }
