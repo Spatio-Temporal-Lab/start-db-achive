@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<expectedResult>
+
+    <result id="1">
+        <column name="EXPR$0" type="int">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="2">
+        <column name="EXPR$0" type="int">
+            <row>2147483647</row>
+        </column>
+    </result>
+
+    <result id="3">
+        <column name="EXPR$0" type="int">
+            <row>-2147483648</row>
+        </column>
+    </result>
+
+    <result id="4">
+        <column name="EXPR$0" type="bigint">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="5">
+        <column name="EXPR$0" type="bigint">
+            <row>9223372036854775807</row>
+        </column>
+    </result>
+
+    <result id="6">
+        <column name="EXPR$0" type="bigint">
+            <row>-9223372036854775808</row>
+        </column>
+    </result>
+
+    <result id="7">
+        <column name="EXPR$0" type="real">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="8">
+        <column name="EXPR$0" type="real">
+            <row>100.12346</row>
+        </column>
+    </result>
+
+    <result id="9">
+        <column name="EXPR$0" type="real">
+            <row>-100.12346</row>
+        </column>
+    </result>
+
+    <result id="10">
+        <column name="EXPR$0" type="real">
+            <row>3.4028235E38</row>
+        </column>
+    </result>
+
+    <result id="11">
+        <column name="EXPR$0" type="real">
+            <row>-3.4028235E38</row>
+        </column>
+    </result>
+
+    <result id="12">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="13">
+        <column name="EXPR$0" type="double">
+            <row>1.123456789012345</row>
+        </column>
+    </result>
+
+    <result id="14">
+        <column name="EXPR$0" type="double">
+            <row>-1.123456789012345</row>
+        </column>
+    </result>
+
+    <result id="15">
+        <column name="EXPR$0" type="double">
+            <row>1.79E308</row>
+        </column>
+    </result>
+
+    <result id="16">
+        <column name="EXPR$0" type="double">
+            <row>-1.79E308</row>
+        </column>
+    </result>
+
+    <result id="17">
+        <column name="EXPR$0" type="boolean">
+            <row>true</row>
+        </column>
+    </result>
+
+    <result id="18">
+        <column name="EXPR$0" type="boolean">
+            <row>false</row>
+        </column>
+    </result>
+
+    <result id="19">
+        <column name="EXPR$0" type="boolean">
+            <row>false</row>
+        </column>
+    </result>
+
+    <result id="20">
+        <column name="EXPR$0" type="boolean">
+            <row>false</row>
+        </column>
+    </result>
+
+    <result id="21">
+        <column name="EXPR$0" type="boolean">
+            <row>false</row>
+        </column>
+    </result>
+
+    <result id="22">
+        <column name="EXPR$0" type="string">
+            <row>123</row>
+        </column>
+    </result>
+
+    <result id="23">
+        <column name="EXPR$0" type="string">
+            <row>-123</row>
+        </column>
+    </result>
+
+    <result id="24">
+        <column name="EXPR$0" type="string">
+            <row>123.456</row>
+        </column>
+    </result>
+
+    <result id="25">
+        <column name="EXPR$0" type="string">
+            <row>abcd</row>
+        </column>
+    </result>
+
+    <result id="26">
+        <column name="EXPR$0" type="string">
+            <row>true</row>
+        </column>
+    </result>
+
+    <result id="27">
+        <column name="EXPR$0" type="int">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="28">
+        <column name="EXPR$0" type="int">
+            <row>2147483647</row>
+        </column>
+    </result>
+
+    <result id="29">
+        <column name="EXPR$0" type="int">
+            <row>-2147483648</row>
+        </column>
+    </result>
+
+    <result id="30">
+        <column name="EXPR$0" type="bigint">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="31">
+        <column name="EXPR$0" type="bigint">
+            <row>9223372036854775807</row>
+        </column>
+    </result>
+
+    <result id="32">
+        <column name="EXPR$0" type="bigint">
+            <row>-9223372036854775808</row>
+        </column>
+    </result>
+
+    <result id="33">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="34">
+        <column name="EXPR$0" type="double">
+            <row>1.123456789012345</row>
+        </column>
+    </result>
+
+    <result id="35">
+        <column name="EXPR$0" type="double">
+            <row>-1.123456789012345</row>
+        </column>
+    </result>
+
+    <result id="36">
+        <column name="EXPR$0" type="double">
+            <row>9.223372036854776E18</row>
+        </column>
+    </result>
+
+    <result id="37">
+        <column name="EXPR$0" type="double">
+            <row>-9.223372036854776E18</row>
+        </column>
+    </result>
+
+</expectedResult>

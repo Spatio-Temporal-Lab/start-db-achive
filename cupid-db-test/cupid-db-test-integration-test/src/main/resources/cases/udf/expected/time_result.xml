@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<expectedResult>
+
+    <result id="1">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25</row>
+        </column>
+    </result>
+
+    <result id="2">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25 12:34:56</row>
+        </column>
+    </result>
+
+    <result id="3">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25 12:34:56.789</row>
+        </column>
+    </result>
+
+    <result id="4">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25</row>
+        </column>
+    </result>
+
+    <result id="5">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25 12:34:56</row>
+        </column>
+    </result>
+
+    <result id="6">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25 12:34:56.789</row>
+        </column>
+    </result>
+
+    <result id="7">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25</row>
+        </column>
+    </result>
+
+    <result id="8">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25 12:34:56</row>
+        </column>
+    </result>
+
+    <result id="9">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25 12:34:56.789</row>
+        </column>
+    </result>
+
+    <result id="10">
+    <column name="EXPR$0" type="timestamp">
+        <row>2022-05-25</row>
+    </column>
+    </result>
+
+    <result id="11">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25 12:34:56</row>
+        </column>
+    </result>
+
+    <result id="12">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25 12:34:56.789</row>
+        </column>
+    </result>
+
+    <result id="13">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25 12:34:56.000</row>
+        </column>
+    </result>
+
+    <result id="14">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25</row>
+        </column>
+    </result>
+
+    <result id="15">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25 12:34:56</row>
+        </column>
+    </result>
+
+    <result id="16">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25 12:34:56.789</row>
+        </column>
+    </result>
+
+    <result id="17">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25</row>
+        </column>
+    </result>
+
+    <result id="18">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25 12:34:56</row>
+        </column>
+    </result>
+
+    <result id="19">
+        <column name="EXPR$0" type="datetime">
+            <row>2022-05-25 12:34:56.789</row>
+        </column>
+    </result>
+
+    <result id="20">
+        <column name="EXPR$0" type="bigint">
+            <row>1653482096789</row>
+        </column>
+    </result>
+
+    <result id="21">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022-05-25 12:34:56.789</row>
+        </column>
+    </result>
+
+    <result id="22">
+        <column name="EXPR$0" type="timestamp">
+            <row>1970-01-01 00:00:00.0</row>
+        </column>
+    </result>
+
+    <result id="23">
+        <column name="EXPR$0" type="timestamp">
+            <row>1969-12-31 23:59:59.99</row>
+        </column>
+    </result>
+
+    <result id="24">
+        <column name="EXPR$0" type="timestamp">
+            <row>292278994-08-17 07:12:55.807</row>
+        </column>
+    </result>
+
+    <result id="25">
+        <column name="EXPR$0" type="datetime">
+            <row>20220525</row>
+        </column>
+    </result>
+
+    <result id="26">
+        <column name="EXPR$0" type="datetime">
+            <row>2022052512</row>
+        </column>
+    </result>
+
+    <result id="27">
+        <column name="EXPR$0" type="timestamp">
+            <row>20220525</row>
+        </column>
+    </result>
+
+    <result id="28">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022052512</row>
+        </column>
+    </result>
+
+    <result id="29">
+        <column name="EXPR$0" type="int">
+            <row>12</row>
+        </column>
+    </result>
+
+    <result id="30">
+        <column name="EXPR$0" type="int">
+            <row>34</row>
+        </column>
+    </result>
+
+    <result id="31">
+        <column name="EXPR$0" type="int">
+            <row>56</row>
+        </column>
+    </result>
+
+    <result id="32">
+        <column name="EXPR$0" type="int">
+            <row>21</row>
+        </column>
+    </result>
+
+    <result id="33">
+        <column name="EXPR$0" type="int">
+            <row>5</row>
+        </column>
+    </result>
+
+    <result id="34">
+        <column name="EXPR$0" type="timestamp">
+            <row>2022</row>
+        </column>
+    </result>
+
+    <result id="35">
+        <column name="EXPR$0" type="int">
+            <row>25</row>
+        </column>
+    </result>
+
+    <result id="36">
+        <column name="EXPR$0" type="int">
+            <row>3</row>
+        </column>
+    </result>
+
+    <result id="37">
+        <column name="EXPR$0" type="int">
+            <row>145</row>
+        </column>
+    </result>
+</expectedResult>

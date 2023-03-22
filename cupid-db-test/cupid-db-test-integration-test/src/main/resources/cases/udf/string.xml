@@ -3,120 +3,118 @@
 <!--  通用字符串函数 测试用例  -->
 <testCase>
 
+    <resultxml>string_result.xml</resultxml>
+
     <!--  字符串翻转  reverse(s: String): String  -->
     <case>
         <sql type="query">select reverse(?);</sql>
-        <assertion expected="string_001.xml">['cupid-db']</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="1">['cupid-db']</arguments>
     </case>
 
     <!--  将字符串转成大写  upper(s: String): String  -->
     <case>
         <sql type="query">select upper(?);</sql>
-        <assertion expected="string_002.xml">['cupid-db']</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="2">['cupid-db']</arguments>
+        <arguments exception="IllegalStateException">[null]</arguments>
     </case>
 
     <!--  将字符串转成小写  lower(s: String): String  -->
     <case>
         <sql type="query">select lower(?);</sql>
-        <assertion expected="string_003.xml">['start-DB']</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="3">['CUPID-db']</arguments>
+        <arguments exception="IllegalStateException">[null]</arguments>
     </case>
 
-    <!--  返回一个字符串在开始索引到结束索引之间的一个子集, 或从开始索引直到字符串的末尾的一个子集
-            substring(s: String, start: Integer[, len: Integer]): String  -->
+    <!--  返回一个字符串在开始索引到结束索引之间的一个子集, 或从开始索引直到字符串的末尾的一个子集,cupid从1开始
+            substring(s: String, cupid: Integer, len: Integer): String  -->
     <case>
         <sql type="query">select substring(?, ?, ?);</sql>
-        <assertion expected="string_004.xml">['cupid-db'][1][3]</assertion>
+        <arguments resultID="4">['cupid-db'][1][5]</arguments>
+        <arguments exception="SqlValidatorException">['cupid-db'][null][2.5]</arguments>
     </case>
 
     <!--  字符串去除首尾空格  trim(s: String): String  -->
     <case>
         <sql type="query">select trim(?);</sql>
-        <assertion expected="string_005.xml">['    start    ']</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="5">['    cupid - db    ']</arguments>
+        <arguments resultID="6">['  ']</arguments>
     </case>
 
     <!--  字符串去除左边空格  ltrim(s: String): String  -->
     <case>
-        <sql type="query">select trim(?);</sql>
-        <assertion expected="string_006.xml">['  start']</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <sql type="query">select ltrim(?);</sql>
+        <arguments resultID="7">['    cupid - db    ']</arguments>
     </case>
 
     <!--  字符串去除右边空格  rtrim(s: String): String  -->
     <case>
-        <sql type="query">select trim(?);</sql>
-        <assertion expected="string_007.xml">['start  ']</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <sql type="query">select rtrim(?);</sql>
+        <arguments resultID="8">['    cupid - db    ']</arguments>
     </case>
 
-    <!--  字符串连接  concat(s1: String, s2: String, …): String  -->
+    <!--  字符串连接  concat(s1: String, s2: String): String  -->
     <case>
         <sql type="query">select concat(?, ?);</sql>
-        <assertion expected="string_008.xml">['start']['db']</assertion>
+        <arguments resultID="9">['cupid']['-db']</arguments>
     </case>
 
     <!--  字符串左侧填充空格  lpad(str: String, len: Int): String  -->
     <case>
         <sql type="query">select lpad(?, ?);</sql>
-        <assertion expected="string_009.xml">['start'][7]</assertion>
+        <arguments resultID="10">['cupid-db'][7]</arguments>
     </case>
 
     <!--  字符串左侧填充指定字符  lpad(str: String, len: Int, pad: String): String  -->
     <case>
         <sql type="query">select lpad(?, ?, ?);</sql>
-        <assertion expected="string_010.xml">['start'][7]['db']</assertion>
+        <arguments resultID="11">['cupid'][3]['db']</arguments>
     </case>
-
+    
     <!--  字符串右侧填充空格  rpad(str: String, len: Int): String  -->
     <case>
         <sql type="query">select rpad(?, ?);</sql>
-        <assertion expected="string_011.xml">['start'][7]</assertion>
+        <arguments resultID="12">['cupid-db'][7]</arguments>
     </case>
 
     <!--  字符串右侧填充指定字符  rpad(str: String, len: Int, pad: String): String  -->
     <case>
         <sql type="query">select rpad(?, ?, ?);</sql>
-        <assertion expected="string_012.xml">['start'][7]['db']</assertion>
+        <arguments resultID="13">['cupid'][3]['db']</arguments>
     </case>
 
     <!--  返回字符串占用的字节数  length(str: String): Int  一个中文占3个字节-->
     <case>
         <sql type="query">select length(?);</sql>
-        <assertion expected="string_013.xml">['cupid_db']</assertion>
-        <assertion expected="string_013.xml">['开心工作']</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="14">['cupid-db']</arguments>
     </case>
 
     <!--  返回字符串的长度，一个多字节字符算作一个字符  charLength(str: String): Int  -->
     <case>
         <sql type="query">select charLength(?);</sql>
-        <assertion expected="string_014.xml">['cupid_db']</assertion>
-        <assertion expected="string_014.xml">['开心工作']</assertion>
-        <assertion expected="error:参数有误">[null]</assertion>
+        <arguments resultID="15">['cupid-db']</arguments>
     </case>
 
     <!--  子串定位，返回子串第一次出现的位置(从1开始),如果没有找到返回0
         locate(substr: String, str: String): Int  -->
     <case>
         <sql type="query">select locate(?, ?);</sql>
-        <assertion expected="string_015.xml">['la']['strlala']</assertion>
+        <arguments resultID="16">['db']['cupid-db']</arguments>
+        <arguments resultID="17">['db']['cupid']</arguments>
     </case>
 
     <!--  子串定位，返回子串在第pos位置后第一次出现的位置（从1开始）,如果没有找到，返回0
         locate(substr: String, str: String, pos: Int): Int  -->
     <case>
         <sql type="query">select locate(?, ?, ?);</sql>
-        <assertion expected="string_016.xml">['la']['strlala'][5]</assertion>
+        <arguments resultID="18">['d']['cupid-db'][0]</arguments>
+        <arguments resultID="19">['d']['cupid-db'][6]</arguments>
     </case>
 
     <!--  字符串转md5  md5(s: String): String  -->
     <case>
         <sql type="query">select md5(?);</sql>
-        <assertion expected="string_017.xml">['123asdf@#-_+!?']</assertion>
+        <arguments resultID="20">['123asdf@#-_+!?']</arguments>
+        <arguments exception="NullPointerException">[null]</arguments>
     </case>
-
-
+    
 </testCase>

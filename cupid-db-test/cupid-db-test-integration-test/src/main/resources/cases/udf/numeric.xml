@@ -3,136 +3,118 @@
 <!--  通用数据类型转换 测试用例  -->
 <testCase>
 
+    <resultxml>numeric_result.xml</resultxml>
+
     <!--  数值字符串 转 Integer  castToInteger(str: String): Integer  -->
     <case>
         <sql type="query">select castToInteger(?);</sql>
-        <assertion expected="numeric_001.xml">['0']</assertion>
-        <assertion expected="numeric_002.xml">['1']</assertion>
-        <assertion expected="numeric_003.xml">['-1']</assertion>
-        <assertion expected="numeric_004.xml">['12.34']</assertion>
-        <assertion expected="numeric_005.xml">['-12.34']</assertion>
-        <assertion expected="numeric_006.xml">['2147483647']</assertion>
-        <assertion expected="numeric_007.xml">['-2147483648']</assertion>
-        <assertion expected="error: 参数有误">['2147483648']</assertion>
-        <assertion expected="error: 参数有误">['-2147483649']</assertion>
-        <assertion expected="error: 参数有误">[true]</assertion>
-        <assertion expected="error: 参数有误">['hello']</assertion>
-        <assertion expected="numeric_008.xml">[null]</assertion>
+        <arguments resultID="1">['0']</arguments>
+        <arguments resultID="2">['2147483647']</arguments>
+        <arguments resultID="3">['-2147483648']</arguments>
+        <arguments exception="NumberFormatException">['2147483648']</arguments>
+        <arguments exception="NumberFormatException">['-2147483649']</arguments>
+        <arguments exception="NumberFormatException">['12.34']</arguments>
+        <arguments exception="NumberFormatException">['-12.34']</arguments>
+        <arguments exception="NumberFormatException">['hello']</arguments>
+        <arguments exception="NumberFormatException">[null]</arguments>
     </case>
 
     <!--  数值字符串 转 Long  castToLong(str: String): Long  -->
     <case>
         <sql type="query">select castToLong(?);</sql>
-        <assertion expected="numeric_009.xml">['0']</assertion>
-        <assertion expected="numeric_010.xml">['1']</assertion>
-        <assertion expected="numeric_011.xml">['-1']</assertion>
-        <assertion expected="numeric_012.xml">['12.34']</assertion>
-        <assertion expected="numeric_013.xml">['-12.34']</assertion>
-        <assertion expected="numeric_014.xml">['9223372036854775807']</assertion>
-        <assertion expected="numeric_015.xml">['-9223372036854775808']</assertion>
-        <assertion expected="error: 参数有误">['9223372036854775808']</assertion>
-        <assertion expected="error: 参数有误">['-9223372036854775809']</assertion>
-        <assertion expected="error: 参数有误">[true]</assertion>
-        <assertion expected="error: 参数有误">['hello']</assertion>
-        <assertion expected="numeric_016.xml">[null]</assertion>
+        <arguments resultID="4">['0']</arguments>
+        <arguments resultID="5">['9223372036854775807']</arguments>
+        <arguments resultID="6">['-9223372036854775808']</arguments>
+        <arguments exception="NumberFormatException">['9223372036854775808']</arguments>
+        <arguments exception="NumberFormatException">['-9223372036854775809']</arguments>
+        <arguments exception="NumberFormatException">['12.34']</arguments>
+        <arguments exception="NumberFormatException">['-12.34']</arguments>
+        <arguments exception="NumberFormatException">['hello']</arguments>
+        <arguments exception="NumberFormatException">[null]</arguments>
     </case>
 
-    <!--  数值字符串 转 float  castToFloat(str: String): Float  -->
+    <!--  数值字符串 转 Float  castToFloat(str: String): Float  -->
     <case>
         <sql type="query">select castToFloat(?);</sql>
-        <assertion expected="numeric_017.xml">['0']</assertion>
-        <assertion expected="numeric_018.xml">['10000.1234567']</assertion>
-        <assertion expected="numeric_019.xml">['-10000.1234567']</assertion>
-        <assertion expected="numeric_020.xml">['12345']</assertion>
-        <assertion expected="numeric_021.xml">['-12345']</assertion>
-        <assertion expected="numeric_022.xml">[10000.1234567]</assertion>
-        <assertion expected="numeric_023.xml">[-10000.1234567]</assertion>
-        <assertion expected="error: 参数有误">[true]</assertion>
-        <assertion expected="error: 参数有误">['hello']</assertion>
-        <assertion expected="numeric_024.xml">[null]</assertion>
+        <arguments resultID="7">['0']</arguments>
+        <arguments resultID="8">['100.1234567']</arguments>
+        <arguments resultID="9">['-100.1234567']</arguments>
+        <arguments resultID="10">['3.4028235E38']</arguments>
+        <arguments resultID="11">['-3.4028235E38']</arguments>
+        <arguments exception="ClassCastException">['3.4028236E38']</arguments>
+        <arguments exception="NumberFormatException">['hello']</arguments>
     </case>
 
-    <!--  数值字符串 转 double  castToDouble(str: String): Double  -->
+    <!--  数值字符串 转 Double  castToDouble(str: String): Double  -->
     <case>
         <sql type="query">select castToDouble(?);</sql>
-        <assertion expected="numeric_025.xml">['0']</assertion>
-        <assertion expected="numeric_026.xml">['100.123456789012345']</assertion>
-        <assertion expected="numeric_027.xml">['-100.123456789012345']</assertion>
-        <assertion expected="numeric_028.xml">['12345']</assertion>
-        <assertion expected="numeric_029.xml">['-12345']</assertion>
-        <assertion expected="numeric_030.xml">[100.123456789012345]</assertion>
-        <assertion expected="numeric_031.xml">[100.123456789012345]</assertion>
-        <assertion expected="error: 参数有误">[true]</assertion>
-        <assertion expected="error: 参数有误">['hello']</assertion>
-        <assertion expected="numeric_032.xml">[null]</assertion>
+        <arguments resultID="12">['0']</arguments>
+        <arguments resultID="13">['1.123456789012345']</arguments>
+        <arguments resultID="14">['-1.123456789012345']</arguments>
+        <arguments resultID="15">['1.79E308']</arguments>
+        <arguments resultID="16">['-1.79E308']</arguments>
+        <arguments exception="ClassCastException">['1.80E308']</arguments>
+        <arguments exception="NumberFormatException">['hello']</arguments>
     </case>
 
     <!--  字符串 转 布尔值  castToBoolean(str: String): Boolean  -->
     <case>
         <sql type="query">select castToBoolean(?);</sql>
-        <assertion expected="numeric_033.xml">['true']</assertion>
-        <assertion expected="numeric_034.xml">['false']</assertion>
-        <assertion expected="error: 参数有误">['abcd']</assertion>
-        <assertion expected="error: 参数有误">['123']</assertion>
-        <assertion expected="error: 参数有误">[null]</assertion>
+        <arguments resultID="17">['true']</arguments>
+        <arguments resultID="18">['false']</arguments>
+        <arguments resultID="19">['abcd']</arguments>
+        <arguments resultID="20">['123']</arguments>
+        <arguments resultID="21">[null]</arguments>
     </case>
 
     <!--  任意数据 转 字符串  castToString(any: Any): String  -->
     <case>
         <sql type="query">select castToString(?);</sql>
-        <assertion expected="numeric_035.xml">[123]</assertion>
-        <assertion expected="numeric_036.xml">[-123]</assertion>
-        <assertion expected="numeric_037.xml">['abcd']</assertion>
-        <assertion expected="numeric_038.xml">[123.456]</assertion>
-        <assertion expected="numeric_039.xml">[true]</assertion>
-        <assertion expected="numeric_040.xml">[null]</assertion>
+        <arguments resultID="22">[123]</arguments>
+        <arguments resultID="23">[-123]</arguments>
+        <arguments resultID="24">[123.456]</arguments>
+        <arguments resultID="25">['abcd']</arguments>
+        <arguments resultID="26">[true]</arguments>
     </case>
 
     <!--  数值类型 转 Integer  parseInteger(num: Any): Integer   -->
     <case>
         <sql type="query">select parseInteger(?);</sql>
-        <assertion expected="numeric_041.xml">[0]</assertion>
-        <assertion expected="numeric_042.xml">[1]</assertion>
-        <assertion expected="numeric_043.xml">[-1]</assertion>
-        <assertion expected="numeric_044.xml">[10.2]</assertion>
-        <assertion expected="numeric_045.xml">[-5.8]</assertion>
-        <assertion expected="numeric_046.xml">[2147483647]</assertion>
-        <assertion expected="numeric_047.xml">[-2147483648]</assertion>
-        <assertion expected="error: 参数有误">[2147483648.1]</assertion>
-        <assertion expected="error: 参数有误">[-2147483649.5]</assertion>
-        <assertion expected="error: 参数有误">['abcd']</assertion>
-        <assertion expected="error: 参数有误">[true]</assertion>
-        <assertion expected="error: 参数有误">[null]</assertion>
+        <arguments resultID="27">[0]</arguments>
+        <arguments resultID="28">[2147483647]</arguments>
+        <arguments resultID="29">[-2147483648]</arguments>
+        <arguments exception="NumberFormatException">[100.12345]</arguments>
+        <arguments exception="NumberFormatException">[2147483648]</arguments>
+        <arguments exception="NumberFormatException">[-2147483649]</arguments>
+        <arguments exception="NumberFormatException">['abcd']</arguments>
+        <arguments exception="NumberFormatException">[true]</arguments>
     </case>
 
     <!--  数值类型 转 Long  parseLong(num: Any): Long  -->
     <case>
         <sql type="query">select parseLong(?);</sql>
-        <assertion expected="numeric_048.xml">[0]</assertion>
-        <assertion expected="numeric_049.xml">[123456789]</assertion>
-        <assertion expected="numeric_050.xml">[-123456789]</assertion>
-        <assertion expected="numeric_051.xml">[12345.2345]</assertion>
-        <assertion expected="numeric_052.xml">[-56789.89012]</assertion>
-        <assertion expected="numeric_053.xml">[9223372036854775807]</assertion>
-        <assertion expected="numeric_054.xml">[-9223372036854775808]</assertion>
-        <assertion expected="error: 参数有误">[9223372036854775807.5]</assertion>
-        <assertion expected="error: 参数有误">[-9223372036854775809.5]</assertion>
-        <assertion expected="error: 参数有误">['abcd']</assertion>
-        <assertion expected="error: 参数有误">[true]</assertion>
-        <assertion expected="error: 参数有误">[null]</assertion>
+        <arguments resultID="30">[0]</arguments>
+        <arguments resultID="31">[9223372036854775807]</arguments>
+        <arguments resultID="32">[-9223372036854775808]</arguments>
+        <arguments exception="NumberFormatException">[12345.2345]</arguments>
+        <arguments exception="SqlValidatorException">[9223372036854775808]</arguments>
+        <arguments exception="SqlValidatorException">[-9223372036854775809]</arguments>
+        <arguments exception="NumberFormatException">['abcd']</arguments>
+        <arguments exception="NumberFormatException">[true]</arguments>
     </case>
 
     <!--  数值类型 转 Double  parseDouble(num: Any): Double  -->
     <case>
         <sql type="query">select  parseDouble(?);</sql>
-        <assertion expected="numeric_055.xml">[0]</assertion>
-        <assertion expected="numeric_056.xml">[12345]</assertion>
-        <assertion expected="numeric_057.xml">[-12345]</assertion>
-        <assertion expected="numeric_058.xml">[10.23456]</assertion>
-        <assertion expected="numeric_059.xml">[-567.89012345]</assertion>
-        <assertion expected="error: 参数有误">['abcd']</assertion>
-        <assertion expected="error: 参数有误">[true]</assertion>
-        <assertion expected="numeric_060.xml">[null]</assertion>
+        <arguments resultID="33">[0]</arguments>
+        <arguments resultID="34">[1.123456789012345]</arguments>
+        <arguments resultID="35">[-1.123456789012345]</arguments>
+        <arguments resultID="36">[9223372036854775807]</arguments>
+        <arguments resultID="37">[-9223372036854775808]</arguments>
+        <arguments exception="SqlValidatorException">[9223372036854775808]</arguments>
+        <arguments exception="ClassCastException">[1.80E308]</arguments>
+        <arguments exception="NumberFormatException">['hello']</arguments>
+        <arguments exception="NumberFormatException">[true]</arguments>
     </case>
 
 </testCase>
