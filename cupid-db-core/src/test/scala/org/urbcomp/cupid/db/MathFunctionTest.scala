@@ -150,4 +150,5 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     resultSet2.next()
     assertEquals(null, resultSet2.getObject(1))
   }
+
 }
