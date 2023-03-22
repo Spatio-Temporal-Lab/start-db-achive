@@ -41,7 +41,7 @@ public class RunSingleSQLCase {
     static boolean COMPARE_RESULT = true;
     static boolean COMPARE_EXCEPTION = true;
     // 用一个静态变量来控制是否输出过程信息
-    static boolean OUTPUT_MESSAGE = false;
+    static boolean OUTPUT_MESSAGE = true;
     static String XML_PATH;
     static String XML_NAME;
     static String DBNAME;
@@ -102,9 +102,12 @@ public class RunSingleSQLCase {
                     analyseSql(sqlElement, initSql, sqlType);
                 } else {
                     // sql需要拼接参数时
+                    if (argumentsElements.size() == 0) {
+                        throw new Exception("缺少参数");
+                    }
                     for (Element argumentsElement : argumentsElements) {
                         // 将sql和参数进行拼接
-                        String params = argumentsElement.getText();
+                        String params = argumentsElement.getText().trim();
                         String sqlWithParam = getSqlWithParam(initSql, params);
                         analyseSql(argumentsElement, sqlWithParam, sqlType);
                     }
@@ -134,7 +137,7 @@ public class RunSingleSQLCase {
             }
 
             // 有预期结果获取并加入预期数据中,然后与实际数据进行比较
-            if (resultID != null) {
+            if (resultID != null && !resultID.equals("ignore")) {
                 if (OUTPUT_MESSAGE) {
                     log.info("开始执行sql: " + sql + " resultID: " + resultID);
                 }
@@ -161,7 +164,7 @@ public class RunSingleSQLCase {
                 if (OUTPUT_MESSAGE) {
                     log.info("sql执行完成");
                 }
-            } else if (exception != null) {
+            } else if (exception != null && !exception.equals("ignore")) {
                 // 有预期异常加入预期数据中，然后与实际数据进行比较
                 if (!exception.contains("Exception")) {
                     throw new Exception("预期异常内容不对");
@@ -229,7 +232,7 @@ public class RunSingleSQLCase {
                     }
                     break;
                 case "ignore":
-                    log.info("忽略执行:" + sql);
+                    log.info("忽略执行: " + sql);
                     break;
                 default:
                     log.info(sql + ":sql标签的type类型有误");

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<expectedResult>
+
+    <result id="1">
+        <column name="EXPR$0" type="string">
+            <row>bd-dipuc</row>
+        </column>
+    </result>
+
+    <result id="2">
+        <column name="EXPR$0" type="char">
+            <row>CUPID-DB</row>
+        </column>
+    </result>
+
+    <result id="3">
+        <column name="EXPR$0" type="char">
+            <row>cupid-db</row>
+        </column>
+    </result>
+
+    <result id="4">
+        <column name="EXPR$0" type="string">
+            <row>cupid</row>
+        </column>
+    </result>
+
+    <result id="5">
+        <column name="EXPR$0" type="string">
+            <row>cupid - db</row>
+        </column>
+    </result>
+
+    <result id="6">
+        <column name="EXPR$0" type="string">
+            <row></row>
+        </column>
+    </result>
+
+    <result id="7">
+        <column name="EXPR$0" type="string">
+            <row>cupid - db    </row>
+        </column>
+    </result>
+
+    <result id="8">
+        <column name="EXPR$0" type="string">
+            <row>    cupid - db</row>
+        </column>
+    </result>
+
+    <result id="9">
+        <column name="EXPR$0" type="string">
+            <row>cupid-db</row>
+        </column>
+    </result>
+
+    <result id="10">
+        <column name="EXPR$0" type="string">
+            <row>       cupid-db</row>
+        </column>
+    </result>
+
+    <result id="11">
+        <column name="EXPR$0" type="string">
+            <row>dbdbdbcupid</row>
+        </column>
+    </result>
+
+    <result id="12">
+        <column name="EXPR$0" type="string">
+            <row>cupid-db       </row>
+        </column>
+    </result>
+
+    <result id="13">
+        <column name="EXPR$0" type="string">
+            <row>cupiddbdbdb</row>
+        </column>
+    </result>
+
+    <result id="14">
+        <column name="EXPR$0" type="int">
+            <row>8</row>
+        </column>
+    </result>
+
+    <result id="15">
+        <column name="EXPR$0" type="int">
+            <row>8</row>
+        </column>
+    </result>
+
+    <result id="16">
+        <column name="EXPR$0" type="int">
+            <row>7</row>
+        </column>
+    </result>
+
+    <result id="17">
+        <column name="EXPR$0" type="int">
+            <row>0</row>
+        </column>
+    </result>
+
+    <result id="18">
+        <column name="EXPR$0" type="int">
+            <row>5</row>
+        </column>
+    </result>
+
+    <result id="19">
+        <column name="EXPR$0" type="int">
+            <row>7</row>
+        </column>
+    </result>
+
+    <result id="20">
+        <column name="EXPR$0" type="string">
+            <row>B3F66BF573050BF2EB793DB905441E17</row>
+        </column>
+    </result>
+
+</expectedResult>
