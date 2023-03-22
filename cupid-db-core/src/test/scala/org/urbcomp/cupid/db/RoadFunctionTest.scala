@@ -33,6 +33,7 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
   val rsGeoJson: String = rs.toGeoJSON
   val trajectory: Trajectory = ModelGenerator.generateTrajectory()
   val tGeo: String = trajectory.toGeoJSON
+  val rnGeoJson: String = rn.toGeoJSON
 
   test("st_rn_shortestPath") {
     val statement = connect.createStatement
@@ -176,5 +177,24 @@ class RoadFunctionTest extends AbstractCalciteFunctionTest {
         "\"tid\":\"afab91fa68cb417c2f663924a0ba1ff92018-10-09 07:28:21.0\"}}",
       resultSet.getObject(1)
     )
+  }
+  test("st_rn_reachableConvexHull") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery(
+        "select st_rn_reachableConvexHull(st_rn_fromGeoJson(\'" + rnGeoJson + "\'),st_makePoint(108.98897,34.25815), 180.0, \"Drive\")"
+      )
+    resultSet.next()
+    assertNotNull(resultSet.getObject(1))
+  }
+
+  test("st_rn_reachableConcavexHull") {
+    val statement = connect.createStatement
+    val resultSet =
+      statement.executeQuery(
+        "select st_rn_reachableConcaveHull(st_rn_fromGeoJson(\'" + rnGeoJson + "\'),st_makePoint(108.98897,34.25815), 180.0, \"Drive\")"
+      )
+    resultSet.next()
+    assertNotNull(resultSet.getObject(1))
   }
 }

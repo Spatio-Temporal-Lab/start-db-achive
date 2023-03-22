@@ -23,10 +23,9 @@
 package org.urbcomp.cupid.db.function;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.*;
+import org.urbcomp.cupid.db.algorithm.reachable.ReachableAreaConcaveHull;
+import org.urbcomp.cupid.db.algorithm.reachable.ReachableAreaConvexHull;
 import org.urbcomp.cupid.db.algorithm.shortestpath.BiDijkstraShortestPath;
 import org.urbcomp.cupid.db.exception.AlgorithmExecuteException;
 import org.urbcomp.cupid.db.model.point.SpatialPoint;
@@ -34,6 +33,7 @@ import org.urbcomp.cupid.db.model.roadnetwork.RoadNetwork;
 import org.urbcomp.cupid.db.model.roadnetwork.RoadSegment;
 import org.urbcomp.cupid.db.util.GeometryFactoryUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -57,6 +57,11 @@ public class RoadFunction {
     public RoadNetwork st_rn_makeRoadNetwork(List<RoadSegment> rsList)
         throws JsonProcessingException {
         return new RoadNetwork(rsList);
+    }
+
+    @CupidDBFunction("st_rn_fromGeoJson")
+    public RoadNetwork st_rn_fromGeoJson(String geoJson) throws JsonProcessingException {
+        return RoadNetwork.fromGeoJSON(geoJson);
     }
 
     @CupidDBFunction("st_rs_fromGeoJSON")
@@ -110,6 +115,41 @@ public class RoadFunction {
     @CupidDBFunction("st_rs_lengthInKM")
     public Double st_rs_lengthInKM(RoadSegment rs) {
         return rs.getLengthInMeter() / 1000;
+    }
+
+    @CupidDBFunction("st_rn_reachableConvexHull")
+    public Polygon st_rn_reachableConvexHull(
+        RoadNetwork roadNetwork,
+        Point startPt,
+        BigDecimal timeInSec,
+        String travelMode
+    ) {
+        SpatialPoint startSpatialPoint = new SpatialPoint(startPt.getCoordinate());
+        ReachableAreaConvexHull reachable = new ReachableAreaConvexHull(
+            roadNetwork,
+            startSpatialPoint,
+            timeInSec.doubleValue(),
+            travelMode
+        );
+        return reachable.getHull();
+    }
+
+    @CupidDBFunction("st_rn_reachableConcaveHull")
+    public Polygon st_rn_reachableConcaveHull(
+        RoadNetwork roadNetwork,
+        Point startPt,
+        BigDecimal timeInSec,
+        String travelMode
+
+    ) {
+        SpatialPoint startSpatialPoint = new SpatialPoint(startPt.getCoordinate());
+        ReachableAreaConcaveHull reachable = new ReachableAreaConcaveHull(
+            roadNetwork,
+            startSpatialPoint,
+            timeInSec.doubleValue(),
+            travelMode
+        );
+        return reachable.getHull();
     }
 
 }
