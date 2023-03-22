@@ -25,9 +25,9 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("log") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select log(3.8,9.5)")
+    val resultSet = statement.executeQuery("select log(3.3,9.6)")
     resultSet.next()
-    assertEquals(BigDecimal(1.6863595503462367).bigDecimal, resultSet.getObject(1))
+    assertEquals(BigDecimal(1.8943969631190591).bigDecimal, resultSet.getObject(1))
   }
 
   /**

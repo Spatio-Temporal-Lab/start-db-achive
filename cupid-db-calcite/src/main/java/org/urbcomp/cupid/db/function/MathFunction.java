@@ -45,8 +45,10 @@ public class MathFunction {
      * @return log result
      */
     @CupidDBFunction("log")
-    public BigDecimal log(BigDecimal base, BigDecimal num) {
-        return BigDecimal.valueOf(Math.log(num.doubleValue()) / Math.log(base.doubleValue()));
+    public Object log(BigDecimal base, BigDecimal num) {
+        double res = Math.log(num.doubleValue()) / Math.log(base.doubleValue());
+        if (res % 1 == 0) return res;
+        return BigDecimal.valueOf(res);
     }
 
     /**
@@ -66,8 +68,10 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("log2")
-    public BigDecimal log2(BigDecimal num) {
-        return BigDecimal.valueOf(Math.log(num.doubleValue()) / Math.log(2.0D));
+    public Object log2(BigDecimal num) {
+        double res = Math.log(num.doubleValue()) / Math.log(2.0D);
+        if (res % 1 == 0) return res;
+        return BigDecimal.valueOf(res);
     }
 
     /**
@@ -77,8 +81,10 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("log1p")
-    public BigDecimal log1p(BigDecimal num) {
-        return BigDecimal.valueOf(Math.log1p(num.doubleValue()));
+    public Object log1p(BigDecimal num) {
+        double res = Math.log1p(num.doubleValue());
+        if (res % 1 == 0) return res;
+        return BigDecimal.valueOf(res);
     }
 
     /**
@@ -89,8 +95,10 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("pow")
-    public BigDecimal pow(BigDecimal a, BigDecimal b) {
-        return BigDecimal.valueOf(Math.pow(a.doubleValue(), b.doubleValue()));
+    public Object pow(BigDecimal a, BigDecimal b) {
+        double res = Math.pow(a.doubleValue(), b.doubleValue());
+        if (res % 1 == 0) return res;
+        return BigDecimal.valueOf(res);
     }
 
     /**
@@ -101,8 +109,10 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("toRadians")
-    public BigDecimal toRadians(BigDecimal angDeg) {
-        return BigDecimal.valueOf(Math.toRadians(angDeg.doubleValue()));
+    public Object toRadians(BigDecimal angDeg) {
+        double res = Math.toRadians(angDeg.doubleValue());
+        if (res % 1 == 0) return res;
+        return BigDecimal.valueOf(res);
     }
 
     /**
@@ -114,8 +124,10 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("toDegrees")
-    public BigDecimal toDegrees(BigDecimal angRad) {
-        return BigDecimal.valueOf(Math.toDegrees(angRad.doubleValue()));
+    public Object toDegrees(BigDecimal angRad) {
+        double res = Math.toDegrees(angRad.doubleValue());
+        if (res % 1 == 0) return res;
+        return BigDecimal.valueOf(res);
     }
 
 }
