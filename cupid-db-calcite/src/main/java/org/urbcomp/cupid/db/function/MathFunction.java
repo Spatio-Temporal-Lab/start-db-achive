@@ -25,12 +25,12 @@ package org.urbcomp.cupid.db.function;
 import java.math.BigDecimal;
 
 public class MathFunction {
+
     /**
      * The double value that is closer than any other to e,
      * the base of the natural logarithms.
      */
     public static final double E = 2.7182818284590452354;
-
     /**
      * The double value that is closer than any other to pi,
      * the ratio of the circumference of a circle to its diameter.
@@ -46,6 +46,11 @@ public class MathFunction {
      */
     @CupidDBFunction("log")
     public Object log(BigDecimal base, BigDecimal num) {
+        if (base == null
+            || num == null
+            || base.doubleValue() <= 0
+            || base.doubleValue() == 1
+            || num.doubleValue() == 0) return null;
         double res = Math.log(num.doubleValue()) / Math.log(base.doubleValue());
         if (res % 1 == 0) return res;
         return BigDecimal.valueOf(res);
@@ -69,6 +74,7 @@ public class MathFunction {
      */
     @CupidDBFunction("log2")
     public Object log2(BigDecimal num) {
+        if (num == null || num.doubleValue() <= 0) return null;
         double res = Math.log(num.doubleValue()) / Math.log(2.0D);
         if (res % 1 == 0) return res;
         return BigDecimal.valueOf(res);
@@ -82,6 +88,7 @@ public class MathFunction {
      */
     @CupidDBFunction("log1p")
     public Object log1p(BigDecimal num) {
+        if (num == null || num.doubleValue() <= 0) return null;
         double res = Math.log1p(num.doubleValue());
         if (res % 1 == 0) return res;
         return BigDecimal.valueOf(res);
@@ -96,6 +103,7 @@ public class MathFunction {
      */
     @CupidDBFunction("pow")
     public Object pow(BigDecimal a, BigDecimal b) {
+        if (a == null || b == null) return null;
         double res = Math.pow(a.doubleValue(), b.doubleValue());
         if (res % 1 == 0) return res;
         return BigDecimal.valueOf(res);
@@ -110,6 +118,7 @@ public class MathFunction {
      */
     @CupidDBFunction("toRadians")
     public Object toRadians(BigDecimal angDeg) {
+        if (angDeg == null) return null;
         double res = Math.toRadians(angDeg.doubleValue());
         if (res % 1 == 0) return res;
         return BigDecimal.valueOf(res);
@@ -125,7 +134,36 @@ public class MathFunction {
      */
     @CupidDBFunction("toDegrees")
     public Object toDegrees(BigDecimal angRad) {
+        if (angRad == null) return null;
         double res = Math.toDegrees(angRad.doubleValue());
+        if (res % 1 == 0) return res;
+        return BigDecimal.valueOf(res);
+    }
+
+    @CupidDBFunction("abs")
+    public Object abs(BigDecimal a) {
+        if (a == null) return null;
+        double res = Math.abs(a.doubleValue());
+        if (res % 1 == 0) return res;
+        return BigDecimal.valueOf(res);
+    }
+
+    @CupidDBFunction("floor")
+    public Double floor(BigDecimal a) {
+        if (a == null) return null;
+        return Math.floor(a.doubleValue());
+    }
+
+    @CupidDBFunction("ceil")
+    public Double ceil(BigDecimal a) {
+        if (a == null) return null;
+        return Math.ceil(a.doubleValue());
+    }
+
+    @CupidDBFunction("mod")
+    public Object mod(BigDecimal a, BigDecimal b) {
+        if (a == null || b == null) return null;
+        double res = a.doubleValue() % b.doubleValue();
         if (res % 1 == 0) return res;
         return BigDecimal.valueOf(res);
     }
