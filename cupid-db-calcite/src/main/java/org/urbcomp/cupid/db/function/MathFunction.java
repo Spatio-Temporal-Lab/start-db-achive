@@ -22,6 +22,8 @@
 
 package org.urbcomp.cupid.db.function;
 
+import java.math.BigDecimal;
+
 public class MathFunction {
     /**
      * The double value that is closer than any other to e,
@@ -43,8 +45,8 @@ public class MathFunction {
      * @return log result
      */
     @CupidDBFunction("log")
-    public double log(double base, double num) {
-        return Math.log(num) / Math.log(base);
+    public BigDecimal log(BigDecimal base, BigDecimal num) {
+        return BigDecimal.valueOf(Math.log(num.doubleValue()) / Math.log(base.doubleValue()));
     }
 
     /**
@@ -64,8 +66,8 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("log2")
-    public double log2(double num) {
-        return Math.log(num) / Math.log(2.0D);
+    public BigDecimal log2(BigDecimal num) {
+        return BigDecimal.valueOf(Math.log(num.doubleValue()) / Math.log(2.0D));
     }
 
     /**
@@ -75,8 +77,8 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("log1p")
-    public double log1p(double num) {
-        return Math.log1p(num);
+    public BigDecimal log1p(BigDecimal num) {
+        return BigDecimal.valueOf(Math.log1p(num.doubleValue()));
     }
 
     /**
@@ -87,8 +89,8 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("pow")
-    public double pow(double a, double b) {
-        return Math.pow(a, b);
+    public BigDecimal pow(BigDecimal a, BigDecimal b) {
+        return BigDecimal.valueOf(Math.pow(a.doubleValue(), b.doubleValue()));
     }
 
     /**
@@ -99,8 +101,8 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("toRadians")
-    public double toRadians(double angDeg) {
-        return Math.toRadians(angDeg);
+    public BigDecimal toRadians(BigDecimal angDeg) {
+        return BigDecimal.valueOf(Math.toRadians(angDeg.doubleValue()));
     }
 
     /**
@@ -112,8 +114,8 @@ public class MathFunction {
      * @return double
      */
     @CupidDBFunction("toDegrees")
-    public double toDegrees(double angRad) {
-        return Math.toDegrees(angRad);
+    public BigDecimal toDegrees(BigDecimal angRad) {
+        return BigDecimal.valueOf(Math.toDegrees(angRad.doubleValue()));
     }
 
 }

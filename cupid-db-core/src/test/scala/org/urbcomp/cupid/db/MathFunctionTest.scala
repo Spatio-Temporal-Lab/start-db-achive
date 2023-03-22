@@ -25,9 +25,9 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("log") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select log(3,9)")
+    val resultSet = statement.executeQuery("select log(3.8,9.5)")
     resultSet.next()
-    assertEquals(2.0, resultSet.getObject(1))
+    assertEquals(BigDecimal(1.6863595503462367).bigDecimal, resultSet.getObject(1))
   }
 
   /**
@@ -45,9 +45,9 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("log1p") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select log1p('1.5')")
+    val resultSet = statement.executeQuery("select log1p(1.5)")
     resultSet.next()
-    assertEquals(0.9162907318741551, resultSet.getObject(1))
+    assertEquals(BigDecimal(0.9162907318741551).bigDecimal, resultSet.getObject(1))
   }
 
   /**
@@ -55,9 +55,9 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("log2") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select log2('8.6')")
+    val resultSet = statement.executeQuery("select log2(8.6)")
     resultSet.next()
-    assertEquals(3.1043366598147353, resultSet.getObject(1))
+    assertEquals(BigDecimal(3.1043366598147353).bigDecimal, resultSet.getObject(1))
   }
 
   /**
@@ -65,9 +65,9 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("pow") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select pow('0.5',3)")
+    val resultSet = statement.executeQuery("select pow(0.5,3)")
     resultSet.next()
-    assertEquals(0.125, resultSet.getObject(1))
+    assertEquals(BigDecimal(0.125).bigDecimal, resultSet.getObject(1))
   }
 
   /**
@@ -75,9 +75,9 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("toRadians") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select toRadians('90')")
+    val resultSet = statement.executeQuery("select toRadians(90)")
     resultSet.next()
-    assertEquals(1.5707963267948966, resultSet.getObject(1))
+    assertEquals(BigDecimal(1.5707963267948966).bigDecimal, resultSet.getObject(1))
   }
 
   /**
@@ -85,8 +85,8 @@ class MathFunctionTest extends AbstractCalciteFunctionTest {
     */
   test("toDegrees") {
     val statement = connect.createStatement()
-    val resultSet = statement.executeQuery("select toDegrees('1')")
+    val resultSet = statement.executeQuery("select toDegrees(1)")
     resultSet.next()
-    assertEquals(57.29577951308232, resultSet.getObject(1))
+    assertEquals(BigDecimal(57.29577951308232).bigDecimal, resultSet.getObject(1))
   }
 }
