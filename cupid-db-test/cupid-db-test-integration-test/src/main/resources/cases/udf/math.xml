@@ -179,31 +179,40 @@
         <arguments resultID="63">null</arguments>
     </case>
 
+    <!--  立方根  sqrt(num：Double): Double  -->
+    <case>
+        <sql type="query">select cbrt(?);</sql>
+        <arguments resultID="64">8.0</arguments>
+        <arguments resultID="65">0</arguments>
+        <arguments resultID="66">-8.0</arguments>
+        <arguments resultID="67">null</arguments>
+    </case>
+
     <!--  指数  pow(base：Double, num：Double): Double  -->
     <case>
         <sql type="query">select pow(?,?);</sql>
-        <arguments resultID="64">[2][2]</arguments>
-        <arguments resultID="65">[2][0]</arguments>
-        <arguments resultID="66">[2][-1]</arguments>
-        <arguments resultID="67">[0][2]</arguments>
-        <arguments resultID="68">[-2][2]</arguments>
-        <arguments resultID="69">[-2][-2]</arguments>
+        <arguments resultID="68">[2][2]</arguments>
+        <arguments resultID="69">[2][0]</arguments>
+        <arguments resultID="70">[2][-1]</arguments>
+        <arguments resultID="71">[0][2]</arguments>
+        <arguments resultID="72">[-2][2]</arguments>
+        <arguments resultID="73">[-2][-2]</arguments>
     </case>
 
     <!--  角度转弧度  toRadians(num：Double): Double  -->
     <case>
         <sql type="query">select toRadians(?);</sql>
-        <arguments resultID="70">[90]</arguments>
-        <arguments resultID="71">[0]</arguments>
-        <arguments resultID="72">[-90]</arguments>
+        <arguments resultID="74">[90]</arguments>
+        <arguments resultID="75">[0]</arguments>
+        <arguments resultID="76">[-90]</arguments>
     </case>
 
     <!--  弧度转角度  toDegrees(num：Double): Double  -->
     <case>
         <sql type="query">select toDegrees(?);</sql>
-        <arguments resultID="73">[1]</arguments>
-        <arguments resultID="74">[0]</arguments>
-        <arguments resultID="75">[-1]</arguments>
+        <arguments resultID="77">[1]</arguments>
+        <arguments resultID="78">[0]</arguments>
+        <arguments resultID="79">[-1]</arguments>
     </case>
 
 </testCase>

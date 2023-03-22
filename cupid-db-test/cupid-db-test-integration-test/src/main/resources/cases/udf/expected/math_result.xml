@@ -382,25 +382,25 @@
 
     <result id="64">
         <column name="EXPR$0" type="double">
-            <row>4.0</row>
+            <row>2.0</row>
         </column>
     </result>
 
     <result id="65">
         <column name="EXPR$0" type="double">
-            <row>1.0</row>
+            <row>0.0</row>
         </column>
     </result>
 
     <result id="66">
         <column name="EXPR$0" type="double">
-            <row>0.5</row>
+            <row>-2.0</row>
         </column>
     </result>
 
     <result id="67">
         <column name="EXPR$0" type="double">
-            <row>0.0</row>
+            <row>null</row>
         </column>
     </result>
 
@@ -412,13 +412,13 @@
 
     <result id="69">
         <column name="EXPR$0" type="double">
-            <row>0.25</row>
+            <row>1.0</row>
         </column>
     </result>
 
     <result id="70">
         <column name="EXPR$0" type="double">
-            <row>1.5707963267948966</row>
+            <row>0.5</row>
         </column>
     </result>
 
@@ -430,23 +430,47 @@
 
     <result id="72">
         <column name="EXPR$0" type="double">
-            <row>-1.5707963267948966</row>
+            <row>4.0</row>
         </column>
     </result>
 
     <result id="73">
         <column name="EXPR$0" type="double">
-            <row>57.29577951308232</row>
+            <row>0.25</row>
         </column>
     </result>
 
     <result id="74">
         <column name="EXPR$0" type="double">
-            <row>0.0</row>
+            <row>1.5707963267948966</row>
         </column>
     </result>
 
     <result id="75">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="76">
+        <column name="EXPR$0" type="double">
+            <row>-1.5707963267948966</row>
+        </column>
+    </result>
+
+    <result id="77">
+        <column name="EXPR$0" type="double">
+            <row>57.29577951308232</row>
+        </column>
+    </result>
+
+    <result id="78">
+        <column name="EXPR$0" type="double">
+            <row>0.0</row>
+        </column>
+    </result>
+
+    <result id="79">
         <column name="EXPR$0" type="double">
             <row>-57.29577951308232</row>
         </column>
