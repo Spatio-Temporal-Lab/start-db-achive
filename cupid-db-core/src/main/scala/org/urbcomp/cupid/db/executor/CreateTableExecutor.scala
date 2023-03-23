@@ -183,13 +183,13 @@ case class CreateTableExecutor(n: SqlCupidCreateTable) extends BaseExecutor {
             .toArray
           val indexName: String =
             if (index.indexName != null) index.indexName.names.get(0) else null
-          new Index(
-            tableId,
-            getIndexType(index.indexType, fields, fieldMap),
-            indexName,
-            fields.mkString(","),
-            ""
-          )
+
+          var indexImplType = getIndexType(index.indexType, fields, fieldMap)
+          if (index.indexImplType != null) {
+            indexImplType = index.indexImplType.names.get(0)
+          }
+
+          new Index(tableId, indexImplType, indexName, fields.mkString(","), "")
         })
         .toArray
     } else {

@@ -47,6 +47,7 @@ import org.urbcomp.cupid.db.util.{MetadataUtil, StringUtil}
 import java.util
 import scala.collection.JavaConverters._
 import scala.collection.mutable
+import scala.language.postfixOps
 
 /**
   * Cupid DB grammar visitor
@@ -625,6 +626,11 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
             indexName = new SqlIdentifier(i.ident().getText, pos)
           }
 
+          var indexImplType: SqlIdentifier = null
+          if (i.index_type_decl() != null) {
+            indexImplType = new SqlIdentifier(i.index_type_decl().ident().getText, pos)
+          }
+
           val columns = i
             .key_list()
             .qident()
@@ -634,7 +640,7 @@ class CupidDBVisitor(user: String, db: String) extends CupidDBSqlBaseVisitor[Any
             })
             .toList
             .asJava
-          new SqlIndexDeclaration(pos, indexType, indexName, columns)
+          new SqlIndexDeclaration(pos, indexType, indexName, columns, indexImplType)
         }
         .toList
         .asJava

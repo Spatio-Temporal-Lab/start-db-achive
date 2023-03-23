@@ -95,11 +95,15 @@ create_table_columns :
 create_table_columns_item :
        column_name dtype dtype_attr* create_table_column_inline_cons*
      | (T_CONSTRAINT qident)? create_table_column_cons
-     | (T_SPATIAL|T_ATTRIBUTE) T_INDEX ident? key_list
+     | (T_SPATIAL|T_ATTRIBUTE) T_INDEX ident? key_list index_type_decl?
      ;
 
 key_list:
     T_OPEN_P qident (T_COMMA qident)* T_CLOSE_P
+;
+
+index_type_decl:
+    T_TYPE ident
 ;
 
 column_name :

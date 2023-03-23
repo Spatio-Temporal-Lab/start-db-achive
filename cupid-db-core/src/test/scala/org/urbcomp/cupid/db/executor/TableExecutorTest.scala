@@ -16,7 +16,7 @@
  */
 package org.urbcomp.cupid.db.executor
 
-import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertNull}
+import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertNull, assertTrue}
 import org.urbcomp.cupid.db.AbstractCalciteFunctionTest
 import org.urbcomp.cupid.db.model.sample.ModelGenerator
 import org.urbcomp.cupid.db.model.trajectory.Trajectory
@@ -70,6 +70,38 @@ class TableExecutorTest extends AbstractCalciteFunctionTest {
                             |)""".stripMargin.format(uniqueId).stripMargin
     val stmt = connect.createStatement()
     stmt.executeUpdate(createTableSQL)
+  }
+
+  test("test create table with specify concrete index type") {
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE gemo_%s (
+                            |    name String,
+                            |    st Point,
+                            |    dtg Datetime,
+                            |    SPATIAL INDEX spatial_index2(st, dtg) type z2t
+                            |)""".stripMargin.format(uniqueId).stripMargin
+    val stmt = connect.createStatement()
+    stmt.executeUpdate(createTableSQL)
+    val rs = stmt.executeQuery("""show index from gemo_%s""".format(uniqueId))
+    rs.next()
+    assertEquals(rs.getString(3), "z2t")
+  }
+
+  test("test create table with invalid index type will throw error") {
+    val uniqueId = generateUniqueId()
+    val createTableSQL = s"""CREATE TABLE gemo_%s (
+                            |    name String,
+                            |    st Point,
+                            |    dtg Datetime,
+                            |    SPATIAL INDEX spatial_index2(st, dtg) type nonsense
+                            |)""".stripMargin.format(uniqueId).stripMargin
+
+    val stmt = connect.createStatement()
+    val thrown = intercept[Exception] {
+      stmt.executeUpdate(createTableSQL)
+    }
+    assertTrue(thrown.getMessage.contains("nonsense:st:dtg"))
+    assertTrue(thrown.getMessage.contains("does not support"))
   }
 
   test("test create table with attribute secondary temporal/Z2/Z3 index") {

@@ -41,6 +41,8 @@ public class SqlIndexDeclaration extends SqlCall {
 
     public final List<SqlIdentifier> columns;
 
+    public final SqlIdentifier indexImplType;
+
     /**
      * Creates a SqlIndexDeclaration;
      */
@@ -48,12 +50,14 @@ public class SqlIndexDeclaration extends SqlCall {
         SqlParserPos pos,
         IndexType indexType,
         SqlIdentifier indexName,
-        List<SqlIdentifier> columns
+        List<SqlIdentifier> columns,
+        SqlIdentifier indexImplType
     ) {
         super(pos);
         this.indexType = indexType;
         this.indexName = indexName;
         this.columns = columns;
+        this.indexImplType = indexImplType;
     }
 
     @Override
